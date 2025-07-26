@@ -52,13 +52,13 @@ const navigationItems = [
     url: '/dashboard',
     icon: LayoutDashboard,
     roles: ['base', 'manager', 'director', 'finance', 'super_admin'],
-    departments: ['kitchen', 'pizzeria', 'service', 'finance', 'manager', 'super_manager'],
+    departments: ['kitchen', 'pizzeria', 'service', 'finance', 'manager', 'super_manager', 'general_manager'],
   },
   {
     title: 'inventory',
     icon: Package,
     roles: ['base', 'manager', 'director', 'super_admin'],
-    departments: ['kitchen', 'pizzeria', 'service', 'manager', 'super_manager'],
+    departments: ['kitchen', 'pizzeria', 'service', 'manager', 'super_manager', 'general_manager'],
     submenu: [
       { title: 'inventoryCucina', url: '/inventory/kitchen', icon: Package },
       { title: 'inventoryPizzeria', url: '/inventory/pizzeria', icon: Package },
@@ -70,7 +70,7 @@ const navigationItems = [
     title: 'suppliers',
     icon: Truck,
     roles: ['manager', 'director', 'super_admin'],
-    departments: ['manager', 'super_manager', 'finance'],
+    departments: ['manager', 'super_manager', 'finance', 'general_manager'],
     submenu: [
       { title: 'orderManagement', url: '/suppliers/orders', icon: ShoppingCart },
       { title: 'supplierList', url: '/suppliers/list', icon: FileText },
@@ -82,7 +82,7 @@ const navigationItems = [
     title: 'checklists',
     icon: CheckSquare,
     roles: ['base', 'manager', 'director', 'super_admin'],
-    departments: ['kitchen', 'pizzeria', 'service', 'manager', 'super_manager'],
+    departments: ['kitchen', 'pizzeria', 'service', 'manager', 'super_manager', 'general_manager'],
     submenu: [
       { title: 'miseEnPlace', url: '/checklists/mise-en-place', icon: ClipboardList },
       { title: 'serviceOpening', url: '/checklists/service-opening', icon: CheckSquare },
@@ -94,7 +94,7 @@ const navigationItems = [
     title: 'communication',
     icon: MessageSquare,
     roles: ['base', 'manager', 'director', 'super_admin'],
-    departments: ['kitchen', 'pizzeria', 'service', 'finance', 'manager', 'super_manager'],
+    departments: ['kitchen', 'pizzeria', 'service', 'finance', 'manager', 'super_manager', 'general_manager'],
     submenu: [
       { title: 'globalChat', url: '/communication/global', icon: MessageSquare },
       { title: 'groupChats', url: '/communication/groups', icon: Users },
@@ -106,7 +106,7 @@ const navigationItems = [
     title: 'tasks',
     icon: ListTodo,
     roles: ['base', 'manager', 'director', 'super_admin'],
-    departments: ['kitchen', 'pizzeria', 'service', 'finance', 'manager', 'super_manager'],
+    departments: ['kitchen', 'pizzeria', 'service', 'finance', 'manager', 'super_manager', 'general_manager'],
     submenu: [
       { title: 'assignedTasks', url: '/tasks/assigned', icon: ListTodo },
       { title: 'createTask', url: '/tasks/create', icon: CheckSquare },
@@ -117,7 +117,7 @@ const navigationItems = [
     title: 'finance',
     icon: DollarSign,
     roles: ['manager', 'director', 'finance', 'super_admin'],
-    departments: ['finance', 'manager', 'super_manager'],
+    departments: ['finance', 'manager', 'super_manager', 'general_manager'],
     submenu: [
       { title: 'dailyCashClosure', url: '/financial', icon: Calculator },
       { title: 'financialReports', url: '/financial?tab=reports', icon: BarChart3 },
@@ -129,7 +129,7 @@ const navigationItems = [
     title: 'administration',
     icon: Shield,
     roles: ['super_admin'],
-    departments: ['super_manager'],
+    departments: ['super_manager', 'general_manager'],
     submenu: [
       { title: 'userManagement', url: '/users', icon: UserCog },
       { title: 'notificationSettings', url: '/admin/notifications', icon: Bell },
@@ -141,7 +141,7 @@ const navigationItems = [
     title: 'maintenance',
     icon: Wrench,
     roles: ['base', 'manager', 'director', 'super_admin'],
-    departments: ['kitchen', 'pizzeria', 'service', 'manager', 'super_manager'],
+    departments: ['kitchen', 'pizzeria', 'service', 'manager', 'super_manager', 'general_manager'],
     submenu: [
       { title: 'reportMalfunction', url: '/maintenance/report', icon: AlertTriangle },
       { title: 'malfunctionHistory', url: '/maintenance/history', icon: FileText },

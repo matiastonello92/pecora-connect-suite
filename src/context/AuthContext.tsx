@@ -2,7 +2,7 @@ import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { Language } from '@/lib/i18n';
 
 export type UserRole = 'base' | 'manager' | 'director' | 'finance' | 'super_admin';
-export type Department = 'kitchen' | 'pizzeria' | 'service' | 'finance' | 'manager' | 'super_manager';
+export type Department = 'kitchen' | 'pizzeria' | 'service' | 'finance' | 'manager' | 'super_manager' | 'general_manager';
 
 export interface User {
   id: string;
@@ -107,7 +107,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         firstName: 'Matias',
         lastName: 'Tonello',
         role: 'super_admin', // General Manager with super admin access
-        department: 'super_manager', // Full access to all departments
+        department: 'general_manager', // General Manager department
         location: 'PecoraNegra',
         language: 'fr', // French as default for Matias
         isActive: true,
