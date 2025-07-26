@@ -214,7 +214,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setChats(chatsWithUnread as unknown as Chat[]);
     } catch (error: any) {
       console.error('Error loading chats:', error);
-      toast.error(t('communication.errors.loadChats'));
+      toast.error(t('communication.errorLoadingChats'));
     } finally {
       setLoading(false);
     }
@@ -241,7 +241,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setMessages(data as unknown as ChatMessage[] || []);
     } catch (error: any) {
       console.error('Error loading messages:', error);
-      toast.error(t('communication.errors.loadMessages'));
+      toast.error(t('communication.errorLoadingChats'));
     }
   };
 
@@ -261,7 +261,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setConnectionRequests(data as unknown as ConnectionRequest[] || []);
     } catch (error: any) {
       console.error('Error loading connection requests:', error);
-      toast.error(t('communication.errors.loadRequests'));
+      toast.error(t('communication.errorLoadingChats'));
     }
   };
 
@@ -305,11 +305,11 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
 
       await loadChats();
-      toast.success(t('communication.chatCreated'));
+      toast.success(t('communication.groupCreated'));
       return chat as Chat;
     } catch (error: any) {
       console.error('Error creating chat:', error);
-      toast.error(t('communication.errors.createChat'));
+      toast.error(t('communication.errorCreatingGroup'));
       return null;
     }
   };
@@ -341,7 +341,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
     } catch (error: any) {
       console.error('Error sending message:', error);
-      toast.error(t('communication.errors.sendMessage'));
+      toast.error(t('communication.errorSendingMessage'));
     } finally {
       setSendingMessage(false);
     }
@@ -394,7 +394,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       toast.success(t('communication.requestSent'));
     } catch (error: any) {
       console.error('Error sending connection request:', error);
-      toast.error(t('communication.errors.sendRequest'));
+      toast.error(t('communication.errorSendingMessage'));
     }
   };
 
@@ -414,7 +414,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       toast.success(accept ? t('communication.requestAccepted') : t('communication.requestDeclined'));
     } catch (error: any) {
       console.error('Error responding to connection request:', error);
-      toast.error(t('communication.errors.respondRequest'));
+      toast.error(t('communication.errorSendingMessage'));
     }
   };
 
@@ -439,7 +439,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return publicUrl;
     } catch (error: any) {
       console.error('Error uploading media:', error);
-      toast.error(t('communication.errors.uploadMedia'));
+      toast.error(t('communication.errorUploadingFile'));
       return null;
     }
   };
