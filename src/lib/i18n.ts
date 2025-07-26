@@ -69,6 +69,12 @@ export const translations = {
     'total-price': 'Total Price',
     notes: 'Notes',
     favorite: 'Favorite',
+    welcome: 'Welcome',
+    kitchen: 'Kitchen',
+    pizzeria: 'Pizzeria',
+    service: 'Service',
+    manager: 'Manager',
+    super_manager: 'Super Manager',
     
     // Kitchen Inventory
     'kitchen-inventory-title': 'Kitchen Inventory',
@@ -259,6 +265,12 @@ export const translations = {
     'total-price': 'Prix total',
     notes: 'Notes',
     favorite: 'Favori',
+    welcome: 'Bienvenue',
+    kitchen: 'Cuisine',
+    pizzeria: 'Pizzeria',
+    service: 'Service',
+    manager: 'Manager',
+    super_manager: 'Super Manager',
     
     // Kitchen Inventory
     'kitchen-inventory-title': 'Inventaire Cuisine',
@@ -435,6 +447,12 @@ export const translations = {
     'total-price': 'Prezzo totale',
     notes: 'Note',
     favorite: 'Preferito',
+    welcome: 'Benvenuto',
+    kitchen: 'Cucina',
+    pizzeria: 'Pizzeria',
+    service: 'Servizio',
+    manager: 'Manager',
+    super_manager: 'Super Manager',
     
     // Kitchen Inventory
     'kitchen-inventory-title': 'Inventario Cucina',
@@ -572,7 +590,31 @@ export const useTranslation = (language: Language) => {
       value = value?.[k];
     }
     
-    return value || key;
+    // If translation not found, try to create a fallback
+    if (!value || value === key) {
+      // For product keys like "products.burrata", extract and capitalize the last part
+      if (key.startsWith('products.')) {
+        const productName = key.replace('products.', '').replace(/_/g, ' ');
+        return productName.split(' ').map(word => 
+          word.charAt(0).toUpperCase() + word.slice(1)
+        ).join(' ');
+      }
+      
+      // For category keys like "category.fish", extract and format the last part
+      if (key.startsWith('category.')) {
+        const categoryName = key.replace('category.', '').replace(/-/g, ' ').replace(/_/g, ' ');
+        return categoryName.split(' ').map(word => 
+          word.charAt(0).toUpperCase() + word.slice(1)
+        ).join(' ');
+      }
+      
+      // General fallback: capitalize and clean up the key
+      return key.replace(/[-_]/g, ' ').split(' ').map(word => 
+        word.charAt(0).toUpperCase() + word.slice(1)
+      ).join(' ');
+    }
+    
+    return value;
   };
   
   return { t };
