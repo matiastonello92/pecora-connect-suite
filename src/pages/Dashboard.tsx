@@ -77,15 +77,15 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Welcome Section */}
-      <div className="bg-gradient-to-r from-secondary/20 via-background to-accent/10 rounded-lg p-6 border">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-playfair font-bold text-primary mb-2">
+      <div className="bg-gradient-to-r from-secondary/20 via-background to-accent/10 rounded-lg p-4 sm:p-6 border">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="min-w-0 flex-1">
+            <h1 className="text-2xl sm:text-3xl font-playfair font-bold text-primary mb-2">
               {t('welcome')}, {user?.firstName}!
             </h1>
-            <p className="text-muted-foreground font-inter">
+            <p className="text-sm sm:text-base text-muted-foreground font-inter">
               {new Intl.DateTimeFormat(language === 'it' ? 'it-IT' : language === 'fr' ? 'fr-FR' : 'en-US', {
                 weekday: 'long',
                 year: 'numeric',
@@ -95,11 +95,13 @@ export default function Dashboard() {
             </p>
             <div className="mt-2">
               <Badge className={getDepartmentColor(user?.department || '')}>
-                {t(user?.department || '')} • {user?.location}
+                <span className="text-xs sm:text-sm">
+                  {t(user?.department || '')} • {user?.location}
+                </span>
               </Badge>
             </div>
           </div>
-          <div className="hidden md:flex items-center gap-2 text-muted-foreground">
+          <div className="hidden md:flex items-center gap-2 text-muted-foreground shrink-0">
             <Calendar className="h-5 w-5" />
             <TrendingUp className="h-5 w-5" />
           </div>
@@ -107,7 +109,7 @@ export default function Dashboard() {
       </div>
 
       {/* Stats Grid - Now clickable */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         {stats.map((stat, index) => {
           const linkTo = stat.title === 'Pending Inventories' ? '/inventory' :
                         stat.title === 'Open Checklists' ? '/checklists' :
@@ -197,40 +199,40 @@ export default function Dashboard() {
           <CardTitle className="font-playfair">Quick Actions</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
             <Link to="/inventory">
-              <Button variant="outline" className="flex flex-col items-center p-4 h-auto w-full">
-                <Package className="h-8 w-8 text-blue-600 mb-2" />
-                <span className="text-sm font-medium">Update Inventory</span>
+              <Button variant="outline" className="flex flex-col items-center p-3 sm:p-4 h-auto w-full">
+                <Package className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600 mb-2" />
+                <span className="text-xs sm:text-sm font-medium text-center">Update Inventory</span>
               </Button>
             </Link>
             
             <Link to="/checklists">
-              <Button variant="outline" className="flex flex-col items-center p-4 h-auto w-full">
-                <CheckSquare className="h-8 w-8 text-green-600 mb-2" />
-                <span className="text-sm font-medium">Complete Checklist</span>
+              <Button variant="outline" className="flex flex-col items-center p-3 sm:p-4 h-auto w-full">
+                <CheckSquare className="h-6 w-6 sm:h-8 sm:w-8 text-green-600 mb-2" />
+                <span className="text-xs sm:text-sm font-medium text-center">Complete Checklist</span>
               </Button>
             </Link>
             
             <Link to="/cash-register">
-              <Button variant="outline" className="flex flex-col items-center p-4 h-auto w-full">
-                <Calculator className="h-8 w-8 text-purple-600 mb-2" />
-                <span className="text-sm font-medium">Cash Register</span>
+              <Button variant="outline" className="flex flex-col items-center p-3 sm:p-4 h-auto w-full">
+                <Calculator className="h-6 w-6 sm:h-8 sm:w-8 text-purple-600 mb-2" />
+                <span className="text-xs sm:text-sm font-medium text-center">Cash Register</span>
               </Button>
             </Link>
             
             <Link to="/communication">
-              <Button variant="outline" className="flex flex-col items-center p-4 h-auto w-full">
-                <MessageSquare className="h-8 w-8 text-orange-600 mb-2" />
-                <span className="text-sm font-medium">Send Message</span>
+              <Button variant="outline" className="flex flex-col items-center p-3 sm:p-4 h-auto w-full">
+                <MessageSquare className="h-6 w-6 sm:h-8 sm:w-8 text-orange-600 mb-2" />
+                <span className="text-xs sm:text-sm font-medium text-center">Send Message</span>
               </Button>
             </Link>
 
             {hasFinancialAccess && (
               <Link to="/financial">
-                <Button variant="outline" className="flex flex-col items-center p-4 h-auto w-full border-green-300 hover:bg-green-50">
-                  <DollarSign className="h-8 w-8 text-green-600 mb-2" />
-                  <span className="text-sm font-medium">Financial</span>
+                <Button variant="outline" className="flex flex-col items-center p-3 sm:p-4 h-auto w-full border-green-300 hover:bg-green-50">
+                  <DollarSign className="h-6 w-6 sm:h-8 sm:w-8 text-green-600 mb-2" />
+                  <span className="text-xs sm:text-sm font-medium text-center">Financial</span>
                 </Button>
               </Link>
             )}

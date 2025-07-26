@@ -74,13 +74,13 @@ export const InviteUserDialog = () => {
           Invite User
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md max-w-[95vw] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Invite New User</DialogTitle>
         </DialogHeader>
         
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+        <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <div className="space-y-2">
               <Label htmlFor="firstName">First Name</Label>
               <Input
@@ -88,6 +88,7 @@ export const InviteUserDialog = () => {
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
                 disabled={isLoading}
+                className="h-10 sm:h-11"
                 required
               />
             </div>
@@ -98,6 +99,7 @@ export const InviteUserDialog = () => {
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
                 disabled={isLoading}
+                className="h-10 sm:h-11"
                 required
               />
             </div>
@@ -112,14 +114,15 @@ export const InviteUserDialog = () => {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="user@example.com"
               disabled={isLoading}
+              className="h-10 sm:h-11"
               required
             />
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="role">Role</Label>
-            <Select value={role} onValueChange={(value: UserRole) => setRole(value)}>
-              <SelectTrigger>
+            <Select value={role} onValueChange={(value: UserRole) => setRole(value)} disabled={isLoading}>
+              <SelectTrigger className="h-10 sm:h-11">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -135,7 +138,7 @@ export const InviteUserDialog = () => {
           <div className="space-y-2">
             <Label htmlFor="location">Location</Label>
             <Select value={location} onValueChange={(value: LocationType) => setLocation(value)} disabled={isLoading}>
-              <SelectTrigger>
+              <SelectTrigger className="h-10 sm:h-11">
                 <SelectValue placeholder="Select location" />
               </SelectTrigger>
               <SelectContent>
@@ -146,19 +149,20 @@ export const InviteUserDialog = () => {
             </Select>
           </div>
 
-          <div className="flex justify-end space-x-2 pt-4">
+          <div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-3 pt-4">
             <Button
               type="button"
               variant="outline"
               onClick={() => setIsOpen(false)}
               disabled={isLoading}
+              className="h-10 sm:h-11 order-1 sm:order-none"
             >
               Cancel
             </Button>
             <Button
               type="submit"
               disabled={isLoading}
-              className="bg-primary hover:bg-primary/90 text-primary-foreground"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground h-10 sm:h-11"
             >
               {isLoading ? (
                 <>

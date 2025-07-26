@@ -33,23 +33,23 @@ export const AppHeader = () => {
   };
 
   return (
-    <header className="h-16 border-b border-border bg-card flex items-center justify-between px-6 shadow-sm">
-      <div className="flex items-center gap-4">
-        <SidebarTrigger className="text-muted-foreground hover:text-foreground" />
-        <div className="hidden md:block">
-          <p className="text-sm text-muted-foreground font-inter">
+    <header className="h-14 sm:h-16 border-b border-border bg-card flex items-center justify-between px-3 sm:px-4 md:px-6 shadow-sm">
+      <div className="flex items-center gap-2 sm:gap-4 min-w-0">
+        <SidebarTrigger className="text-muted-foreground hover:text-foreground shrink-0" />
+        <div className="hidden md:block min-w-0">
+          <p className="text-sm text-muted-foreground font-inter truncate">
             {t('welcome')}, {user?.firstName}
           </p>
         </div>
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2 sm:gap-4 shrink-0">
         {/* Language Selector */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" className="gap-2">
-              <Globe className="h-4 w-4" />
-              <span className="hidden sm:inline">
+            <Button variant="ghost" size="sm" className="gap-1 sm:gap-2 px-2 sm:px-3">
+              <Globe className="h-4 w-4 shrink-0" />
+              <span className="hidden sm:inline text-sm">
                 {languages[language]}
               </span>
             </Button>
@@ -72,25 +72,28 @@ export const AppHeader = () => {
         {/* User Menu */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="relative h-10 w-10 rounded-full">
-              <Avatar className="h-10 w-10">
+            <Button variant="ghost" className="relative h-8 w-8 sm:h-10 sm:w-10 rounded-full">
+              <Avatar className="h-8 w-8 sm:h-10 sm:w-10">
                 <AvatarFallback className={getRoleColor(user?.role || '')}>
-                  {user && getInitials(user.firstName, user.lastName)}
+                  <span className="text-xs sm:text-sm">
+                    {user && getInitials(user.firstName, user.lastName)}
+                  </span>
                 </AvatarFallback>
               </Avatar>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-56" align="end">
+          <DropdownMenuContent className="w-48 sm:w-56" align="end">
             <DropdownMenuLabel className="font-normal">
               <div className="flex flex-col space-y-1">
-                <p className="text-sm font-medium leading-none">
+                <p className="text-sm font-medium leading-none truncate">
                   {user?.firstName} {user?.lastName}
                 </p>
-                <p className="text-xs leading-none text-muted-foreground">
+                <p className="text-xs leading-none text-muted-foreground truncate">
                   {user?.email}
                 </p>
                 <p className="text-xs leading-none text-muted-foreground capitalize">
-                  {user?.role} • {user?.department}
+                  {user?.role}
+                  {user?.department && ` • ${user.department}`}
                 </p>
               </div>
             </DropdownMenuLabel>

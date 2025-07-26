@@ -17,11 +17,13 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
       <div className="min-h-screen flex w-full bg-background">
         <AppSidebar />
         
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col min-w-0">
           <AppHeader />
           
-          <main className="flex-1 p-6 overflow-auto">
-            {children}
+          <main className="flex-1 p-3 sm:p-4 md:p-6 overflow-auto">
+            <div className="max-w-full">
+              {children}
+            </div>
           </main>
         </div>
       </div>

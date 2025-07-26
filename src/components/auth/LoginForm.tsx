@@ -49,21 +49,21 @@ export const LoginForm = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-secondary/20 via-background to-accent/10 p-4">
-      <Card className="w-full max-w-md shadow-elegant">
-        <CardHeader className="text-center pb-8">
-          <div className="flex justify-center mb-6">
-            <Logo size="lg" />
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-secondary/20 via-background to-accent/10 p-3 sm:p-4 lg:p-8">
+      <Card className="w-full max-w-sm sm:max-w-md shadow-elegant">
+        <CardHeader className="text-center pb-6 sm:pb-8">
+          <div className="flex justify-center mb-4 sm:mb-6">
+            <Logo size="lg" className="h-12 w-12 sm:h-16 sm:w-16" />
           </div>
-          <CardTitle className="text-2xl font-playfair text-primary">
+          <CardTitle className="text-xl sm:text-2xl font-playfair text-primary">
             {t('welcome')}
           </CardTitle>
-          <p className="text-muted-foreground font-inter">
+          <p className="text-sm sm:text-base text-muted-foreground font-inter">
             {t('welcomeMessage')}
           </p>
         </CardHeader>
         
-        <CardContent className="space-y-6">
+        <CardContent className="space-y-4 sm:space-y-6">
           <div className="space-y-2">
             <Label htmlFor="language" className="font-inter">
               {t('language')}
@@ -92,7 +92,7 @@ export const LoginForm = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="mario@pecoranegra.com"
                 disabled={isLoading}
-                className="font-inter"
+                className="font-inter h-11 sm:h-12 text-base"
                 required
               />
             </div>
@@ -107,14 +107,14 @@ export const LoginForm = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={isLoading}
-                className="font-inter"
+                className="font-inter h-11 sm:h-12 text-base"
                 required
               />
             </div>
 
             <Button
               type="submit"
-              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-inter font-medium"
+              className="w-full h-11 sm:h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-inter font-medium text-base"
               disabled={isLoading}
             >
               {isLoading ? (
