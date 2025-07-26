@@ -182,6 +182,9 @@ export const AppSidebar = () => {
   const filteredItems = navigationItems.filter((item) => {
     if (!user) return false;
     
+    // Super admin can see everything
+    if (user.role === 'super_admin') return true;
+    
     const hasRolePermission = item.roles.some(role => hasPermission(role as any));
     const hasDepartmentAccess = hasAccess(item.departments as any);
     

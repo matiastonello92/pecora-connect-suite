@@ -21,8 +21,9 @@ export default function Dashboard() {
   const { t } = useTranslation(language);
 
   // Check if user has access to financial section
-  const hasFinancialAccess = ['manager', 'director', 'finance', 'super_admin'].includes(user?.role || '') && 
-                            hasAccess(['finance', 'manager', 'super_manager']);
+  const hasFinancialAccess = user?.role === 'super_admin' || 
+                            (['manager', 'director', 'finance', 'super_admin'].includes(user?.role || '') && 
+                            hasAccess(['finance', 'manager', 'super_manager', 'general_manager']));
 
   const stats = [
     {
