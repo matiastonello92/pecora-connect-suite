@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -23,6 +23,9 @@ import {
   Clock
 } from 'lucide-react';
 import { ChatType } from '@/types/communication';
+import { ChatInterface } from './ChatInterface';
+import { ConnectionRequestManager } from './ConnectionRequestManager';
+import { GroupManagement } from './GroupManagement';
 
 const locales = { en: enUS, fr, it };
 
@@ -206,22 +209,9 @@ export const ChatDashboard: React.FC = () => {
         </ScrollArea>
       </div>
 
-      {/* Chat Content Area */}
-      <div className="flex-1 flex items-center justify-center bg-background">
-        {activeChat ? (
-          <div className="text-center text-muted-foreground">
-            {/* This will be replaced with the actual chat component */}
-            <MessageSquare className="h-16 w-16 mx-auto mb-4 opacity-50" />
-            <h3 className="text-lg font-medium mb-2">{getChatName(activeChat)}</h3>
-            <p>{t('communication.chatSelected')}</p>
-          </div>
-        ) : (
-          <div className="text-center text-muted-foreground">
-            <MessageSquare className="h-16 w-16 mx-auto mb-4 opacity-50" />
-            <h3 className="text-lg font-medium mb-2">{t('communication.selectChat')}</h3>
-            <p>{t('communication.selectChatDescription')}</p>
-          </div>
-        )}
+      {/* Chat Interface */}
+      <div className="flex-1">
+        <ChatInterface />
       </div>
     </div>
   );
