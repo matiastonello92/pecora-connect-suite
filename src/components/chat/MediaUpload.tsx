@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { useTranslation } from 'react-i18next';
+import { useAuth } from '@/context/AuthContext';
+import { useTranslation } from '@/lib/i18n';
 import { X, Upload, FileText, Image as ImageIcon } from 'lucide-react';
 
 interface MediaUploadProps {
@@ -14,7 +15,8 @@ interface MediaUploadProps {
 export const MediaUpload: React.FC<MediaUploadProps> = ({ file, onCancel, onSend }) => {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [caption, setCaption] = useState('');
-  const { t } = useTranslation();
+  const { language } = useAuth();
+  const { t } = useTranslation(language);
 
   const isImage = file.type.startsWith('image/');
   const fileSize = (file.size / 1024 / 1024).toFixed(2);

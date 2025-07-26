@@ -16,9 +16,9 @@ export const LocationClock: React.FC<LocationClockProps> = ({
   showLocation = true,
   format = DATE_FORMATS.ITALIAN_DATE
 }) => {
-  const { user } = useAuth();
+  const { user, language } = useAuth();
   const { activeLocation, canSwitchLocations } = useLocation();
-  const { t } = useTranslation('en');
+  const { t } = useTranslation(language);
   const [currentTime, setCurrentTime] = useState<Date>(new Date());
 
   // Determine effective location for timezone

@@ -64,8 +64,8 @@ export const useChatContext = () => {
 };
 
 export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { user } = useAuth();
-  const { t } = useTranslation('en');
+  const { user, language } = useAuth();
+  const { t } = useTranslation(language);
   
   const [chats, setChats] = useState<Chat[]>([]);
   const [activeChat, setActiveChat] = useState<Chat | null>(null);

@@ -7,7 +7,8 @@ import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useChatContext } from '@/context/ChatContext';
-import { useTranslation } from 'react-i18next';
+import { useAuth } from '@/context/AuthContext';
+import { useTranslation } from '@/lib/i18n';
 import {
   Users,
   Settings,
@@ -26,7 +27,8 @@ interface GroupManagementProps {
 
 export const GroupManagement: React.FC<GroupManagementProps> = ({ onClose }) => {
   const { activeChat, createChat, updateChat, addParticipant, removeParticipant, updateParticipantRole } = useChatContext();
-  const { t } = useTranslation();
+  const { language } = useAuth();
+  const { t } = useTranslation(language);
   const [showCreateGroup, setShowCreateGroup] = useState(false);
   const [groupName, setGroupName] = useState('');
   const [groupDescription, setGroupDescription] = useState('');

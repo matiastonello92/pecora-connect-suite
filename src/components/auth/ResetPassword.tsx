@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useAuth } from '@/context/AuthContext';
 import { useTranslation, Language } from '@/lib/i18n';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -16,7 +17,8 @@ export const ResetPassword = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { t } = useTranslation('en');
+  const { language } = useAuth();
+  const { t } = useTranslation(language);
   const { toast } = useToast();
 
   useEffect(() => {

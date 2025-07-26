@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useChatContext } from '@/context/ChatContext';
 import { useAuth } from '@/context/AuthContext';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@/lib/i18n';
 import { formatDistanceToNow } from 'date-fns';
 import { enUS, fr, it } from 'date-fns/locale';
 import {
@@ -28,19 +28,19 @@ interface ConnectionRequestManagerProps {
 }
 
 export const ConnectionRequestManager: React.FC<ConnectionRequestManagerProps> = ({ onClose }) => {
+  const { user, language } = useAuth();
   const { 
     connectionRequests, 
     sendConnectionRequest, 
     respondToConnectionRequest 
   } = useChatContext();
-  const { user } = useAuth();
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation(language);
   const [searchTerm, setSearchTerm] = useState('');
   const [showSendRequest, setShowSendRequest] = useState(false);
   const [recipientEmail, setRecipientEmail] = useState('');
   const [requestMessage, setRequestMessage] = useState('');
 
-  const getLocale = () => locales[i18n.language as keyof typeof locales] || enUS;
+  const getLocale = () => locales[language as keyof typeof locales] || enUS;
 
   const incomingRequests = connectionRequests.filter(
     req => req.recipient_id === user?.id && req.status === 'pending'

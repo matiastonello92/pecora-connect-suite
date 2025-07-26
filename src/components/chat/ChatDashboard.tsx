@@ -44,8 +44,8 @@ export const ChatDashboard: React.FC = () => {
     loading,
     createChat
   } = useChatContext();
-  const { user } = useAuth();
-  const { t } = useTranslation('en');
+  const { user, language } = useAuth();
+  const { t } = useTranslation(language);
   const [showCreateChat, setShowCreateChat] = useState(false);
   const [showConnections, setShowConnections] = useState(false);
   const [showGroups, setShowGroups] = useState(false);

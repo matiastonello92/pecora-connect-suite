@@ -14,8 +14,8 @@ export const ForgotPassword = () => {
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const { resetPassword } = useAuth();
-  const { t } = useTranslation('en');
+  const { resetPassword, language } = useAuth();
+  const { t } = useTranslation(language);
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {

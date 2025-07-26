@@ -5,9 +5,9 @@ import { useTranslation } from '@/lib/i18n';
 import { toast } from '@/hooks/use-toast';
 
 export const NotificationHandler: React.FC = () => {
-  const { user } = useAuth();
+  const { user, language } = useAuth();
   const { messages, activeChat } = useChatContext();
-  const { t } = useTranslation('en');
+  const { t } = useTranslation(language);
 
   useEffect(() => {
     if (!user || !('Notification' in window)) return;

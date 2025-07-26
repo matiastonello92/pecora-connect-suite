@@ -81,6 +81,13 @@ export const translations = {
     quantity: 'Quantity',
     notes: 'Notes',
     welcome: 'Welcome',
+    profile: 'Profile',
+    
+    // Missing common translations
+    common: {
+      allLocations: 'All Locations',
+      yesterday: 'Yesterday'
+    },
 
     communication: {
       dashboard: {
@@ -327,6 +334,13 @@ export const translations = {
     quantity: 'Quantité',
     notes: 'Notes',
     welcome: 'Bienvenue',
+    profile: 'Profil',
+    
+    // Missing common translations
+    common: {
+      allLocations: 'Tous les emplacements',
+      yesterday: 'Hier'
+    },
 
     // Communication System - French translations
     'communication.selectChat': 'Sélectionner une conversation',
@@ -412,6 +426,13 @@ export const translations = {
     quantity: 'Quantità',
     notes: 'Note',
     welcome: 'Benvenuto',
+    profile: 'Profilo',
+    
+    // Missing common translations
+    common: {
+      allLocations: 'Tutte le Posizioni',
+      yesterday: 'Ieri'
+    },
 
     // Communication System - Italian translations
     'communication.selectChat': 'Seleziona una conversazione',

@@ -3,7 +3,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useChatContext } from '@/context/ChatContext';
-import { useTranslation } from 'react-i18next';
+import { useAuth } from '@/context/AuthContext';
+import { useTranslation } from '@/lib/i18n';
 import {
   Send,
   Plus,
@@ -30,7 +31,8 @@ export const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage }) => 
   const [isRecording, setIsRecording] = useState(false);
   const [uploadingFile, setUploadingFile] = useState<File | null>(null);
   const { uploadMedia } = useChatContext();
-  const { t } = useTranslation();
+  const { language } = useAuth();
+  const { t } = useTranslation(language);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);

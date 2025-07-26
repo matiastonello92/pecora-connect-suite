@@ -3,7 +3,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/AuthContext';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@/lib/i18n';
 import { formatDistanceToNow, format, isToday, isYesterday } from 'date-fns';
 import { enUS, fr, it } from 'date-fns/locale';
 import {
@@ -24,10 +24,13 @@ interface MessageListProps {
 }
 
 export const MessageList: React.FC<MessageListProps> = ({ messages }) => {
-  const { user } = useAuth();
-  const { t, i18n } = useTranslation();
+  const { user, language } = useAuth();
+  const { t } = useTranslation(language);
   
-  const getLocale = () => locales[i18n.language as keyof typeof locales] || enUS;
+  const getDateLocale = () => {
+    const locales = { en: enUS, fr, it };
+    return locales[language] || enUS;
+  };
 
   const formatMessageDate = (date: string) => {
     const messageDate = new Date(date);
@@ -132,7 +135,7 @@ export const MessageList: React.FC<MessageListProps> = ({ messages }) => {
         {showDate && (
           <div className="flex justify-center my-4">
             <div className="bg-muted text-muted-foreground px-3 py-1 rounded-full text-xs">
-              {format(new Date(message.created_at), 'EEEE, MMMM do', { locale: getLocale() })}
+              {format(new Date(message.created_at), 'EEEE, MMMM do', { locale: getDateLocale() })}
             </div>
           </div>
         )}
