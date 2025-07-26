@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Clock, MapPin } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useLocation } from '@/context/LocationContext';
-import { formatDateForLocation, getCurrentTimeForLocation, DATE_FORMATS } from '@/lib/timezone';
+import { formatDateForLocation, getCurrentTimeForLocation, DATE_FORMATS, getDateLocale } from '@/lib/timezone';
 import { useTranslation } from '@/lib/i18n';
 
 interface LocationClockProps {
@@ -14,7 +14,7 @@ interface LocationClockProps {
 export const LocationClock: React.FC<LocationClockProps> = ({ 
   className = '',
   showLocation = true,
-  format = DATE_FORMATS.FULL_DATETIME
+  format = DATE_FORMATS.ITALIAN_DATE
 }) => {
   const { user } = useAuth();
   const { activeLocation, canSwitchLocations } = useLocation();
@@ -38,7 +38,7 @@ export const LocationClock: React.FC<LocationClockProps> = ({
     return () => clearInterval(interval);
   }, [effectiveLocation]);
 
-  const formattedTime = formatDateForLocation(currentTime, effectiveLocation, format);
+  const formattedTime = formatDateForLocation(currentTime, effectiveLocation, format, getDateLocale('it'));
   
   const getLocationDisplayName = () => {
     if (!effectiveLocation || effectiveLocation === 'all_locations') {

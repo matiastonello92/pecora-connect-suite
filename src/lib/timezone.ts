@@ -1,6 +1,6 @@
 import { format } from 'date-fns';
 import { formatInTimeZone, toZonedTime, fromZonedTime } from 'date-fns-tz';
-import { enUS, fr, it } from 'date-fns/locale';
+import { enUS, fr, it, Locale } from 'date-fns/locale';
 
 // Location to timezone mapping
 export const LOCATION_TIMEZONES = {
@@ -21,7 +21,8 @@ export const DATE_FORMATS = {
   DATE_ONLY: 'dd/MM/yyyy',
   TIME_ONLY: 'HH:mm',
   FULL_WITH_SECONDS: 'dd/MM/yyyy HH:mm:ss',
-  ISO_DATETIME: "yyyy-MM-dd'T'HH:mm:ss.SSSxxx"
+  ISO_DATETIME: "yyyy-MM-dd'T'HH:mm:ss.SSSxxx",
+  ITALIAN_DATE: 'dd MMM yyyy'
 } as const;
 
 // Get timezone for a location
@@ -44,16 +45,17 @@ export const getCurrentTimeForLocation = (location: string | null | undefined): 
 export const formatDateForLocation = (
   date: Date | string,
   location: string | null | undefined,
-  formatString: string = DATE_FORMATS.FULL_DATETIME
+  formatString: string = DATE_FORMATS.FULL_DATETIME,
+  locale?: Locale
 ): string => {
   const timezone = getTimezoneForLocation(location);
   const dateObj = typeof date === 'string' ? new Date(date) : date;
   
   try {
-    return formatInTimeZone(dateObj, timezone, formatString);
+    return formatInTimeZone(dateObj, timezone, formatString, { locale });
   } catch (error) {
     console.error('Error formatting date for location:', error);
-    return format(dateObj, formatString);
+    return format(dateObj, formatString, { locale });
   }
 };
 
