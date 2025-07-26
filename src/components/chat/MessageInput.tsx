@@ -237,6 +237,8 @@ export const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage }) => 
             onMouseDown={startRecording}
             onMouseUp={stopRecording}
             onMouseLeave={stopRecording}
+            onTouchStart={startRecording}
+            onTouchEnd={stopRecording}
           >
             <Mic className="h-4 w-4" />
           </Button>

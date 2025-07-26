@@ -196,11 +196,11 @@ export const MessageList: React.FC<MessageListProps> = ({ messages }) => {
                 </div>
               </div>
 
-              {/* Message Actions */}
+              {/* Message Actions - Always visible on mobile, hover on desktop */}
               <Button
                 variant="ghost"
                 size="sm"
-                className={`absolute top-0 opacity-0 group-hover:opacity-100 transition-opacity p-1 h-6 w-6 ${
+                className={`absolute top-0 transition-opacity p-1 h-6 w-6 opacity-50 hover:opacity-100 md:opacity-0 md:group-hover:opacity-100 ${
                   isOwn ? '-left-8' : '-right-8'
                 }`}
               >

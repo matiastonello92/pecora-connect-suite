@@ -91,7 +91,7 @@ export const GroupManagement: React.FC<GroupManagementProps> = ({ onClose }) => 
           {/* Group Info */}
           <div className="space-y-4">
             <div className="flex items-center space-x-4">
-              <div className="h-16 w-16 bg-muted rounded-full flex items-center justify-center cursor-pointer hover:bg-muted/80">
+              <div className="h-16 w-16 bg-muted rounded-full flex items-center justify-center cursor-pointer hover:bg-muted/80 focus:bg-muted/80 active:bg-muted/80 transition-colors">
                 <Upload className="h-6 w-6 text-muted-foreground" />
               </div>
               <div className="flex-1 space-y-2">
@@ -115,7 +115,7 @@ export const GroupManagement: React.FC<GroupManagementProps> = ({ onClose }) => 
             <ScrollArea className="h-64 border rounded-lg">
               <div className="p-3 space-y-2">
                 {availableUsers.map((user) => (
-                  <div key={user.id} className="flex items-center space-x-3 p-2 rounded-lg hover:bg-muted">
+                  <div key={user.id} className="flex items-center space-x-3 p-2 rounded-lg hover:bg-muted focus:bg-muted active:bg-muted transition-colors">
                     <Checkbox
                       checked={selectedUsers.includes(user.id)}
                       onCheckedChange={(checked) => handleUserSelection(user.id, checked as boolean)}

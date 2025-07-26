@@ -156,7 +156,7 @@ export const ChatDashboard: React.FC = () => {
               filteredChats.map((chat) => (
                 <Card
                   key={chat.id}
-                  className={`cursor-pointer transition-colors hover:bg-accent/50 ${
+                  className={`cursor-pointer transition-colors hover:bg-accent/50 focus:bg-accent/50 active:bg-accent/50 ${
                     activeChat?.id === chat.id ? 'bg-accent' : ''
                   }`}
                   onClick={() => setActiveChat(chat)}

@@ -172,7 +172,7 @@ export const AppSidebar = () => {
   const getNavClassName = ({ isActive }: { isActive: boolean }) =>
     isActive
       ? 'bg-accent text-accent-foreground font-medium'
-      : 'hover:bg-accent/50 text-foreground';
+      : 'hover:bg-accent/50 focus:bg-accent/50 active:bg-accent/50 text-foreground transition-colors';
 
   const toggleGroup = (groupTitle: string) => {
     setOpenGroups(prev => ({
@@ -243,7 +243,7 @@ export const AppSidebar = () => {
                     <>
                       <SidebarMenuButton
                         onClick={() => toggleGroup(item.title)}
-                        className={`${isGroupActive(item) ? 'bg-accent text-accent-foreground font-medium' : 'hover:bg-accent/50'}`}
+                        className={`${isGroupActive(item) ? 'bg-accent text-accent-foreground font-medium' : 'hover:bg-accent/50 focus:bg-accent/50 active:bg-accent/50 transition-colors'}`}
                         title={isCollapsed ? t(item.title) : undefined}
                       >
                         <item.icon className="h-5 w-5 flex-shrink-0" />
@@ -317,7 +317,7 @@ export const AppSidebar = () => {
                 
                 <SidebarMenuButton 
                   onClick={logout}
-                  className="flex-1 text-destructive hover:text-destructive hover:bg-destructive/10"
+                  className="flex-1 text-destructive hover:text-destructive hover:bg-destructive/10 focus:bg-destructive/10 active:bg-destructive/10 transition-colors"
                 >
                   <LogOut className="h-4 w-4" />
                   <span className="ml-2 text-xs">{t('logout')}</span>
@@ -337,7 +337,7 @@ export const AppSidebar = () => {
               <SidebarMenuButton 
                 onClick={logout}
                 title={t('logout')}
-                className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                className="text-destructive hover:text-destructive hover:bg-destructive/10 focus:bg-destructive/10 active:bg-destructive/10 transition-colors"
               >
                 <LogOut className="h-4 w-4" />
               </SidebarMenuButton>
