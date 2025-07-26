@@ -14,13 +14,105 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          created_at: string | null
+          department: string | null
+          first_name: string
+          id: string
+          last_name: string
+          location: string
+          phone: string | null
+          position: string | null
+          role: string
+          status: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          department?: string | null
+          first_name: string
+          id?: string
+          last_name: string
+          location: string
+          phone?: string | null
+          position?: string | null
+          role: string
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          department?: string | null
+          first_name?: string
+          id?: string
+          last_name?: string
+          location?: string
+          phone?: string | null
+          position?: string | null
+          role?: string
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      user_invitations: {
+        Row: {
+          completed_at: string | null
+          created_at: string | null
+          email: string
+          expires_at: string | null
+          first_name: string
+          id: string
+          invitation_token: string | null
+          invited_by: string | null
+          last_name: string
+          location: string
+          role: string
+          status: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string | null
+          email: string
+          expires_at?: string | null
+          first_name: string
+          id?: string
+          invitation_token?: string | null
+          invited_by?: string | null
+          last_name: string
+          location: string
+          role: string
+          status?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string | null
+          email?: string
+          expires_at?: string | null
+          first_name?: string
+          id?: string
+          invitation_token?: string | null
+          invited_by?: string | null
+          last_name?: string
+          location?: string
+          role?: string
+          status?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_current_user_role: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never
