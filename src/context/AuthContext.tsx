@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { Language } from '@/lib/i18n';
 
-export type UserRole = 'base' | 'manager' | 'super_admin';
+export type UserRole = 'base' | 'manager' | 'director' | 'finance' | 'super_admin';
 export type Department = 'kitchen' | 'pizzeria' | 'service' | 'finance' | 'manager' | 'super_manager';
 
 export interface User {
@@ -106,8 +106,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         email,
         firstName: 'Mario',
         lastName: 'Rossi',
-        role: 'manager',
-        department: 'kitchen',
+        role: 'super_admin', // Changed to super_admin to see all menu items
+        department: 'super_manager', // Changed to super_manager for full access
         location: 'Milano',
         language: 'it',
         isActive: true,
@@ -149,16 +149,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const roleHierarchy = {
       base: 0,
       manager: 1,
-      super_admin: 2,
+      director: 2,
+      finance: 1,
+      super_admin: 3,
     };
     
-    return roleHierarchy[state.user.role] >= roleHierarchy[requiredRole];
+    return roleHierarchy[state.user.role as keyof typeof roleHierarchy] >= roleHierarchy[requiredRole as keyof typeof roleHierarchy];
   };
 
   const hasAccess = (departments: Department[]): boolean => {
     if (!state.user) return false;
     if (state.user.role === 'super_admin') return true;
-    return departments.includes(state.user.department);
+    return departments.includes(state.user.department as Department);
   };
 
   // Check for existing session on mount
