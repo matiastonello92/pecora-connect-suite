@@ -103,13 +103,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Mock user data - in real app, this comes from your backend
       const mockUser: User = {
         id: '1',
-        email,
-        firstName: 'Mario',
-        lastName: 'Rossi',
-        role: 'super_admin', // Changed to super_admin to see all menu items
-        department: 'super_manager', // Changed to super_manager for full access
-        location: 'Milano',
-        language: 'it',
+        email: 'Matias@pecoranegra.fr',
+        firstName: 'Matias',
+        lastName: 'Tonello',
+        role: 'super_admin', // General Manager with super admin access
+        department: 'super_manager', // Full access to all departments
+        location: 'PecoraNegra',
+        language: 'fr', // French as default for Matias
         isActive: true,
         createdAt: new Date(),
         updatedAt: new Date(),
