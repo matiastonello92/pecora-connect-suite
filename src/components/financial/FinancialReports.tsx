@@ -44,7 +44,7 @@ export const FinancialReports = () => {
   const [filters, setFilters] = useState({
     submitter: '',
     location: '',
-    status: '' as ClosureStatus | ''
+    status: 'all' as ClosureStatus | 'all' | ''
   });
   
   const [selectedPreset, setSelectedPreset] = useState('');
@@ -78,7 +78,7 @@ export const FinancialReports = () => {
       if (filters.location && closure.restaurantLocation !== filters.location) {
         return false;
       }
-      if (filters.status && closure.status !== filters.status) {
+      if (filters.status && filters.status !== 'all' && closure.status !== filters.status) {
         return false;
       }
       return true;
@@ -101,7 +101,7 @@ export const FinancialReports = () => {
       setFilters({
         submitter: preset.filters.submitter || '',
         location: preset.filters.location || '',
-        status: preset.filters.status || ''
+        status: preset.filters.status || 'all'
       });
     }
   };
@@ -215,12 +215,12 @@ export const FinancialReports = () => {
             {/* Status Filter */}
             <div>
               <Label>Status</Label>
-              <Select value={filters.status} onValueChange={(value) => setFilters(prev => ({ ...prev, status: value as ClosureStatus }))}>
+              <Select value={filters.status} onValueChange={(value) => setFilters(prev => ({ ...prev, status: value === 'all' ? '' : value as ClosureStatus }))}>
                 <SelectTrigger>
                   <SelectValue placeholder="Filter by status..." />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Statuses</SelectItem>
+                  <SelectItem value="all">All Statuses</SelectItem>
                   <SelectItem value="draft">Draft</SelectItem>
                   <SelectItem value="submitted">Submitted</SelectItem>
                   <SelectItem value="under_review">Under Review</SelectItem>
