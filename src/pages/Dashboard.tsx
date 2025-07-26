@@ -4,20 +4,25 @@ import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-  Package,
-  CheckSquare,
-  MessageSquare,
-  Calculator,
-  AlertTriangle,
-  Users,
-  Calendar,
-  TrendingUp,
-} from 'lucide-react';
+  import {
+    Package,
+    CheckSquare,
+    MessageSquare,
+    Calculator,
+    AlertTriangle,
+    Users,
+    Calendar,
+    TrendingUp,
+    DollarSign,
+  } from 'lucide-react';
 
 export default function Dashboard() {
-  const { user, language } = useAuth();
+  const { user, language, hasPermission, hasAccess } = useAuth();
   const { t } = useTranslation(language);
+
+  // Check if user has access to financial section
+  const hasFinancialAccess = ['manager', 'director', 'finance', 'super_admin'].includes(user?.role || '') && 
+                            hasAccess(['finance', 'manager', 'super_manager']);
 
   const stats = [
     {
@@ -158,6 +163,37 @@ export default function Dashboard() {
         })}
       </div>
 
+      {/* Financial Section - Only for authorized users */}
+      {hasFinancialAccess && (
+        <Card className="bg-gradient-to-r from-green-50 to-emerald-50 border-green-200">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 font-playfair text-green-800">
+              <DollarSign className="h-6 w-6" />
+              {t('financial') || 'Financial Management'}
+            </CardTitle>
+            <p className="text-green-600 text-sm">
+              Access daily cash closure and financial reports
+            </p>
+          </CardHeader>
+          <CardContent>
+            <div className="flex gap-4">
+              <Link to="/financial">
+                <Button className="bg-green-600 hover:bg-green-700 text-white">
+                  <Calculator className="h-4 w-4 mr-2" />
+                  {t('openFinancialSection') || 'Open Financial Section'}
+                </Button>
+              </Link>
+              <Link to="/financial">
+                <Button variant="outline" className="border-green-300 text-green-700 hover:bg-green-50">
+                  <TrendingUp className="h-4 w-4 mr-2" />
+                  {t('viewReports') || 'View Reports'}
+                </Button>
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Recent Activity */}
       <Card>
         <CardHeader>
@@ -206,7 +242,7 @@ export default function Dashboard() {
           <CardTitle className="font-playfair">Quick Actions</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
             <Link to="/inventory">
               <Button variant="outline" className="flex flex-col items-center p-4 h-auto w-full">
                 <Package className="h-8 w-8 text-blue-600 mb-2" />
@@ -234,6 +270,15 @@ export default function Dashboard() {
                 <span className="text-sm font-medium">Send Message</span>
               </Button>
             </Link>
+
+            {hasFinancialAccess && (
+              <Link to="/financial">
+                <Button variant="outline" className="flex flex-col items-center p-4 h-auto w-full border-green-300 hover:bg-green-50">
+                  <DollarSign className="h-8 w-8 text-green-600 mb-2" />
+                  <span className="text-sm font-medium">Financial</span>
+                </Button>
+              </Link>
+            )}
           </div>
         </CardContent>
       </Card>
