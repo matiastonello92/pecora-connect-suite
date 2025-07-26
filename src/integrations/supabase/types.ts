@@ -109,6 +109,16 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      can_access_all_locations: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
+      get_available_locations: {
+        Args: { user_role?: string }
+        Returns: {
+          location: string
+        }[]
+      }
       get_current_user_role: {
         Args: Record<PropertyKey, never>
         Returns: string
