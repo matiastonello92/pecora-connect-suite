@@ -68,6 +68,218 @@ export type Database = {
         }
         Relationships: []
       }
+      chat_messages: {
+        Row: {
+          chat_id: string
+          content: string | null
+          created_at: string | null
+          id: string
+          is_deleted: boolean | null
+          is_edited: boolean | null
+          media_size: number | null
+          media_type: string | null
+          media_url: string | null
+          message_type: Database["public"]["Enums"]["message_type"] | null
+          metadata: Json | null
+          reply_to_id: string | null
+          sender_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          chat_id: string
+          content?: string | null
+          created_at?: string | null
+          id?: string
+          is_deleted?: boolean | null
+          is_edited?: boolean | null
+          media_size?: number | null
+          media_type?: string | null
+          media_url?: string | null
+          message_type?: Database["public"]["Enums"]["message_type"] | null
+          metadata?: Json | null
+          reply_to_id?: string | null
+          sender_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          chat_id?: string
+          content?: string | null
+          created_at?: string | null
+          id?: string
+          is_deleted?: boolean | null
+          is_edited?: boolean | null
+          media_size?: number | null
+          media_type?: string | null
+          media_url?: string | null
+          message_type?: Database["public"]["Enums"]["message_type"] | null
+          metadata?: Json | null
+          reply_to_id?: string | null
+          sender_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_messages_chat_id_fkey"
+            columns: ["chat_id"]
+            isOneToOne: false
+            referencedRelation: "chats"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chat_messages_reply_to_id_fkey"
+            columns: ["reply_to_id"]
+            isOneToOne: false
+            referencedRelation: "chat_messages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chat_notifications: {
+        Row: {
+          body: string
+          chat_id: string
+          created_at: string | null
+          expires_at: string | null
+          id: string
+          is_read: boolean | null
+          message_id: string | null
+          metadata: Json | null
+          priority: Database["public"]["Enums"]["notification_priority"] | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          body: string
+          chat_id: string
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          message_id?: string | null
+          metadata?: Json | null
+          priority?: Database["public"]["Enums"]["notification_priority"] | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          body?: string
+          chat_id?: string
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          message_id?: string | null
+          metadata?: Json | null
+          priority?: Database["public"]["Enums"]["notification_priority"] | null
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_notifications_chat_id_fkey"
+            columns: ["chat_id"]
+            isOneToOne: false
+            referencedRelation: "chats"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chat_notifications_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "chat_messages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chat_participants: {
+        Row: {
+          chat_id: string
+          id: string
+          is_muted: boolean | null
+          joined_at: string | null
+          last_read_at: string | null
+          muted_until: string | null
+          notification_settings: Json | null
+          role: string | null
+          user_id: string
+        }
+        Insert: {
+          chat_id: string
+          id?: string
+          is_muted?: boolean | null
+          joined_at?: string | null
+          last_read_at?: string | null
+          muted_until?: string | null
+          notification_settings?: Json | null
+          role?: string | null
+          user_id: string
+        }
+        Update: {
+          chat_id?: string
+          id?: string
+          is_muted?: boolean | null
+          joined_at?: string | null
+          last_read_at?: string | null
+          muted_until?: string | null
+          notification_settings?: Json | null
+          role?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_participants_chat_id_fkey"
+            columns: ["chat_id"]
+            isOneToOne: false
+            referencedRelation: "chats"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chats: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          id: string
+          is_archived: boolean | null
+          last_message_at: string | null
+          location: string
+          metadata: Json | null
+          name: string | null
+          type: Database["public"]["Enums"]["chat_type"]
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_archived?: boolean | null
+          last_message_at?: string | null
+          location: string
+          metadata?: Json | null
+          name?: string | null
+          type: Database["public"]["Enums"]["chat_type"]
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_archived?: boolean | null
+          last_message_at?: string | null
+          location?: string
+          metadata?: Json | null
+          name?: string | null
+          type?: Database["public"]["Enums"]["chat_type"]
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       checklist_items: {
         Row: {
           created_at: string | null
@@ -176,6 +388,36 @@ export type Database = {
           id?: string
           location?: string
           name?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      connection_requests: {
+        Row: {
+          created_at: string | null
+          id: string
+          message: string | null
+          recipient_id: string
+          requester_id: string
+          status: Database["public"]["Enums"]["connection_status"] | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          message?: string | null
+          recipient_id: string
+          requester_id: string
+          status?: Database["public"]["Enums"]["connection_status"] | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          message?: string | null
+          recipient_id?: string
+          requester_id?: string
+          status?: Database["public"]["Enums"]["connection_status"] | null
           updated_at?: string | null
         }
         Relationships: []
@@ -316,6 +558,35 @@ export type Database = {
             columns: ["equipment_id"]
             isOneToOne: false
             referencedRelation: "equipment"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      message_read_receipts: {
+        Row: {
+          id: string
+          message_id: string
+          read_at: string | null
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          message_id: string
+          read_at?: string | null
+          user_id: string
+        }
+        Update: {
+          id?: string
+          message_id?: string
+          read_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "message_read_receipts_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "chat_messages"
             referencedColumns: ["id"]
           },
         ]
@@ -679,6 +950,14 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: boolean
       }
+      create_private_chat: {
+        Args: { other_user_id: string }
+        Returns: string
+      }
+      ensure_default_chats: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       get_available_locations: {
         Args: { user_role?: string }
         Returns: {
@@ -691,7 +970,10 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      chat_type: "private" | "group" | "global" | "announcements"
+      connection_status: "pending" | "accepted" | "declined" | "blocked"
+      message_type: "text" | "image" | "voice" | "document" | "system"
+      notification_priority: "normal" | "urgent" | "forced"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -818,6 +1100,11 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      chat_type: ["private", "group", "global", "announcements"],
+      connection_status: ["pending", "accepted", "declined", "blocked"],
+      message_type: ["text", "image", "voice", "document", "system"],
+      notification_priority: ["normal", "urgent", "forced"],
+    },
   },
 } as const
