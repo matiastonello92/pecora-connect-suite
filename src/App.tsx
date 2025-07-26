@@ -9,6 +9,7 @@ import { InventoryProvider } from '@/context/InventoryContext';
 import { KitchenInventoryProvider } from '@/context/KitchenInventoryContext';
 import { ChecklistProvider } from '@/context/ChecklistContext';
 import { CommunicationProvider } from '@/context/CommunicationContext';
+import { ChatProvider } from '@/context/ChatContext';
 import { CashRegisterProvider } from '@/context/CashRegisterContext';
 import { ReportsProvider } from '@/context/ReportsContext';
 import { EquipmentProvider } from '@/context/EquipmentContext';
@@ -105,23 +106,25 @@ const App: React.FC = () => {
             <KitchenInventoryProvider>
               <ChecklistProvider>
                 <CommunicationProvider>
-                  <CashRegisterProvider>
-                    <ReportsProvider>
-                      <EquipmentProvider>
-                        <UserManagementProvider>
-                          <FinancialProvider>
-                            <LocationProvider>
-                              <TooltipProvider>
-                                <AppContent />
-                                <Toaster />
-                                <Sonner />
-                              </TooltipProvider>
-                            </LocationProvider>
-                          </FinancialProvider>
-                        </UserManagementProvider>
-                      </EquipmentProvider>
-                    </ReportsProvider>
-                  </CashRegisterProvider>
+                  <ChatProvider>
+                     <CashRegisterProvider>
+                      <ReportsProvider>
+                        <EquipmentProvider>
+                          <UserManagementProvider>
+                            <FinancialProvider>
+                              <LocationProvider>
+                                <TooltipProvider>
+                                  <AppContent />
+                                  <Toaster />
+                                  <Sonner />
+                                </TooltipProvider>
+                              </LocationProvider>
+                            </FinancialProvider>
+                          </UserManagementProvider>
+                        </EquipmentProvider>
+                      </ReportsProvider>
+                    </CashRegisterProvider>
+                  </ChatProvider>
                 </CommunicationProvider>
               </ChecklistProvider>
             </KitchenInventoryProvider>
