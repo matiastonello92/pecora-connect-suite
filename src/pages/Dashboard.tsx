@@ -25,61 +25,37 @@ export default function Dashboard() {
                             (['manager', 'director', 'finance', 'super_admin'].includes(user?.role || '') && 
                             hasAccess(['finance', 'manager', 'super_manager', 'general_manager']));
 
+  // All stats now start with 0 - will be populated with real data
   const stats = [
     {
       title: 'Pending Inventories',
-      value: '3',
+      value: '0',
       icon: Package,
       color: 'bg-orange-500',
-      urgent: true,
+      urgent: false,
     },
     {
       title: 'Open Checklists',
-      value: '7',
+      value: '0',
       icon: CheckSquare,
       color: 'bg-blue-500',
     },
     {
       title: 'Unread Messages',
-      value: '12',
+      value: '0',
       icon: MessageSquare,
       color: 'bg-green-500',
     },
     {
       title: 'Equipment Alerts',
-      value: '2',
+      value: '0',
       icon: AlertTriangle,
       color: 'bg-red-500',
-      urgent: true,
+      urgent: false,
     },
   ];
 
-  const recentActivity = [
-    {
-      action: 'Kitchen inventory completed',
-      user: 'Marco Bianchi',
-      time: '2 hours ago',
-      type: 'inventory',
-    },
-    {
-      action: 'Cash register closed',
-      user: 'Sofia Rossi',
-      time: '4 hours ago',
-      type: 'cash',
-    },
-    {
-      action: 'Equipment maintenance scheduled',
-      user: 'Luigi Verdi',
-      time: '6 hours ago',
-      type: 'equipment',
-    },
-    {
-      action: 'New user invitation sent',
-      user: 'Maria Neri',
-      time: '1 day ago',
-      type: 'user',
-    },
-  ];
+  // No mock activity data - will show "No recent activity" message
 
   const getDepartmentColor = (department: string) => {
     switch (department) {
@@ -205,34 +181,12 @@ export default function Dashboard() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {recentActivity.map((activity, index) => (
-              <div key={index} className="flex items-center justify-between border-b border-border last:border-0 pb-3 last:pb-0">
-                <div className="flex items-center gap-3">
-                  <div className={`p-2 rounded-full ${
-                    activity.type === 'inventory' ? 'bg-blue-100 text-blue-600' :
-                    activity.type === 'cash' ? 'bg-green-100 text-green-600' :
-                    activity.type === 'equipment' ? 'bg-orange-100 text-orange-600' :
-                    'bg-purple-100 text-purple-600'
-                  }`}>
-                    {activity.type === 'inventory' && <Package className="h-4 w-4" />}
-                    {activity.type === 'cash' && <Calculator className="h-4 w-4" />}
-                    {activity.type === 'equipment' && <AlertTriangle className="h-4 w-4" />}
-                    {activity.type === 'user' && <Users className="h-4 w-4" />}
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-foreground">
-                      {activity.action}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      by {activity.user}
-                    </p>
-                  </div>
-                </div>
-                <span className="text-xs text-muted-foreground">
-                  {activity.time}
-                </span>
+            <div className="flex items-center justify-center py-8">
+              <div className="text-center text-muted-foreground">
+                <Calendar className="h-12 w-12 mx-auto mb-2 opacity-50" />
+                <p>No recent activity</p>
               </div>
-            ))}
+            </div>
           </div>
         </CardContent>
       </Card>

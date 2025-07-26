@@ -42,7 +42,9 @@ export const Equipment = () => {
             <div className="flex items-center gap-2">
               <CheckCircle className="h-8 w-8 text-green-500" />
               <div>
-                <div className="text-2xl font-bold">8</div>
+                <div className="text-2xl font-bold">
+                  {equipment.filter(e => e.status === 'operational').length}
+                </div>
                 <div className="text-sm text-muted-foreground">Operational</div>
               </div>
             </div>
@@ -53,7 +55,9 @@ export const Equipment = () => {
             <div className="flex items-center gap-2">
               <Wrench className="h-8 w-8 text-yellow-500" />
               <div>
-                <div className="text-2xl font-bold">2</div>
+                <div className="text-2xl font-bold">
+                  {equipment.filter(e => e.status === 'maintenance').length}
+                </div>
                 <div className="text-sm text-muted-foreground">Maintenance</div>
               </div>
             </div>
@@ -64,7 +68,9 @@ export const Equipment = () => {
             <div className="flex items-center gap-2">
               <AlertTriangle className="h-8 w-8 text-red-500" />
               <div>
-                <div className="text-2xl font-bold">1</div>
+                <div className="text-2xl font-bold">
+                  {equipment.filter(e => e.status === 'broken').length}
+                </div>
                 <div className="text-sm text-muted-foreground">Broken</div>
               </div>
             </div>
@@ -75,7 +81,9 @@ export const Equipment = () => {
             <div className="flex items-center gap-2">
               <Calendar className="h-8 w-8 text-blue-500" />
               <div>
-                <div className="text-2xl font-bold">3</div>
+                <div className="text-2xl font-bold">
+                  {getUpcomingMaintenance(7).length}
+                </div>
                 <div className="text-sm text-muted-foreground">Due Soon</div>
               </div>
             </div>
@@ -91,46 +99,57 @@ export const Equipment = () => {
         </TabsList>
 
         <TabsContent value="equipment" className="space-y-4">
-          <div className="grid gap-4">
-            {equipment.map((item) => (
-              <Card key={item.id}>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className={`w-2 h-2 rounded-full ${getStatusColor(item.status)}`} />
-                      <CardTitle>{item.name}</CardTitle>
-                      <Badge variant="outline">{item.category}</Badge>
+          {equipment.length > 0 ? (
+            <div className="grid gap-4">
+              {equipment.map((item) => (
+                <Card key={item.id}>
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className={`w-2 h-2 rounded-full ${getStatusColor(item.status)}`} />
+                        <CardTitle>{item.name}</CardTitle>
+                        <Badge variant="outline">{item.category}</Badge>
+                      </div>
+                      <Badge variant={item.status === 'operational' ? 'default' : 'destructive'}>
+                        {item.status}
+                      </Badge>
                     </div>
-                    <Badge variant={item.status === 'operational' ? 'default' : 'destructive'}>
-                      {item.status}
-                    </Badge>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div>
-                      <div className="text-sm font-medium">Location</div>
-                      <div className="text-sm text-muted-foreground">{item.location}</div>
-                    </div>
-                    <div>
-                      <div className="text-sm font-medium">Department</div>
-                      <div className="text-sm text-muted-foreground">{item.department}</div>
-                    </div>
-                    <div>
-                      <div className="text-sm font-medium">Model</div>
-                      <div className="text-sm text-muted-foreground">{item.model || 'N/A'}</div>
-                    </div>
-                    <div>
-                      <div className="text-sm font-medium">Next Maintenance</div>
-                      <div className="text-sm text-muted-foreground">
-                        {item.nextMaintenance?.toLocaleDateString() || 'Not scheduled'}
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      <div>
+                        <div className="text-sm font-medium">Location</div>
+                        <div className="text-sm text-muted-foreground">{item.location}</div>
+                      </div>
+                      <div>
+                        <div className="text-sm font-medium">Department</div>
+                        <div className="text-sm text-muted-foreground">{item.department}</div>
+                      </div>
+                      <div>
+                        <div className="text-sm font-medium">Model</div>
+                        <div className="text-sm text-muted-foreground">{item.model || 'N/A'}</div>
+                      </div>
+                      <div>
+                        <div className="text-sm font-medium">Next Maintenance</div>
+                        <div className="text-sm text-muted-foreground">
+                          {item.nextMaintenance?.toLocaleDateString() || 'Not scheduled'}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <Card>
+              <CardContent className="flex items-center justify-center py-8">
+                <div className="text-center text-muted-foreground">
+                  <Wrench className="h-12 w-12 mx-auto mb-2 opacity-50" />
+                  <p>No equipment registered</p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </TabsContent>
 
         <TabsContent value="maintenance">
