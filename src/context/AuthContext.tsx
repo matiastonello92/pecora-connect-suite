@@ -123,18 +123,15 @@ const fetchUserProfile = async (userId: string): Promise<Profile | null> => {
       .maybeSingle();
 
     if (error) {
-      console.error('Error fetching user profile:', error);
       return null;
     }
 
     if (!data) {
-      console.log('No profile found for user ID:', userId);
       return null;
     }
 
     return data;
   } catch (error) {
-    console.error('Error fetching user profile:', error);
     return null;
   }
 };
@@ -177,10 +174,10 @@ const updateUserProfile = async (updates: Partial<User>): Promise<void> => {
       .eq('user_id', userData.user.id);
 
     if (error) {
-      console.error('Error updating user profile:', error);
+      // Handle error silently
     }
   } catch (error) {
-    console.error('Error updating user profile:', error);
+    // Handle error silently
   }
 };
 
@@ -315,7 +312,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           }
         });
       } catch (emailError) {
-        console.error('Failed to send invitation email:', emailError);
         // Don't return error for email sending failure - invitation is still created
       }
 
@@ -392,7 +388,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               dispatch({ type: 'AUTH_FAILURE' });
             }
           } catch (error) {
-            console.error('Error in handleAuthState:', error);
             if (isMounted) {
               dispatch({ type: 'AUTH_FAILURE' });
             }

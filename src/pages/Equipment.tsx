@@ -15,11 +15,11 @@ export const Equipment = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'operational': return 'bg-green-500';
-      case 'maintenance': return 'bg-yellow-500';
-      case 'broken': return 'bg-red-500';
-      case 'retired': return 'bg-gray-500';
-      default: return 'bg-gray-500';
+      case 'operational': return 'bg-green-600';
+      case 'maintenance': return 'bg-yellow-600';
+      case 'broken': return 'bg-destructive';
+      case 'retired': return 'bg-muted';
+      default: return 'bg-muted';
     }
   };
 
@@ -40,7 +40,7 @@ export const Equipment = () => {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
-              <CheckCircle className="h-8 w-8 text-green-500" />
+              <CheckCircle className="h-8 w-8 text-green-600" />
               <div>
                 <div className="text-2xl font-bold">
                   {equipment.filter(e => e.status === 'operational').length}
@@ -53,7 +53,7 @@ export const Equipment = () => {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
-              <Wrench className="h-8 w-8 text-yellow-500" />
+              <Wrench className="h-8 w-8 text-yellow-600" />
               <div>
                 <div className="text-2xl font-bold">
                   {equipment.filter(e => e.status === 'maintenance').length}
@@ -66,7 +66,7 @@ export const Equipment = () => {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
-              <AlertTriangle className="h-8 w-8 text-red-500" />
+              <AlertTriangle className="h-8 w-8 text-destructive" />
               <div>
                 <div className="text-2xl font-bold">
                   {equipment.filter(e => e.status === 'broken').length}
@@ -79,7 +79,7 @@ export const Equipment = () => {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
-              <Calendar className="h-8 w-8 text-blue-500" />
+              <Calendar className="h-8 w-8 text-primary" />
               <div>
                 <div className="text-2xl font-bold">
                   {getUpcomingMaintenance(7).length}

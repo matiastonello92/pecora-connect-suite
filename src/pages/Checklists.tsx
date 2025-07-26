@@ -39,22 +39,22 @@ export const Checklists = () => {
 
   const getFrequencyColor = (frequency: string) => {
     switch (frequency) {
-      case 'daily': return 'bg-blue-500';
-      case 'weekly': return 'bg-green-500';
-      case 'monthly': return 'bg-yellow-500';
-      default: return 'bg-gray-500';
+      case 'daily': return 'bg-primary';
+      case 'weekly': return 'bg-green-600';
+      case 'monthly': return 'bg-yellow-600';
+      default: return 'bg-muted';
     }
   };
 
   const getCategoryColor = (category: string) => {
     switch (category) {
-      case 'safety': return 'bg-red-100 text-red-800';
-      case 'cleaning': return 'bg-blue-100 text-blue-800';
-      case 'equipment': return 'bg-yellow-100 text-yellow-800';
-      case 'inventory': return 'bg-green-100 text-green-800';
-      case 'preparation': return 'bg-purple-100 text-purple-800';
-      case 'finance': return 'bg-orange-100 text-orange-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'safety': return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
+      case 'cleaning': return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
+      case 'equipment': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200';
+      case 'inventory': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
+      case 'preparation': return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200';
+      case 'finance': return 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200';
+      default: return 'bg-muted text-muted-foreground';
     }
   };
 
@@ -113,7 +113,7 @@ export const Checklists = () => {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
-              <CheckSquare className="h-8 w-8 text-blue-500" />
+              <CheckSquare className="h-8 w-8 text-primary" />
               <div>
                 <div className="text-2xl font-bold">{templates.length}</div>
                 <div className="text-sm text-muted-foreground">Templates</div>
@@ -124,7 +124,7 @@ export const Checklists = () => {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
-              <Clock className="h-8 w-8 text-yellow-500" />
+              <Clock className="h-8 w-8 text-yellow-600" />
               <div>
                 <div className="text-2xl font-bold">{activeChecklists.length}</div>
                 <div className="text-sm text-muted-foreground">In Progress</div>
@@ -135,7 +135,7 @@ export const Checklists = () => {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
-              <CheckCircle className="h-8 w-8 text-green-500" />
+              <CheckCircle className="h-8 w-8 text-green-600" />
               <div>
                 <div className="text-2xl font-bold">
                   {sessions.filter(s => s.status === 'completed').length}
@@ -148,7 +148,7 @@ export const Checklists = () => {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
-              <AlertCircle className="h-8 w-8 text-red-500" />
+              <AlertCircle className="h-8 w-8 text-destructive" />
               <div>
                 <div className="text-2xl font-bold">0</div>
                 <div className="text-sm text-muted-foreground">Overdue</div>
@@ -175,7 +175,7 @@ export const Checklists = () => {
                     <div className="flex items-center justify-between">
                       <div>
                         <CardTitle className="flex items-center gap-2">
-                          <Clock className="h-5 w-5 text-yellow-500" />
+                          <Clock className="h-5 w-5 text-yellow-600" />
                           {session.template.name}
                         </CardTitle>
                         <p className="text-sm text-muted-foreground">
@@ -183,7 +183,7 @@ export const Checklists = () => {
                         </p>
                       </div>
                       <div className="text-right">
-                        <div className="text-2xl font-bold text-blue-600">
+                        <div className="text-2xl font-bold text-primary">
                           {getProgressPercentage(session)}%
                         </div>
                         <div className="text-sm text-muted-foreground">
@@ -206,7 +206,7 @@ export const Checklists = () => {
                           <div className="flex-1">
                             <div className={`font-medium ${item.completed ? 'line-through text-muted-foreground' : ''}`}>
                               {item.title}
-                              {item.isRequired && <span className="text-red-500 ml-1">*</span>}
+                              {item.isRequired && <span className="text-destructive ml-1">*</span>}
                             </div>
                             <div className="text-sm text-muted-foreground">
                               {item.description}
@@ -344,14 +344,14 @@ export const Checklists = () => {
                   <div className="flex items-center justify-between">
                     <div>
                       <CardTitle className="flex items-center gap-2">
-                        <CheckCircle className="h-5 w-5 text-green-500" />
+                        <CheckCircle className="h-5 w-5 text-green-600" />
                         {session.template.name}
                       </CardTitle>
                       <p className="text-sm text-muted-foreground">
                         Completed: {session.completedAt && formatDate(session.completedAt)}
                       </p>
                     </div>
-                    <Badge variant="default" className="bg-green-600">
+                    <Badge variant="default" className="bg-green-600 hover:bg-green-700">
                       Completed
                     </Badge>
                   </div>

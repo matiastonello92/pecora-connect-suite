@@ -100,11 +100,11 @@ export const Communication = () => {
 
   const getPriorityColor = (priority: MessagePriority) => {
     switch (priority) {
-      case 'urgent': return 'bg-red-500';
+      case 'urgent': return 'bg-destructive';
       case 'high': return 'bg-orange-500';
       case 'medium': return 'bg-yellow-500';
       case 'low': return 'bg-green-500';
-      default: return 'bg-gray-500';
+      default: return 'bg-muted';
     }
   };
 
@@ -214,9 +214,9 @@ export const Communication = () => {
                       <div className="flex items-center gap-2">
                         <div className={`w-2 h-2 rounded-full ${getPriorityColor(announcement.priority)}`} />
                         <CardTitle>{announcement.title}</CardTitle>
-                        {announcement.priority === 'urgent' && (
-                          <AlertTriangle className="h-4 w-4 text-red-500" />
-                        )}
+                         {announcement.priority === 'urgent' && (
+                           <AlertTriangle className="h-4 w-4 text-destructive" />
+                         )}
                       </div>
                       <div className="text-xs text-muted-foreground">
                         {formatTime(announcement.createdAt)}

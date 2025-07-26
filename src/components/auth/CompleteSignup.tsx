@@ -164,8 +164,7 @@ export const CompleteSignup = () => {
         .eq('id', invitationData.id);
 
       if (updateError) {
-        console.error('Failed to update invitation status:', updateError);
-        // Don't throw error as user creation was successful
+        // Don't throw error as user creation was successful - just log internally
       }
 
       toast({

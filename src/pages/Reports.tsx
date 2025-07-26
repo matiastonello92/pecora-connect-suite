@@ -101,7 +101,7 @@ export const Reports = () => {
             <CardContent>
               <div className="grid grid-cols-3 gap-4">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-green-600">€18,650</div>
+                  <div className="text-2xl font-bold text-primary">€18,650</div>
                   <div className="text-sm text-muted-foreground">Total Revenue</div>
                 </div>
                 <div className="text-center">

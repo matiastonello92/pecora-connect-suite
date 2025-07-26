@@ -70,11 +70,11 @@ const AppContent = () => {
         <Route path="/communication" element={<Communication />} />
         <Route path="/cash-register" element={<CashRegister />} />
         <Route path="/financial" element={<Financial />} />
-              <Route path="/reports" element={<Reports />} />
-              <Route path="/equipment" element={<Equipment />} />
-              <Route path="/users" element={<UserManagement />} />
-              <Route path="/settings" element={<Settings />} />
-              <Route path="*" element={<NotFound />} />
+        <Route path="/reports" element={<Reports />} />
+        <Route path="/equipment" element={<Equipment />} />
+        <Route path="/users" element={<UserManagement />} />
+        <Route path="/settings" element={<Settings />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </AppLayout>
   );
@@ -93,15 +93,15 @@ const App: React.FC = () => {
                     <ReportsProvider>
                       <EquipmentProvider>
                         <UserManagementProvider>
-                           <FinancialProvider>
-                             <LocationProvider>
-                               <TooltipProvider>
-                                 <AppContent />
-                                 <Toaster />
-                                 <Sonner />
-                               </TooltipProvider>
-                             </LocationProvider>
-                           </FinancialProvider>
+                          <FinancialProvider>
+                            <LocationProvider>
+                              <TooltipProvider>
+                                <AppContent />
+                                <Toaster />
+                                <Sonner />
+                              </TooltipProvider>
+                            </LocationProvider>
+                          </FinancialProvider>
                         </UserManagementProvider>
                       </EquipmentProvider>
                     </ReportsProvider>

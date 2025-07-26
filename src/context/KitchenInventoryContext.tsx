@@ -249,7 +249,6 @@ export const KitchenInventoryProvider: React.FC<{ children: React.ReactNode }> =
   const saveInventory = () => {
     dispatch({ type: 'SAVE_INVENTORY' });
     // Here you would send push notification to managers
-    console.log('Push notification sent to managers: Inventory completed and ready for approval');
   };
 
   const approveInventory = (inventoryId: string) => {
@@ -278,7 +277,6 @@ export const KitchenInventoryProvider: React.FC<{ children: React.ReactNode }> =
     if (!state.currentInventory) return;
     
     // In a real implementation, this would generate and download the file
-    console.log(`Exporting inventory ${state.currentInventory.id} as ${format.toUpperCase()}`);
     
     if (format === 'csv') {
       // Generate CSV

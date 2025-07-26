@@ -149,8 +149,7 @@ export const ReportsProvider: React.FC<{ children: React.ReactNode }> = ({ child
   };
 
   const exportReport = (reportId: string, format: 'pdf' | 'csv' | 'excel') => {
-    console.log(`Exporting report ${reportId} as ${format}`);
-    // Mock export functionality
+    // Mock export functionality - would implement real export here
   };
 
   return (

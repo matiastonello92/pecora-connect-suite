@@ -19,7 +19,7 @@ export const Financial = () => {
       <div className="flex items-center justify-center min-h-[400px]">
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
-            <AlertTriangle className="h-12 w-12 mx-auto text-yellow-500 mb-4" />
+            <AlertTriangle className="h-12 w-12 mx-auto text-yellow-600 mb-4" />
             <CardTitle>Access Restricted</CardTitle>
           </CardHeader>
           <CardContent className="text-center">

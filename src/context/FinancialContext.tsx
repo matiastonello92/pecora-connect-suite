@@ -174,7 +174,6 @@ export const FinancialProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     dispatch({ type: 'SUBMIT_CLOSURE', payload: completeClosure });
     
     // Send notification (would be implemented with real notification system)
-    console.log('Notification sent to directors, finance, and super admins');
   };
 
   const updateClosureStatus = (id: string, status: ClosureStatus) => {
@@ -247,7 +246,6 @@ export const FinancialProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const exportData = (format: 'csv' | 'pdf', data: CashClosure[]) => {
     // Implementation would depend on the export library used
-    console.log(`Exporting ${data.length} records as ${format.toUpperCase()}`);
     
     if (format === 'csv') {
       const csvContent = [
