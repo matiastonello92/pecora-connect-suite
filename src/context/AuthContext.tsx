@@ -55,7 +55,7 @@ const initialState: AuthState = {
   user: null,
   session: null,
   isAuthenticated: false,
-  isLoading: false, // Start with false to prevent infinite loading
+  isLoading: true, // Start with true to show loading while checking session
   language: 'en',
 };
 
@@ -127,6 +127,11 @@ const fetchUserProfile = async (userId: string): Promise<Profile | null> => {
       return null;
     }
 
+    if (!data) {
+      console.log('No profile found for user ID:', userId);
+      return null;
+    }
+
     return data;
   } catch (error) {
     console.error('Error fetching user profile:', error);
@@ -135,7 +140,7 @@ const fetchUserProfile = async (userId: string): Promise<Profile | null> => {
 };
 
 const transformProfileToUser = (profile: Profile, supabaseUser: SupabaseUser): User => {
-  return {
+  const user = {
     id: profile.user_id,
     email: supabaseUser.email || '',
     firstName: profile.first_name,
@@ -148,6 +153,8 @@ const transformProfileToUser = (profile: Profile, supabaseUser: SupabaseUser): U
     createdAt: new Date(profile.created_at),
     updatedAt: new Date(profile.updated_at),
   };
+  
+  return user;
 };
 
 const updateUserProfile = async (updates: Partial<User>): Promise<void> => {
@@ -345,10 +352,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Force loading to false after a reasonable timeout to prevent infinite loading
     const forceLoadingTimeout = setTimeout(() => {
       if (isMounted) {
-        console.log('AuthContext: Force stopping loading due to timeout');
-        dispatch({ type: 'AUTH_FAILURE' });
+        // Try one more time to get session before giving up
+        supabase.auth.getSession().then(({ data: { session } }) => {
+          if (session?.user && isMounted) {
+            setTimeout(async () => {
+              if (!isMounted) return;
+              const profile = await fetchUserProfile(session.user.id);
+              if (profile && isMounted) {
+                const user = transformProfileToUser(profile, session.user);
+                dispatch({ type: 'AUTH_SUCCESS', payload: { user, session } });
+              } else if (isMounted) {
+                dispatch({ type: 'AUTH_FAILURE' });
+              }
+            }, 50);
+          } else if (isMounted) {
+            dispatch({ type: 'AUTH_FAILURE' });
+          }
+        }).catch(() => {
+          if (isMounted) dispatch({ type: 'AUTH_FAILURE' });
+        });
       }
-    }, 2000);
+    }, 1500);
 
     const handleAuthState = (event: string, session: any) => {
       if (!isMounted) return;
@@ -368,6 +392,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               dispatch({ type: 'AUTH_FAILURE' });
             }
           } catch (error) {
+            console.error('Error in handleAuthState:', error);
             if (isMounted) {
               dispatch({ type: 'AUTH_FAILURE' });
             }
