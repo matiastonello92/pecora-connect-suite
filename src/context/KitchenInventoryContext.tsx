@@ -234,52 +234,8 @@ export const KitchenInventoryProvider: React.FC<{ children: React.ReactNode }> =
     const isInPeriod = checkInventoryPeriod();
     dispatch({ type: 'SET_INVENTORY_PERIOD', payload: isInPeriod });
 
-    // Load current month's inventory
-    const now = new Date();
-    const currentMonth = now.getMonth() + 1;
-    const currentYear = now.getFullYear();
-
-    // Simulate loading current inventory
-    const mockCurrentInventory: MonthlyInventory = {
-      id: `inv-${currentYear}-${currentMonth}`,
-      month: currentMonth,
-      year: currentYear,
-      department: 'kitchen',
-      status: 'draft',
-      items: [],
-      createdBy: user?.email || 'current@user.com',
-      createdAt: new Date(),
-      totalValue: 0,
-      anomalies: [],
-      isLocked: false
-    };
-
-    if (isInPeriod) {
-      dispatch({ type: 'SET_CURRENT_INVENTORY', payload: mockCurrentInventory });
-    }
-
-    // Load historical inventories
-    const mockHistoricalInventories: MonthlyInventory[] = [
-      {
-        id: 'inv-2024-11',
-        month: 11,
-        year: 2024,
-        department: 'kitchen',
-        status: 'approved',
-        items: [],
-        createdBy: 'chef@pecoranegra.fr',
-        createdAt: new Date('2024-11-30'),
-        completedBy: 'chef@pecoranegra.fr',
-        completedAt: new Date('2024-11-30'),
-        approvedBy: 'manager@pecoranegra.fr',
-        approvedAt: new Date('2024-12-01'),
-        totalValue: 2450.50,
-        anomalies: [],
-        isLocked: true
-      }
-    ];
-
-    dispatch({ type: 'SET_HISTORICAL_INVENTORIES', payload: mockHistoricalInventories });
+    // Load historical inventories (empty by default - will be loaded from backend)
+    dispatch({ type: 'SET_HISTORICAL_INVENTORIES', payload: [] });
   }, [user]);
 
   const updateInventoryItem = (productId: string, quantity: number, notes?: string) => {

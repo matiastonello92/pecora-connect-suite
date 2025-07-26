@@ -236,13 +236,7 @@ export const KitchenInventory = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div>
-                <div className="text-sm font-medium">{t('total-value')}</div>
-                <div className="text-2xl font-bold">
-                  {formatPrice(currentInventory.totalValue)}
-                </div>
-              </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <div className="text-sm font-medium">{t('status')}</div>
                 <div className="text-lg">
@@ -252,7 +246,7 @@ export const KitchenInventory = () => {
                 </div>
               </div>
               <div>
-                <div className="text-sm font-medium">Items</div>
+                <div className="text-sm font-medium">Items Counted</div>
                 <div className="text-lg">
                   {currentInventory.items.filter(item => item.quantity > 0).length} / {products.length}
                 </div>
@@ -261,17 +255,15 @@ export const KitchenInventory = () => {
                 <div className="text-sm font-medium">{t('anomalies-detected')}</div>
                 <div className="text-lg flex items-center gap-2">
                   {currentInventory.anomalies.length}
-                  {currentInventory.anomalies.length > 0 && (
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      onClick={detectAnomalies}
-                      className="flex items-center gap-1"
-                    >
-                      <TrendingUp className="h-3 w-3" />
-                      {t('detect-anomalies')}
-                    </Button>
-                  )}
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={detectAnomalies}
+                    className="flex items-center gap-1"
+                  >
+                    <TrendingUp className="h-3 w-3" />
+                    {t('detect-anomalies')}
+                  </Button>
                 </div>
               </div>
             </div>
@@ -374,7 +366,7 @@ export const KitchenInventory = () => {
                                     </Button>
                                   </div>
                                   <div className="text-sm text-muted-foreground">
-                                    {formatPrice(product.unitPrice)} / {product.unit}
+                                    {product.unitPrice > 0 ? formatPrice(product.unitPrice) : 'Price not set'} / {product.unit}
                                   </div>
                                   <div className="text-xs text-muted-foreground">
                                     {t('last-order-date')}: {product.lastOrderDate ? formatDate(product.lastOrderDate) : t('never-ordered')}
@@ -414,7 +406,7 @@ export const KitchenInventory = () => {
                                 {/* Total Price */}
                                 <div className="lg:col-span-2">
                                   <div className="text-sm font-medium">
-                                    {formatPrice(totalPrice)}
+                                    {product.unitPrice > 0 ? formatPrice(totalPrice) : 'Set price first'}
                                   </div>
                                 </div>
 
