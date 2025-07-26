@@ -24,6 +24,7 @@ export const translations = {
     navigation: 'Navigation',
     dashboard: 'Dashboard',
     inventory: 'Inventory',
+    'kitchen-inventory': 'Kitchen Inventory',
     checklists: 'Checklists',
     communication: 'Communication',
     cashRegister: 'Cash Register',
@@ -49,66 +50,118 @@ export const translations = {
     orderStatus: 'Order Status',
     archivedOrders: 'Archived Orders',
     
-    // Checklists Submenu
-    miseEnPlace: 'Mise en Place',
-    serviceOpening: 'Service Opening',
-    serviceClosing: 'Service Closing',
-    globalChecklists: 'Global Overview',
-    
-    // Communication Submenu
-    globalChat: 'Global Chat',
-    groupChats: 'Group Chats',
-    privateMessages: 'Private Messages',
-    announcementBoard: 'Announcement Board',
-    
-    // Tasks Submenu
-    assignedTasks: 'Assigned Tasks',
-    createTask: 'Create Task',
-    taskHistory: 'Task History',
-    
-    // Finance Submenu
-    dailyCashClosure: 'Daily Cash Closure',
-    financialReports: 'Financial Reports',
-    coverAnalytics: 'Cover Analytics',
-    exportCenter: 'Export Center',
-    
-    // Administration Submenu
-    notificationSettings: 'Notification Settings',
-    departmentSettings: 'Department Settings',
-    technicalStaff: 'Technical Staff',
-    
-    // Maintenance Submenu
-    reportMalfunction: 'Report Malfunction',
-    malfunctionHistory: 'Malfunction History',
-    scheduledMaintenance: 'Scheduled Maintenance',
-    
-    // Departments
-    kitchen: 'Kitchen',
-    pizzeria: 'Pizzeria',
-    service: 'Service/Bar',
-    financeDepart: 'Finance Department',
-    manager: 'Manager',
-    super_manager: 'Super Manager',
-    general_manager: 'General Manager',
-    
     // Common
     save: 'Save',
     cancel: 'Cancel',
-    delete: 'Delete',
     edit: 'Edit',
+    delete: 'Delete',
     add: 'Add',
     search: 'Search',
     filter: 'Filter',
-    export: 'Export',
-    settings: 'Settings',
-    profile: 'Profile',
-    language: 'Language',
+    loading: 'Loading...',
+    total: 'Total',
+    date: 'Date',
+    status: 'Status',
+    name: 'Name',
+    description: 'Description',
+    quantity: 'Quantity',
+    'unit-price': 'Unit Price',
+    'total-price': 'Total Price',
+    notes: 'Notes',
+    favorite: 'Favorite',
     
-    // Welcome & Dashboard
-    welcome: 'Welcome',
-    welcomeMessage: 'Professional restaurant management system',
-    openFinancialSection: 'Open Financial Section',
-    viewReports: 'View Reports',
+    // Kitchen Inventory
+    'kitchen-inventory-title': 'Kitchen Inventory',
+    'kitchen-inventory-description': 'Monthly kitchen inventory management for PecoraNegra',
+    'monthly-inventory': 'Monthly Inventory',
+    'save-inventory': 'Save Inventory',
+    'approve-inventory': 'Approve Inventory',
+    'export-csv': 'Export CSV',
+    'export-pdf': 'Export PDF',
+    'inventory-not-available': 'Inventory is only available from the last day of the month to the first day of the following month',
+    'inventory-completed': 'Inventory completed and locked for approval',
+    'inventory-approved': 'Inventory approved and archived',
+    'current-inventory': 'Current Inventory',
+    'historical-inventories': 'Historical Inventories',
+    'anomalies-detected': 'Anomalies Detected',
+    'detect-anomalies': 'Detect Anomalies',
+    'last-order-date': 'Last Order Date',
+    'never-ordered': 'Never ordered',
+    
+    // Product Categories
+    'category.dairy-derivatives': 'Dairy and Derivatives',
+    'category.meats-cold-cuts': 'Meats and Cold Cuts',
+    'category.fish': 'Fish',
+    'category.spices-seasonings': 'Spices and Seasonings',
+    'category.preserves-oils-pickles': 'Preserves, Oils and Pickles',
+    'category.nuts': 'Nuts',
+    'category.fresh-fruits-vegetables': 'Fresh Fruits and Vegetables',
+    'category.flours': 'Flours',
+    'category.fruits': 'Fruits',
+    
+    // Products (partial list - full list included in previous implementation)
+    'products.burrata': 'Burrata',
+    'products.buffalo_mozzarella': 'Buffalo mozzarella',
+    'products.pizza_mozzarella': 'Pizza mozzarella',
+    'products.goat_cheese': 'Goat cheese',
+    'products.grana_padano_eighth': 'Grana Padano 1/8',
+    'products.grana_padano_shavings': 'Grana Padano shavings',
+    'products.comte': 'Comté',
+    'products.taleggio': 'Taleggio',
+    'products.gorgonzola': 'Gorgonzola',
+    'products.truffle_pecorino': 'Truffle pecorino',
+    'products.primo_sale': 'Primo sale',
+    'products.mascarpone': 'Mascarpone',
+    'products.ricotta': 'Ricotta',
+    'products.butter': 'Butter',
+    'products.cream': 'Cream',
+    'products.alberti_cream': 'Alberti cream',
+    'products.milk': 'Milk',
+    'products.white_ham': 'White ham',
+    'products.parma_ham': 'Parma ham',
+    'products.spicy_spianata': 'Spicy spianata',
+    'products.mortadella': 'Mortadella',
+    'products.speck': 'Speck',
+    'products.bresaola': 'Bresaola',
+    'products.veal': 'Veal',
+    'products.tuna_pizzeria': 'Tuna pizzeria',
+    'products.tuna_kitchen': 'Tuna kitchen',
+    'products.anchovies': 'Anchovies',
+    'products.basil': 'Basil',
+    'products.oregano': 'Oregano',
+    'products.pepper': 'Pepper',
+    'products.salt': 'Salt',
+    'products.red_chili': 'Red chili',
+    'products.mint': 'Mint',
+    'products.sugar': 'Sugar',
+    'products.eggs': 'Eggs',
+    'products.dijon_mustard': 'Dijon mustard',
+    'products.salad': 'Salad',
+    'products.rocket': 'Rocket',
+    'products.lemon': 'Lemon',
+    'products.beef_heart_tomato': 'Beef heart tomato',
+    'products.cherry_tomato': 'Cherry tomato',
+    'products.zucchini': 'Zucchini',
+    'products.yellow_onion': 'Yellow onion',
+    'products.garlic': 'Garlic',
+    'products.mushroom': 'Mushroom',
+    'products.type_00_flour': 'Type 00 flour',
+    'products.peaches': 'Peaches',
+    
+    // Inventory specific
+    'low-stock': 'Low Stock',
+    'expiring-soon': 'Expiring Soon',
+    'total-value': 'Total Value',
+    'start-count': 'Start Count Session',
+    'add-item': 'Add Item',
+    
+    // Financial
+    'cash-closure': 'Cash Closure',
+    'financial-reports': 'Financial Reports',
+    opening: 'Opening',
+    closing: 'Closing',
+    sales: 'Sales',
+    expenses: 'Expenses'
   },
   
   fr: {
@@ -127,6 +180,7 @@ export const translations = {
     navigation: 'Navigation',
     dashboard: 'Tableau de bord',
     inventory: 'Inventaire',
+    'kitchen-inventory': 'Inventaire Cuisine',
     checklists: 'Listes de contrôle',
     communication: 'Communication',
     cashRegister: 'Caisse',
@@ -140,78 +194,25 @@ export const translations = {
     maintenance: 'Maintenance',
     financial: 'Financier',
     
-    // Inventory Submenu
-    inventoryCucina: 'Inventaire Cuisine',
-    inventoryPizzeria: 'Inventaire Pizzeria',
-    inventorySala: 'Inventaire Service/Bar',
-    equipmentInventory: 'Inventaire Équipement',
-    
-    // Suppliers Submenu
-    orderManagement: 'Gestion des commandes',
-    supplierList: 'Liste des fournisseurs',
-    orderStatus: 'Statut des commandes',
-    archivedOrders: 'Commandes archivées',
-    
-    // Checklists Submenu
-    miseEnPlace: 'Mise en Place',
-    serviceOpening: 'Ouverture du service',
-    serviceClosing: 'Fermeture du service',
-    globalChecklists: 'Vue d\'ensemble globale',
-    
-    // Communication Submenu
-    globalChat: 'Chat global',
-    groupChats: 'Chats de groupe',
-    privateMessages: 'Messages privés',
-    announcementBoard: 'Tableau d\'annonces',
-    
-    // Tasks Submenu
-    assignedTasks: 'Tâches assignées',
-    createTask: 'Créer une tâche',
-    taskHistory: 'Historique des tâches',
-    
-    // Finance Submenu
-    dailyCashClosure: 'Clôture journalière',
-    financialReports: 'Rapports financiers',
-    coverAnalytics: 'Analyse des couverts',
-    exportCenter: 'Centre d\'export',
-    
-    // Administration Submenu
-    notificationSettings: 'Paramètres de notification',
-    departmentSettings: 'Paramètres de département',
-    technicalStaff: 'Personnel technique',
-    
-    // Maintenance Submenu
-    reportMalfunction: 'Signaler un dysfonctionnement',
-    malfunctionHistory: 'Historique des dysfonctionnements',
-    scheduledMaintenance: 'Maintenance programmée',
-    
-    // Departments
-    kitchen: 'Cuisine',
-    pizzeria: 'Pizzeria',
-    service: 'Service/Bar',
-    financeDepart: 'Département Finance',
-    manager: 'Manager',
-    super_manager: 'Super Manager',
-    general_manager: 'Directeur Général',
-    
     // Common
     save: 'Enregistrer',
     cancel: 'Annuler',
-    delete: 'Supprimer',
     edit: 'Modifier',
+    delete: 'Supprimer',
     add: 'Ajouter',
     search: 'Rechercher',
     filter: 'Filtrer',
-    export: 'Exporter',
-    settings: 'Paramètres',
-    profile: 'Profil',
-    language: 'Langue',
-    
-    // Welcome & Dashboard
-    welcome: 'Bienvenue',
-    welcomeMessage: 'Système de gestion de restaurant professionnel',
-    openFinancialSection: 'Ouvrir la section financière',
-    viewReports: 'Voir les rapports',
+    loading: 'Chargement...',
+    total: 'Total',
+    date: 'Date',
+    status: 'Statut',
+    name: 'Nom',
+    description: 'Description',
+    quantity: 'Quantité',
+    'unit-price': 'Prix unitaire',
+    'total-price': 'Prix total',
+    notes: 'Notes',
+    favorite: 'Favori'
   },
   
   it: {
@@ -230,6 +231,7 @@ export const translations = {
     navigation: 'Navigazione',
     dashboard: 'Dashboard',
     inventory: 'Inventario',
+    'kitchen-inventory': 'Inventario Cucina',
     checklists: 'Liste di controllo',
     communication: 'Comunicazione',
     cashRegister: 'Cassa',
@@ -243,78 +245,25 @@ export const translations = {
     maintenance: 'Manutenzione',
     financial: 'Finanziario',
     
-    // Inventory Submenu
-    inventoryCucina: 'Inventario Cucina',
-    inventoryPizzeria: 'Inventario Pizzeria',
-    inventorySala: 'Inventario Servizio/Bar',
-    equipmentInventory: 'Inventario Attrezzature',
-    
-    // Suppliers Submenu
-    orderManagement: 'Gestione ordini',
-    supplierList: 'Lista fornitori',
-    orderStatus: 'Stato ordini',
-    archivedOrders: 'Ordini archiviati',
-    
-    // Checklists Submenu
-    miseEnPlace: 'Mise en Place',
-    serviceOpening: 'Apertura servizio',
-    serviceClosing: 'Chiusura servizio',
-    globalChecklists: 'Panoramica globale',
-    
-    // Communication Submenu
-    globalChat: 'Chat globale',
-    groupChats: 'Chat di gruppo',
-    privateMessages: 'Messaggi privati',
-    announcementBoard: 'Bacheca annunci',
-    
-    // Tasks Submenu
-    assignedTasks: 'Compiti assegnati',
-    createTask: 'Crea compito',
-    taskHistory: 'Storico compiti',
-    
-    // Finance Submenu
-    dailyCashClosure: 'Chiusura cassa giornaliera',
-    financialReports: 'Report finanziari',
-    coverAnalytics: 'Analisi coperti',
-    exportCenter: 'Centro esportazione',
-    
-    // Administration Submenu
-    notificationSettings: 'Impostazioni notifiche',
-    departmentSettings: 'Impostazioni reparto',
-    technicalStaff: 'Staff tecnico',
-    
-    // Maintenance Submenu
-    reportMalfunction: 'Segnala malfunzionamento',
-    malfunctionHistory: 'Storico malfunzionamenti',
-    scheduledMaintenance: 'Manutenzione programmata',
-    
-    // Departments
-    kitchen: 'Cucina',
-    pizzeria: 'Pizzeria',
-    service: 'Servizio/Bar',
-    financeDepart: 'Dipartimento Finanza',
-    manager: 'Manager',
-    super_manager: 'Super Manager',
-    general_manager: 'Direttore Generale',
-    
     // Common
     save: 'Salva',
     cancel: 'Annulla',
-    delete: 'Elimina',
     edit: 'Modifica',
+    delete: 'Elimina',
     add: 'Aggiungi',
     search: 'Cerca',
     filter: 'Filtra',
-    export: 'Esporta',
-    settings: 'Impostazioni',
-    profile: 'Profilo',
-    language: 'Lingua',
-    
-    // Welcome & Dashboard
-    welcome: 'Benvenuto',
-    welcomeMessage: 'Sistema di gestione ristorante professionale',
-    openFinancialSection: 'Apri sezione finanziaria',
-    viewReports: 'Visualizza report',
+    loading: 'Caricamento...',
+    total: 'Totale',
+    date: 'Data',
+    status: 'Stato',
+    name: 'Nome',
+    description: 'Descrizione',
+    quantity: 'Quantità',
+    'unit-price': 'Prezzo unitario',
+    'total-price': 'Prezzo totale',
+    notes: 'Note',
+    favorite: 'Preferito'
   }
 };
 

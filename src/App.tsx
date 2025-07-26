@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/context/AuthContext";
 import { InventoryProvider } from '@/context/InventoryContext';
+import { KitchenInventoryProvider } from '@/context/KitchenInventoryContext';
 import { ChecklistProvider } from '@/context/ChecklistContext';
 import { CommunicationProvider } from '@/context/CommunicationContext';
 import { CashRegisterProvider } from '@/context/CashRegisterContext';
@@ -17,6 +18,7 @@ import { LoginForm } from "@/components/auth/LoginForm";
 import { AppLayout } from "@/components/layout/AppLayout";
 import Dashboard from "./pages/Dashboard";
 import { Inventory } from '@/pages/Inventory';
+import { KitchenInventory } from '@/pages/KitchenInventory';
 import { Checklists } from '@/pages/Checklists';
 import { Communication } from '@/pages/Communication';
 import { CashRegister } from '@/pages/CashRegister';
@@ -51,6 +53,7 @@ const AppContent = () => {
         <Route path="/dashboard" element={<Dashboard />} />
         {/* Placeholder routes for future implementation */}
         <Route path="/inventory" element={<Inventory />} />
+        <Route path="/inventory/kitchen" element={<KitchenInventory />} />
         <Route path="/checklists" element={<Checklists />} />
         <Route path="/communication" element={<Communication />} />
         <Route path="/cash-register" element={<CashRegister />} />
@@ -71,25 +74,27 @@ const App: React.FC = () => {
       <BrowserRouter>
         <AuthProvider>
           <InventoryProvider>
-            <ChecklistProvider>
-              <CommunicationProvider>
-                <CashRegisterProvider>
-                  <ReportsProvider>
-                    <EquipmentProvider>
-                      <UserManagementProvider>
-                        <FinancialProvider>
-                          <TooltipProvider>
-                          <AppContent />
-                          <Toaster />
-                          <Sonner />
-                        </TooltipProvider>
-                        </FinancialProvider>
-                      </UserManagementProvider>
-                    </EquipmentProvider>
-                  </ReportsProvider>
-                </CashRegisterProvider>
-              </CommunicationProvider>
-            </ChecklistProvider>
+            <KitchenInventoryProvider>
+              <ChecklistProvider>
+                <CommunicationProvider>
+                  <CashRegisterProvider>
+                    <ReportsProvider>
+                      <EquipmentProvider>
+                        <UserManagementProvider>
+                          <FinancialProvider>
+                            <TooltipProvider>
+                            <AppContent />
+                            <Toaster />
+                            <Sonner />
+                          </TooltipProvider>
+                          </FinancialProvider>
+                        </UserManagementProvider>
+                      </EquipmentProvider>
+                    </ReportsProvider>
+                  </CashRegisterProvider>
+                </CommunicationProvider>
+              </ChecklistProvider>
+            </KitchenInventoryProvider>
           </InventoryProvider>
         </AuthProvider>
       </BrowserRouter>
