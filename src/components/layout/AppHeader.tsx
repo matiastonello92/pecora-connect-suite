@@ -2,6 +2,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useTranslation, Language, languages } from '@/lib/i18n';
 import { Button } from '@/components/ui/button';
 import { SidebarTrigger } from '@/components/ui/sidebar';
+import { LocationClock } from '@/components/ui/location-clock';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -45,6 +46,11 @@ export const AppHeader = () => {
             {t('welcome')}, {user?.firstName}
           </p>
         </div>
+      </div>
+
+      {/* Center section with location clock */}
+      <div className="flex-1 flex justify-center">
+        <LocationClock className="bg-muted/30 px-3 py-1.5 rounded-lg border border-border/50" />
       </div>
 
       <div className="flex items-center gap-2 sm:gap-4 shrink-0">
