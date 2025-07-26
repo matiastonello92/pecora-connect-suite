@@ -38,7 +38,7 @@ export const LocationClock: React.FC<LocationClockProps> = ({
     return () => clearInterval(interval);
   }, [effectiveLocation]);
 
-  const formattedTime = formatDateForLocation(currentTime, effectiveLocation, format, getDateLocale('it'));
+  const formattedTime = formatDateForLocation(currentTime, effectiveLocation, format, getDateLocale(language));
   
   const getLocationDisplayName = () => {
     if (!effectiveLocation || effectiveLocation === 'all_locations') {
