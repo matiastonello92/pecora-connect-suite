@@ -1,6 +1,7 @@
 import React from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useUserManagement } from '@/context/UserManagementContext';
+import { InviteUserDialog } from '@/components/auth/InviteUserDialog';
 import { useTranslation } from '@/lib/i18n';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -32,10 +33,7 @@ export const UserManagement = () => {
           <h1 className="text-3xl font-bold">{t('userManagement')}</h1>
           <p className="text-muted-foreground">Staff and user administration</p>
         </div>
-        <Button>
-          <UserPlus className="h-4 w-4 mr-2" />
-          Add User
-        </Button>
+        <InviteUserDialog />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">

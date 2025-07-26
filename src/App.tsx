@@ -15,6 +15,9 @@ import { EquipmentProvider } from '@/context/EquipmentContext';
 import { UserManagementProvider } from '@/context/UserManagementContext';
 import { FinancialProvider } from '@/context/FinancialContext';
 import { LoginForm } from "@/components/auth/LoginForm";
+import { CompleteSignup } from "@/components/auth/CompleteSignup";
+import { ForgotPassword } from "@/components/auth/ForgotPassword";
+import { ResetPassword } from "@/components/auth/ResetPassword";
 import { AppLayout } from "@/components/layout/AppLayout";
 import Dashboard from "./pages/Dashboard";
 import { Inventory } from '@/pages/Inventory';
@@ -43,7 +46,15 @@ const AppContent = () => {
   }
 
   if (!isAuthenticated) {
-    return <LoginForm />;
+    return (
+      <Routes>
+        <Route path="/" element={<LoginForm />} />
+        <Route path="/auth/complete-signup" element={<CompleteSignup />} />
+        <Route path="/auth/forgot-password" element={<ForgotPassword />} />
+        <Route path="/auth/reset-password" element={<ResetPassword />} />
+        <Route path="*" element={<LoginForm />} />
+      </Routes>
+    );
   }
 
   return (
