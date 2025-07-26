@@ -1,13 +1,13 @@
 import React, { useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useChatContext } from '@/context/ChatContext';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@/lib/i18n';
 import { toast } from '@/hooks/use-toast';
 
 export const NotificationHandler: React.FC = () => {
   const { user } = useAuth();
   const { messages, activeChat } = useChatContext();
-  const { t } = useTranslation();
+  const { t } = useTranslation('en');
 
   useEffect(() => {
     if (!user || !('Notification' in window)) return;

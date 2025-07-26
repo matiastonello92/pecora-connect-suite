@@ -1,4 +1,4 @@
-// Internationalization system for PecoraNegra
+// Simple internationalization system for PecoraNegra
 export type Language = 'en' | 'fr' | 'it';
 
 export const languages: Record<Language, string> = {
@@ -7,6 +7,7 @@ export const languages: Record<Language, string> = {
   it: 'Italiano'
 };
 
+// Translation resources
 export const translations = {
   en: {
     // Auth
@@ -38,18 +39,6 @@ export const translations = {
     maintenance: 'Maintenance',
     financial: 'Financial',
     
-    // Inventory Submenu
-    inventoryCucina: 'Kitchen Inventory',
-    inventoryPizzeria: 'Pizzeria Inventory',
-    inventorySala: 'Service/Bar Inventory',
-    equipmentInventory: 'Equipment Inventory',
-    
-    // Suppliers Submenu
-    orderManagement: 'Order Management',
-    supplierList: 'Supplier List',
-    orderStatus: 'Order Status',
-    archivedOrders: 'Archived Orders',
-    
     // Common
     save: 'Save',
     cancel: 'Cancel',
@@ -65,155 +54,109 @@ export const translations = {
     name: 'Name',
     description: 'Description',
     quantity: 'Quantity',
-    'unit-price': 'Unit Price',
-    'total-price': 'Total Price',
     notes: 'Notes',
-    favorite: 'Favorite',
     welcome: 'Welcome',
-    kitchen: 'Kitchen',
-    pizzeria: 'Pizzeria',
-    service: 'Service',
-    manager: 'Manager',
-    super_manager: 'Super Manager',
+
+    // Communication System
+    'communication.selectChat': 'Select a conversation',
+    'communication.selectChatDescription': 'Choose from your conversations to start messaging',
+    'communication.typing': 'typing...',
+    'communication.sending': 'Sending',
+    'communication.chatTypes.private': 'Private Chat',
+    'communication.chatTypes.group': 'Group Chat',
+    'communication.chatTypes.global': 'General Discussion',
+    'communication.chatTypes.announcements': 'Announcements',
+    'communication.participantsCount': '{{count}} participants',
     
-    // Kitchen Inventory
-    'kitchen-inventory-title': 'Kitchen Inventory',
-    'kitchen-inventory-description': 'Manage monthly kitchen inventory tracking and reporting',
-    'current-inventory': 'Current Inventory',
-    'historical-inventories': 'Historical Inventories',
-    'anomalies-detected': 'Anomalies Detected',
-    'inventory-period-message': 'Inventory can only be accessed from the last day of the month to the first day of the next month.',
-    'access-denied-kitchen': 'You don\'t have access to the Kitchen Inventory section. Only Kitchen department users and managers can access this area.',
-    'start-inventory-title': 'Start Monthly Inventory',
-    'start-inventory-description': 'Begin entering the monthly kitchen inventory. You can save your progress and continue later.',
-    'start-new-inventory': 'Start New Inventory',
-    'last-order-date': 'Last Order Date',
-    'never-ordered': 'Never ordered',
-    'current-stock': 'Current Stock',
-    'total-value': 'Total Value',
-    'in-stock': 'In Stock',
-    'price-needed': 'Price Required',
-    'products-with-stock': 'products with stock',
-    'items': 'items',
-    'save-inventory': 'Save Inventory',
-    'approve-inventory': 'Approve Inventory',
-    'export-csv': 'Export CSV',
-    'export-pdf': 'Export PDF',
-    'detect-anomalies': 'Detect Anomalies',
-    'inventory-completed': 'Inventory Completed',
-    'inventory-approved': 'Inventory Approved',
-    'inventory-saved': 'Inventory Saved',
-    'inventory-saved-message': 'Your inventory has been saved successfully. Managers will be notified for approval.',
-    'validation-error': 'Validation Error',
-    'inventory-validation-message': 'Please enter at least one product quantity or price before saving.',
-    'monthly-inventory': 'Monthly Inventory',
-    'daily-inventory': 'Daily Inventory',
-    'daily-inventory-description': 'Record daily stock levels and missing products for operational control.',
-    'missing-product': 'Missing',
-    'available': 'Available',
-    'missing': 'Missing',
-    'products-recorded': 'products recorded',
-    'submit-daily-inventory': 'Submit Daily Inventory',
-    'daily-inventory-saved': 'Daily Inventory Saved',
-    'daily-inventory-saved-message': 'Daily inventory has been recorded successfully.',
-    'daily-inventory-validation-message': 'Please record at least one product quantity or mark a product as missing.',
+    // Messages
+    'communication.messageInput': 'Type a message...',
+    'communication.sendMessage': 'Send message',
+    'communication.replyTo': 'Reply to {{name}}',
+    'communication.editMessage': 'Edit message',
+    'communication.deleteMessage': 'Delete message',
+    'communication.messageDeleted': 'This message was deleted',
+    'communication.messageEdited': 'edited',
     
+    // Media
+    'communication.uploadImage': 'Upload Image',
+    'communication.uploadFile': 'Upload File',
+    'communication.recordVoice': 'Record Voice',
+    'communication.uploading': 'Uploading...',
+    'communication.uploadFailed': 'Upload failed',
+    'communication.retry': 'Retry',
+    'communication.cancel': 'Cancel',
     
-    // Product Categories
-    'category.dairy-derivatives': 'Dairy and Derivatives',
-    'category.meats-cold-cuts': 'Meats and Cold Cuts',
-    'category.fish': 'Fish',
-    'category.spices-seasonings': 'Spices and Seasonings',
-    'category.preserves-oils-pickles': 'Preserves, Oils and Pickles',
-    'category.nuts': 'Nuts',
-    'category.fresh-fruits-vegetables': 'Fresh Fruits and Vegetables',
-    'category.flours': 'Flours',
-    'category.fruits': 'Fruits',
+    // Emoji
+    'communication.searchEmojis': 'Search emojis...',
+    'communication.recentEmojis': 'Recently Used',
+    'communication.frequentEmojis': 'Frequently Used',
     
-    'products.burrata': 'Burrata',
-    'products.buffalo_mozzarella': 'Buffalo mozzarella',
-    'products.pizza_mozzarella': 'Pizza mozzarella',
-    'products.goat_cheese': 'Goat cheese',
-    'products.grana_padano_eighth': 'Grana Padano 1/8',
-    'products.grana_padano_shavings': 'Grana Padano shavings',
-    'products.comte': 'Comté',
-    'products.taleggio': 'Taleggio',
-    'products.gorgonzola': 'Gorgonzola',
-    'products.truffle_pecorino': 'Truffle pecorino',
-    'products.primo_sale': 'Primo sale',
-    'products.mascarpone': 'Mascarpone',
-    'products.ricotta': 'Ricotta',
-    'products.butter': 'Butter',
-    'products.cream': 'Cream',
-    'products.alberti_cream': 'Alberti cream',
-    'products.milk': 'Milk',
-    'products.white_ham': 'White ham',
-    'products.parma_ham': 'Parma ham',
-    'products.spicy_spianata': 'Spicy spianata',
-    'products.mortadella': 'Mortadella',
-    'products.speck': 'Speck',
-    'products.bresaola': 'Bresaola',
-    'products.veal': 'Veal',
-    'products.tuna_pizzeria': 'Tuna pizzeria',
-    'products.tuna_kitchen': 'Tuna kitchen',
-    'products.anchovies': 'Anchovies',
-    'products.basil': 'Basil',
-    'products.oregano': 'Oregano',
-    'products.pepper': 'Pepper',
-    'products.salt': 'Salt',
-    'products.red_chili': 'Red chili',
-    'products.mint': 'Mint',
-    'products.sugar': 'Sugar',
-    'products.eggs': 'Eggs',
-    'products.dijon_mustard': 'Dijon mustard',
-    'products.artichokes': 'Artichokes',
-    'products.sun_dried_tomatoes': 'Sun-dried tomatoes',
-    'products.caper_flowers': 'Caper flowers',
-    'products.pizza_olives': 'Pizza olives',
-    'products.olive_oil': 'Extra virgin olive oil',
-    'products.pistachio_oil': 'Pistachio oil',
-    'products.balsamic_vinegar': 'Balsamic vinegar',
-    'products.white_balsamic_vinegar': 'White balsamic vinegar',
-    'products.sherry_vinegar': 'Sherry vinegar',
-    'products.small_capers': 'Small capers',
-    'products.pine_nuts': 'Pine nuts',
-    'products.almonds': 'Almonds',
-    'products.hazelnuts': 'Hazelnuts',
-    'products.hazelnut_cream': 'Hazelnut cream',
-    'products.pistachios': 'Pistachios',
-    'products.salad': 'Salad',
-    'products.rocket': 'Rocket',
-    'products.lemon': 'Lemon',
-    'products.orange': 'Orange',
-    'products.beef_heart_tomato': 'Beef heart tomato',
-    'products.cherry_tomato': 'Cherry tomato',
-    'products.yellow_pepper': 'Yellow pepper',
-    'products.red_pepper': 'Red pepper',
-    'products.zucchini': 'Zucchini',
-    'products.eggplants': 'Eggplants',
-    'products.yellow_onion': 'Yellow onion',
-    'products.red_onion': 'Red onion',
-    'products.garlic': 'Garlic',
-    'products.cucumber': 'Cucumber',
-    'products.mushroom': 'Mushroom',
-    'products.type_00_flour': 'Type 00 flour',
-    'products.stone_ground_flour': 'Stone-ground flour',
-    'products.chickpea_flour': 'Chickpea flour',
-    'products.peaches': 'Peaches',
+    // Connection Requests
+    'communication.connectionRequests': 'Connection Requests',
+    'communication.sendRequest': 'Send Connection Request',
+    'communication.acceptRequest': 'Accept',
+    'communication.declineRequest': 'Decline',
+    'communication.pending': 'Pending',
+    'communication.accepted': 'Accepted',
+    'communication.declined': 'Declined',
+    'communication.recipientEmail': 'Recipient Email',
+    'communication.requestMessage': 'Optional Message',
+    'communication.sendConnectionRequest': 'Send Request',
+    'communication.incomingRequests': 'Incoming',
+    'communication.outgoingRequests': 'Outgoing',
+    'communication.acceptedConnections': 'Connections',
+    'communication.noRequests': 'No connection requests',
+    'communication.requestSent': 'Connection request sent',
+    'communication.requestAccepted': 'Connection request accepted',
+    'communication.requestDeclined': 'Connection request declined',
     
-    // Inventory specific
-    'low-stock': 'Low Stock',
-    'expiring-soon': 'Expiring Soon',
-    'start-count': 'Start Count Session',
-    'add-item': 'Add Item',
+    // Group Management  
+    'communication.createGroup': 'Create Group',
+    'communication.groupName': 'Group Name',
+    'communication.groupDescription': 'Group Description (optional)',
+    'communication.selectParticipants': 'Select Participants',
+    'communication.createNewGroup': 'Create New Group',
+    'communication.groupInfo': 'Group Info',
+    'communication.participants': 'Participants',
+    'communication.addParticipants': 'Add Participants',
+    'communication.removeParticipant': 'Remove from group',
+    'communication.makeAdmin': 'Make Admin',
+    'communication.leaveGroup': 'Leave Group',
+    'communication.deleteGroup': 'Delete Group',
+    'communication.groupCreated': 'Group created successfully',
+    'communication.groupUpdated': 'Group updated successfully',
+    'communication.participantAdded': 'Participant added',
+    'communication.participantRemoved': 'Participant removed',
+    'communication.leftGroup': 'You left the group',
+    'communication.groupDeleted': 'Group deleted',
     
-    // Financial
-    'cash-closure': 'Cash Closure',
-    'financial-reports': 'Financial Reports',
-    opening: 'Opening',
-    closing: 'Closing',
-    sales: 'Sales',
-    expenses: 'Expenses'
+    // Notifications
+    'communication.newMessage': 'New message from {{name}}',
+    'communication.newGroupMessage': 'New message in {{groupName}}',
+    'communication.connectionRequestReceived': 'New connection request from {{name}}',
+    'communication.muteChat': 'Mute notifications',
+    'communication.unmuteChat': 'Unmute notifications',
+    'communication.mutedUntil': 'Muted until {{time}}',
+    
+    // Status
+    'communication.online': 'Online',
+    'communication.offline': 'Offline',
+    'communication.lastSeen': 'Last seen {{time}}',
+    'communication.delivered': 'Delivered',
+    'communication.read': 'Read',
+    
+    // Time formatting
+    'communication.now': 'now',
+    'communication.yesterday': 'yesterday',
+    'communication.today': 'today',
+    
+    // Errors
+    'communication.errorLoadingChats': 'Error loading chats',
+    'communication.errorSendingMessage': 'Failed to send message',
+    'communication.errorUploadingFile': 'Failed to upload file',
+    'communication.errorCreatingGroup': 'Failed to create group',
+    'communication.errorJoiningGroup': 'Failed to join group',
+    'communication.connectionRequired': 'Connection required to start private chat'
   },
   
   fr: {
@@ -261,141 +204,19 @@ export const translations = {
     name: 'Nom',
     description: 'Description',
     quantity: 'Quantité',
-    'unit-price': 'Prix unitaire',
-    'total-price': 'Prix total',
     notes: 'Notes',
-    favorite: 'Favori',
     welcome: 'Bienvenue',
-    kitchen: 'Cuisine',
-    pizzeria: 'Pizzeria',
-    service: 'Service',
-    manager: 'Manager',
-    super_manager: 'Super Manager',
-    
-    // Kitchen Inventory
-    'kitchen-inventory-title': 'Inventaire Cuisine',
-    'kitchen-inventory-description': 'Gérer le suivi et les rapports d\'inventaire mensuel de la cuisine',
-    'current-inventory': 'Inventaire Actuel',
-    'historical-inventories': 'Inventaires Historiques',
-    'anomalies-detected': 'Anomalies Détectées',
-    'inventory-period-message': 'L\'inventaire ne peut être accessible que du dernier jour du mois au premier jour du mois suivant.',
-    'access-denied-kitchen': 'Vous n\'avez pas accès à la section Inventaire Cuisine. Seuls les utilisateurs du département Cuisine et les managers peuvent accéder à cette zone.',
-    'start-inventory-title': 'Commencer l\'Inventaire Mensuel',
-    'start-inventory-description': 'Commencez à saisir l\'inventaire mensuel de la cuisine. Vous pouvez sauvegarder vos progrès et continuer plus tard.',
-    'start-new-inventory': 'Commencer Nouvel Inventaire',
-    'last-order-date': 'Date Dernière Commande',
-    'never-ordered': 'Jamais commandé',
-    'current-stock': 'Stock Actuel',
-    'total-value': 'Valeur Totale',
-    'in-stock': 'En Stock',
-    'price-needed': 'Prix Requis',
-    'products-with-stock': 'produits avec stock',
-    'items': 'articles',
-    'save-inventory': 'Sauvegarder Inventaire',
-    'approve-inventory': 'Approuver Inventaire',
-    'export-csv': 'Exporter CSV',
-    'export-pdf': 'Exporter PDF',
-    'detect-anomalies': 'Détecter Anomalies',
-    'inventory-completed': 'Inventaire Terminé',
-    'inventory-approved': 'Inventaire Approuvé',
-    'inventory-saved': 'Inventaire Sauvegardé',
-    'inventory-saved-message': 'Votre inventaire a été sauvegardé avec succès. Les managers seront notifiés pour approbation.',
-    'validation-error': 'Erreur de Validation',
-    'inventory-validation-message': 'Veuillez saisir au moins une quantité de produit ou un prix avant de sauvegarder.',
-    'monthly-inventory': 'Inventaire Mensuel',
-    'daily-inventory': 'Inventaire Quotidien',
-    'daily-inventory-description': 'Enregistrer les niveaux de stock quotidiens et les produits manquants pour le contrôle opérationnel.',
-    'missing-product': 'Manquant',
-    'available': 'Disponible',
-    'missing': 'Manquant',
-    'products-recorded': 'produits enregistrés',
-    'submit-daily-inventory': 'Soumettre Inventaire Quotidien',
-    'daily-inventory-saved': 'Inventaire Quotidien Sauvegardé',
-    'daily-inventory-saved-message': 'L\'inventaire quotidien a été enregistré avec succès.',
-    'daily-inventory-validation-message': 'Veuillez enregistrer au moins une quantité de produit ou marquer un produit comme manquant.',
-    
-    // Product Categories
-    'category.dairy-derivatives': 'Produits Laitiers et Dérivés',
-    'category.meats-cold-cuts': 'Viandes et Charcuteries',
-    'category.fish': 'Poissons',
-    'category.spices-seasonings': 'Épices et Assaisonnements',
-    'category.preserves-oils-pickles': 'Conserves, Huiles et Cornichons',
-    'category.nuts': 'Noix',
-    'category.fresh-fruits-vegetables': 'Fruits et Légumes Frais',
-    'category.flours': 'Farines',
-    'category.fruits': 'Fruits',
-    
-    // Products
-    'products.burrata': 'Burrata',
-    'products.buffalo_mozzarella': 'Mozzarella de bufflonne',
-    'products.pizza_mozzarella': 'Mozzarella pour pizza',
-    'products.goat_cheese': 'Fromage de chèvre',
-    'products.grana_padano_eighth': 'Grana Padano 1/8',
-    'products.grana_padano_shavings': 'Copeaux de Grana Padano',
-    'products.comte': 'Comté',
-    'products.taleggio': 'Taleggio',
-    'products.gorgonzola': 'Gorgonzola',
-    'products.truffle_pecorino': 'Pecorino à la truffe',
-    'products.primo_sale': 'Primo sale',
-    'products.mascarpone': 'Mascarpone',
-    'products.ricotta': 'Ricotta',
-    'products.butter': 'Beurre',
-    'products.cream': 'Crème',
-    'products.alberti_cream': 'Crème Alberti',
-    'products.milk': 'Lait',
-    'products.white_ham': 'Jambon blanc',
-    'products.parma_ham': 'Jambon de Parme',
-    'products.spicy_spianata': 'Spianata épicée',
-    'products.mortadella': 'Mortadelle',
-    'products.speck': 'Speck',
-    'products.bresaola': 'Bresaola',
-    'products.veal': 'Veau',
-    'products.tuna_pizzeria': 'Thon pizzeria',
-    'products.tuna_kitchen': 'Thon cuisine',
-    'products.anchovies': 'Anchois',
-    'products.basil': 'Basilic',
-    'products.oregano': 'Origan',
-    'products.pepper': 'Poivre',
-    'products.salt': 'Sel',
-    'products.red_chili': 'Piment rouge',
-    'products.mint': 'Menthe',
-    'products.sugar': 'Sucre',
-    'products.eggs': 'Œufs',
-    'products.dijon_mustard': 'Moutarde de Dijon',
-    'products.artichokes': 'Artichauts',
-    'products.sun_dried_tomatoes': 'Tomates séchées',
-    'products.caper_flowers': 'Fleurs de câpres',
-    'products.pizza_olives': 'Olives pour pizza',
-    'products.olive_oil': 'Huile d\'olive extra vierge',
-    'products.pistachio_oil': 'Huile de pistache',
-    'products.balsamic_vinegar': 'Vinaigre balsamique',
-    'products.white_balsamic_vinegar': 'Vinaigre balsamique blanc',
-    'products.sherry_vinegar': 'Vinaigre de Xérès',
-    'products.small_capers': 'Petites câpres',
-    'products.pine_nuts': 'Pignons de pin',
-    'products.almonds': 'Amandes',
-    'products.hazelnuts': 'Noisettes',
-    'products.hazelnut_cream': 'Crème de noisette',
-    'products.pistachios': 'Pistaches',
-    'products.salad': 'Salade',
-    'products.rocket': 'Roquette',
-    'products.lemon': 'Citron',
-    'products.orange': 'Orange',
-    'products.beef_heart_tomato': 'Tomate cœur de bœuf',
-    'products.cherry_tomato': 'Tomate cerise',
-    'products.yellow_pepper': 'Poivron jaune',
-    'products.red_pepper': 'Poivron rouge',
-    'products.zucchini': 'Courgette',
-    'products.eggplants': 'Aubergines',
-    'products.yellow_onion': 'Oignon jaune',
-    'products.red_onion': 'Oignon rouge',
-    'products.garlic': 'Ail',
-    'products.cucumber': 'Concombre',
-    'products.mushroom': 'Champignon',
-    'products.type_00_flour': 'Farine type 00',
-    'products.stone_ground_flour': 'Farine moulue sur pierre',
-    'products.chickpea_flour': 'Farine de pois chiches',
-    'products.peaches': 'Pêches'
+
+    // Communication System - French translations
+    'communication.selectChat': 'Sélectionner une conversation',
+    'communication.selectChatDescription': 'Choisissez parmi vos conversations pour commencer à échanger',
+    'communication.typing': 'en train d\'écrire...',
+    'communication.sending': 'Envoi en cours',
+    'communication.chatTypes.private': 'Chat Privé',
+    'communication.chatTypes.group': 'Chat de Groupe',
+    'communication.chatTypes.global': 'Discussion Générale',
+    'communication.chatTypes.announcements': 'Annonces',
+    'communication.participantsCount': '{{count}} participants'
   },
   
   it: {
@@ -443,146 +264,25 @@ export const translations = {
     name: 'Nome',
     description: 'Descrizione',
     quantity: 'Quantità',
-    'unit-price': 'Prezzo unitario',
-    'total-price': 'Prezzo totale',
     notes: 'Note',
-    favorite: 'Preferito',
     welcome: 'Benvenuto',
-    kitchen: 'Cucina',
-    pizzeria: 'Pizzeria',
-    service: 'Servizio',
-    manager: 'Manager',
-    super_manager: 'Super Manager',
-    
-    // Kitchen Inventory
-    'kitchen-inventory-title': 'Inventario Cucina',
-    'kitchen-inventory-description': 'Gestisci il tracciamento e i report dell\'inventario mensile della cucina',
-    'current-inventory': 'Inventario Corrente',
-    'historical-inventories': 'Inventari Storici',
-    'anomalies-detected': 'Anomalie Rilevate',
-    'inventory-period-message': 'L\'inventario può essere accessibile solo dall\'ultimo giorno del mese al primo giorno del mese successivo.',
-    'access-denied-kitchen': 'Non hai accesso alla sezione Inventario Cucina. Solo gli utenti del dipartimento Cucina e i manager possono accedere a quest\'area.',
-    'start-inventory-title': 'Inizia Inventario Mensile',
-    'start-inventory-description': 'Inizia a inserire l\'inventario mensile della cucina. Puoi salvare i tuoi progressi e continuare più tardi.',
-    'start-new-inventory': 'Inizia Nuovo Inventario',
-    'last-order-date': 'Data Ultimo Ordine',
-    'never-ordered': 'Mai ordinato',
-    'current-stock': 'Scorta Attuale',
-    'total-value': 'Valore Totale',
-    'in-stock': 'Disponibile',
-    'price-needed': 'Prezzo Richiesto',
-    'products-with-stock': 'prodotti con scorte',
-    'items': 'articoli',
-    'save-inventory': 'Salva Inventario',
-    'approve-inventory': 'Approva Inventario',
-    'export-csv': 'Esporta CSV',
-    'export-pdf': 'Esporta PDF',
-    'detect-anomalies': 'Rileva Anomalie',
-    'inventory-completed': 'Inventario Completato',
-    'inventory-approved': 'Inventario Approvato',
-    'inventory-saved': 'Inventario Salvato',
-    'inventory-saved-message': 'Il tuo inventario è stato salvato con successo. I manager saranno notificati per l\'approvazione.',
-    'validation-error': 'Errore di Validazione',
-    'inventory-validation-message': 'Inserisci almeno una quantità di prodotto o un prezzo prima di salvare.',
-    'monthly-inventory': 'Inventario Mensile',
-    'daily-inventory': 'Inventario Giornaliero',
-    'daily-inventory-description': 'Registra i livelli di scorte giornalieri e i prodotti mancanti per il controllo operativo.',
-    'missing-product': 'Mancante',
-    'available': 'Disponibile',
-    'missing': 'Mancante',
-    'products-recorded': 'prodotti registrati',
-    'submit-daily-inventory': 'Invia Inventario Giornaliero',
-    'daily-inventory-saved': 'Inventario Giornaliero Salvato',
-    'daily-inventory-saved-message': 'L\'inventario giornaliero è stato registrato con successo.',
-    'daily-inventory-validation-message': 'Registra almeno una quantità di prodotto o contrassegna un prodotto come mancante.',
-    
-    // Product Categories
-    'category.dairy-derivatives': 'Latticini e Derivati',
-    'category.meats-cold-cuts': 'Carni e Salumi',
-    'category.fish': 'Pesce',
-    'category.spices-seasonings': 'Spezie e Condimenti',
-    'category.preserves-oils-pickles': 'Conserve, Oli e Sottaceti',
-    'category.nuts': 'Frutta Secca',
-    'category.fresh-fruits-vegetables': 'Frutta e Verdura Fresca',
-    'category.flours': 'Farine',
-    'category.fruits': 'Frutta',
-    
-    // Products
-    'products.burrata': 'Burrata',
-    'products.buffalo_mozzarella': 'Mozzarella di bufala',
-    'products.pizza_mozzarella': 'Mozzarella per pizza',
-    'products.goat_cheese': 'Formaggio di capra',
-    'products.grana_padano_eighth': 'Grana Padano 1/8',
-    'products.grana_padano_shavings': 'Scaglie di Grana Padano',
-    'products.comte': 'Comté',
-    'products.taleggio': 'Taleggio',
-    'products.gorgonzola': 'Gorgonzola',
-    'products.truffle_pecorino': 'Pecorino al tartufo',
-    'products.primo_sale': 'Primo sale',
-    'products.mascarpone': 'Mascarpone',
-    'products.ricotta': 'Ricotta',
-    'products.butter': 'Burro',
-    'products.cream': 'Panna',
-    'products.alberti_cream': 'Panna Alberti',
-    'products.milk': 'Latte',
-    'products.white_ham': 'Prosciutto cotto',
-    'products.parma_ham': 'Prosciutto di Parma',
-    'products.spicy_spianata': 'Spianata piccante',
-    'products.mortadella': 'Mortadella',
-    'products.speck': 'Speck',
-    'products.bresaola': 'Bresaola',
-    'products.veal': 'Vitello',
-    'products.tuna_pizzeria': 'Tonno pizzeria',
-    'products.tuna_kitchen': 'Tonno cucina',
-    'products.anchovies': 'Acciughe',
-    'products.basil': 'Basilico',
-    'products.oregano': 'Origano',
-    'products.pepper': 'Pepe',
-    'products.salt': 'Sale',
-    'products.red_chili': 'Peperoncino rosso',
-    'products.mint': 'Menta',
-    'products.sugar': 'Zucchero',
-    'products.eggs': 'Uova',
-    'products.dijon_mustard': 'Senape di Digione',
-    'products.artichokes': 'Carciofi',
-    'products.sun_dried_tomatoes': 'Pomodori secchi',
-    'products.caper_flowers': 'Fiori di cappero',
-    'products.pizza_olives': 'Olive per pizza',
-    'products.olive_oil': 'Olio extravergine di oliva',
-    'products.pistachio_oil': 'Olio di pistacchio',
-    'products.balsamic_vinegar': 'Aceto balsamico',
-    'products.white_balsamic_vinegar': 'Aceto balsamico bianco',
-    'products.sherry_vinegar': 'Aceto di Sherry',
-    'products.small_capers': 'Capperi piccoli',
-    'products.pine_nuts': 'Pinoli',
-    'products.almonds': 'Mandorle',
-    'products.hazelnuts': 'Nocciole',
-    'products.hazelnut_cream': 'Crema di nocciole',
-    'products.pistachios': 'Pistacchi',
-    'products.salad': 'Insalata',
-    'products.rocket': 'Rucola',
-    'products.lemon': 'Limone',
-    'products.orange': 'Arancia',
-    'products.beef_heart_tomato': 'Pomodoro cuore di bue',
-    'products.cherry_tomato': 'Pomodorino',
-    'products.yellow_pepper': 'Peperone giallo',
-    'products.red_pepper': 'Peperone rosso',
-    'products.zucchini': 'Zucchine',
-    'products.eggplants': 'Melanzane',
-    'products.yellow_onion': 'Cipolla gialla',
-    'products.red_onion': 'Cipolla rossa',
-    'products.garlic': 'Aglio',
-    'products.cucumber': 'Cetriolo',
-    'products.mushroom': 'Funghi',
-    'products.type_00_flour': 'Farina tipo 00',
-    'products.stone_ground_flour': 'Farina macinata a pietra',
-    'products.chickpea_flour': 'Farina di ceci',
-    'products.peaches': 'Pesche'
+
+    // Communication System - Italian translations
+    'communication.selectChat': 'Seleziona una conversazione',
+    'communication.selectChatDescription': 'Scegli tra le tue conversazioni per iniziare a messaggiare',
+    'communication.typing': 'sta scrivendo...',
+    'communication.sending': 'Invio in corso',
+    'communication.chatTypes.private': 'Chat Privata',
+    'communication.chatTypes.group': 'Chat di Gruppo',
+    'communication.chatTypes.global': 'Discussione Generale',
+    'communication.chatTypes.announcements': 'Annunci',
+    'communication.participantsCount': '{{count}} partecipanti'
   }
 };
 
-export const useTranslation = (language: Language) => {
-  const t = (key: string): string => {
+// Simple translation hook
+export const useTranslation = (language: Language = 'en') => {
+  const t = (key: string, params?: Record<string, any>) => {
     const keys = key.split('.');
     let value: any = translations[language];
     
@@ -590,28 +290,23 @@ export const useTranslation = (language: Language) => {
       value = value?.[k];
     }
     
-    // If translation not found, try to create a fallback
-    if (!value || value === key) {
-      // For product keys like "products.burrata", extract and capitalize the last part
-      if (key.startsWith('products.')) {
-        const productName = key.replace('products.', '').replace(/_/g, ' ');
-        return productName.split(' ').map(word => 
-          word.charAt(0).toUpperCase() + word.slice(1)
-        ).join(' ');
+    if (typeof value !== 'string') {
+      // Fallback to English
+      value = translations.en;
+      for (const k of keys) {
+        value = value?.[k];
       }
-      
-      // For category keys like "category.fish", extract and format the last part
-      if (key.startsWith('category.')) {
-        const categoryName = key.replace('category.', '').replace(/-/g, ' ').replace(/_/g, ' ');
-        return categoryName.split(' ').map(word => 
-          word.charAt(0).toUpperCase() + word.slice(1)
-        ).join(' ');
-      }
-      
-      // General fallback: capitalize and clean up the key
-      return key.replace(/[-_]/g, ' ').split(' ').map(word => 
-        word.charAt(0).toUpperCase() + word.slice(1)
-      ).join(' ');
+    }
+    
+    if (typeof value !== 'string') {
+      return key; // Return the key if translation not found
+    }
+    
+    // Simple template replacement
+    if (params) {
+      return value.replace(/\{\{(\w+)\}\}/g, (match: string, paramKey: string) => {
+        return params[paramKey] || match;
+      });
     }
     
     return value;

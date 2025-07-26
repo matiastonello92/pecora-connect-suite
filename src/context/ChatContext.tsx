@@ -11,7 +11,7 @@ import {
   ChatMessageType
 } from '@/types/communication';
 import { toast } from "sonner";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@/lib/i18n';
 
 interface ChatContextType {
   // Chats
@@ -65,7 +65,7 @@ export const useChatContext = () => {
 
 export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user } = useAuth();
-  const { t } = useTranslation();
+  const { t } = useTranslation('en');
   
   const [chats, setChats] = useState<Chat[]>([]);
   const [activeChat, setActiveChat] = useState<Chat | null>(null);
