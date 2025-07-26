@@ -1,3 +1,4 @@
+import React from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -60,31 +61,31 @@ const AppContent = () => {
 };
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <InventoryProvider>
-        <ChecklistProvider>
-          <CommunicationProvider>
-            <CashRegisterProvider>
-              <ReportsProvider>
-                <EquipmentProvider>
-                  <UserManagementProvider>
-                    <TooltipProvider>
-                <Toaster />
-                <Sonner />
-                <BrowserRouter>
-                  <AppContent />
-                </BrowserRouter>
-                    </TooltipProvider>
-                  </UserManagementProvider>
-                </EquipmentProvider>
-              </ReportsProvider>
-            </CashRegisterProvider>
-          </CommunicationProvider>
-        </ChecklistProvider>
-      </InventoryProvider>
-    </AuthProvider>
-  </QueryClientProvider>
+  <BrowserRouter>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <InventoryProvider>
+          <ChecklistProvider>
+            <CommunicationProvider>
+              <CashRegisterProvider>
+                <ReportsProvider>
+                  <EquipmentProvider>
+                    <UserManagementProvider>
+                      <TooltipProvider>
+                        <AppContent />
+                        <Toaster />
+                        <Sonner />
+                      </TooltipProvider>
+                    </UserManagementProvider>
+                  </EquipmentProvider>
+                </ReportsProvider>
+              </CashRegisterProvider>
+            </CommunicationProvider>
+          </ChecklistProvider>
+        </InventoryProvider>
+      </AuthProvider>
+    </QueryClientProvider>
+  </BrowserRouter>
 );
 
 export default App;
