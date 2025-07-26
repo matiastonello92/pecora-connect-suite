@@ -55,7 +55,7 @@ const initialState: AuthState = {
   user: null,
   session: null,
   isAuthenticated: false,
-  isLoading: true,
+  isLoading: false, // Start with false to prevent infinite loading
   language: 'en',
 };
 
@@ -340,44 +340,86 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Check for existing session and set up auth listener
   useEffect(() => {
-    // Set up auth state listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        if (session?.user) {
-          // Use setTimeout to defer async operations and prevent deadlock
-          setTimeout(async () => {
-            const profile = await fetchUserProfile(session.user.id);
-            if (profile) {
-              const user = transformProfileToUser(profile, session.user);
-              dispatch({ type: 'AUTH_SUCCESS', payload: { user, session } });
-            } else {
-              dispatch({ type: 'AUTH_FAILURE' });
-            }
-          }, 0);
-        } else {
-          dispatch({ type: 'AUTH_FAILURE' });
-        }
+    let isMounted = true;
+    
+    // Force loading to false after a reasonable timeout to prevent infinite loading
+    const forceLoadingTimeout = setTimeout(() => {
+      if (isMounted) {
+        console.log('AuthContext: Force stopping loading due to timeout');
+        dispatch({ type: 'AUTH_FAILURE' });
       }
-    );
+    }, 2000);
 
-    // Check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    const handleAuthState = (event: string, session: any) => {
+      if (!isMounted) return;
+      
+      clearTimeout(forceLoadingTimeout);
+      
       if (session?.user) {
         setTimeout(async () => {
+          if (!isMounted) return;
+          
+          try {
+            const profile = await fetchUserProfile(session.user.id);
+            if (profile && isMounted) {
+              const user = transformProfileToUser(profile, session.user);
+              dispatch({ type: 'AUTH_SUCCESS', payload: { user, session } });
+            } else if (isMounted) {
+              dispatch({ type: 'AUTH_FAILURE' });
+            }
+          } catch (error) {
+            if (isMounted) {
+              dispatch({ type: 'AUTH_FAILURE' });
+            }
+          }
+        }, 100);
+      } else if (isMounted) {
+        dispatch({ type: 'AUTH_FAILURE' });
+      }
+    };
+
+    // Set up auth state listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(handleAuthState);
+
+    // Check for existing session
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      if (!isMounted) return;
+      
+      clearTimeout(forceLoadingTimeout);
+      
+      if (error || !session?.user) {
+        dispatch({ type: 'AUTH_FAILURE' });
+        return;
+      }
+
+      setTimeout(async () => {
+        if (!isMounted) return;
+        
+        try {
           const profile = await fetchUserProfile(session.user.id);
-          if (profile) {
+          if (profile && isMounted) {
             const user = transformProfileToUser(profile, session.user);
             dispatch({ type: 'AUTH_SUCCESS', payload: { user, session } });
-          } else {
+          } else if (isMounted) {
             dispatch({ type: 'AUTH_FAILURE' });
           }
-        }, 0);
-      } else {
+        } catch (error) {
+          if (isMounted) {
+            dispatch({ type: 'AUTH_FAILURE' });
+          }
+        }
+      }, 100);
+    }).catch(() => {
+      if (isMounted) {
         dispatch({ type: 'AUTH_FAILURE' });
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      isMounted = false;
+      clearTimeout(forceLoadingTimeout);
+      subscription.unsubscribe();
+    };
   }, []);
 
   const value: AuthContextType = {
