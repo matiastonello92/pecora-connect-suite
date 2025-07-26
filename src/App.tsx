@@ -22,7 +22,7 @@ import { CashRegister } from '@/pages/CashRegister';
 import { Reports } from '@/pages/Reports';
 import { Equipment } from '@/pages/Equipment';
 import { UserManagement } from '@/pages/UserManagement';
-import { Settings } from '@/pages/Settings';
+import Settings from '@/pages/Settings';
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
