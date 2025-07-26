@@ -31,6 +31,9 @@ import { Equipment } from '@/pages/Equipment';
 import { UserManagement } from '@/pages/UserManagement';
 import Settings from '@/pages/Settings';
 import { Financial } from '@/pages/Financial';
+import { Suppliers } from '@/pages/Suppliers';
+import { Tasks } from '@/pages/Tasks';
+import { Maintenance } from '@/pages/Maintenance';
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -74,6 +77,19 @@ const AppContent = () => {
         <Route path="/equipment" element={<Equipment />} />
         <Route path="/users" element={<UserManagement />} />
         <Route path="/settings" element={<Settings />} />
+        {/* Supplier routes */}
+        <Route path="/suppliers/orders" element={<Suppliers />} />
+        <Route path="/suppliers/list" element={<Suppliers />} />
+        <Route path="/suppliers/status" element={<Suppliers />} />
+        <Route path="/suppliers/archived" element={<Suppliers />} />
+        {/* Task routes */}
+        <Route path="/tasks/assigned" element={<Tasks />} />
+        <Route path="/tasks/create" element={<Tasks />} />
+        <Route path="/tasks/history" element={<Tasks />} />
+        {/* Maintenance routes */}
+        <Route path="/maintenance/report" element={<Maintenance />} />
+        <Route path="/maintenance/history" element={<Maintenance />} />
+        <Route path="/maintenance/scheduled" element={<Maintenance />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </AppLayout>
