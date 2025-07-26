@@ -155,6 +155,9 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     
     setLoading(true);
     try {
+      // First ensure default chats exist
+      await supabase.rpc('ensure_default_chats');
+
       const { data, error } = await supabase
         .from('chats')
         .select(`

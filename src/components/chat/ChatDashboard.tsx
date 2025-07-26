@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { useChatContext } from '@/context/ChatContext';
 import { useTranslation } from '@/lib/i18n';
+import { useAuth } from '@/context/AuthContext';
 import { formatDistanceToNow } from 'date-fns';
 import { enUS, fr, it } from 'date-fns/locale';
 import {
@@ -20,7 +21,11 @@ import {
   Settings,
   Volume2,
   VolumeX,
-  Clock
+  Check,
+  CheckCheck,
+  Pin,
+  Archive,
+  Menu
 } from 'lucide-react';
 import { ChatType } from '@/types/communication';
 import { ChatInterface } from './ChatInterface';
@@ -39,23 +44,27 @@ export const ChatDashboard: React.FC = () => {
     loading,
     createChat
   } = useChatContext();
+  const { user } = useAuth();
   const { t } = useTranslation('en');
   const [showCreateChat, setShowCreateChat] = useState(false);
+  const [showConnections, setShowConnections] = useState(false);
+  const [showGroups, setShowGroups] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const getLocale = () => enUS;
 
   const getChatIcon = (type: ChatType) => {
     switch (type) {
       case 'private':
-        return <MessageSquare className="h-4 w-4" />;
+        return <MessageSquare className="h-5 w-5 text-blue-500" />;
       case 'group':
-        return <Users className="h-4 w-4" />;
+        return <Users className="h-5 w-5 text-green-500" />;
       case 'global':
-        return <Globe className="h-4 w-4" />;
+        return <Globe className="h-5 w-5 text-purple-500" />;
       case 'announcements':
-        return <Megaphone className="h-4 w-4" />;
+        return <Megaphone className="h-5 w-5 text-orange-500" />;
       default:
-        return <MessageSquare className="h-4 w-4" />;
+        return <MessageSquare className="h-5 w-5 text-muted-foreground" />;
     }
   };
 
@@ -63,9 +72,9 @@ export const ChatDashboard: React.FC = () => {
     if (chat.name) return chat.name;
     
     if (chat.type === 'private' && chat.participants) {
-      // Find the other participant (not the current user)
-      // We'll need to get current user ID from context
-      const otherParticipant = chat.participants.find((p: any) => p.user?.first_name);
+      const otherParticipant = chat.participants.find((p: any) => 
+        p.user_id !== user?.id && p.user?.first_name
+      );
       if (otherParticipant?.user) {
         return `${otherParticipant.user.first_name} ${otherParticipant.user.last_name}`;
       }
@@ -85,133 +94,245 @@ export const ChatDashboard: React.FC = () => {
     }
   };
 
+  const getInitials = (chat: any) => {
+    const name = getChatName(chat);
+    return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+  };
+
+  const isMessageFromCurrentUser = (chat: any) => {
+    return chat.last_message?.sender_id === user?.id;
+  };
+
+  const getMessageStatus = (chat: any) => {
+    if (!chat.last_message || !isMessageFromCurrentUser(chat)) return null;
+    
+    // For now, we'll show as delivered - would need read receipts data
+    return <CheckCheck className="h-3 w-3 text-blue-500" />;
+  };
+
   const handleCreateChat = async (type: ChatType) => {
     if (type === 'group') {
-      // For group chats, we'll need a participant selection dialog
-      // For now, just create an empty group
-      await createChat(type, t('communication.newGroupChat'));
+      setShowGroups(true);
     } else if (type === 'private') {
-      // For private chats, we'll need a user selection dialog
-      // This will be handled by connection requests
+      setShowConnections(true);
     }
     setShowCreateChat(false);
   };
 
+  const formatTime = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInHours = (now.getTime() - date.getTime()) / (1000 * 60 * 60);
+    
+    if (diffInHours < 24) {
+      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    } else if (diffInHours < 168) { // Less than a week
+      return date.toLocaleDateString([], { weekday: 'short' });
+    } else {
+      return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
+    }
+  };
+
+  const sortedChats = [...filteredChats].sort((a, b) => {
+    // Announcements and global chats first
+    if (a.type === 'announcements' && b.type !== 'announcements') return -1;
+    if (b.type === 'announcements' && a.type !== 'announcements') return 1;
+    if (a.type === 'global' && b.type !== 'global' && b.type !== 'announcements') return -1;
+    if (b.type === 'global' && a.type !== 'global' && a.type !== 'announcements') return 1;
+    
+    // Then by last message time
+    return new Date(b.last_message_at).getTime() - new Date(a.last_message_at).getTime();
+  });
+
+  if (showConnections) {
+    return <ConnectionRequestManager onClose={() => setShowConnections(false)} />;
+  }
+
+  if (showGroups) {
+    return <GroupManagement onClose={() => setShowGroups(false)} />;
+  }
+
   return (
-    <div className="flex h-full">
-      {/* Chat List */}
-      <div className="w-80 border-r border-border bg-card">
-        <div className="p-4 space-y-4">
-          {/* Header */}
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold">{t('communication.dashboard.title')}</h2>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowCreateChat(!showCreateChat)}
-            >
-              <Plus className="h-4 w-4" />
-            </Button>
+    <div className="flex h-full bg-background">
+      {/* Chat List Sidebar */}
+      <div className={`${activeChat && !isMobileMenuOpen ? 'hidden md:flex' : 'flex'} w-full md:w-80 flex-col border-r border-border bg-card`}>
+        {/* Header */}
+        <div className="p-4 bg-primary/5 border-b border-border">
+          <div className="flex items-center justify-between mb-4">
+            <h1 className="text-xl font-semibold text-foreground">
+              {t('communication.dashboard.title')}
+            </h1>
+            <div className="flex items-center space-x-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowConnections(true)}
+                className="hover:bg-accent focus:bg-accent active:bg-accent"
+              >
+                <Users className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowCreateChat(!showCreateChat)}
+                className="hover:bg-accent focus:bg-accent active:bg-accent"
+              >
+                <Plus className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="hover:bg-accent focus:bg-accent active:bg-accent"
+              >
+                <Settings className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
 
-          {/* Search */}
+          {/* Search Bar */}
           <div className="relative">
-            <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder={t('communication.searchChats')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-9"
+              className="pl-10 bg-background/50 border-border focus:bg-background"
             />
           </div>
 
-          {/* Quick Create Buttons */}
+          {/* Quick Create Menu */}
           {showCreateChat && (
-            <div className="space-y-2 p-3 bg-muted/50 rounded-lg">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="w-full justify-start"
-                onClick={() => handleCreateChat('group')}
-              >
-                <Users className="h-4 w-4 mr-2" />
-                {t('communication.createGroupChat')}
-              </Button>
+            <div className="mt-3 p-3 bg-background/80 rounded-lg border border-border animate-fade-in">
+              <div className="space-y-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="w-full justify-start hover:bg-accent focus:bg-accent active:bg-accent"
+                  onClick={() => handleCreateChat('group')}
+                >
+                  <Users className="h-4 w-4 mr-2" />
+                  {t('communication.createGroupChat')}
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="w-full justify-start hover:bg-accent focus:bg-accent active:bg-accent"
+                  onClick={() => setShowConnections(true)}
+                >
+                  <MessageSquare className="h-4 w-4 mr-2" />
+                  {t('communication.newPrivateChat')}
+                </Button>
+              </div>
             </div>
           )}
         </div>
 
         {/* Chat List */}
         <ScrollArea className="flex-1">
-          <div className="p-2 space-y-1">
+          <div className="p-2">
             {loading ? (
-              <div className="p-4 text-center text-muted-foreground">
-                {t('common.loading')}
+              <div className="flex items-center justify-center py-8">
+                <div className="animate-pulse text-muted-foreground">
+                  {t('common.loading')}
+                </div>
               </div>
-            ) : filteredChats.length === 0 ? (
-              <div className="p-4 text-center text-muted-foreground">
-                {searchTerm ? t('communication.noChatsFound') : t('communication.noChats')}
+            ) : sortedChats.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-muted flex items-center justify-center">
+                  <MessageSquare className="w-8 h-8" />
+                </div>
+                <p className="text-sm">
+                  {searchTerm ? t('communication.noChatsFound') : t('communication.noChats')}
+                </p>
               </div>
             ) : (
-              filteredChats.map((chat) => (
-                <Card
-                  key={chat.id}
-                  className={`cursor-pointer transition-colors hover:bg-accent/50 focus:bg-accent/50 active:bg-accent/50 ${
-                    activeChat?.id === chat.id ? 'bg-accent' : ''
-                  }`}
-                  onClick={() => setActiveChat(chat)}
-                >
-                  <CardContent className="p-3">
-                    <div className="flex items-start space-x-3">
-                      {/* Chat Avatar/Icon */}
-                      <div className="flex items-center justify-center w-10 h-10 bg-primary/10 rounded-full">
-                        {getChatIcon(chat.type)}
-                      </div>
-
-                      {/* Chat Info */}
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between">
-                          <h3 className="font-medium truncate">{getChatName(chat)}</h3>
-                          <div className="flex items-center space-x-1">
-                            {chat.unread_count > 0 && (
-                              <Badge variant="default" className="h-5 text-xs">
-                                {chat.unread_count}
-                              </Badge>
-                            )}
-                            {/* Mute indicator */}
-                            {chat.participants?.some((p: any) => p.is_muted) && (
-                              <VolumeX className="h-3 w-3 text-muted-foreground" />
-                            )}
+              <div className="space-y-1">
+                {sortedChats.map((chat) => (
+                  <div
+                    key={chat.id}
+                    className={`relative rounded-lg cursor-pointer transition-all duration-200 hover:bg-accent/50 focus:bg-accent/50 active:bg-accent/50 ${
+                      activeChat?.id === chat.id ? 'bg-accent' : ''
+                    }`}
+                    onClick={() => {
+                      setActiveChat(chat);
+                      setIsMobileMenuOpen(false);
+                    }}
+                  >
+                    <div className="p-3">
+                      <div className="flex items-start space-x-3">
+                        {/* Avatar */}
+                        <div className="relative">
+                          <Avatar className="h-12 w-12 border-2 border-background">
+                            <AvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/10 text-primary font-semibold text-sm">
+                              {getInitials(chat)}
+                            </AvatarFallback>
+                          </Avatar>
+                          {/* Chat type indicator */}
+                          <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-background border-2 border-background flex items-center justify-center">
+                            {getChatIcon(chat.type)}
                           </div>
                         </div>
 
-                        <p className="text-sm text-muted-foreground truncate mt-1">
-                          {getLastMessagePreview(chat)}
-                        </p>
+                        {/* Chat Info */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center space-x-2">
+                                <h3 className="font-semibold text-sm truncate text-foreground">
+                                  {getChatName(chat)}
+                                </h3>
+                                {chat.type === 'announcements' && (
+                                  <Pin className="h-3 w-3 text-orange-500" />
+                                )}
+                              </div>
+                              
+                              <div className="flex items-center mt-1 space-x-1">
+                                {getMessageStatus(chat)}
+                                <p className="text-xs text-muted-foreground truncate flex-1">
+                                  {getLastMessagePreview(chat)}
+                                </p>
+                              </div>
+                            </div>
 
-                        {/* Timestamp */}
-                        {chat.last_message_at && (
-                          <div className="flex items-center mt-2 text-xs text-muted-foreground">
-                            <Clock className="h-3 w-3 mr-1" />
-                            {formatDistanceToNow(new Date(chat.last_message_at), {
-                              addSuffix: true,
-                              locale: getLocale()
-                            })}
+                            {/* Time and Badges */}
+                            <div className="flex flex-col items-end space-y-1 ml-2">
+                              {chat.last_message_at && (
+                                <span className="text-xs text-muted-foreground">
+                                  {formatTime(chat.last_message_at)}
+                                </span>
+                              )}
+                              
+                              <div className="flex items-center space-x-1">
+                                {chat.unread_count > 0 && (
+                                  <Badge 
+                                    variant="default" 
+                                    className="h-5 min-w-[20px] text-xs bg-primary text-primary-foreground flex items-center justify-center rounded-full"
+                                  >
+                                    {chat.unread_count > 99 ? '99+' : chat.unread_count}
+                                  </Badge>
+                                )}
+                                {chat.participants?.some((p: any) => p.is_muted) && (
+                                  <VolumeX className="h-3 w-3 text-muted-foreground" />
+                                )}
+                              </div>
+                            </div>
                           </div>
-                        )}
+                        </div>
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
-              ))
+                  </div>
+                ))}
+              </div>
             )}
           </div>
         </ScrollArea>
       </div>
 
       {/* Chat Interface */}
-      <div className="flex-1">
-        <ChatInterface />
+      <div className={`${!activeChat || isMobileMenuOpen ? 'hidden md:flex' : 'flex'} flex-1 flex-col`}>
+        <ChatInterface 
+          onBack={() => setIsMobileMenuOpen(true)}
+        />
       </div>
     </div>
   );

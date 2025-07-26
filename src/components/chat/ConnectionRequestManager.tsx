@@ -17,12 +17,17 @@ import {
   Check,
   X,
   Clock,
-  MessageCircle
+  MessageCircle,
+  ArrowLeft
 } from 'lucide-react';
 
 const locales = { en: enUS, fr, it };
 
-export const ConnectionRequestManager: React.FC = () => {
+interface ConnectionRequestManagerProps {
+  onClose: () => void;
+}
+
+export const ConnectionRequestManager: React.FC<ConnectionRequestManagerProps> = ({ onClose }) => {
   const { 
     connectionRequests, 
     sendConnectionRequest, 
@@ -79,6 +84,14 @@ export const ConnectionRequestManager: React.FC = () => {
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center space-x-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onClose}
+              className="hover:bg-accent focus:bg-accent active:bg-accent"
+            >
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
             <UserPlus className="h-5 w-5" />
             <span>{t('communication.connections')}</span>
           </CardTitle>
