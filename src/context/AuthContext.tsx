@@ -120,7 +120,7 @@ const fetchUserProfile = async (userId: string): Promise<Profile | null> => {
       .from('profiles')
       .select('*')
       .eq('user_id', userId)
-      .single();
+      .maybeSingle();
 
     if (error) {
       console.error('Error fetching user profile:', error);
@@ -342,15 +342,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      (event, session) => {
         if (session?.user) {
-          const profile = await fetchUserProfile(session.user.id);
-          if (profile) {
-            const user = transformProfileToUser(profile, session.user);
-            dispatch({ type: 'AUTH_SUCCESS', payload: { user, session } });
-          } else {
-            dispatch({ type: 'AUTH_FAILURE' });
-          }
+          // Use setTimeout to defer async operations and prevent deadlock
+          setTimeout(async () => {
+            const profile = await fetchUserProfile(session.user.id);
+            if (profile) {
+              const user = transformProfileToUser(profile, session.user);
+              dispatch({ type: 'AUTH_SUCCESS', payload: { user, session } });
+            } else {
+              dispatch({ type: 'AUTH_FAILURE' });
+            }
+          }, 0);
         } else {
           dispatch({ type: 'AUTH_FAILURE' });
         }

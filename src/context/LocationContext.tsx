@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import { LocationType } from '@/types/users';
 import { useAuth } from './AuthContext';
 
@@ -20,11 +20,11 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   // Determine if user can switch locations
   const canSwitchLocations = user?.location === 'all_locations';
 
-  // Available locations for switching
-  const availableLocations = [
+  // Available locations for switching - memoized to prevent unnecessary re-renders
+  const availableLocations = useMemo(() => [
     { value: 'menton' as ActiveLocationType, label: 'Menton' },
     { value: 'lyon' as ActiveLocationType, label: 'Lyon' }
-  ];
+  ], []);
 
   // Set default location based on user's location
   useEffect(() => {
@@ -49,7 +49,7 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         setActiveLocationState(saved);
       }
     }
-  }, [canSwitchLocations]);
+  }, [canSwitchLocations, availableLocations]);
 
   const value: LocationContextType = {
     activeLocation,
