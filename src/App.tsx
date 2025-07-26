@@ -22,6 +22,7 @@ import { CashRegister } from '@/pages/CashRegister';
 import { Reports } from '@/pages/Reports';
 import { Equipment } from '@/pages/Equipment';
 import { UserManagement } from '@/pages/UserManagement';
+import { Settings } from '@/pages/Settings';
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -51,10 +52,11 @@ const AppContent = () => {
         <Route path="/checklists" element={<Checklists />} />
         <Route path="/communication" element={<Communication />} />
         <Route path="/cash-register" element={<CashRegister />} />
-        <Route path="/reports" element={<Reports />} />
-        <Route path="/equipment" element={<Equipment />} />
-        <Route path="/users" element={<UserManagement />} />
-        <Route path="*" element={<NotFound />} />
+              <Route path="/reports" element={<Reports />} />
+              <Route path="/equipment" element={<Equipment />} />
+              <Route path="/users" element={<UserManagement />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="*" element={<NotFound />} />
       </Routes>
     </AppLayout>
   );

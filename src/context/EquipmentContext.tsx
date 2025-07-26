@@ -83,112 +83,11 @@ export const EquipmentProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     loading: false
   });
 
-  // Mock data
+  // Initialize with empty data - ready for real use
   useEffect(() => {
-    const mockEquipment: Equipment[] = [
-      {
-        id: '1',
-        name: 'Pizza Oven #1',
-        category: 'kitchen',
-        model: 'Pavesi Forni RPM 120',
-        serialNumber: 'PF2024001',
-        purchaseDate: new Date('2023-01-15'),
-        warrantyExpiry: new Date('2026-01-15'),
-        location: 'Main Kitchen',
-        department: 'kitchen',
-        status: 'operational',
-        lastMaintenance: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000),
-        nextMaintenance: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000),
-        notes: 'Regular weekly cleaning performed'
-      },
-      {
-        id: '2',
-        name: 'Espresso Machine',
-        category: 'bar',
-        model: 'La Marzocco Linea PB',
-        serialNumber: 'LM2024002',
-        purchaseDate: new Date('2023-06-10'),
-        warrantyExpiry: new Date('2025-06-10'),
-        location: 'Main Bar',
-        department: 'service',
-        status: 'maintenance',
-        lastMaintenance: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
-        nextMaintenance: new Date(Date.now() + 28 * 24 * 60 * 60 * 1000),
-        notes: 'Descaling in progress'
-      },
-      {
-        id: '3',
-        name: 'Dishwasher',
-        category: 'cleaning',
-        model: 'Hobart UX25EA',
-        serialNumber: 'HB2024003',
-        purchaseDate: new Date('2023-03-20'),
-        location: 'Dish Pit',
-        department: 'kitchen',
-        status: 'broken',
-        lastMaintenance: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
-        notes: 'Pump failure - repair scheduled'
-      }
-    ];
-
-    const mockMaintenanceRecords: MaintenanceRecord[] = [
-      {
-        id: '1',
-        equipmentId: '1',
-        type: 'routine',
-        description: 'Weekly deep cleaning and calibration',
-        performedBy: 'kitchen@pecora.com',
-        performedAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000),
-        duration: 120,
-        nextMaintenanceDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000),
-        notes: 'All systems functioning normally'
-      },
-      {
-        id: '2',
-        equipmentId: '2',
-        type: 'deep-clean',
-        description: 'Descaling and group head cleaning',
-        performedBy: 'service@pecora.com',
-        performedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
-        cost: 85.00,
-        duration: 180,
-        nextMaintenanceDate: new Date(Date.now() + 28 * 24 * 60 * 60 * 1000),
-        partsUsed: [
-          { name: 'Descaling solution', quantity: 2, cost: 25.00 },
-          { name: 'Group screen', quantity: 1, cost: 15.00 }
-        ]
-      }
-    ];
-
-    const mockMaintenanceSchedule: MaintenanceSchedule[] = [
-      {
-        id: '1',
-        equipmentId: '1',
-        equipment: mockEquipment[0],
-        type: 'routine',
-        frequency: 30,
-        lastPerformed: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000),
-        nextDue: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000),
-        isOverdue: false,
-        assignedTo: 'kitchen@pecora.com',
-        priority: 'medium'
-      },
-      {
-        id: '2',
-        equipmentId: '3',
-        equipment: mockEquipment[2],
-        type: 'repair',
-        frequency: 0,
-        nextDue: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
-        isOverdue: true,
-        assignedTo: 'maintenance@pecora.com',
-        priority: 'high'
-      }
-    ];
-
-    dispatch({ type: 'LOAD_EQUIPMENT', payload: mockEquipment });
-    dispatch({ type: 'LOAD_MAINTENANCE_RECORDS', payload: mockMaintenanceRecords });
-    dispatch({ type: 'LOAD_MAINTENANCE_SCHEDULE', payload: mockMaintenanceSchedule });
+    dispatch({ type: 'LOAD_EQUIPMENT', payload: [] });
+    dispatch({ type: 'LOAD_MAINTENANCE_RECORDS', payload: [] });
+    dispatch({ type: 'LOAD_MAINTENANCE_SCHEDULE', payload: [] });
   }, []);
 
   const addEquipment = (equipmentData: Omit<Equipment, 'id'>) => {

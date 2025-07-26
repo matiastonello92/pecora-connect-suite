@@ -97,103 +97,10 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     loading: false
   });
 
-  // Mock data
+  // Initialize with empty data - ready for real use
   useEffect(() => {
-    const mockItems: InventoryItem[] = [
-      {
-        id: '1',
-        name: 'San Marzano Tomatoes',
-        category: 'vegetables',
-        unit: 'kg',
-        currentStock: 25,
-        minStock: 10,
-        maxStock: 50,
-        unitCost: 4.50,
-        supplier: 'Italian Foods Co.',
-        location: 'Dry Storage A1',
-        department: 'kitchen',
-        expiryDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
-        lastUpdated: new Date(),
-        updatedBy: 'system'
-      },
-      {
-        id: '2',
-        name: 'Mozzarella di Bufala',
-        category: 'dairy',
-        unit: 'kg',
-        currentStock: 8,
-        minStock: 5,
-        maxStock: 20,
-        unitCost: 18.00,
-        supplier: 'Campania Dairy',
-        location: 'Fridge B2',
-        department: 'kitchen',
-        expiryDate: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000),
-        lastUpdated: new Date(),
-        updatedBy: 'chef@pecora.com'
-      },
-      {
-        id: '3',
-        name: '00 Flour',
-        category: 'dry-goods',
-        unit: 'kg',
-        currentStock: 45,
-        minStock: 20,
-        maxStock: 100,
-        unitCost: 2.20,
-        supplier: 'Mulino Bianco',
-        location: 'Dry Storage A3',
-        department: 'pizzeria',
-        lastUpdated: new Date(),
-        updatedBy: 'system'
-      },
-      {
-        id: '4',
-        name: 'Chianti Classico 2020',
-        category: 'wine',
-        unit: 'bottle',
-        currentStock: 12,
-        minStock: 6,
-        maxStock: 24,
-        unitCost: 15.50,
-        supplier: 'Tuscan Wines',
-        location: 'Wine Cellar C1',
-        department: 'service',
-        lastUpdated: new Date(),
-        updatedBy: 'sommelier@pecora.com'
-      }
-    ];
-
-    const mockSessions: InventorySession[] = [
-      {
-        id: '1',
-        department: 'kitchen',
-        status: 'active',
-        startedBy: 'chef@pecora.com',
-        startedAt: new Date(Date.now() - 2 * 60 * 60 * 1000),
-        items: [
-          {
-            itemId: '1',
-            item: mockItems[0],
-            expectedQuantity: 25,
-            countedQuantity: 24,
-            variance: -1,
-            notes: 'One damaged can'
-          },
-          {
-            itemId: '2',
-            item: mockItems[1],
-            expectedQuantity: 8,
-            countedQuantity: 8,
-            variance: 0
-          }
-        ]
-      }
-    ];
-
-    dispatch({ type: 'LOAD_ITEMS', payload: mockItems });
-    dispatch({ type: 'LOAD_SESSIONS', payload: mockSessions });
-    dispatch({ type: 'START_SESSION', payload: mockSessions[0] });
+    dispatch({ type: 'LOAD_ITEMS', payload: [] });
+    dispatch({ type: 'LOAD_SESSIONS', payload: [] });
   }, []);
 
   const addItem = (itemData: Omit<InventoryItem, 'id'>) => {

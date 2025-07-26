@@ -45,43 +45,9 @@ export const ReportsProvider: React.FC<{ children: React.ReactNode }> = ({ child
     currentReport: null
   });
 
-  // Mock data
+  // Initialize with empty data - ready for real use
   useEffect(() => {
-    const mockReports: Report[] = [
-      {
-        id: '1',
-        type: 'sales',
-        title: 'Weekly Sales Report',
-        period: 'week',
-        startDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-        endDate: new Date(),
-        data: {
-          period: 'Week of ' + new Date().toLocaleDateString(),
-          totalSales: 15420.50,
-          totalOrders: 234,
-          averageOrder: 65.90,
-          topItems: [
-            { itemId: '1', name: 'Margherita Pizza', quantity: 45, revenue: 652.50 },
-            { itemId: '2', name: 'Truffle Risotto', quantity: 28, revenue: 616.00 }
-          ],
-          paymentMethods: {
-            cash: 3200.50,
-            card: 8920.00,
-            digital: 2800.00,
-            voucher: 500.00
-          },
-          hourlyBreakdown: [
-            { hour: 12, sales: 2340.50, orders: 28 },
-            { hour: 13, sales: 3120.00, orders: 35 },
-            { hour: 19, sales: 4200.00, orders: 45 }
-          ]
-        } as SalesReport,
-        generatedBy: 'manager@pecora.com',
-        generatedAt: new Date()
-      }
-    ];
-
-    dispatch({ type: 'LOAD_REPORTS', payload: mockReports });
+    dispatch({ type: 'LOAD_REPORTS', payload: [] });
   }, []);
 
   const generateReport = (type: ReportType, period: TimeRange, startDate: Date, endDate: Date) => {

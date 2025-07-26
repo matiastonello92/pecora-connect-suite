@@ -161,62 +161,10 @@ export const CashRegisterProvider: React.FC<{ children: React.ReactNode }> = ({ 
     loading: false
   });
 
-  // Mock data
+  // Initialize with empty data - ready for real use
   useEffect(() => {
-    const mockMenuItems: MenuItem[] = [
-      {
-        id: '1',
-        name: 'Margherita Pizza',
-        category: 'Pizza',
-        price: 14.50,
-        description: 'Fresh tomato sauce, mozzarella, basil',
-        allergens: ['gluten', 'dairy'],
-        isAvailable: true,
-        preparationTime: 15
-      },
-      {
-        id: '2',
-        name: 'Truffle Risotto',
-        category: 'Pasta',
-        price: 22.00,
-        description: 'Arborio rice with black truffle and parmesan',
-        allergens: ['dairy'],
-        isAvailable: true,
-        preparationTime: 20
-      },
-      {
-        id: '3',
-        name: 'Tiramisu',
-        category: 'Dessert',
-        price: 8.50,
-        description: 'Traditional Italian dessert',
-        allergens: ['eggs', 'dairy', 'alcohol'],
-        isAvailable: true,
-        preparationTime: 2
-      }
-    ];
-
-    const mockOrders: Order[] = [
-      {
-        id: '1',
-        tableNumber: 5,
-        items: [],
-        subtotal: 22.50,
-        tax: 2.25,
-        discount: 0,
-        total: 24.75,
-        paymentMethod: 'card',
-        status: 'delivered',
-        type: 'dine-in',
-        createdBy: 'server@pecora.com',
-        createdAt: new Date(Date.now() - 30 * 60 * 1000),
-        completedAt: new Date(Date.now() - 20 * 60 * 1000)
-      }
-    ];
-
-    dispatch({ type: 'LOAD_MENU_ITEMS', payload: mockMenuItems });
-    dispatch({ type: 'LOAD_ORDERS', payload: mockOrders });
-    dispatch({ type: 'START_CASH_SESSION', payload: 200 });
+    dispatch({ type: 'LOAD_MENU_ITEMS', payload: [] });
+    dispatch({ type: 'LOAD_ORDERS', payload: [] });
   }, []);
 
   const startNewOrder = (tableNumber?: number, customerName?: string) => {

@@ -23,6 +23,7 @@ import {
   Wrench,
   Users,
   Settings,
+  LogOut,
 } from 'lucide-react';
 
 const navigationItems = [
@@ -85,7 +86,7 @@ const navigationItems = [
 ];
 
 export const AppSidebar = () => {
-  const { user, language, hasPermission, hasAccess } = useAuth();
+  const { user, language, hasPermission, hasAccess, logout } = useAuth();
   const { t } = useTranslation(language);
   const { state } = useSidebar();
   const location = useLocation();
@@ -147,21 +148,58 @@ export const AppSidebar = () => {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* User Info Section */}
-        {!isCollapsed && user && (
-          <div className="mt-auto p-4 border-t border-border">
-            <div className="flex items-center gap-3">
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-foreground truncate">
-                  {user.firstName} {user.lastName}
-                </p>
-                <p className="text-xs text-muted-foreground truncate capitalize">
-                  {t(user.department)} • {user.location}
-                </p>
+        {/* User Footer Section */}
+        <div className="mt-auto border-t border-border">
+          {!isCollapsed && user && (
+            <div className="p-4">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-foreground truncate">
+                    {user.firstName} {user.lastName}
+                  </p>
+                  <p className="text-xs text-muted-foreground truncate capitalize">
+                    {t(user.department)} • {user.location}
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex gap-2">
+                <SidebarMenuButton asChild className="flex-1">
+                  <NavLink to="/settings" className={getNavClassName}>
+                    <Settings className="h-4 w-4" />
+                    <span className="ml-2 text-xs">{t('settings')}</span>
+                  </NavLink>
+                </SidebarMenuButton>
+                
+                <SidebarMenuButton 
+                  onClick={logout}
+                  className="flex-1 text-destructive hover:text-destructive hover:bg-destructive/10"
+                >
+                  <LogOut className="h-4 w-4" />
+                  <span className="ml-2 text-xs">{t('logout')}</span>
+                </SidebarMenuButton>
               </div>
             </div>
-          </div>
-        )}
+          )}
+          
+          {isCollapsed && (
+            <div className="p-2 space-y-1">
+              <SidebarMenuButton asChild>
+                <NavLink to="/settings" title={t('settings')}>
+                  <Settings className="h-4 w-4" />
+                </NavLink>
+              </SidebarMenuButton>
+              
+              <SidebarMenuButton 
+                onClick={logout}
+                title={t('logout')}
+                className="text-destructive hover:text-destructive hover:bg-destructive/10"
+              >
+                <LogOut className="h-4 w-4" />
+              </SidebarMenuButton>
+            </div>
+          )}
+        </div>
       </SidebarContent>
     </Sidebar>
   );
