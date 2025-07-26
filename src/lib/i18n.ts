@@ -24,6 +24,7 @@ export const translations = {
     // Navigation
     navigation: 'Navigation',
     dashboard: 'Dashboard',
+    chat: 'CHAT',
     inventory: 'Inventory',
     'kitchen-inventory': 'Kitchen Inventory',
     checklists: 'Checklists',
@@ -174,6 +175,7 @@ export const translations = {
     // Navigation
     navigation: 'Navigation',
     dashboard: 'Tableau de bord',
+    chat: 'CHAT',
     inventory: 'Inventaire',
     'kitchen-inventory': 'Inventaire Cuisine',
     checklists: 'Listes de contrôle',
@@ -234,6 +236,7 @@ export const translations = {
     // Navigation
     navigation: 'Navigazione',
     dashboard: 'Dashboard',
+    chat: 'CHAT',
     inventory: 'Inventario',
     'kitchen-inventory': 'Inventario Cucina',
     checklists: 'Liste di controllo',

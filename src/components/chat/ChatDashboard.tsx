@@ -7,7 +7,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { useChatContext } from '@/context/ChatContext';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@/lib/i18n';
 import { formatDistanceToNow } from 'date-fns';
 import { enUS, fr, it } from 'date-fns/locale';
 import {
@@ -39,10 +39,10 @@ export const ChatDashboard: React.FC = () => {
     loading,
     createChat
   } = useChatContext();
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation('en');
   const [showCreateChat, setShowCreateChat] = useState(false);
 
-  const getLocale = () => locales[i18n.language as keyof typeof locales] || enUS;
+  const getLocale = () => enUS;
 
   const getChatIcon = (type: ChatType) => {
     switch (type) {
