@@ -60,32 +60,34 @@ const AppContent = () => {
   );
 };
 
-const App = () => (
-  <BrowserRouter>
+const App: React.FC = () => {
+  return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <InventoryProvider>
-          <ChecklistProvider>
-            <CommunicationProvider>
-              <CashRegisterProvider>
-                <ReportsProvider>
-                  <EquipmentProvider>
-                    <UserManagementProvider>
-                      <TooltipProvider>
-                        <AppContent />
-                        <Toaster />
-                        <Sonner />
-                      </TooltipProvider>
-                    </UserManagementProvider>
-                  </EquipmentProvider>
-                </ReportsProvider>
-              </CashRegisterProvider>
-            </CommunicationProvider>
-          </ChecklistProvider>
-        </InventoryProvider>
-      </AuthProvider>
+      <BrowserRouter>
+        <AuthProvider>
+          <InventoryProvider>
+            <ChecklistProvider>
+              <CommunicationProvider>
+                <CashRegisterProvider>
+                  <ReportsProvider>
+                    <EquipmentProvider>
+                      <UserManagementProvider>
+                        <TooltipProvider>
+                          <AppContent />
+                          <Toaster />
+                          <Sonner />
+                        </TooltipProvider>
+                      </UserManagementProvider>
+                    </EquipmentProvider>
+                  </ReportsProvider>
+                </CashRegisterProvider>
+              </CommunicationProvider>
+            </ChecklistProvider>
+          </InventoryProvider>
+        </AuthProvider>
+      </BrowserRouter>
     </QueryClientProvider>
-  </BrowserRouter>
-);
+  );
+};
 
 export default App;
