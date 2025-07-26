@@ -2,6 +2,7 @@
 export type UserRole = 'base' | 'manager' | 'super_admin';
 export type UserStatus = 'active' | 'inactive' | 'suspended';
 export type EmploymentType = 'full-time' | 'part-time' | 'contract' | 'intern';
+export type LocationType = 'menton' | 'lyon' | 'all_locations';
 
 export interface UserProfile {
   id: string;
@@ -15,6 +16,7 @@ export interface UserProfile {
   position: string;
   employmentType: EmploymentType;
   status: UserStatus;
+  location: LocationType;
   startDate: Date;
   endDate?: Date;
   language: 'en' | 'fr' | 'it';

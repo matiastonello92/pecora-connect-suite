@@ -14,6 +14,7 @@ import { ReportsProvider } from '@/context/ReportsContext';
 import { EquipmentProvider } from '@/context/EquipmentContext';
 import { UserManagementProvider } from '@/context/UserManagementContext';
 import { FinancialProvider } from '@/context/FinancialContext';
+import { LocationProvider } from '@/context/LocationContext';
 import { LoginForm } from "@/components/auth/LoginForm";
 import { CompleteSignup } from "@/components/auth/CompleteSignup";
 import { ForgotPassword } from "@/components/auth/ForgotPassword";
@@ -92,13 +93,15 @@ const App: React.FC = () => {
                     <ReportsProvider>
                       <EquipmentProvider>
                         <UserManagementProvider>
-                          <FinancialProvider>
-                            <TooltipProvider>
-                            <AppContent />
-                            <Toaster />
-                            <Sonner />
-                          </TooltipProvider>
-                          </FinancialProvider>
+                           <FinancialProvider>
+                             <LocationProvider>
+                               <TooltipProvider>
+                                 <AppContent />
+                                 <Toaster />
+                                 <Sonner />
+                               </TooltipProvider>
+                             </LocationProvider>
+                           </FinancialProvider>
                         </UserManagementProvider>
                       </EquipmentProvider>
                     </ReportsProvider>

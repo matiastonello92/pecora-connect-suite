@@ -17,6 +17,7 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar';
 import { Logo } from '@/components/ui/logo';
+import { LocationSwitcher } from './LocationSwitcher';
 import {
   LayoutDashboard,
   Package,
@@ -278,6 +279,9 @@ export const AppSidebar = () => {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
+        {/* Location Switcher */}
+        <LocationSwitcher />
 
         {/* User Footer Section */}
         <div className="mt-auto border-t border-border">

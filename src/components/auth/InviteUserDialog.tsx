@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, UserPlus } from 'lucide-react';
+import { LocationType } from '@/types/users';
 
 export const InviteUserDialog = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -14,7 +15,7 @@ export const InviteUserDialog = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [role, setRole] = useState<UserRole>('base');
-  const [location, setLocation] = useState('');
+  const [location, setLocation] = useState<LocationType | ''>('');
   const [isLoading, setIsLoading] = useState(false);
   
   const { createInvitation, hasPermission } = useAuth();
@@ -39,7 +40,7 @@ export const InviteUserDialog = () => {
 
     setIsLoading(true);
 
-    const result = await createInvitation(email, firstName, lastName, role, location);
+    const result = await createInvitation(email, firstName, lastName, role, location as LocationType);
     
     if (result.error) {
       toast({
@@ -133,14 +134,16 @@ export const InviteUserDialog = () => {
 
           <div className="space-y-2">
             <Label htmlFor="location">Location</Label>
-            <Input
-              id="location"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              placeholder="PecoraNegra"
-              disabled={isLoading}
-              required
-            />
+            <Select value={location} onValueChange={(value: LocationType) => setLocation(value)} disabled={isLoading}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select location" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="menton">Menton</SelectItem>
+                <SelectItem value="lyon">Lyon</SelectItem>
+                <SelectItem value="all_locations">All Locations</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="flex justify-end space-x-2 pt-4">
