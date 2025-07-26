@@ -1,7 +1,9 @@
 import { useAuth } from '@/context/AuthContext';
 import { useTranslation } from '@/lib/i18n';
+import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
   Package,
   CheckSquare,
@@ -122,29 +124,38 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Stats Grid */}
+      {/* Stats Grid - Now clickable */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((stat, index) => (
-          <Card key={index} className={`relative ${stat.urgent ? 'ring-2 ring-red-200' : ''}`}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                {stat.title}
-              </CardTitle>
-              <div className={`p-2 rounded-md ${stat.color}`}>
-                <stat.icon className="h-4 w-4 text-white" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-primary">{stat.value}</div>
-              {stat.urgent && (
-                <div className="flex items-center mt-2 text-sm text-red-600">
-                  <AlertTriangle className="h-3 w-3 mr-1" />
-                  Requires attention
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        ))}
+        {stats.map((stat, index) => {
+          const linkTo = stat.title === 'Pending Inventories' ? '/inventory' :
+                        stat.title === 'Open Checklists' ? '/checklists' :
+                        stat.title === 'Unread Messages' ? '/communication' :
+                        stat.title === 'Equipment Alerts' ? '/equipment' : '#';
+          
+          return (
+            <Link key={index} to={linkTo}>
+              <Card className={`relative hover:shadow-md transition-shadow cursor-pointer ${stat.urgent ? 'ring-2 ring-red-200' : ''}`}>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">
+                    {stat.title}
+                  </CardTitle>
+                  <div className={`p-2 rounded-md ${stat.color}`}>
+                    <stat.icon className="h-4 w-4 text-white" />
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold text-primary">{stat.value}</div>
+                  {stat.urgent && (
+                    <div className="flex items-center mt-2 text-sm text-red-600">
+                      <AlertTriangle className="h-3 w-3 mr-1" />
+                      Requires attention
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </Link>
+          );
+        })}
       </div>
 
       {/* Recent Activity */}
@@ -189,29 +200,40 @@ export default function Dashboard() {
         </CardContent>
       </Card>
 
-      {/* Quick Actions */}
+      {/* Quick Actions - Now with navigation */}
       <Card>
         <CardHeader>
           <CardTitle className="font-playfair">Quick Actions</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <button className="flex flex-col items-center p-4 rounded-lg border border-border hover:bg-accent/50 transition-colors">
-              <Package className="h-8 w-8 text-blue-600 mb-2" />
-              <span className="text-sm font-medium">Update Inventory</span>
-            </button>
-            <button className="flex flex-col items-center p-4 rounded-lg border border-border hover:bg-accent/50 transition-colors">
-              <CheckSquare className="h-8 w-8 text-green-600 mb-2" />
-              <span className="text-sm font-medium">Complete Checklist</span>
-            </button>
-            <button className="flex flex-col items-center p-4 rounded-lg border border-border hover:bg-accent/50 transition-colors">
-              <Calculator className="h-8 w-8 text-purple-600 mb-2" />
-              <span className="text-sm font-medium">Close Register</span>
-            </button>
-            <button className="flex flex-col items-center p-4 rounded-lg border border-border hover:bg-accent/50 transition-colors">
-              <MessageSquare className="h-8 w-8 text-orange-600 mb-2" />
-              <span className="text-sm font-medium">Send Message</span>
-            </button>
+            <Link to="/inventory">
+              <Button variant="outline" className="flex flex-col items-center p-4 h-auto w-full">
+                <Package className="h-8 w-8 text-blue-600 mb-2" />
+                <span className="text-sm font-medium">Update Inventory</span>
+              </Button>
+            </Link>
+            
+            <Link to="/checklists">
+              <Button variant="outline" className="flex flex-col items-center p-4 h-auto w-full">
+                <CheckSquare className="h-8 w-8 text-green-600 mb-2" />
+                <span className="text-sm font-medium">Complete Checklist</span>
+              </Button>
+            </Link>
+            
+            <Link to="/cash-register">
+              <Button variant="outline" className="flex flex-col items-center p-4 h-auto w-full">
+                <Calculator className="h-8 w-8 text-purple-600 mb-2" />
+                <span className="text-sm font-medium">Cash Register</span>
+              </Button>
+            </Link>
+            
+            <Link to="/communication">
+              <Button variant="outline" className="flex flex-col items-center p-4 h-auto w-full">
+                <MessageSquare className="h-8 w-8 text-orange-600 mb-2" />
+                <span className="text-sm font-medium">Send Message</span>
+              </Button>
+            </Link>
           </div>
         </CardContent>
       </Card>
