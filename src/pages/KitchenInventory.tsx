@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
 import { 
   ChefHat, 
@@ -16,7 +18,8 @@ import {
   Plus, 
   Minus, 
   AlertTriangle,
-  Calendar
+  Calendar,
+  Clock
 } from 'lucide-react';
 import { KitchenCategory, KitchenProduct } from '@/types/kitchenInventory';
 
@@ -35,6 +38,8 @@ export const KitchenInventory = () => {
     createNewInventory
   } = useKitchenInventory();
 
+  const [dailyInventoryData, setDailyInventoryData] = useState<Record<string, { quantity: number; missing: boolean }>>({});
+  const [activeTab, setActiveTab] = useState('monthly');
   const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>(
     // Start with all categories expanded for better UX
     {
@@ -102,41 +107,49 @@ export const KitchenInventory = () => {
     updateInventoryItem(productId, quantity, currentItem?.notes);
   };
 
-  const updateProductPrice = (productId: string, price: number) => {
-    // In a real app, this would update the product's unit price in the database
-    console.log(`Updating price for product ${productId}: ${price}`);
+  const updateDailyQuantity = (productId: string, quantity: number) => {
+    setDailyInventoryData(prev => ({
+      ...prev,
+      [productId]: { ...prev[productId], quantity }
+    }));
   };
 
-  const updateProductLastOrderDate = (productId: string, date: string) => {
-    // In a real app, this would update the product's last order date in the database
-    console.log(`Updating last order date for product ${productId}: ${date}`);
+  const toggleMissingProduct = (productId: string, missing: boolean) => {
+    setDailyInventoryData(prev => ({
+      ...prev,
+      [productId]: { ...prev[productId], missing, quantity: prev[productId]?.quantity || 0 }
+    }));
   };
 
-  const validateInventory = (): boolean => {
-    if (!currentInventory) return false;
+  const handleSubmitDailyInventory = () => {
+    const hasData = Object.values(dailyInventoryData).some(item => item.quantity > 0 || item.missing);
     
-    // Check if at least one product has quantity or price entered
-    const hasData = currentInventory.items.some(item => item.quantity > 0) ||
-                   products.some(product => product.unitPrice > 0);
-    
-    return hasData;
-  };
-
-  const handleSaveInventory = () => {
-    if (!validateInventory()) {
+    if (!hasData) {
       toast({
         title: t('validation-error'),
-        description: t('inventory-validation-message'),
+        description: t('daily-inventory-validation-message'),
         variant: "destructive",
       });
       return;
     }
 
-    saveInventory();
+    // Save daily inventory with timestamp
+    const dailyRecord = {
+      id: `daily-${Date.now()}`,
+      date: new Date(),
+      data: dailyInventoryData,
+      submittedBy: user?.email || 'current@user.com'
+    };
+    
+    // In a real app, this would save to backend
+    localStorage.setItem(`dailyInventory-${new Date().toISOString().split('T')[0]}`, JSON.stringify(dailyRecord));
+    
     toast({
-      title: t('inventory-saved'),
-      description: t('inventory-saved-message'),
+      title: t('daily-inventory-saved'),
+      description: t('daily-inventory-saved-message'),
     });
+    
+    setDailyInventoryData({});
   };
 
   if (loading) {
@@ -175,38 +188,58 @@ export const KitchenInventory = () => {
         </Alert>
       )}
 
-      {/* Inventory Period Check */}
-      {hasKitchenAccess && !isInventoryPeriod && (
-        <Alert>
-          <Calendar className="h-4 w-4" />
-          <AlertDescription>
-            {t('inventory-period-message')}
-          </AlertDescription>
-        </Alert>
-      )}
+      {hasKitchenAccess && (
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          <TabsList className="grid grid-cols-2 w-full max-w-md">
+            <TabsTrigger value="monthly" className="flex items-center gap-2">
+              <Calendar className="h-4 w-4" />
+              {t('monthly-inventory')}
+            </TabsTrigger>
+            <TabsTrigger value="daily" className="flex items-center gap-2">
+              <Clock className="h-4 w-4" />
+              {t('daily-inventory')}
+            </TabsTrigger>
+          </TabsList>
 
-      {/* Main Inventory Input */}
-      {hasKitchenAccess && isInventoryPeriod && (
-        <>
-          {!currentInventory && (
-            <Card>
-              <CardContent className="flex items-center justify-center py-12">
-                <div className="text-center">
-                  <ChefHat className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
-                  <h3 className="text-xl font-semibold mb-2">{t('start-inventory-title')}</h3>
-                  <p className="text-muted-foreground mb-6">{t('start-inventory-description')}</p>
-                  <Button onClick={createNewInventory} size="lg">
-                    <Plus className="h-5 w-5 mr-2" />
-                    {t('start-new-inventory')}
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          )}
+          {/* Monthly Inventory Tab */}
+          <TabsContent value="monthly">
+            {!isInventoryPeriod && (
+              <Alert>
+                <Calendar className="h-4 w-4" />
+                <AlertDescription>
+                  {t('inventory-period-message')}
+                </AlertDescription>
+              </Alert>
+            )}
+            {/* Monthly Inventory Content - Existing Logic */}
+            {isInventoryPeriod && !currentInventory && (
+              <Card>
+                <CardContent className="flex items-center justify-center py-12">
+                  <div className="text-center">
+                    <ChefHat className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
+                    <h3 className="text-xl font-semibold mb-2">{t('start-inventory-title')}</h3>
+                    <p className="text-muted-foreground mb-6">{t('start-inventory-description')}</p>
+                    <Button onClick={createNewInventory} size="lg">
+                      <Plus className="h-5 w-5 mr-2" />
+                      {t('start-new-inventory')}
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
 
-          {currentInventory && (
+          {/* Daily Inventory Tab */}
+          <TabsContent value="daily">
             <div className="space-y-6">
-              {/* Product Categories */}
+              <Alert>
+                <Clock className="h-4 w-4" />
+                <AlertDescription>
+                  {t('daily-inventory-description')}
+                </AlertDescription>
+              </Alert>
+
+              {/* Daily Inventory Product List */}
               <div className="space-y-6">
                 {Object.entries(categorizedProducts).map(([category, categoryProducts]) => (
                   <Card key={category} className="border-2">
@@ -234,13 +267,12 @@ export const KitchenInventory = () => {
                     {expandedCategories[category] && (
                       <CardContent className="space-y-4 pt-0">
                         {categoryProducts.map((product) => {
-                          const inventoryItem = getInventoryItem(product.id);
-                          const quantity = inventoryItem?.quantity || 0;
+                          const dailyData = dailyInventoryData[product.id] || { quantity: 0, missing: false };
                           
                           return (
                             <Card key={product.id} className="border border-border/40">
                               <CardContent className="p-6">
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                   {/* Product Info */}
                                   <div>
                                     <div className="flex items-center gap-2 mb-2">
@@ -257,103 +289,59 @@ export const KitchenInventory = () => {
                                         }
                                       </Button>
                                     </div>
-                                    <div className="space-y-2">
-                                      <div>
-                                        <label className="text-sm font-medium text-muted-foreground">
-                                          {t('last-order-date')}
-                                        </label>
-                                        <Input
-                                          type="date"
-                                          defaultValue={product.lastOrderDate?.toISOString().split('T')[0] || ''}
-                                          onChange={(e) => updateProductLastOrderDate(product.id, e.target.value)}
-                                          className="mt-1"
-                                          disabled={currentInventory.isLocked}
+                                    <div className="flex items-center gap-4">
+                                      <label className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                                        <Switch
+                                          checked={dailyData.missing}
+                                          onCheckedChange={(checked) => toggleMissingProduct(product.id, checked)}
                                         />
-                                      </div>
-                                      <div>
-                                        <label className="text-sm font-medium text-muted-foreground">
-                                          {t('unit-price')} (€/{product.unit})
-                                        </label>
-                                        <Input
-                                          type="number"
-                                          placeholder="0.00"
-                                          step="0.01"
-                                          min="0"
-                                          defaultValue={product.unitPrice || ''}
-                                          onChange={(e) => updateProductPrice(product.id, parseFloat(e.target.value) || 0)}
-                                          className="mt-1"
-                                          disabled={currentInventory.isLocked}
-                                        />
-                                      </div>
+                                        {t('missing-product')}
+                                      </label>
                                     </div>
                                   </div>
 
                                   {/* Quantity Controls */}
                                   <div>
                                     <label className="text-sm font-medium text-muted-foreground mb-2 block">
-                                      {t('quantity')} ({product.unit})
+                                      {t('current-stock')} ({product.unit})
                                     </label>
                                     <div className="flex items-center gap-2">
                                       <Button
                                         variant="outline"
                                         size="sm"
-                                        onClick={() => updateQuantity(product.id, -1)}
-                                        disabled={currentInventory.isLocked || quantity <= 0}
+                                        onClick={() => updateDailyQuantity(product.id, Math.max(0, dailyData.quantity - 1))}
+                                        disabled={dailyData.quantity <= 0}
                                       >
                                         <Minus className="h-4 w-4" />
                                       </Button>
                                       <Input
                                         type="number"
-                                        value={quantity || ''}
-                                        onChange={(e) => handleQuantityInput(product.id, e.target.value)}
+                                        value={dailyData.quantity || ''}
+                                        onChange={(e) => updateDailyQuantity(product.id, parseFloat(e.target.value) || 0)}
                                         className="w-24 text-center"
                                         min="0"
                                         step="0.1"
-                                        disabled={currentInventory.isLocked}
                                       />
                                       <Button
                                         variant="outline"
                                         size="sm"
-                                        onClick={() => updateQuantity(product.id, 1)}
-                                        disabled={currentInventory.isLocked}
+                                        onClick={() => updateDailyQuantity(product.id, dailyData.quantity + 1)}
                                       >
                                         <Plus className="h-4 w-4" />
                                       </Button>
                                     </div>
                                   </div>
 
-                                  {/* Status Info */}
-                                  <div className="space-y-2">
-                                    <div>
-                                      <span className="text-sm font-medium text-muted-foreground">
-                                        {t('current-stock')}:
-                                      </span>
-                                      <div className="text-lg font-semibold">
-                                        {quantity} {product.unit}
-                                      </div>
-                                    </div>
-                                    {product.unitPrice > 0 && quantity > 0 && (
-                                      <div>
-                                        <span className="text-sm font-medium text-muted-foreground">
-                                          {t('total-value')}:
-                                        </span>
-                                        <div className="text-lg font-semibold text-primary">
-                                          €{(quantity * product.unitPrice).toFixed(2)}
-                                        </div>
-                                      </div>
-                                    )}
-                                  </div>
-
-                                  {/* Additional Actions */}
+                                  {/* Status */}
                                   <div className="flex flex-col gap-2">
-                                    {quantity > 0 && (
-                                      <Badge variant="secondary" className="w-fit">
-                                        {t('in-stock')}
+                                    {dailyData.missing && (
+                                      <Badge variant="destructive" className="w-fit">
+                                        {t('missing')}
                                       </Badge>
                                     )}
-                                    {product.unitPrice === 0 && (
-                                      <Badge variant="outline" className="w-fit">
-                                        {t('price-needed')}
+                                    {dailyData.quantity > 0 && !dailyData.missing && (
+                                      <Badge variant="secondary" className="w-fit">
+                                        {t('available')}
                                       </Badge>
                                     )}
                                   </div>
@@ -368,26 +356,25 @@ export const KitchenInventory = () => {
                 ))}
               </div>
 
-              {/* Save Button */}
+              {/* Submit Daily Inventory Button */}
               <div className="sticky bottom-4 bg-background/80 backdrop-blur-sm p-4 rounded-lg border">
                 <div className="flex items-center justify-between">
                   <div className="text-sm text-muted-foreground">
-                    {currentInventory.items.filter(item => item.quantity > 0).length} {t('products-with-stock')}
+                    {Object.values(dailyInventoryData).filter(item => item.quantity > 0 || item.missing).length} {t('products-recorded')}
                   </div>
                   <Button 
-                    onClick={handleSaveInventory}
+                    onClick={handleSubmitDailyInventory}
                     size="lg"
-                    disabled={currentInventory.isLocked}
                     className="min-w-32"
                   >
                     <Save className="h-5 w-5 mr-2" />
-                    {t('save-inventory')}
+                    {t('submit-daily-inventory')}
                   </Button>
                 </div>
               </div>
             </div>
-          )}
-        </>
+          </TabsContent>
+        </Tabs>
       )}
     </div>
   );
