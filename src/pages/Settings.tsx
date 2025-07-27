@@ -147,7 +147,7 @@ export const Settings = () => {
               
               <div className="space-y-2">
                 <Label>Location</Label>
-                <Input value={user.location || 'Main Location'} disabled />
+                <Input value={(user.locations || [user.location]).join(', ') || 'Main Location'} disabled />
               </div>
               
               <Button variant="outline" className="w-full">

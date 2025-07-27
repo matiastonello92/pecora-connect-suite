@@ -55,7 +55,7 @@ export const ProfileInformation = ({ user }: ProfileInformationProps) => {
               </label>
               <div className="flex items-center gap-2">
                 <MapPin className="h-4 w-4 text-muted-foreground" />
-                <p className="text-lg">{user.location}</p>
+                <p className="text-lg">{(user.locations || [user.location]).join(', ')}</p>
               </div>
             </div>
           </div>

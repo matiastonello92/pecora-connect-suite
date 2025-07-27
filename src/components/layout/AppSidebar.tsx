@@ -358,7 +358,7 @@ export const AppSidebar = () => {
                     {user.firstName} {user.lastName}
                   </p>
                   <p className="text-xs text-muted-foreground truncate capitalize">
-                    {t(user.department)} • {user.location}
+                    {t(user.department)} • {(user.locations || [user.location]).join(', ')}
                   </p>
                 </div>
               </div>

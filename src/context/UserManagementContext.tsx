@@ -216,7 +216,8 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
         lastName: user.last_name,
         email: user.email,
         role: user.role as UserRole,
-        location: user.location as LocationType,
+        location: ((user.locations && user.locations[0]) || user.location) as LocationType, // Use first location
+        locations: user.locations || [user.location], // Add new locations field
         department: user.department,
         position: user.position,
         previousStatus: user.previous_status as 'active' | 'pending',
@@ -362,7 +363,8 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
           role: user.role,
           restaurant_role: user.restaurantRole,
           access_level: user.accessLevel,
-          location: user.location,
+          location: (user.locations && user.locations[0]) || user.location, // Use first location
+          locations: user.locations || [user.location], // Add new locations field
           department: user.department,
           position: user.position,
           previous_status: user.status || 'active',
@@ -552,7 +554,8 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
             first_name: archivedUser.firstName,
             last_name: archivedUser.lastName,
             role: archivedUser.role,
-            location: archivedUser.location,
+            location: (archivedUser.locations && archivedUser.locations[0]) || archivedUser.location,
+            locations: archivedUser.locations || [archivedUser.location],
             status: 'pending'
           });
 
@@ -566,7 +569,8 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
             first_name: archivedUser.firstName,
             last_name: archivedUser.lastName,
             role: archivedUser.role,
-            location: archivedUser.location,
+            location: (archivedUser.locations && archivedUser.locations[0]) || archivedUser.location,
+            locations: archivedUser.locations || [archivedUser.location],
             department: archivedUser.department,
             position: archivedUser.position,
             status: 'active'

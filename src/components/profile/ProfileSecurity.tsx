@@ -101,7 +101,8 @@ export const ProfileSecurity = ({ user }: ProfileSecurityProps) => {
             role: user.role,
             restaurant_role: user.restaurantRole,
             access_level: user.accessLevel,
-            location: user.location,
+            location: user.location, // Keep for backward compatibility
+            locations: user.locations || [user.location], // Add new locations field
             department: user.department,
             position: user.position,
             previous_status: user.status,
@@ -241,20 +242,12 @@ export const ProfileSecurity = ({ user }: ProfileSecurityProps) => {
 
             <div className="space-y-2">
               <label className="text-sm font-medium">{t('profile.fields.location')}</label>
-              <Select
-                value={user.location}
-                onValueChange={(value) => handleRoleChange('location', value)}
-                disabled={isUpdating}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="menton">Menton</SelectItem>
-                  <SelectItem value="lyon">Lyon</SelectItem>
-                  <SelectItem value="all_locations">All Locations</SelectItem>
-                </SelectContent>
-              </Select>
+              <div className="text-sm text-muted-foreground">
+                Current locations: {(user.locations || [user.location]).join(', ')}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Contact an administrator to change location assignments.
+              </p>
             </div>
           </div>
         </CardContent>

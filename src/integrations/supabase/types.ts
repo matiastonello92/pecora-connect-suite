@@ -748,7 +748,15 @@ export type Database = {
           status?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "message_reminders_chat_id_fkey"
+            columns: ["chat_id"]
+            isOneToOne: false
+            referencedRelation: "chats"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       messages: {
         Row: {
@@ -1370,6 +1378,10 @@ export type Database = {
       get_user_access_level: {
         Args: { user_uuid?: string }
         Returns: Database["public"]["Enums"]["access_level"]
+      }
+      get_user_locations_for_rls: {
+        Args: { user_uuid: string }
+        Returns: string[]
       }
       has_module_permission: {
         Args: {

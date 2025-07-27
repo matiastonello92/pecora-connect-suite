@@ -43,7 +43,7 @@ export const UserEditDialog = ({ user, isOpen, onOpenChange, onUserUpdated }: Us
       setRole(user.role);
       setRestaurantRole(user.restaurantRole || 'none');
       setAccessLevel(user.accessLevel);
-      setLocation(user.location);
+      setLocation(((user.locations && user.locations[0]) || user.location) as LocationType); // Use first location or fallback
       setDepartment(user.department);
       setPosition(user.position);
     }

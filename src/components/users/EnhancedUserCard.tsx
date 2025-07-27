@@ -119,7 +119,7 @@ export const EnhancedUserCard = ({ user, onDelete, onUpdate, hasPermission, show
           </div>
           <div className="min-w-0">
             <div className="text-xs sm:text-sm font-medium">Location</div>
-            <div className="text-xs sm:text-sm text-muted-foreground">{user.location}</div>
+            <div className="text-xs sm:text-sm text-muted-foreground">{(user.locations || [user.location]).join(', ')}</div>
           </div>
           <div className="min-w-0">
             <div className="text-xs sm:text-sm font-medium">Last Login</div>

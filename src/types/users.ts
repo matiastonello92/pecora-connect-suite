@@ -109,7 +109,8 @@ export interface ArchivedUser {
   role: UserRole;
   restaurantRole?: RestaurantRole;
   accessLevel?: AccessLevel;
-  location: LocationType;
+  location: LocationType; // Keep for backward compatibility
+  locations: string[]; // New multiple locations field
   department?: string;
   position?: string;
   previousStatus: 'active' | 'pending';

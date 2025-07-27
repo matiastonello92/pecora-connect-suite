@@ -268,10 +268,10 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
           const participant = chat.participants?.find(p => p.user_id === user.id);
           console.log(`🔍 Checking access for chat ${chat.type}-${chat.location}:`, {
             isParticipant: !!participant,
-            userLocation: user.location,
+            userLocations: user.locations || [user.location], // Support both formats
             chatLocation: chat.location
           });
-          
+
           // Check if user has access to this chat
           let hasAccess = false;
           
@@ -412,7 +412,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         .insert({
           type,
           name,
-          location: user.location || 'general',
+          location: (user.locations && user.locations[0]) || user.location || 'menton', // Use first location
           created_by: user.id
         })
         .select()
