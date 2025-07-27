@@ -20,6 +20,7 @@ export interface ChecklistTemplate {
   name: string;
   description: string;
   department: string;
+  location: string; // Add location field
   frequency: ChecklistFrequency;
   estimatedTime: number; // in minutes
   items: ChecklistItem[];

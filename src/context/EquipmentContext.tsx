@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { Equipment, MaintenanceRecord, MaintenanceSchedule, EquipmentStatus, MaintenanceType } from '@/types/equipment';
+import { useAuth } from '@/context/AuthContext';
 
 interface EquipmentState {
   equipment: Equipment[];
@@ -76,6 +77,7 @@ interface EquipmentContextType extends EquipmentState {
 const EquipmentContext = createContext<EquipmentContextType | undefined>(undefined);
 
 export const EquipmentProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { user } = useAuth();
   const [state, dispatch] = useReducer(equipmentReducer, {
     equipment: [],
     maintenanceRecords: [],
@@ -119,17 +121,27 @@ export const EquipmentProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   };
 
   const getEquipmentByStatus = (status: EquipmentStatus) => {
-    return state.equipment.filter(eq => eq.status === status);
+    const userLocations = user?.locations || [user?.location].filter(Boolean) || [];
+    return state.equipment.filter(eq => 
+      eq.status === status && 
+      userLocations.includes(eq.location)
+    );
   };
 
   const getOverdueMaintenance = () => {
-    return state.maintenanceSchedule.filter(schedule => schedule.isOverdue);
+    const userLocations = user?.locations || [user?.location].filter(Boolean) || [];
+    return state.maintenanceSchedule.filter(schedule => 
+      schedule.isOverdue &&
+      state.equipment.some(eq => eq.id === schedule.equipmentId && userLocations.includes(eq.location))
+    );
   };
 
   const getUpcomingMaintenance = (days: number) => {
+    const userLocations = user?.locations || [user?.location].filter(Boolean) || [];
     const targetDate = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
     return state.maintenanceSchedule.filter(schedule => 
-      !schedule.isOverdue && schedule.nextDue <= targetDate
+      !schedule.isOverdue && schedule.nextDue <= targetDate &&
+      state.equipment.some(eq => eq.id === schedule.equipmentId && userLocations.includes(eq.location))
     );
   };
 

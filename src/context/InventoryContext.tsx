@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { InventoryItem, InventorySession, InvoiceItem } from '@/types/inventory';
+import { useAuth } from '@/context/AuthContext';
+import { useLocationFilter } from '@/hooks/useLocationData';
 
 interface InventoryState {
   items: InventoryItem[];
@@ -90,6 +92,7 @@ interface InventoryContextType extends InventoryState {
 const InventoryContext = createContext<InventoryContextType | undefined>(undefined);
 
 export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { user } = useAuth();
   const [state, dispatch] = useReducer(inventoryReducer, {
     items: [],
     sessions: [],
@@ -166,13 +169,19 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   };
 
   const getLowStockItems = () => {
-    return state.items.filter(item => item.currentStock <= item.minStock);
+    const userLocations = user?.locations || [user?.location].filter(Boolean) || [];
+    return state.items.filter(item => 
+      item.currentStock <= item.minStock && 
+      userLocations.includes(item.location)
+    );
   };
 
   const getExpiringItems = (days: number) => {
+    const userLocations = user?.locations || [user?.location].filter(Boolean) || [];
     const targetDate = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
     return state.items.filter(item => 
-      item.expiryDate && item.expiryDate <= targetDate
+      item.expiryDate && item.expiryDate <= targetDate &&
+      userLocations.includes(item.location)
     );
   };
 

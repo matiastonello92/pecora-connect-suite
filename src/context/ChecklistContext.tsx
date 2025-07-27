@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { ChecklistTemplate, ChecklistSession, ChecklistItem } from '@/types/checklist';
+import { useAuth } from '@/context/AuthContext';
 
 interface ChecklistState {
   templates: ChecklistTemplate[];
@@ -91,6 +92,7 @@ interface ChecklistContextType extends ChecklistState {
 const ChecklistContext = createContext<ChecklistContextType | undefined>(undefined);
 
 export const ChecklistProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { user } = useAuth();
   const [state, dispatch] = useReducer(checklistReducer, {
     templates: [],
     sessions: [],
@@ -151,11 +153,19 @@ export const ChecklistProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   };
 
   const getActiveChecklists = () => {
-    return state.sessions.filter(session => session.status === 'in-progress');
+    const userLocations = user?.locations || [user?.location].filter(Boolean) || [];
+    return state.sessions.filter(session => 
+      session.status === 'in-progress' &&
+      userLocations.includes(session.template.location)
+    );
   };
 
   const getTemplatesByDepartment = (department: string) => {
-    return state.templates.filter(template => template.department === department);
+    const userLocations = user?.locations || [user?.location].filter(Boolean) || [];
+    return state.templates.filter(template => 
+      template.department === department &&
+      userLocations.includes(template.location)
+    );
   };
 
   return (

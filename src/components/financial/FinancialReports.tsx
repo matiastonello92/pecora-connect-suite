@@ -65,7 +65,13 @@ export const FinancialReports = () => {
   };
 
   const handleExport = (format: 'csv' | 'pdf') => {
+    const userLocations = user?.locations || [user?.location].filter(Boolean) || [];
     const filteredData = closures.filter(closure => {
+      // Apply user location access filter first
+      if (!userLocations.includes(closure.restaurantLocation)) {
+        return false;
+      }
+      
       if (dateRange.start && dateRange.end) {
         const closureDate = new Date(closure.date);
         if (closureDate < dateRange.start || closureDate > dateRange.end) {
@@ -204,12 +210,19 @@ export const FinancialReports = () => {
             {/* Location Filter */}
             <div>
               <Label htmlFor="location">Location</Label>
-              <Input
-                id="location"
-                placeholder="Filter by location..."
-                value={filters.location}
-                onChange={(e) => setFilters(prev => ({ ...prev, location: e.target.value }))}
-              />
+              <Select value={filters.location} onValueChange={(value) => setFilters(prev => ({ ...prev, location: value }))}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Filter by location..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">All Locations</SelectItem>
+                  {(user?.locations || [user?.location].filter(Boolean)).map(location => (
+                    <SelectItem key={location} value={location}>
+                      {location.charAt(0).toUpperCase() + location.slice(1)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             {/* Status Filter */}

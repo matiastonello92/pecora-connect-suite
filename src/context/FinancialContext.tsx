@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { CashClosure, FinancialReport, FilterPreset, FinancialAnomalies, ClosureStatus, SatisfactionRating } from '@/types/financial';
+import { useAuth } from '@/context/AuthContext';
 
 interface FinancialState {
   closures: CashClosure[];
@@ -103,6 +104,7 @@ interface FinancialContextType extends FinancialState {
 const FinancialContext = createContext<FinancialContextType | undefined>(undefined);
 
 export const FinancialProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { user } = useAuth();
   const [state, dispatch] = useReducer(financialReducer, {
     closures: [],
     currentClosure: null,
@@ -124,11 +126,13 @@ export const FinancialProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   }, []);
 
   const createNewClosure = () => {
+    const userLocations = user?.locations || [user?.location].filter(Boolean) || [];
     const newClosure: Partial<CashClosure> = {
       id: Date.now().toString(),
       date: new Date(),
       submittedBy: 'current@user.com',
       submitterName: 'Current User',
+      restaurantLocation: userLocations[0] || 'menton', // Use first user location
       cashCollected: 0,
       lightspeedPayments: 0,
       satispayPayments: 0,
@@ -189,7 +193,13 @@ export const FinancialProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   };
 
   const generateReport = (filters: any) => {
+    const userLocations = user?.locations || [user?.location].filter(Boolean) || [];
     const filteredClosures = state.closures.filter(closure => {
+      // Apply location filtering based on user access
+      if (!userLocations.includes(closure.restaurantLocation)) {
+        return false;
+      }
+      
       if (filters.dateRange) {
         const closureDate = new Date(closure.date);
         if (closureDate < filters.dateRange.start || closureDate > filters.dateRange.end) {
@@ -272,15 +282,20 @@ export const FinancialProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   };
 
   const detectAnomalies = () => {
-    const averageCash = state.closures.reduce((sum, c) => sum + c.cashCollected, 0) / state.closures.length || 0;
+    const userLocations = user?.locations || [user?.location].filter(Boolean) || [];
+    const userClosures = state.closures.filter(closure => 
+      userLocations.includes(closure.restaurantLocation)
+    );
+    
+    const averageCash = userClosures.reduce((sum, c) => sum + c.cashCollected, 0) / userClosures.length || 0;
     const threshold = averageCash * 0.5; // 50% deviation threshold
 
     const anomalies: FinancialAnomalies = {
-      unusualCash: state.closures.filter(c => 
+      unusualCash: userClosures.filter(c => 
         c.cashCollected < threshold || c.cashCollected > averageCash * 1.5
       ),
-      missingCovers: state.closures.filter(c => c.totalCovers === 0),
-      lowSatisfaction: state.closures.filter(c => c.satisfactionRating <= 3)
+      missingCovers: userClosures.filter(c => c.totalCovers === 0),
+      lowSatisfaction: userClosures.filter(c => c.satisfactionRating <= 3)
     };
 
     dispatch({ type: 'DETECT_ANOMALIES', payload: anomalies });
