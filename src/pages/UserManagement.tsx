@@ -2,6 +2,7 @@ import React from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useUserManagement } from '@/context/UserManagementContext';
 import { DeleteUserDialog } from '@/components/ui/delete-user-dialog';
+import { DeleteInvitationDialog } from '@/components/ui/delete-invitation-dialog';
 import { InviteUserDialog } from '@/components/auth/InviteUserDialog';
 import { useTranslation } from '@/lib/i18n';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,7 +14,7 @@ import { Users, Clock, Calendar, UserPlus, Shield, Mail, RefreshCw } from 'lucid
 export const UserManagement = () => {
   const { language, user, hasPermission } = useAuth();
   const { t } = useTranslation(language);
-  const { users, pendingInvitations, shifts, getActiveShifts, getTodayTimeEntries, resendInvitation, deleteUser } = useUserManagement();
+  const { users, pendingInvitations, shifts, getActiveShifts, getTodayTimeEntries, resendInvitation, deleteUser, deletePendingInvitation } = useUserManagement();
 
   const activeShifts = getActiveShifts();
   const todayEntries = getTodayTimeEntries();
@@ -126,6 +127,9 @@ export const UserManagement = () => {
                         <RefreshCw className="h-3 w-3 mr-1" />
                         Resend
                       </Button>
+                      {hasPermission('manager') && (
+                        <DeleteInvitationDialog invitation={invitation} onDelete={deletePendingInvitation} />
+                      )}
                     </div>
                   </div>
                 </CardHeader>

@@ -108,6 +108,7 @@ interface UserManagementContextType extends UserManagementState {
   addUser: (user: Omit<UserProfile, 'id' | 'createdAt' | 'updatedAt'>) => void;
   updateUser: (user: UserProfile) => void;
   deleteUser: (userId: string) => void;
+  deletePendingInvitation: (invitationId: string) => Promise<void>;
   resendInvitation: (invitation: PendingInvitation) => Promise<void>;
   addShift: (shift: Omit<Shift, 'id'>) => void;
   updateShift: (shift: Shift) => void;
@@ -328,6 +329,32 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
     return state.timeEntries.filter(entry => entry.clockIn >= today);
   };
 
+  const deletePendingInvitation = async (invitationId: string) => {
+    try {
+      // Delete the invitation from the database - this will make the email link invalid
+      const { error } = await supabase
+        .from('user_invitations')
+        .delete()
+        .eq('id', invitationId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Invitation deleted successfully",
+      });
+
+      // Refresh data to update the UI
+      refreshData();
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: `Failed to delete invitation: ${error.message}`,
+        variant: "destructive",
+      });
+    }
+  };
+
   const resendInvitation = async (invitation: PendingInvitation) => {
     try {
       const { error } = await supabase.functions.invoke('send-invitation-email', {
@@ -368,6 +395,7 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
       addUser,
       updateUser,
       deleteUser,
+      deletePendingInvitation,
       resendInvitation,
       addShift,
       updateShift,
