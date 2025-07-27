@@ -92,7 +92,7 @@ interface InventoryContextType extends InventoryState {
 const InventoryContext = createContext<InventoryContextType | undefined>(undefined);
 
 export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { user } = useSimpleAuth();
+  const { profile } = useSimpleAuth();
   const [state, dispatch] = useReducer(inventoryReducer, {
     items: [],
     sessions: [],

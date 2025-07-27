@@ -2,9 +2,25 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import type { User, Session } from '@supabase/supabase-js';
 
+interface UserProfile {
+  user_id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  role: string;
+  access_level: string;
+  location: string;
+  locations: string[];
+  department: string;
+  position: string;
+  status: string;
+  has_custom_permissions: boolean;
+}
+
 interface AuthState {
   user: User | null;
   session: Session | null;
+  profile: UserProfile | null;
   isLoading: boolean;
   isAuthenticated: boolean;
 }
@@ -20,27 +36,64 @@ export const SimpleAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const [state, setState] = useState<AuthState>({
     user: null,
     session: null,
+    profile: null,
     isLoading: true,
     isAuthenticated: false,
   });
 
+  const fetchProfile = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('user_id', userId)
+        .single();
+      
+      if (error) {
+        console.error('Error fetching profile:', error);
+        return null;
+      }
+      
+      return data;
+    } catch (error) {
+      console.error('Error fetching profile:', error);
+      return null;
+    }
+  };
+
   useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    const initializeAuth = async () => {
+      // Get initial session
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      let profile = null;
+      if (session?.user) {
+        profile = await fetchProfile(session.user.id);
+      }
+      
       setState({
         user: session?.user ?? null,
         session,
+        profile,
         isLoading: false,
         isAuthenticated: !!session?.user,
       });
-    });
+    };
+
+    initializeAuth();
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
+      async (event, session) => {
+        let profile = null;
+        if (session?.user) {
+          profile = await fetchProfile(session.user.id);
+        }
+        
         setState({
           user: session?.user ?? null,
           session,
+          profile,
           isLoading: false,
           isAuthenticated: !!session?.user,
         });

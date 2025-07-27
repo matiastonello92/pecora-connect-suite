@@ -14,11 +14,11 @@ export const LocationFilter: React.FC<LocationFilterProps> = ({
   onLocationChange, 
   selectedLocation 
 }) => {
-  const { user } = useSimpleAuth();
+  const { profile } = useSimpleAuth();
   const { data: activeLocations = [] } = useActiveLocations();
   
   // Get user's accessible locations from their profile
-  const userLocations = user?.user_metadata?.locations || [];
+  const userLocations = profile?.locations || [];
   
   // Filter active locations to only show ones the user has access to
   const accessibleLocations = activeLocations.filter(loc => 

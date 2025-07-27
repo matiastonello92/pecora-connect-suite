@@ -19,6 +19,7 @@ import { EquipmentProvider } from '@/context/EquipmentContext';
 import { UserManagementProvider } from '@/context/UserManagementContext';
 import { FinancialProvider } from '@/context/FinancialContext';
 import { LocationProvider } from '@/context/LocationContext';
+import { PermissionProvider } from '@/context/PermissionContext';
 import { LoginForm } from "@/components/auth/LoginForm";
 import { CompleteSignup } from "@/components/auth/CompleteSignup";
 import { ForgotPassword } from "@/components/auth/ForgotPassword";
@@ -68,19 +69,20 @@ const AppContent = () => {
 
   return (
     <LocationProvider>
-      <InventoryProvider>
-        <KitchenInventoryProvider>
-          <ChecklistProvider>
-            <CommunicationProvider>
-              <ChatProvider>
-                <UnreadMessagesProvider>
-                  <CashRegisterProvider>
-                    <ReportsProvider>
-                      <EquipmentProvider>
-                        <UserManagementProvider>
-                          <FinancialProvider>
-                            <NotificationHandler />
-                            <AppLayout>
+      <PermissionProvider>
+        <InventoryProvider>
+          <KitchenInventoryProvider>
+            <ChecklistProvider>
+              <CommunicationProvider>
+                <ChatProvider>
+                  <UnreadMessagesProvider>
+                    <CashRegisterProvider>
+                      <ReportsProvider>
+                        <EquipmentProvider>
+                          <UserManagementProvider>
+                            <FinancialProvider>
+                              <NotificationHandler />
+                              <AppLayout>
                               <Routes>
                                 <Route path="/" element={<Dashboard />} />
                                 <Route path="/dashboard" element={<Dashboard />} />
@@ -109,18 +111,19 @@ const AppContent = () => {
                                 <Route path="/maintenance/scheduled" element={<Maintenance />} />
                                 <Route path="*" element={<NotFound />} />
                               </Routes>
-                            </AppLayout>
-                          </FinancialProvider>
-                        </UserManagementProvider>
-                      </EquipmentProvider>
-                    </ReportsProvider>
-                  </CashRegisterProvider>
-                </UnreadMessagesProvider>
-              </ChatProvider>
-            </CommunicationProvider>
-          </ChecklistProvider>
-        </KitchenInventoryProvider>
-      </InventoryProvider>
+                              </AppLayout>
+                            </FinancialProvider>
+                          </UserManagementProvider>
+                        </EquipmentProvider>
+                      </ReportsProvider>
+                    </CashRegisterProvider>
+                  </UnreadMessagesProvider>
+                </ChatProvider>
+              </CommunicationProvider>
+            </ChecklistProvider>
+          </KitchenInventoryProvider>
+        </InventoryProvider>
+      </PermissionProvider>
     </LocationProvider>
   );
 };

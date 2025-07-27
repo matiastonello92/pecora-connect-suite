@@ -12,10 +12,10 @@ interface PermissionContextType {
 const PermissionContext = createContext<PermissionContextType | undefined>(undefined);
 
 export const PermissionProvider = ({ children }: { children: ReactNode }) => {
-  const { user } = useSimpleAuth();
+  const { profile } = useSimpleAuth();
   const { hasPermission: hasModulePermission } = usePermissions({
-    userId: user?.id,
-    accessLevel: 'base' as AccessLevel
+    userId: profile?.user_id,
+    accessLevel: profile?.access_level as AccessLevel || 'base'
   });
 
   const getUserPermissions = (userId: string) => {

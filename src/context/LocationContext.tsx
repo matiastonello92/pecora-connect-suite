@@ -30,12 +30,11 @@ const LOCATION_COORDINATES: Record<string, { lat: number; lng: number }> = {
 };
 
 export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { user } = useSimpleAuth();
+  const { profile } = useSimpleAuth();
   const { data: allActiveLocations = [], isLoading } = useActiveLocations();
   
-  // Get user's locations from the new locations array field
-  // Temporarily default to all locations for simple auth
-  const userLocations = ['menton', 'lyon', 'paris', 'nice', 'cannes', 'monaco', 'antibes'];
+  // Get user's locations from their profile
+  const userLocations = profile?.locations || ['menton'];
   
   // State for location management
   const [activeLocation, setActiveLocationState] = useState<string>('');
