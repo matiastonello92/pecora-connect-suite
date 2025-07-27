@@ -48,7 +48,7 @@ const handler = async (req: Request): Promise<Response> => {
     console.log("Sending invitation email to:", email);
 
     // Create invitation link - this would typically point to your app's signup page
-    const invitationLink = `${Deno.env.get("SUPABASE_URL")}/auth/v1/verify?token=${invitationToken}&type=invite&redirect_to=${encodeURIComponent(window.location.origin + "/auth/complete-signup")}`;
+    const invitationLink = `${Deno.env.get("SUPABASE_URL")}/auth/v1/verify?token=${invitationToken}&type=invite&redirect_to=${encodeURIComponent("https://cqlbidkagiknfplzbwse.lovable.app/auth/complete-signup")}`;
 
     const emailResponse = await resend.emails.send({
       from: "Team <onboarding@resend.dev>",

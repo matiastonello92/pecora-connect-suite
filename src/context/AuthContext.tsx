@@ -3,7 +3,7 @@ import { Language } from '@/lib/i18n';
 import { supabase } from '@/integrations/supabase/client';
 import { User as SupabaseUser, Session } from '@supabase/supabase-js';
 
-export type UserRole = 'base' | 'manager' | 'director' | 'finance' | 'super_admin';
+export type UserRole = 'base' | 'manager' | 'super_admin';
 export type Department = 'kitchen' | 'pizzeria' | 'service' | 'finance' | 'manager' | 'super_manager' | 'general_manager';
 
 export interface User {
@@ -327,9 +327,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const roleHierarchy = {
       base: 0,
       manager: 1,
-      director: 2,
-      finance: 1,
-      super_admin: 3,
+      super_admin: 2,
     };
     
     return roleHierarchy[state.user.role as keyof typeof roleHierarchy] >= roleHierarchy[requiredRole as keyof typeof roleHierarchy];

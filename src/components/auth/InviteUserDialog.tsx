@@ -128,8 +128,6 @@ export const InviteUserDialog = () => {
               <SelectContent>
                 <SelectItem value="base">Base User</SelectItem>
                 <SelectItem value="manager">Manager</SelectItem>
-                <SelectItem value="director">Director</SelectItem>
-                <SelectItem value="finance">Finance</SelectItem>
                 <SelectItem value="super_admin">Super Admin</SelectItem>
               </SelectContent>
             </Select>
