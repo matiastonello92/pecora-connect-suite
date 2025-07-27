@@ -163,42 +163,20 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 // Helper functions
 const fetchUserProfile = async (userId: string): Promise<Profile | null> => {
   try {
-    console.log('🔍 Starting profile fetch for user:', userId);
-    console.log('🔍 Auth state before profile fetch:', { uid: userId, timestamp: new Date().toISOString() });
-    
     const { data, error } = await supabase
       .from('profiles')
       .select('*')
       .eq('user_id', userId)
-      .maybeSingle(); // Use maybeSingle instead of single to handle no results gracefully
+      .maybeSingle();
 
     if (error) {
-      console.error('❌ Error fetching user profile:', error);
-      console.error('❌ Error details:', { code: error.code, message: error.message, details: error.details });
+      console.error('Error fetching user profile:', error.message);
       return null;
     }
 
-    if (!data) {
-      console.warn('⚠️ No profile found for user:', userId);
-      return null;
-    }
-
-    console.log('✅ Profile fetched successfully:', { 
-      userId: data.user_id, 
-      email: data.email, 
-      role: data.role,
-      timestamp: new Date().toISOString()
-    });
-    
     return data;
   } catch (error) {
-    console.error('💥 Exception fetching user profile:', error);
-    console.error('💥 Exception details:', { 
-      name: error instanceof Error ? error.name : 'Unknown',
-      message: error instanceof Error ? error.message : String(error),
-      stack: error instanceof Error ? error.stack : undefined,
-      timestamp: new Date().toISOString()
-    });
+    console.error('Exception fetching user profile:', error);
     return null;
   }
 };
@@ -400,37 +378,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     let initTimeout: NodeJS.Timeout;
 
     const handleAuthState = async (event: string, session: any) => {
-      console.log('🔐 Auth state change:', event, !!session?.user);
-      
       if (!isMounted) return;
       
       if (session?.user) {
         try {
-          console.log('👤 Fetching profile for user:', session.user.id);
           const profile = await fetchUserProfile(session.user.id);
           if (profile && isMounted) {
             const user = transformProfileToUser(profile, session.user);
-            console.log('✅ Auth success with profile:', user.email);
             dispatch({ type: 'AUTH_SUCCESS', payload: { user, session } });
-            
-            // Notify other components that auth is ready
-            setTimeout(() => {
-              window.dispatchEvent(new CustomEvent('authReady', { 
-                detail: { user, session } 
-              }));
-            }, 100);
           } else if (isMounted) {
-            console.warn('⚠️ No profile found, auth failure');
             dispatch({ type: 'AUTH_FAILURE' });
           }
         } catch (error) {
-          console.error('❌ Error in auth state handler:', error);
+          console.error('Auth state error:', error);
           if (isMounted) {
             dispatch({ type: 'AUTH_FAILURE' });
           }
         }
       } else if (isMounted) {
-        console.log('🚫 No session, auth failure');
         dispatch({ type: 'AUTH_FAILURE' });
       }
     };
@@ -441,24 +406,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Initialize session check with timeout
     const initializeAuth = async () => {
       try {
-        console.log('🔍 Checking for existing session...');
         const { data: { session }, error } = await supabase.auth.getSession();
         
         if (error) {
-          console.error('❌ Session error:', error);
           if (isMounted) dispatch({ type: 'AUTH_FAILURE' });
           return;
         }
 
         if (session?.user) {
-          console.log('✅ Found existing session');
           await handleAuthState('INITIAL_SESSION', session);
         } else {
-          console.log('🚫 No existing session');
           if (isMounted) dispatch({ type: 'AUTH_FAILURE' });
         }
       } catch (error) {
-        console.error('❌ Error initializing auth:', error);
+        console.error('Auth initialization error:', error);
         if (isMounted) dispatch({ type: 'AUTH_FAILURE' });
       }
     };
