@@ -237,8 +237,30 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
     dispatch({ type: 'UPDATE_USER', payload: updatedUser });
   };
 
-  const deleteUser = (userId: string) => {
-    dispatch({ type: 'DELETE_USER', payload: userId });
+  const deleteUser = async (userId: string) => {
+    try {
+      // Delete from profiles table - this will cascade to related data
+      const { error } = await supabase
+        .from('profiles')
+        .delete()
+        .eq('id', userId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "User deleted successfully",
+      });
+
+      // Refresh data to update the UI
+      refreshData();
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: `Failed to delete user: ${error.message}`,
+        variant: "destructive",
+      });
+    }
   };
 
   const addShift = (shiftData: Omit<Shift, 'id'>) => {

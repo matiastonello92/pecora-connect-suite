@@ -1,6 +1,7 @@
 import React from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useUserManagement } from '@/context/UserManagementContext';
+import { DeleteUserDialog } from '@/components/ui/delete-user-dialog';
 import { InviteUserDialog } from '@/components/auth/InviteUserDialog';
 import { useTranslation } from '@/lib/i18n';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,9 +11,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Users, Clock, Calendar, UserPlus, Shield, Mail, RefreshCw } from 'lucide-react';
 
 export const UserManagement = () => {
-  const { language } = useAuth();
+  const { language, user, hasPermission } = useAuth();
   const { t } = useTranslation(language);
-  const { users, pendingInvitations, shifts, getActiveShifts, getTodayTimeEntries, resendInvitation } = useUserManagement();
+  const { users, pendingInvitations, shifts, getActiveShifts, getTodayTimeEntries, resendInvitation, deleteUser } = useUserManagement();
 
   const activeShifts = getActiveShifts();
   const todayEntries = getTodayTimeEntries();
@@ -177,6 +178,9 @@ export const UserManagement = () => {
                       <Badge variant={user.status === 'active' ? 'default' : 'secondary'} className="text-xs">
                         {user.status}
                       </Badge>
+                      {hasPermission('manager') && (
+                        <DeleteUserDialog user={user} onDelete={deleteUser} />
+                      )}
                     </div>
                   </div>
                 </CardHeader>
