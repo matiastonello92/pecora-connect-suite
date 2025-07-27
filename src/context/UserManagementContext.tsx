@@ -385,6 +385,14 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
       const invitation = state.pendingInvitations.find(inv => inv.id === invitationId);
       if (!invitation) throw new Error('Invitation not found');
 
+      console.log('Deleting invitation:', invitationId, invitation.email);
+
+      // Immediately update local state to reflect the deletion BEFORE database call
+      dispatch({
+        type: 'REMOVE_PENDING_INVITATION',
+        payload: invitationId
+      });
+
       // Permanently delete the invitation from the database - no archiving for pending users
       // This will immediately invalidate any invitation tokens and remove all traces
       const { error } = await supabase
@@ -392,22 +400,30 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
         .delete()
         .eq('id', invitationId);
 
-      if (error) throw error;
+      if (error) {
+        // If database deletion fails, restore the invitation to the local state
+        dispatch({
+          type: 'ADD_PENDING_INVITATION',
+          payload: invitation
+        });
+        throw error;
+      }
 
-      // Immediately update local state to reflect the deletion
-      dispatch({
-        type: 'REMOVE_PENDING_INVITATION',
-        payload: invitationId
-      });
+      console.log('Invitation successfully deleted from database:', invitationId);
 
       toast({
         title: "Success",
         description: "Invitation permanently deleted. The invitation link is now invalid.",
       });
 
-      // The real-time subscription will automatically refresh the data
-      setTimeout(() => refreshData(), 100);
+      // Force a refresh of pending invitations to ensure UI is in sync
+      setTimeout(() => {
+        console.log('Forcing refresh of pending invitations');
+        loadPendingInvitations();
+      }, 100);
+      
     } catch (error: any) {
+      console.error('Failed to delete invitation:', error);
       toast({
         title: "Error",
         description: `Failed to delete invitation: ${error.message}`,
