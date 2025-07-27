@@ -22,7 +22,7 @@ export const Profile = () => {
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState('information');
 
-  const currentUser = users.find(u => u.user_id === user?.id);
+  const currentUser = users.find(u => u.id === user?.id);
 
   if (!currentUser) {
     return (
@@ -52,7 +52,7 @@ export const Profile = () => {
           <div className="flex items-center gap-3">
             <div className="relative">
               <Avatar className="h-12 w-12">
-                <AvatarImage src={currentUser.avatarUrl} />
+                <AvatarImage src={currentUser.avatar} />
                 <AvatarFallback className="bg-primary text-primary-foreground">
                   {initials}
                 </AvatarFallback>

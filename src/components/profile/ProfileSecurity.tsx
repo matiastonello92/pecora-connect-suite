@@ -21,10 +21,10 @@ export const ProfileSecurity = ({ user }: ProfileSecurityProps) => {
   const [isUpdating, setIsUpdating] = useState(false);
 
   // Check if current user is admin/super_admin
-  const isAdmin = currentUser && ['manager', 'super_admin'].includes(currentUser.user_metadata?.role || '');
+  const isAdmin = currentUser && ['manager', 'super_admin'].includes(currentUser.role || '');
   
   // Don't show admin controls if not admin or if viewing own profile
-  if (!isAdmin || currentUser?.id === user.user_id) {
+  if (!isAdmin || currentUser?.id === user.id) {
     return (
       <Card>
         <CardHeader>
@@ -94,7 +94,7 @@ export const ProfileSecurity = ({ user }: ProfileSecurityProps) => {
         const { error } = await supabase
           .from('archived_users')
           .insert({
-            original_user_id: user.user_id,
+            original_user_id: user.id,
             first_name: user.firstName,
             last_name: user.lastName,
             email: user.email,

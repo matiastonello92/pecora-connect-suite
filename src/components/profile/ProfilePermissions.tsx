@@ -23,8 +23,8 @@ export const ProfilePermissions = ({ user }: ProfilePermissionsProps) => {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  const isAdmin = currentUser && ['manager', 'super_admin'].includes(currentUser.user_metadata?.role || '');
-  const canEdit = isAdmin && currentUser?.id !== user.user_id;
+  const isAdmin = currentUser && ['manager', 'super_admin'].includes(currentUser.role || '');
+  const canEdit = isAdmin && currentUser?.id !== user.id;
 
   const modules: AppModule[] = [
     'chat', 'inventory_sala', 'inventory_kitchen', 'checklists', 
@@ -44,7 +44,7 @@ export const ProfilePermissions = ({ user }: ProfilePermissionsProps) => {
       const { data, error } = await supabase
         .from('user_permissions')
         .select('*')
-        .eq('user_id', user.user_id);
+        .eq('user_id', user.id);
 
       if (error) throw error;
 
@@ -81,7 +81,7 @@ export const ProfilePermissions = ({ user }: ProfilePermissionsProps) => {
   };
 
   const savePermissions = async () => {
-    if (!user.user_id) return;
+    if (!user.id) return;
     
     setSaving(true);
     try {
@@ -89,7 +89,7 @@ export const ProfilePermissions = ({ user }: ProfilePermissionsProps) => {
       const { error: deleteError } = await supabase
         .from('user_permissions')
         .delete()
-        .eq('user_id', user.user_id);
+        .eq('user_id', user.id);
 
       if (deleteError) throw deleteError;
 
@@ -97,7 +97,7 @@ export const ProfilePermissions = ({ user }: ProfilePermissionsProps) => {
       const permissionsToInsert = Object.entries(permissions)
         .filter(([_, perms]) => perms && Object.values(perms).some(Boolean))
         .map(([module, perms]) => ({
-          user_id: user.user_id,
+          user_id: user.id,
           module: module as AppModule,
           ...perms
         }));
@@ -249,7 +249,7 @@ export const ProfilePermissions = ({ user }: ProfilePermissionsProps) => {
           {!canEdit && (
             <div className="mt-6 p-4 bg-muted rounded-lg">
               <p className="text-sm text-muted-foreground text-center">
-                {currentUser?.id === user.user_id 
+                {currentUser?.id === user.id 
                   ? t('profile.messages.cannotEditOwnPermissions')
                   : t('profile.messages.noPermissionToEdit')
                 }

@@ -18,7 +18,7 @@ interface ProfileSettingsProps {
 
 export const ProfileSettings = ({ user }: ProfileSettingsProps) => {
   const { t, i18n } = useTranslation();
-  const { signOut } = useAuth();
+  const { logout } = useAuth();
   const { toast } = useToast();
   const [showPasswordDialog, setShowPasswordDialog] = useState(false);
   const [settings, setSettings] = useState({
@@ -62,7 +62,7 @@ export const ProfileSettings = ({ user }: ProfileSettingsProps) => {
 
   const handleLogout = async () => {
     try {
-      await signOut();
+      await logout();
       toast({
         title: t('profile.messages.loggedOut'),
       });

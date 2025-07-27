@@ -138,7 +138,7 @@ export const ProfileInformation = ({ user }: ProfileInformationProps) => {
               <div className="flex items-center gap-2">
                 <Calendar className="h-4 w-4 text-muted-foreground" />
                 <p className="text-lg">
-                  {user.lastLoginAt ? format(new Date(user.lastLoginAt), 'dd/MM/yyyy HH:mm') : '-'}
+                  {user.lastLogin ? format(new Date(user.lastLogin), 'dd/MM/yyyy HH:mm') : '-'}
                 </p>
               </div>
             </div>

@@ -56,13 +56,13 @@ export const ProfilePictureUpload = ({ user }: ProfilePictureUploadProps) => {
   };
 
   const handleUpload = async () => {
-    if (!selectedFile || !user.user_id) return;
+    if (!selectedFile || !user.id) return;
 
     setUploading(true);
     try {
       // Create unique filename
       const fileExt = selectedFile.name.split('.').pop();
-      const fileName = `${user.user_id}-${Date.now()}.${fileExt}`;
+      const fileName = `${user.id}-${Date.now()}.${fileExt}`;
       const filePath = `avatars/${fileName}`;
 
       // Upload to Supabase Storage
@@ -87,7 +87,7 @@ export const ProfilePictureUpload = ({ user }: ProfilePictureUploadProps) => {
           avatar_url: urlData.publicUrl,
           updated_at: new Date().toISOString()
         })
-        .eq('user_id', user.user_id);
+        .eq('user_id', user.id);
 
       if (updateError) throw updateError;
 

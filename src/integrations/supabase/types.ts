@@ -911,11 +911,13 @@ export type Database = {
       profiles: {
         Row: {
           access_level: Database["public"]["Enums"]["access_level"]
+          avatar_url: string | null
           created_at: string | null
           department: string | null
           first_name: string
           has_custom_permissions: boolean
           id: string
+          last_login_at: string | null
           last_name: string
           location: string
           phone: string | null
@@ -928,11 +930,13 @@ export type Database = {
         }
         Insert: {
           access_level?: Database["public"]["Enums"]["access_level"]
+          avatar_url?: string | null
           created_at?: string | null
           department?: string | null
           first_name: string
           has_custom_permissions?: boolean
           id?: string
+          last_login_at?: string | null
           last_name: string
           location: string
           phone?: string | null
@@ -947,11 +951,13 @@ export type Database = {
         }
         Update: {
           access_level?: Database["public"]["Enums"]["access_level"]
+          avatar_url?: string | null
           created_at?: string | null
           department?: string | null
           first_name?: string
           has_custom_permissions?: boolean
           id?: string
+          last_login_at?: string | null
           last_name?: string
           location?: string
           phone?: string | null
