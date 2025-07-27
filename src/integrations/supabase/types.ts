@@ -914,6 +914,7 @@ export type Database = {
           avatar_url: string | null
           created_at: string | null
           department: string | null
+          email: string | null
           first_name: string
           has_custom_permissions: boolean
           id: string
@@ -933,6 +934,7 @@ export type Database = {
           avatar_url?: string | null
           created_at?: string | null
           department?: string | null
+          email?: string | null
           first_name: string
           has_custom_permissions?: boolean
           id?: string
@@ -954,6 +956,7 @@ export type Database = {
           avatar_url?: string | null
           created_at?: string | null
           department?: string | null
+          email?: string | null
           first_name?: string
           has_custom_permissions?: boolean
           id?: string
@@ -1176,6 +1179,10 @@ export type Database = {
           permission_type?: string
           user_uuid?: string
         }
+        Returns: boolean
+      }
+      is_email_permanently_deleted: {
+        Args: { check_email: string }
         Returns: boolean
       }
       validate_invitation_token: {
