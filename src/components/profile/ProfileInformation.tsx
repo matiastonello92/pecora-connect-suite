@@ -1,12 +1,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Mail, Calendar, MapPin, Shield, User, Hash } from 'lucide-react';
+import { Mail, Calendar, MapPin, Shield, User, Hash, Edit2 } from 'lucide-react';
 import { UserProfile } from '@/types/users';
 import { useTranslation } from '@/lib/i18n';
 import { format } from 'date-fns';
 import { useState } from 'react';
 import { EmailChangeDialog } from './EmailChangeDialog';
+import { ProfileEditDialog } from './ProfileEditDialog';
 
 interface ProfileInformationProps {
   user: UserProfile;
@@ -15,6 +16,7 @@ interface ProfileInformationProps {
 export const ProfileInformation = ({ user }: ProfileInformationProps) => {
   const { t } = useTranslation('en');
   const [showEmailDialog, setShowEmailDialog] = useState(false);
+  const [showEditDialog, setShowEditDialog] = useState(false);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -56,6 +58,14 @@ export const ProfileInformation = ({ user }: ProfileInformationProps) => {
               <div className="flex items-center gap-2">
                 <MapPin className="h-4 w-4 text-muted-foreground" />
                 <p className="text-lg">{(user.locations || [user.location]).join(', ')}</p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowEditDialog(true)}
+                >
+                  <Edit2 className="mr-2 h-3 w-3" />
+                  Edit Profile
+                </Button>
               </div>
             </div>
           </div>
@@ -131,6 +141,12 @@ export const ProfileInformation = ({ user }: ProfileInformationProps) => {
         isOpen={showEmailDialog}
         onOpenChange={setShowEmailDialog}
         currentEmail={user.email}
+      />
+      
+      <ProfileEditDialog
+        user={user}
+        isOpen={showEditDialog}
+        onOpenChange={setShowEditDialog}
       />
     </div>
   );

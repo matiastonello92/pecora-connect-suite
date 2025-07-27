@@ -129,8 +129,8 @@ export interface InvitationData {
   role: UserRole;
   restaurantRole?: RestaurantRole;
   accessLevel: AccessLevel;
-  location: LocationType;
-  locations: string[];
+  location: LocationType; // Keep for backward compatibility
+  locations?: string[]; // New field for multiple locations (optional for backward compatibility)
   customPermissions?: Partial<Record<AppModule, ModulePermissions>>;
 }
 
