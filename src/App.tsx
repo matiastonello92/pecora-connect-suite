@@ -10,6 +10,7 @@ import { KitchenInventoryProvider } from '@/context/KitchenInventoryContext';
 import { ChecklistProvider } from '@/context/ChecklistContext';
 import { CommunicationProvider } from '@/context/CommunicationContext';
 import { ChatProvider } from '@/context/ChatContext';
+import { UnreadMessagesProvider } from '@/context/UnreadMessagesContext';
 import { NotificationHandler } from '@/components/notifications/NotificationHandler';
 import { CashRegisterProvider } from '@/context/CashRegisterContext';
 import { ReportsProvider } from '@/context/ReportsContext';
@@ -112,6 +113,7 @@ const App: React.FC = () => {
               <ChecklistProvider>
                 <CommunicationProvider>
                   <ChatProvider>
+                    <UnreadMessagesProvider>
                      <CashRegisterProvider>
                       <ReportsProvider>
                         <EquipmentProvider>
@@ -124,12 +126,13 @@ const App: React.FC = () => {
                                    <Toaster />
                                    <Sonner />
                                  </TooltipProvider>
-                              </LocationProvider>
-                            </FinancialProvider>
-                          </UserManagementProvider>
-                        </EquipmentProvider>
-                      </ReportsProvider>
-                    </CashRegisterProvider>
+                               </LocationProvider>
+                             </FinancialProvider>
+                           </UserManagementProvider>
+                         </EquipmentProvider>
+                       </ReportsProvider>
+                     </CashRegisterProvider>
+                    </UnreadMessagesProvider>
                   </ChatProvider>
                 </CommunicationProvider>
               </ChecklistProvider>
