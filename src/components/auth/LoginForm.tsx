@@ -62,7 +62,7 @@ export const LoginForm = () => {
     if (result.error) {
       toast({
         title: "Error",
-        description: result.error,
+        description: result.error?.message || String(result.error) || "Login failed",
         variant: "destructive",
       });
     } else {
