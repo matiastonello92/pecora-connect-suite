@@ -33,6 +33,7 @@ import { ChatType } from '@/types/communication';
 import { ChatInterface } from './ChatInterface';
 import { ConnectionRequestManager } from './ConnectionRequestManager';
 import { GroupManagement } from './GroupManagement';
+import { ChatSettings } from './ChatSettings';
 import { NotificationBadge } from '@/components/ui/notification-badge';
 
 const locales = { en: enUS, fr, it };
@@ -233,13 +234,15 @@ export const ChatDashboard: React.FC = () => {
               >
                 <Plus className="h-4 w-4" />
               </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="hover:bg-accent focus:bg-accent active:bg-accent"
-              >
-                <Settings className="h-4 w-4" />
-              </Button>
+              <ChatSettings>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="hover:bg-accent focus:bg-accent active:bg-accent"
+                >
+                  <Settings className="h-4 w-4" />
+                </Button>
+              </ChatSettings>
             </div>
           </div>
 

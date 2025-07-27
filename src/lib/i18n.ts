@@ -201,8 +201,6 @@ export const translations = {
       globalChatSubtitle: 'Everyone in your location',
       announcementChatSubtitle: 'Important announcements',
       onlyAdminsCanSend: 'Only administrators can send announcements',
-      chatMuted: 'This chat is muted',
-      chatInfo: 'Chat Info',
       typeMessage: 'Type a message...',
       image: 'Image',
       document: 'Document',
@@ -236,7 +234,33 @@ export const translations = {
       waitingForConnection: 'Waiting for the user to accept your chat request',
       connectionDeclined: 'Connection request was declined',
       noConnectionRequest: 'Send a connection request to start chatting',
-      cannotSendRequest: 'Cannot send connection request. You may have a pending request or need to wait after a previous decline.'
+      cannotSendRequest: 'Cannot send connection request. You may have a pending request or need to wait after a previous decline.',
+      
+      // Chat Settings
+      chatSettings: 'Chat Settings',
+      chatInfo: 'Chat Info',
+      chatName: 'Chat Name',
+      chatType: 'Chat Type',
+      participants: 'Participants',
+      notifications: 'Notifications',
+      mute: 'Mute Chat',
+      unmute: 'Unmute Chat',
+      chatCurrentlyMuted: 'This chat is currently muted',
+      chatNotMuted: 'You will receive notifications for this chat',
+      chatMuted: 'Chat muted successfully',
+      chatMutedDesc: 'You will no longer receive notifications for this chat',
+      chatUnmuted: 'Chat unmuted successfully',
+      chatUnmutedDesc: 'You will now receive notifications for this chat',
+      muteError: 'Failed to update mute settings',
+      pushNotifications: 'Push Notifications',
+      pushNotificationsDesc: 'Receive browser notifications for new messages',
+      you: 'you',
+      admin: 'Admin',
+      leaveChat: 'Leave Chat',
+      deleteConversation: 'Delete Conversation',
+      leaveGroup: 'Leave Group',
+      leaveChatConfirm: 'Are you sure you want to leave this chat?',
+      archiveChat: 'Archive Chat'
     },
     
     // Legacy communication keys for backward compatibility

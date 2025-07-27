@@ -560,7 +560,42 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const muteChat = async (chatId: string, muted: boolean, mutedUntil?: Date) => {
-    // Implementation for muting/unmuting chats
+    if (!user) throw new Error('User not authenticated');
+
+    try {
+      const { error } = await supabase
+        .from('chat_participants')
+        .update({
+          is_muted: muted,
+          muted_until: mutedUntil ? mutedUntil.toISOString() : null
+        })
+        .eq('chat_id', chatId)
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+
+      // Update local state
+      setChats(prevChats => 
+        prevChats.map(chat => {
+          if (chat.id === chatId) {
+            return {
+              ...chat,
+              participants: chat.participants?.map(p => 
+                p.user_id === user.id 
+                  ? { ...p, is_muted: muted, muted_until: mutedUntil ? mutedUntil.toISOString() : null }
+                  : p
+              )
+            };
+          }
+          return chat;
+        })
+      );
+
+      console.log(`Chat ${muted ? 'muted' : 'unmuted'} successfully`);
+    } catch (error: any) {
+      console.error('Error muting/unmuting chat:', error);
+      throw error;
+    }
   };
 
   return (
