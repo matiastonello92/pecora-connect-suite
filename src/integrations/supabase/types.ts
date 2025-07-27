@@ -1219,6 +1219,26 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      force_create_default_chats: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          action: string
+          chat_type: string
+          location: string
+          chat_id: string
+          message: string
+        }[]
+      }
+      force_join_user_to_chats: {
+        Args: { target_user_id: string }
+        Returns: {
+          action: string
+          chat_type: string
+          location: string
+          chat_id: string
+          message: string
+        }[]
+      }
       get_available_locations: {
         Args: { user_role?: string }
         Returns: {
