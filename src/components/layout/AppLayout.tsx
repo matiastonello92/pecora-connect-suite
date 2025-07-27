@@ -14,8 +14,8 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
   const { t } = useTranslation(language);
 
   return (
-    <UnreadMessagesProvider>
-      <SidebarProvider>
+    <SidebarProvider>
+      <UnreadMessagesProvider>
         <div className="min-h-screen flex w-full bg-background">
           <AppSidebar />
           
@@ -29,7 +29,7 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
             </main>
           </div>
         </div>
-      </SidebarProvider>
-    </UnreadMessagesProvider>
+      </UnreadMessagesProvider>
+    </SidebarProvider>
   );
 };
