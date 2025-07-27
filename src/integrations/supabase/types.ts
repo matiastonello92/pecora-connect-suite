@@ -1036,6 +1036,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: boolean
       }
+      cleanup_expired_invitations: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       create_private_chat: {
         Args: { other_user_id: string }
         Returns: string
@@ -1053,6 +1057,15 @@ export type Database = {
       get_current_user_role: {
         Args: Record<PropertyKey, never>
         Returns: string
+      }
+      validate_invitation_token: {
+        Args: { token_to_check: string }
+        Returns: {
+          is_valid: boolean
+          error_code: string
+          error_message: string
+          invitation_data: Json
+        }[]
       }
     }
     Enums: {

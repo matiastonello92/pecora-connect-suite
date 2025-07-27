@@ -13,6 +13,7 @@ import { Loader2, AlertTriangle, RefreshCw } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { validatePassword } from '@/utils/security';
 import { auditLogger, auditActions } from '@/utils/auditLog';
+import { validateInvitationToken, getInvitationErrorMessage, cleanupExpiredInvitations } from '@/utils/invitationValidation';
 
 export const CompleteSignup = () => {
   const [searchParams] = useSearchParams();
@@ -52,61 +53,35 @@ export const CompleteSignup = () => {
       setTokenFromUrl(token);
 
       try {
-        // Verify the invitation token with detailed logging
-        console.log('Querying user_invitations for token:', token);
+        // Clean up expired invitations first
+        await cleanupExpiredInvitations();
         
-        const { data, error } = await supabase
-          .from('user_invitations')
-          .select('*')
-          .eq('invitation_token', token)
-          .eq('status', 'pending')
-          .gt('expires_at', new Date().toISOString())
-          .single();
-
-        console.log('Database query result:', { data, error });
-
-        if (error) {
-          console.error('Database error:', error);
-          if (error.code === 'PGRST116') {
-            // No rows returned - token not found or expired
-            const { data: expiredCheck } = await supabase
-              .from('user_invitations')
-              .select('status, expires_at')
-              .eq('invitation_token', token)
-              .single();
-            
-            if (expiredCheck) {
-              if (expiredCheck.status === 'completed') {
-                setInvitationError('This invitation has already been used. If you need access, please contact your administrator for a new invitation.');
-              } else if (new Date(expiredCheck.expires_at) < new Date()) {
-                setInvitationError('This invitation has expired. Please contact your administrator for a new invitation.');
-              } else {
-                setInvitationError('This invitation is no longer valid. Please contact your administrator for a new invitation.');
-              }
-            } else {
-              setInvitationError('Invalid invitation token. Please check your email for the correct link or contact your administrator.');
-            }
-          } else {
-            setInvitationError('Failed to verify invitation. Please try again or contact support.');
-          }
+        // Use the comprehensive validation function
+        const validationResult = await validateInvitationToken(token);
+        
+        if (!validationResult.isValid) {
+          const errorMessage = validationResult.errorMessage || 
+                             getInvitationErrorMessage(validationResult.errorCode || 'UNKNOWN');
+          setInvitationError(errorMessage);
           setIsCheckingInvitation(false);
           return;
         }
 
-        if (!data) {
-          setInvitationError('Invalid or expired invitation. Please contact your administrator for a new invitation.');
+        const invitationData = validationResult.invitationData;
+        if (!invitationData) {
+          setInvitationError('Invalid invitation data. Please contact your administrator.');
           setIsCheckingInvitation(false);
           return;
         }
 
-        console.log('Valid invitation found:', data);
+        console.log('Valid invitation found:', invitationData);
         
         // Check if user already exists with this email
         const { data: existingUser } = await supabase
           .from('profiles')
           .select('user_id')
-          .eq('first_name', data.first_name)
-          .eq('last_name', data.last_name)
+          .eq('first_name', invitationData.first_name)
+          .eq('last_name', invitationData.last_name)
           .single();
 
         if (existingUser) {
@@ -115,12 +90,12 @@ export const CompleteSignup = () => {
           return;
         }
 
-        setInvitationData(data);
-        setEmail(data.email);
-        setFirstName(data.first_name);
-        setLastName(data.last_name);
-        setRole(data.role);
-        setLocation(data.location);
+        setInvitationData(invitationData);
+        setEmail(invitationData.email);
+        setFirstName(invitationData.first_name);
+        setLastName(invitationData.last_name);
+        setRole(invitationData.role);
+        setLocation(invitationData.location);
         setIsValidInvitation(true);
         setIsCheckingInvitation(false);
         
@@ -178,17 +153,13 @@ export const CompleteSignup = () => {
     setLanguage(selectedLanguage);
 
     try {
-      // Final token validation before user creation
-      const { data: finalCheck, error: finalError } = await supabase
-        .from('user_invitations')
-        .select('*')
-        .eq('invitation_token', tokenFromUrl)
-        .eq('status', 'pending')
-        .gt('expires_at', new Date().toISOString())
-        .single();
-
-      if (finalError || !finalCheck) {
-        throw new Error('Invitation is no longer valid. Please request a new invitation.');
+      // Final token validation before user creation using the validation function
+      const finalValidation = await validateInvitationToken(tokenFromUrl);
+      
+      if (!finalValidation.isValid) {
+        const errorMessage = finalValidation.errorMessage || 
+                           getInvitationErrorMessage(finalValidation.errorCode || 'UNKNOWN');
+        throw new Error(errorMessage);
       }
 
       // Create the user account
