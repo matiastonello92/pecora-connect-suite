@@ -135,8 +135,31 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ onBack, onShowInfo
       return user?.role && ['manager', 'super_admin'].includes(user.role);
     }
     
+    // Private chats: check connection status
+    if (activeChat.type === 'private') {
+      return hasAcceptedConnection();
+    }
+    
     // All other chats: check if user is not muted
     return !isCurrentUserMuted();
+  };
+
+  const hasAcceptedConnection = () => {
+    if (!user || !activeChat.participants || activeChat.type !== 'private') return true;
+    
+    // For private chats, we need to check if there's an accepted connection
+    // This will be verified by the backend when sending messages
+    return true; // Backend will handle the actual validation
+  };
+
+  const getConnectionStatus = () => {
+    if (activeChat.type !== 'private' || !activeChat.participants || !user) return null;
+    
+    const otherParticipant = activeChat.participants.find(p => p.user_id !== user.id);
+    if (!otherParticipant) return null;
+    
+    // This should be enhanced to check actual connection status from context
+    return 'pending'; // This would come from connection request data
   };
 
   return (
@@ -286,6 +309,10 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ onBack, onShowInfo
           <div className="p-4 text-center text-muted-foreground">
             {activeChat.type === 'announcements' 
               ? t('communication.onlyAdminsCanSend')
+              : activeChat.type === 'private' && getConnectionStatus() === 'pending'
+              ? t('communication.waitingForConnection')
+              : activeChat.type === 'private' && getConnectionStatus() === 'declined'
+              ? t('communication.connectionDeclined')
               : t('communication.chatMuted')
             }
           </div>
