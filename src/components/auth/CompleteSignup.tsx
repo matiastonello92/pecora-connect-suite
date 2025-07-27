@@ -9,8 +9,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Logo } from '@/components/ui/logo';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2 } from 'lucide-react';
+import { Loader2, AlertTriangle, RefreshCw } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { validatePassword } from '@/utils/security';
+import { auditLogger, auditActions } from '@/utils/auditLog';
 
 export const CompleteSignup = () => {
   const [searchParams] = useSearchParams();
@@ -25,7 +27,10 @@ export const CompleteSignup = () => {
   const [selectedLanguage, setSelectedLanguage] = useState<Language>('en');
   const [isLoading, setIsLoading] = useState(false);
   const [isValidInvitation, setIsValidInvitation] = useState(false);
+  const [isCheckingInvitation, setIsCheckingInvitation] = useState(true);
   const [invitationData, setInvitationData] = useState<any>(null);
+  const [invitationError, setInvitationError] = useState<string>('');
+  const [tokenFromUrl, setTokenFromUrl] = useState<string>('');
   const { setLanguage } = useAuth();
   const { t } = useTranslation(selectedLanguage);
   const { toast } = useToast();
@@ -36,18 +41,20 @@ export const CompleteSignup = () => {
       const token = searchParams.get('token');
       const type = searchParams.get('type');
       
+      console.log('Checking invitation with token:', token, 'type:', type);
+      
       if (!token || type !== 'invite') {
-        toast({
-          title: "Error",
-          description: "Invalid or missing invitation link",
-          variant: "destructive",
-        });
-        navigate('/');
+        setInvitationError('Invalid or missing invitation link. Please check your email for the correct link.');
+        setIsCheckingInvitation(false);
         return;
       }
 
+      setTokenFromUrl(token);
+
       try {
-        // Verify the invitation token
+        // Verify the invitation token with detailed logging
+        console.log('Querying user_invitations for token:', token);
+        
         const { data, error } = await supabase
           .from('user_invitations')
           .select('*')
@@ -56,13 +63,55 @@ export const CompleteSignup = () => {
           .gt('expires_at', new Date().toISOString())
           .single();
 
-        if (error || !data) {
-          toast({
-            title: "Error",
-            description: "Invalid or expired invitation",
-            variant: "destructive",
-          });
-          navigate('/');
+        console.log('Database query result:', { data, error });
+
+        if (error) {
+          console.error('Database error:', error);
+          if (error.code === 'PGRST116') {
+            // No rows returned - token not found or expired
+            const { data: expiredCheck } = await supabase
+              .from('user_invitations')
+              .select('status, expires_at')
+              .eq('invitation_token', token)
+              .single();
+            
+            if (expiredCheck) {
+              if (expiredCheck.status === 'completed') {
+                setInvitationError('This invitation has already been used. If you need access, please contact your administrator for a new invitation.');
+              } else if (new Date(expiredCheck.expires_at) < new Date()) {
+                setInvitationError('This invitation has expired. Please contact your administrator for a new invitation.');
+              } else {
+                setInvitationError('This invitation is no longer valid. Please contact your administrator for a new invitation.');
+              }
+            } else {
+              setInvitationError('Invalid invitation token. Please check your email for the correct link or contact your administrator.');
+            }
+          } else {
+            setInvitationError('Failed to verify invitation. Please try again or contact support.');
+          }
+          setIsCheckingInvitation(false);
+          return;
+        }
+
+        if (!data) {
+          setInvitationError('Invalid or expired invitation. Please contact your administrator for a new invitation.');
+          setIsCheckingInvitation(false);
+          return;
+        }
+
+        console.log('Valid invitation found:', data);
+        
+        // Check if user already exists with this email
+        const { data: existingUser } = await supabase
+          .from('profiles')
+          .select('user_id')
+          .eq('first_name', data.first_name)
+          .eq('last_name', data.last_name)
+          .single();
+
+        if (existingUser) {
+          setInvitationError('A user with this information already exists. Please contact your administrator.');
+          setIsCheckingInvitation(false);
           return;
         }
 
@@ -73,18 +122,25 @@ export const CompleteSignup = () => {
         setRole(data.role);
         setLocation(data.location);
         setIsValidInvitation(true);
+        setIsCheckingInvitation(false);
+        
+        console.log('Invitation validation successful');
       } catch (error) {
-        toast({
-          title: "Error",
-          description: "Failed to verify invitation",
-          variant: "destructive",
-        });
-        navigate('/');
+        console.error('Error during invitation check:', error);
+        setInvitationError('Failed to verify invitation. Please try again or contact support.');
+        setIsCheckingInvitation(false);
       }
     };
 
     checkInvitation();
-  }, [searchParams, navigate, toast]);
+  }, [searchParams]);
+
+  const retryInvitationCheck = () => {
+    setIsCheckingInvitation(true);
+    setInvitationError('');
+    // Trigger re-check
+    window.location.reload();
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -107,10 +163,12 @@ export const CompleteSignup = () => {
       return;
     }
 
-    if (password.length < 6) {
+    // Validate password strength
+    const passwordValidation = validatePassword(password);
+    if (!passwordValidation.isValid) {
       toast({
-        title: "Error",
-        description: "Password must be at least 6 characters long",
+        title: "Password Requirements",
+        description: passwordValidation.errors.join('. '),
         variant: "destructive",
       });
       return;
@@ -120,6 +178,19 @@ export const CompleteSignup = () => {
     setLanguage(selectedLanguage);
 
     try {
+      // Final token validation before user creation
+      const { data: finalCheck, error: finalError } = await supabase
+        .from('user_invitations')
+        .select('*')
+        .eq('invitation_token', tokenFromUrl)
+        .eq('status', 'pending')
+        .gt('expires_at', new Date().toISOString())
+        .single();
+
+      if (finalError || !finalCheck) {
+        throw new Error('Invitation is no longer valid. Please request a new invitation.');
+      }
+
       // Create the user account
       const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email,
@@ -154,7 +225,7 @@ export const CompleteSignup = () => {
         throw new Error('Failed to create user profile');
       }
 
-      // Mark invitation as completed
+      // Mark invitation as completed and invalidate token
       const { error: updateError } = await supabase
         .from('user_invitations')
         .update({ 
@@ -164,8 +235,23 @@ export const CompleteSignup = () => {
         .eq('id', invitationData.id);
 
       if (updateError) {
+        console.error('Failed to mark invitation as completed:', updateError);
         // Don't throw error as user creation was successful - just log internally
       }
+
+      // Audit log the successful registration
+      await auditLogger.logUserAction(
+        signUpData.user.id, 
+        auditActions.USER_CREATED, 
+        undefined, 
+        { 
+          email, 
+          role, 
+          location, 
+          invitation_used: invitationData.id,
+          registration_method: 'invitation' 
+        }
+      );
 
       toast({
         title: "Success",
@@ -185,13 +271,80 @@ export const CompleteSignup = () => {
     }
   };
 
-  if (!isValidInvitation) {
+  // Show loading state while checking invitation
+  if (isCheckingInvitation) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-secondary/20 via-background to-accent/10 p-4">
         <Card className="w-full max-w-md shadow-elegant">
           <CardContent className="p-6 text-center">
             <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
             <p>Verifying invitation...</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // Show error state for invalid invitations
+  if (invitationError) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-secondary/20 via-background to-accent/10 p-4">
+        <Card className="w-full max-w-md shadow-elegant">
+          <CardHeader className="text-center pb-6">
+            <div className="flex justify-center mb-4">
+              <Logo size="lg" />
+            </div>
+            <div className="flex items-center justify-center mb-4">
+              <AlertTriangle className="h-12 w-12 text-destructive" />
+            </div>
+            <CardTitle className="text-2xl font-playfair text-destructive">
+              Invitation Error
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6 text-center">
+            <p className="text-muted-foreground font-inter">
+              {invitationError}
+            </p>
+            <div className="space-y-3">
+              <Button 
+                onClick={retryInvitationCheck}
+                variant="outline" 
+                className="w-full"
+              >
+                <RefreshCw className="mr-2 h-4 w-4" />
+                Try Again
+              </Button>
+              <Button 
+                onClick={() => navigate('/')} 
+                variant="default"
+                className="w-full"
+              >
+                Back to Login
+              </Button>
+            </div>
+            <div className="mt-6 p-4 bg-muted/50 rounded-lg">
+              <p className="text-sm text-muted-foreground">
+                Need help? Contact your administrator to:
+              </p>
+              <ul className="text-sm text-muted-foreground mt-2 list-disc list-inside">
+                <li>Request a new invitation</li>
+                <li>Verify your email address</li>
+                <li>Check invitation expiry</li>
+              </ul>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (!isValidInvitation) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-secondary/20 via-background to-accent/10 p-4">
+        <Card className="w-full max-w-md shadow-elegant">
+          <CardContent className="p-6 text-center">
+            <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
+            <p>Processing...</p>
           </CardContent>
         </Card>
       </div>
@@ -313,8 +466,18 @@ export const CompleteSignup = () => {
                 disabled={isLoading}
                 className="font-inter"
                 required
-                minLength={6}
+                minLength={8}
               />
+              <div className="text-xs text-muted-foreground space-y-1">
+                <p>Password must contain:</p>
+                <ul className="list-disc list-inside space-y-0.5">
+                  <li>At least 8 characters</li>
+                  <li>One uppercase letter</li>
+                  <li>One lowercase letter</li>
+                  <li>One number</li>
+                  <li>One special character</li>
+                </ul>
+              </div>
             </div>
 
             <div className="space-y-2">
@@ -329,7 +492,7 @@ export const CompleteSignup = () => {
                 disabled={isLoading}
                 className="font-inter"
                 required
-                minLength={6}
+                minLength={8}
               />
             </div>
 

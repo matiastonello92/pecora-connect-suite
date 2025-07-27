@@ -49,11 +49,11 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log("Sending invitation email to:", email);
 
-    // Create invitation link - use the current app's origin for the redirect
+    // Create invitation link - DIRECT to our app with token as query parameter
     // Get the origin from the request headers or use the Lovable app URL as fallback
     const origin = req.headers.get('origin') || req.headers.get('referer')?.split('/').slice(0, 3).join('/') || "https://cqlbidkagiknfplzbwse.lovable.app";
-    const redirectUrl = `${origin}/auth/complete-signup`;
-    const invitationLink = `${Deno.env.get("SUPABASE_URL")}/auth/v1/verify?token=${invitationToken}&type=invite&redirect_to=${encodeURIComponent(redirectUrl)}`;
+    // Direct link to our registration page with token - NOT through Supabase auth
+    const invitationLink = `${origin}/auth/complete-signup?token=${invitationToken}&type=invite`;
 
     // Generate unique identifiers to prevent email threading
     const timestamp = new Date().toISOString();
