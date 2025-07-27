@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { Equipment, MaintenanceRecord, MaintenanceSchedule, EquipmentStatus, MaintenanceType } from '@/types/equipment';
-import { useAuth } from '@/context/AuthContext';
+import { useSimpleAuth } from '@/context/SimpleAuthContext';
 
 interface EquipmentState {
   equipment: Equipment[];
@@ -77,7 +77,7 @@ interface EquipmentContextType extends EquipmentState {
 const EquipmentContext = createContext<EquipmentContextType | undefined>(undefined);
 
 export const EquipmentProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { user } = useAuth();
+  const { user } = useSimpleAuth();
   const [state, dispatch] = useReducer(equipmentReducer, {
     equipment: [],
     maintenanceRecords: [],
@@ -121,27 +121,24 @@ export const EquipmentProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   };
 
   const getEquipmentByStatus = (status: EquipmentStatus) => {
-    const userLocations = user?.locations || [user?.location].filter(Boolean) || [];
+    // Simplified for now - will need location data from LocationContext
     return state.equipment.filter(eq => 
-      eq.status === status && 
-      userLocations.includes(eq.location)
+      eq.status === status
     );
   };
 
   const getOverdueMaintenance = () => {
-    const userLocations = user?.locations || [user?.location].filter(Boolean) || [];
+    // Simplified for now - will need location data from LocationContext
     return state.maintenanceSchedule.filter(schedule => 
-      schedule.isOverdue &&
-      state.equipment.some(eq => eq.id === schedule.equipmentId && userLocations.includes(eq.location))
+      schedule.isOverdue
     );
   };
 
   const getUpcomingMaintenance = (days: number) => {
-    const userLocations = user?.locations || [user?.location].filter(Boolean) || [];
+    // Simplified for now - will need location data from LocationContext
     const targetDate = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
     return state.maintenanceSchedule.filter(schedule => 
-      !schedule.isOverdue && schedule.nextDue <= targetDate &&
-      state.equipment.some(eq => eq.id === schedule.equipmentId && userLocations.includes(eq.location))
+      !schedule.isOverdue && schedule.nextDue <= targetDate
     );
   };
 

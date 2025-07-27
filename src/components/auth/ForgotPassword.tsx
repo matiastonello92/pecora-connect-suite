@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '@/context/AuthContext';
+import { useSimpleAuth } from '@/context/SimpleAuthContext';
 import { useTranslation, Language } from '@/lib/i18n';
+import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -14,7 +15,12 @@ export const ForgotPassword = () => {
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const { resetPassword, language } = useAuth();
+  const { user } = useSimpleAuth();
+  const language = 'en'; // Temporarily hardcode language
+  const resetPassword = async (email: string) => {
+    const { error } = await supabase.auth.resetPasswordForEmail(email);
+    return { error: error?.message };
+  };
   const { t } = useTranslation(language);
   const { toast } = useToast();
 

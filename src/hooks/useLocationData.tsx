@@ -1,5 +1,5 @@
 import { useLocation } from '@/context/LocationContext';
-import { useAuth } from '@/context/AuthContext';
+import { useSimpleAuth } from '@/context/SimpleAuthContext';
 import { userHasAccessToLocation } from '@/hooks/useLocations';
 
 /**
@@ -8,7 +8,7 @@ import { userHasAccessToLocation } from '@/hooks/useLocations';
  * or the user's primary location for single-location users
  */
 export const useEffectiveLocation = () => {
-  const { user } = useAuth();
+  const { user } = useSimpleAuth();
   const { activeLocation, userLocations } = useLocation();
 
   // Always use the single active location (no "all_locations" support)

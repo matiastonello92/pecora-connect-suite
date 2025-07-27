@@ -1,4 +1,4 @@
-import { useAuth } from '@/context/AuthContext';
+import { useSimpleAuth } from '@/context/SimpleAuthContext';
 
 /**
  * System-wide audit for multi-location data access
@@ -32,15 +32,16 @@ export const validateLocationSystemAudit = () => {
  * Hook to check if current user has access to a specific location
  */
 export const useLocationAccess = () => {
-  const { user } = useAuth();
+  const { user } = useSimpleAuth();
   
   const hasLocationAccess = (location: string): boolean => {
-    const userLocations = user?.locations || [user?.location].filter(Boolean) || [];
-    return userLocations.includes(location);
+    // Simplified for now - will need location data from LocationContext
+    return true;
   };
 
   const getUserLocations = (): string[] => {
-    return user?.locations || [user?.location].filter(Boolean) || [];
+    // Simplified for now - will need location data from LocationContext
+    return ['menton'];
   };
 
   const isMultiLocationUser = (): boolean => {

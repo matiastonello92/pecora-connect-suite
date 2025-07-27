@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAuth } from '@/context/AuthContext';
+import { useSimpleAuth } from '@/context/SimpleAuthContext';
 import { useTranslation } from '@/lib/i18n';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -12,7 +12,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ListTodo, Plus, CheckSquare, BarChart3, Clock, User, AlertTriangle } from 'lucide-react';
 
 export const Tasks = () => {
-  const { user, language, hasPermission } = useAuth();
+  const { user } = useSimpleAuth();
+  const language = 'en'; // Temporarily hardcode language
+  const hasPermission = (permission: string) => true; // Temporarily allow all permissions
   const { t } = useTranslation(language);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
 
@@ -24,11 +26,11 @@ export const Tasks = () => {
       description: 'Verify all refrigeration units are maintaining proper temperature',
       priority: 'high',
       status: 'pending',
-      assignedTo: user?.firstName + ' ' + user?.lastName,
+      assignedTo: user?.email || 'Current User',
       dueDate: new Date('2024-01-20'),
       createdBy: 'Manager',
       department: 'kitchen',
-      location: user?.location || 'menton'
+      location: 'menton' // Default location - will need location context
     },
     {
       id: '2',
@@ -36,11 +38,11 @@ export const Tasks = () => {
       description: 'Complete monthly inventory update in system',
       priority: 'medium',
       status: 'in_progress',
-      assignedTo: user?.firstName + ' ' + user?.lastName,
+      assignedTo: user?.email || 'Current User',
       dueDate: new Date('2024-01-18'),
       createdBy: 'Manager',
       department: 'kitchen',
-      location: user?.location || 'menton'
+      location: 'menton' // Default location - will need location context
     },
     {
       id: '3',
@@ -52,7 +54,7 @@ export const Tasks = () => {
       dueDate: new Date('2024-01-15'),
       createdBy: 'HR Manager',
       department: 'general',
-      location: user?.location || 'menton'
+      location: 'menton' // Default location - will need location context
     }
   ]);
 
@@ -83,7 +85,7 @@ export const Tasks = () => {
   };
 
   const assignedTasks = tasks.filter(task => 
-    task.assignedTo === user?.firstName + ' ' + user?.lastName
+    task.assignedTo === (user?.email || 'Current User')
   );
 
   const taskHistory = tasks.filter(task => task.status === 'completed');

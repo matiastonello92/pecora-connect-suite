@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAuth } from '@/context/AuthContext';
+import { useSimpleAuth } from '@/context/SimpleAuthContext';
 import { useInventory } from '@/context/InventoryContext';
 import { useTranslation } from '@/lib/i18n';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -12,7 +12,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Package, AlertTriangle, TrendingDown, Plus, Search, Filter, Clock } from 'lucide-react';
 
 export const Inventory = () => {
-  const { user, language } = useAuth();
+  const { user } = useSimpleAuth();
+  const language = 'en'; // Temporarily hardcode language
   const { t } = useTranslation(language);
   const {
     items,
@@ -81,7 +82,7 @@ export const Inventory = () => {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button onClick={() => startInventorySession(user?.department || 'kitchen')}>
+          <Button onClick={() => startInventorySession('kitchen')}>
             <Package className="h-4 w-4 mr-2" />
             Start Count Session
           </Button>

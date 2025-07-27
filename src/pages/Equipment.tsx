@@ -1,5 +1,5 @@
 import React from 'react';
-import { useAuth } from '@/context/AuthContext';
+import { useSimpleAuth } from '@/context/SimpleAuthContext';
 import { useEquipment } from '@/context/EquipmentContext';
 import { useTranslation } from '@/lib/i18n';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Wrench, AlertTriangle, Calendar, CheckCircle, Plus } from 'lucide-react';
 
 export const Equipment = () => {
-  const { language } = useAuth();
+  const language = 'en'; // Temporarily hardcode language
   const { t } = useTranslation(language);
   const { equipment, getOverdueMaintenance, getUpcomingMaintenance } = useEquipment();
 

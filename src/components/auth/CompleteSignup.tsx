@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { useAuth } from '@/context/AuthContext';
+import { useSimpleAuth } from '@/context/SimpleAuthContext';
 import { useTranslation, Language } from '@/lib/i18n';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -32,7 +32,7 @@ export const CompleteSignup = () => {
   const [invitationData, setInvitationData] = useState<any>(null);
   const [invitationError, setInvitationError] = useState<string>('');
   const [tokenFromUrl, setTokenFromUrl] = useState<string>('');
-  const { setLanguage } = useAuth();
+  const setLanguage = (lang: any) => {}; // Temporarily stub
   const { t } = useTranslation(selectedLanguage);
   const { toast } = useToast();
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '@/context/AuthContext';
+import { useSimpleAuth } from '@/context/SimpleAuthContext';
 import { useFinancial } from '@/context/FinancialContext';
 import { useTranslation } from '@/lib/i18n';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -15,7 +15,8 @@ import { SatisfactionRating } from '@/types/financial';
 import { useToast } from '@/hooks/use-toast';
 
 export const CashClosureForm = () => {
-  const { user, language } = useAuth();
+  const { user } = useSimpleAuth();
+  const language = 'en'; // Temporarily hardcode language
   const { t } = useTranslation(language);
   const { toast } = useToast();
   const {

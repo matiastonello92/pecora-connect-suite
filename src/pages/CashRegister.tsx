@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAuth } from '@/context/AuthContext';
+import { useSimpleAuth } from '@/context/SimpleAuthContext';
 import { useCashRegister } from '@/context/CashRegisterContext';
 import { useTranslation } from '@/lib/i18n';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,7 +13,8 @@ import { ShoppingCart, CreditCard, Banknote, Smartphone, Plus, Minus, Trash2, Cl
 import { PaymentMethod, OrderStatus } from '@/types/cashRegister';
 
 export const CashRegister = () => {
-  const { user, language } = useAuth();
+  const { user } = useSimpleAuth();
+  const language = 'en'; // Temporarily hardcode language
   const { t } = useTranslation(language);
   const {
     menuItems,

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
-import { useAuth } from '@/context/AuthContext';
+import { useSimpleAuth } from '@/context/SimpleAuthContext';
 
 // Order types
 export interface Order {
@@ -87,7 +87,7 @@ interface OrderContextType extends OrderState {
 const OrderContext = createContext<OrderContextType | undefined>(undefined);
 
 export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { user } = useAuth();
+  const { user } = useSimpleAuth();
   const [state, dispatch] = useReducer(orderReducer, {
     orders: [],
     currentOrder: null,
@@ -100,11 +100,10 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }, []);
 
   const createNewOrder = () => {
-    const userLocations = user?.locations || [user?.location].filter(Boolean) || [];
     const newOrder: Partial<Order> = {
       id: Date.now().toString(),
       orderNumber: `ORD-${Date.now()}`,
-      location: userLocations[0] || 'menton', // Use first user location
+      location: 'menton', // Default location - will need location context
       status: 'pending',
       orderDate: new Date(),
       items: [],
@@ -136,16 +135,16 @@ export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   const getOrdersByLocation = (location: string) => {
-    const userLocations = user?.locations || [user?.location].filter(Boolean) || [];
+    // Simplified for now - will need location data from LocationContext
     return state.orders.filter(order => 
-      order.location === location && userLocations.includes(order.location)
+      order.location === location
     );
   };
 
   const getOrdersByStatus = (status: Order['status']) => {
-    const userLocations = user?.locations || [user?.location].filter(Boolean) || [];
+    // Simplified for now - will need location data from LocationContext
     return state.orders.filter(order => 
-      order.status === status && userLocations.includes(order.location)
+      order.status === status
     );
   };
 

@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '@/context/AuthContext';
+import { useSimpleAuth } from '@/context/SimpleAuthContext';
 import { useReports } from '@/context/ReportsContext';
 import { useLocation } from '@/context/LocationContext';
 import { useTranslation } from '@/lib/i18n';
 import { LocationAwareReports } from '@/components/reports/LocationAwareReports';
 
 export const Reports = () => {
-  const { language } = useAuth();
+  const language = 'en'; // Temporarily hardcode language
   const { t } = useTranslation(language);
   const { activeLocation, availableLocations } = useLocation();
 

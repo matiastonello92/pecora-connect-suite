@@ -1,5 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/context/AuthContext';
+import { useSimpleAuth } from '@/context/SimpleAuthContext';
 import { useMobileNotifications } from './useMobileNotifications';
 import { useTranslation } from '@/lib/i18n';
 import { toast } from '@/hooks/use-toast';
@@ -14,7 +14,8 @@ interface MessageReminder {
 }
 
 export const useMessageReminders = () => {
-  const { user, language } = useAuth();
+  const { user } = useSimpleAuth();
+  const language = 'en'; // Temporarily hardcode language
   const { showMobileNotification, isMobile } = useMobileNotifications();
   const { t } = useTranslation(language);
 

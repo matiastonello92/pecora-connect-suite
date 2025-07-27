@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useAuth } from '@/context/AuthContext';
+import { useSimpleAuth } from '@/context/SimpleAuthContext';
 import { useUserManagement } from '@/context/UserManagementContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -14,7 +14,7 @@ import { ProfileSettings } from '@/components/profile/ProfileSettings';
 import { ProfilePictureUpload } from '@/components/profile/ProfilePictureUpload';
 
 export const Profile = () => {
-  const { user } = useAuth();
+  const { user } = useSimpleAuth();
   const { users } = useUserManagement();
   const navigate = useNavigate();
   const { t } = useTranslation('en');

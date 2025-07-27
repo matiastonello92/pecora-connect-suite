@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { ChecklistTemplate, ChecklistSession, ChecklistItem } from '@/types/checklist';
-import { useAuth } from '@/context/AuthContext';
+import { useSimpleAuth } from '@/context/SimpleAuthContext';
 
 interface ChecklistState {
   templates: ChecklistTemplate[];
@@ -92,7 +92,7 @@ interface ChecklistContextType extends ChecklistState {
 const ChecklistContext = createContext<ChecklistContextType | undefined>(undefined);
 
 export const ChecklistProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { user } = useAuth();
+  const { user } = useSimpleAuth();
   const [state, dispatch] = useReducer(checklistReducer, {
     templates: [],
     sessions: [],
@@ -153,18 +153,16 @@ export const ChecklistProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   };
 
   const getActiveChecklists = () => {
-    const userLocations = user?.locations || [user?.location].filter(Boolean) || [];
+    // Simplified for now - will need location data from LocationContext
     return state.sessions.filter(session => 
-      session.status === 'in-progress' &&
-      userLocations.includes(session.template.location)
+      session.status === 'in-progress'
     );
   };
 
   const getTemplatesByDepartment = (department: string) => {
-    const userLocations = user?.locations || [user?.location].filter(Boolean) || [];
+    // Simplified for now - will need location data from LocationContext
     return state.templates.filter(template => 
-      template.department === department &&
-      userLocations.includes(template.location)
+      template.department === department
     );
   };
 

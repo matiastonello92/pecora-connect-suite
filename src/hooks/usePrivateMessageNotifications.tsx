@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/context/AuthContext';
+import { useSimpleAuth } from '@/context/SimpleAuthContext';
 import { useChatContext } from '@/context/ChatContext';
 import { useTranslation } from '@/lib/i18n';
 import { toast } from '@/hooks/use-toast';
@@ -27,7 +27,8 @@ interface DatabaseNotification {
 }
 
 export const usePrivateMessageNotifications = () => {
-  const { user, language } = useAuth();
+  const { user } = useSimpleAuth();
+  const language = 'en'; // Temporarily hardcode language
   const { setActiveChat, activeChat } = useChatContext();
   const { t } = useTranslation(language);
 

@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useAuth } from '@/context/AuthContext';
+import { useSimpleAuth } from '@/context/SimpleAuthContext';
 
 // Capacitor Local Notifications for mobile support
 interface LocalNotification {
@@ -36,7 +36,7 @@ declare global {
 }
 
 export const useMobileNotifications = () => {
-  const { user } = useAuth();
+  const { user } = useSimpleAuth();
 
   useEffect(() => {
     // Only initialize if running on mobile (Capacitor)

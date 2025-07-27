@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAuth } from '@/context/AuthContext';
+import { useSimpleAuth } from '@/context/SimpleAuthContext';
 import { useTranslation } from '@/lib/i18n';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -12,7 +12,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Wrench, AlertTriangle, FileText, Settings, Plus, Upload } from 'lucide-react';
 
 export const Maintenance = () => {
-  const { user, language } = useAuth();
+  const { user } = useSimpleAuth();
+  const language = 'en'; // Temporarily hardcode language
   const { t } = useTranslation(language);
   const [showReportDialog, setShowReportDialog] = useState(false);
 
@@ -25,10 +26,10 @@ export const Maintenance = () => {
       equipment: 'Pizza Oven #1',
       priority: 'high',
       status: 'open',
-      reportedBy: user?.firstName + ' ' + user?.lastName,
+      reportedBy: user?.email || 'Current User',
       reportedAt: new Date('2024-01-15'),
       assignedTo: 'Maintenance Team',
-      location: user?.location || 'menton'
+      location: 'menton' // Default location - will need location context
     },
     {
       id: '2',
@@ -40,7 +41,7 @@ export const Maintenance = () => {
       reportedBy: 'Kitchen Staff',
       reportedAt: new Date('2024-01-12'),
       assignedTo: 'John Technical',
-      location: user?.location || 'menton'
+      location: 'menton' // Default location - will need location context
     },
     {
       id: '3',
@@ -52,7 +53,7 @@ export const Maintenance = () => {
       reportedBy: 'Manager',
       reportedAt: new Date('2024-01-10'),
       assignedTo: 'Maintenance Team',
-      location: user?.location || 'menton'
+      location: 'menton' // Default location - will need location context
     }
   ]);
 

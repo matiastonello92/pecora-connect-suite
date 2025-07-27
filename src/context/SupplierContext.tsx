@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
-import { useAuth } from '@/context/AuthContext';
+import { useSimpleAuth } from '@/context/SimpleAuthContext';
 
 // Supplier types  
 export interface Supplier {
@@ -65,7 +65,7 @@ interface SupplierContextType extends SupplierState {
 const SupplierContext = createContext<SupplierContextType | undefined>(undefined);
 
 export const SupplierProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { user } = useAuth();
+  const { user } = useSimpleAuth();
   const [state, dispatch] = useReducer(supplierReducer, {
     suppliers: [],
     loading: false
@@ -99,18 +99,16 @@ export const SupplierProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   };
 
   const getSuppliersByCategory = (category: string) => {
-    const userLocations = user?.locations || [user?.location].filter(Boolean) || [];
+    // Simplified for now - will need location data from LocationContext
     return state.suppliers.filter(supplier => 
-      supplier.category === category && 
-      userLocations.includes(supplier.location)
+      supplier.category === category
     );
   };
 
   const getSuppliersByLocation = (location: string) => {
-    const userLocations = user?.locations || [user?.location].filter(Boolean) || [];
+    // Simplified for now - will need location data from LocationContext
     return state.suppliers.filter(supplier => 
-      supplier.location === location && 
-      userLocations.includes(supplier.location)
+      supplier.location === location
     );
   };
 

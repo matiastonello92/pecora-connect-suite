@@ -1,5 +1,5 @@
 import React from 'react';
-import { useAuth } from '@/context/AuthContext';
+import { useSimpleAuth } from '@/context/SimpleAuthContext';
 import { useTranslation } from '@/lib/i18n';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -11,7 +11,10 @@ import { User, Globe, Shield, Palette, Bell } from 'lucide-react';
 import { languages, Language } from '@/lib/i18n';
 
 export const Settings = () => {
-  const { user, language, setLanguage, updateUser } = useAuth();
+  const { user } = useSimpleAuth();
+  const language = 'en'; // Temporarily hardcode language
+  const setLanguage = (lang: any) => {}; // Temporarily stub
+  const updateUser = (user: any) => {}; // Temporarily stub
   const { t } = useTranslation(language);
 
   const handleLanguageChange = (newLanguage: Language) => {
@@ -59,7 +62,7 @@ export const Settings = () => {
                 <Input
                   id="firstName"
                   name="firstName"
-                  defaultValue={user.firstName}
+                  defaultValue={user.user_metadata?.firstName || ''}
                   required
                 />
               </div>
@@ -69,7 +72,7 @@ export const Settings = () => {
                 <Input
                   id="lastName"
                   name="lastName"
-                  defaultValue={user.lastName}
+                  defaultValue={user.user_metadata?.lastName || ''}
                   required
                 />
               </div>
@@ -87,7 +90,7 @@ export const Settings = () => {
               
               <div className="space-y-2">
                 <Label>Department</Label>
-                <Input value={t(user.department)} disabled />
+                <Input value="Kitchen" disabled />
               </div>
               
               <Button type="submit" className="w-full">
@@ -142,12 +145,12 @@ export const Settings = () => {
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label>Role</Label>
-                <Input value={user.role} disabled />
+                <Input value={user.user_metadata?.role || 'User'} disabled />
               </div>
               
               <div className="space-y-2">
                 <Label>Location</Label>
-                <Input value={(user.locations || [user.location]).join(', ') || 'Main Location'} disabled />
+                <Input value="Menton" disabled />
               </div>
               
               <Button variant="outline" className="w-full">

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAuth } from '@/context/AuthContext';
+import { useSimpleAuth } from '@/context/SimpleAuthContext';
 import { useChecklist } from '@/context/ChecklistContext';
 import { useTranslation } from '@/lib/i18n';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,7 +14,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { CheckSquare, Clock, Play, Plus, CheckCircle, AlertCircle } from 'lucide-react';
 
 export const Checklists = () => {
-  const { user, language } = useAuth();
+  const { user } = useSimpleAuth();
+  const language = 'en'; // Temporarily hardcode language
   const { t } = useTranslation(language);
   const {
     templates,
@@ -28,7 +29,7 @@ export const Checklists = () => {
     getTemplatesByDepartment
   } = useChecklist();
 
-  const [selectedDepartment, setSelectedDepartment] = useState<string>(user?.department || 'all');
+  const [selectedDepartment, setSelectedDepartment] = useState<string>('all');
   const [showAddDialog, setShowAddDialog] = useState(false);
 
   const departments = ['all', ...Array.from(new Set(templates.map(t => t.department)))];
