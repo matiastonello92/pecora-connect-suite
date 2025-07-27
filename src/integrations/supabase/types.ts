@@ -1151,6 +1151,22 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      cleanup_invitation_system: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      complete_invitation_signup: {
+        Args: {
+          token_to_complete: string
+          user_email: string
+          new_user_id: string
+        }
+        Returns: {
+          success: boolean
+          error_code: string
+          error_message: string
+        }[]
+      }
       create_private_chat: {
         Args: { other_user_id: string }
         Returns: string
@@ -1184,6 +1200,15 @@ export type Database = {
       is_email_permanently_deleted: {
         Args: { check_email: string }
         Returns: boolean
+      }
+      validate_invitation_comprehensive: {
+        Args: { token_to_check: string }
+        Returns: {
+          is_valid: boolean
+          error_code: string
+          error_message: string
+          invitation_data: Json
+        }[]
       }
       validate_invitation_token: {
         Args: { token_to_check: string }
