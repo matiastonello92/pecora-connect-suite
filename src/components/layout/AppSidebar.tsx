@@ -1,7 +1,7 @@
 import { useAuth } from '@/context/AuthContext';
 import { useTranslation } from '@/lib/i18n';
 import { NavLink, useLocation } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Sidebar,
   SidebarContent,
@@ -165,28 +165,61 @@ export const AppSidebar = () => {
   const { t } = useTranslation(language);
   const { state } = useSidebar();
   const location = useLocation();
-  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
   
   const isCollapsed = state === 'collapsed';
+
+  // Initialize openGroups based on current route
+  const initializeOpenGroups = () => {
+    const initialState: Record<string, boolean> = {};
+    navigationItems.forEach(item => {
+      if (item.submenu) {
+        // Check if any submenu item matches current route
+        const hasActiveSubmenu = item.submenu.some((subItem: any) => 
+          location.pathname === subItem.url || location.pathname.startsWith(subItem.url + '/')
+        );
+        initialState[item.title] = hasActiveSubmenu;
+      }
+    });
+    return initialState;
+  };
+
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(initializeOpenGroups);
+
+  // Update openGroups when route changes
+  useEffect(() => {
+    setOpenGroups(initializeOpenGroups());
+  }, [location.pathname]);
 
   const getNavClassName = ({ isActive }: { isActive: boolean }) =>
     isActive
       ? 'bg-accent text-accent-foreground font-medium'
       : 'hover:bg-accent/50 focus:bg-accent/50 active:bg-accent/50 text-foreground transition-colors';
 
+  const getParentNavClassName = (item: any) => {
+    // Parent should only be highlighted if it's a direct link (no submenu)
+    if (item.url && !item.submenu) {
+      return location.pathname === item.url
+        ? 'bg-accent text-accent-foreground font-medium'
+        : 'hover:bg-accent/50 focus:bg-accent/50 active:bg-accent/50 transition-colors';
+    }
+    // For expandable items, show muted highlight when group contains active item
+    const hasActiveSubmenu = item.submenu?.some((subItem: any) => 
+      location.pathname === subItem.url || location.pathname.startsWith(subItem.url + '/')
+    );
+    return hasActiveSubmenu
+      ? 'bg-accent/30 text-accent-foreground hover:bg-accent/50 focus:bg-accent/50 active:bg-accent/50 transition-colors'
+      : 'hover:bg-accent/50 focus:bg-accent/50 active:bg-accent/50 transition-colors';
+  };
+
+  const isSubmenuItemActive = (subItemUrl: string) => {
+    return location.pathname === subItemUrl || location.pathname.startsWith(subItemUrl + '/');
+  };
+
   const toggleGroup = (groupTitle: string) => {
     setOpenGroups(prev => ({
       ...prev,
       [groupTitle]: !prev[groupTitle]
     }));
-  };
-
-  const isGroupActive = (item: any) => {
-    if (item.url) return location.pathname === item.url;
-    if (item.submenu) {
-      return item.submenu.some((subItem: any) => location.pathname === subItem.url);
-    }
-    return false;
   };
 
   const filteredItems = navigationItems.filter((item) => {
@@ -243,7 +276,7 @@ export const AppSidebar = () => {
                     <>
                       <SidebarMenuButton
                         onClick={() => toggleGroup(item.title)}
-                        className={`${isGroupActive(item) ? 'bg-accent text-accent-foreground font-medium' : 'hover:bg-accent/50 focus:bg-accent/50 active:bg-accent/50 transition-colors'}`}
+                        className={getParentNavClassName(item)}
                         title={isCollapsed ? t(item.title) : undefined}
                       >
                         <item.icon className="h-5 w-5 flex-shrink-0" />
@@ -269,7 +302,11 @@ export const AppSidebar = () => {
                               <SidebarMenuSubButton asChild>
                                 <NavLink
                                   to={subItem.url}
-                                  className={getNavClassName}
+                                  className={({ isActive }) => 
+                                    isSubmenuItemActive(subItem.url) || isActive
+                                      ? 'bg-accent text-accent-foreground font-medium'
+                                      : 'hover:bg-accent/50 focus:bg-accent/50 active:bg-accent/50 text-muted-foreground transition-colors'
+                                  }
                                 >
                                   <subItem.icon className="h-4 w-4 flex-shrink-0" />
                                   <span className="ml-2 font-inter text-sm">

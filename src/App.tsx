@@ -78,6 +78,8 @@ const AppContent = () => {
         <Route path="/reports" element={<Reports />} />
         <Route path="/equipment" element={<Equipment />} />
         <Route path="/users" element={<UserManagement />} />
+        <Route path="/users/invitations" element={<UserManagement />} />
+        <Route path="/users/roles" element={<UserManagement />} />
         <Route path="/settings" element={<Settings />} />
         {/* Supplier routes */}
         <Route path="/suppliers/orders" element={<Suppliers />} />

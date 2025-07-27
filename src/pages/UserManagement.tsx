@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useUserManagement } from '@/context/UserManagementContext';
 import { DeleteUserDialog } from '@/components/ui/delete-user-dialog';
 import { DeleteInvitationDialog } from '@/components/ui/delete-invitation-dialog';
@@ -15,7 +16,39 @@ import { Users, UserPlus, Mail, RefreshCw, Archive } from 'lucide-react';
 export const UserManagement = () => {
   const { language, user, hasPermission } = useAuth();
   const { t } = useTranslation(language);
+  const location = useLocation();
+  const navigate = useNavigate();
   const { users, pendingInvitations, archivedUsers, resendInvitation, deleteUser, deletePendingInvitation, reactivateUser } = useUserManagement();
+
+  // Determine active tab based on route
+  const getActiveTab = () => {
+    if (location.pathname === '/users/invitations') return 'invitations';
+    if (location.pathname === '/users/roles') return 'roles';
+    return 'users';
+  };
+
+  const [activeTab, setActiveTab] = useState(getActiveTab());
+
+  // Update tab when route changes
+  useEffect(() => {
+    setActiveTab(getActiveTab());
+  }, [location.pathname]);
+
+  // Handle tab change and navigate
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+    switch (tab) {
+      case 'invitations':
+        navigate('/users/invitations');
+        break;
+      case 'roles':
+        navigate('/users/roles');
+        break;
+      default:
+        navigate('/users');
+        break;
+    }
+  };
 
 
   const getRoleColor = (role: string) => {
@@ -75,13 +108,133 @@ export const UserManagement = () => {
         </Card>
       </div>
 
-      <Tabs defaultValue="users" className="space-y-4 sm:space-y-6">
-        <TabsList className="grid w-full grid-cols-2">
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-4 sm:space-y-6">
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="users" className="text-sm">Users</TabsTrigger>
-          <TabsTrigger value="archived" className="text-sm">Archived</TabsTrigger>
+          <TabsTrigger value="invitations" className="text-sm">Invitations</TabsTrigger>
+          <TabsTrigger value="roles" className="text-sm">Roles & Permissions</TabsTrigger>
         </TabsList>
 
         <TabsContent value="users" className="space-y-4">
+          <div className="grid gap-3 sm:gap-4">
+            {/* Active Users */}
+            {users.map((user) => (
+              <Card key={user.id}>
+                <CardHeader className="pb-3 sm:pb-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 bg-primary/10 rounded-full flex items-center justify-center shrink-0">
+                        <Users className="h-4 w-4 sm:h-5 sm:w-5" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <CardTitle className="text-sm sm:text-base truncate">
+                          {user.firstName} {user.lastName}
+                        </CardTitle>
+                        <p className="text-xs sm:text-sm text-muted-foreground truncate">{user.position}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <div className={`w-2 h-2 rounded-full ${getRoleColor(user.role)}`} />
+                      <Badge variant="outline" className="text-xs">{user.role}</Badge>
+                      <Badge variant={user.status === 'active' ? 'default' : 'secondary'} className="text-xs">
+                        {user.status}
+                      </Badge>
+                      {hasPermission('manager') && (
+                        <DeleteUserDialog user={user} onDelete={deleteUser} />
+                      )}
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                    <div className="min-w-0">
+                      <div className="text-xs sm:text-sm font-medium">Email</div>
+                      <div className="text-xs sm:text-sm text-muted-foreground truncate">{user.email}</div>
+                    </div>
+                    <div className="min-w-0">
+                      <div className="text-xs sm:text-sm font-medium">Department</div>
+                      <div className="text-xs sm:text-sm text-muted-foreground">{user.department}</div>
+                    </div>
+                    <div className="min-w-0">
+                      <div className="text-xs sm:text-sm font-medium">Employment</div>
+                      <div className="text-xs sm:text-sm text-muted-foreground">{user.employmentType}</div>
+                    </div>
+                    <div className="min-w-0">
+                      <div className="text-xs sm:text-sm font-medium">Last Login</div>
+                      <div className="text-xs sm:text-sm text-muted-foreground">
+                        {user.lastLogin?.toLocaleDateString() || 'Never'}
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+            
+            {/* Archived Users Section */}
+            <div className="mt-8">
+              <h3 className="text-lg font-semibold mb-4">Archived Users</h3>
+              <div className="grid gap-3 sm:gap-4">
+                {archivedUsers.map((user) => (
+                  <Card key={user.id} className="border-gray-200 bg-gray-50/50 dark:border-gray-800 dark:bg-gray-950/50">
+                    <CardHeader className="pb-3 sm:pb-4">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-100 dark:bg-gray-900 rounded-full flex items-center justify-center shrink-0">
+                            <Archive className="h-4 w-4 sm:h-5 sm:w-5 text-gray-600 dark:text-gray-400" />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <CardTitle className="text-sm sm:text-base truncate">
+                              {user.firstName} {user.lastName}
+                            </CardTitle>
+                            <p className="text-xs sm:text-sm text-muted-foreground truncate">Archived User</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 shrink-0">
+                          <div className={`w-2 h-2 rounded-full ${getRoleColor(user.role)}`} />
+                          <Badge variant="outline" className="text-xs">{user.role}</Badge>
+                          <Badge variant="secondary" className="text-xs bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200">
+                            {user.previousStatus}
+                          </Badge>
+                          {hasPermission('manager') && user.canReactivate && (
+                            <ReactivateUserDialog user={user} onReactivate={reactivateUser} />
+                          )}
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="pt-0">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                        <div className="min-w-0">
+                          <div className="text-xs sm:text-sm font-medium">Email</div>
+                          <div className="text-xs sm:text-sm text-muted-foreground truncate">{user.email}</div>
+                        </div>
+                        <div className="min-w-0">
+                          <div className="text-xs sm:text-sm font-medium">Location</div>
+                          <div className="text-xs sm:text-sm text-muted-foreground">{user.location}</div>
+                        </div>
+                        <div className="min-w-0">
+                          <div className="text-xs sm:text-sm font-medium">Last Login</div>
+                          <div className="text-xs sm:text-sm text-muted-foreground">
+                            {user.metadata && typeof user.metadata === 'object' && (user.metadata as any)?.lastLogin 
+                              ? new Date((user.metadata as any).lastLogin).toLocaleDateString() 
+                              : 'Never'}
+                          </div>
+                        </div>
+                        <div className="min-w-0">
+                          <div className="text-xs sm:text-sm font-medium">Archived</div>
+                          <div className="text-xs sm:text-sm text-muted-foreground">
+                            {user.archivedAt.toLocaleDateString()}
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="invitations" className="space-y-4">
           <div className="grid gap-3 sm:gap-4">
             {/* Pending Invitations */}
             {pendingInvitations.map((invitation) => (
@@ -146,119 +299,14 @@ export const UserManagement = () => {
                 </CardContent>
               </Card>
             ))}
-            
-            {/* Active Users */}
-            {users.map((user) => (
-              <Card key={user.id}>
-                <CardHeader className="pb-3 sm:pb-4">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-8 h-8 sm:w-10 sm:h-10 bg-primary/10 rounded-full flex items-center justify-center shrink-0">
-                        <Users className="h-4 w-4 sm:h-5 sm:w-5" />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <CardTitle className="text-sm sm:text-base truncate">
-                          {user.firstName} {user.lastName}
-                        </CardTitle>
-                        <p className="text-xs sm:text-sm text-muted-foreground truncate">{user.position}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2 shrink-0">
-                      <div className={`w-2 h-2 rounded-full ${getRoleColor(user.role)}`} />
-                      <Badge variant="outline" className="text-xs">{user.role}</Badge>
-                      <Badge variant={user.status === 'active' ? 'default' : 'secondary'} className="text-xs">
-                        {user.status}
-                      </Badge>
-                      {hasPermission('manager') && (
-                        <DeleteUserDialog user={user} onDelete={deleteUser} />
-                      )}
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-                    <div className="min-w-0">
-                      <div className="text-xs sm:text-sm font-medium">Email</div>
-                      <div className="text-xs sm:text-sm text-muted-foreground truncate">{user.email}</div>
-                    </div>
-                    <div className="min-w-0">
-                      <div className="text-xs sm:text-sm font-medium">Department</div>
-                      <div className="text-xs sm:text-sm text-muted-foreground">{user.department}</div>
-                    </div>
-                    <div className="min-w-0">
-                      <div className="text-xs sm:text-sm font-medium">Employment</div>
-                      <div className="text-xs sm:text-sm text-muted-foreground">{user.employmentType}</div>
-                    </div>
-                    <div className="min-w-0">
-                      <div className="text-xs sm:text-sm font-medium">Last Login</div>
-                      <div className="text-xs sm:text-sm text-muted-foreground">
-                        {user.lastLogin?.toLocaleDateString() || 'Never'}
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
           </div>
         </TabsContent>
 
-        <TabsContent value="archived" className="space-y-4">
-          <div className="grid gap-3 sm:gap-4">
-            {archivedUsers.map((user) => (
-              <Card key={user.id} className="border-gray-200 bg-gray-50/50 dark:border-gray-800 dark:bg-gray-950/50">
-                <CardHeader className="pb-3 sm:pb-4">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-100 dark:bg-gray-900 rounded-full flex items-center justify-center shrink-0">
-                        <Archive className="h-4 w-4 sm:h-5 sm:w-5 text-gray-600 dark:text-gray-400" />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <CardTitle className="text-sm sm:text-base truncate">
-                          {user.firstName} {user.lastName}
-                        </CardTitle>
-                        <p className="text-xs sm:text-sm text-muted-foreground truncate">Archived User</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2 shrink-0">
-                      <div className={`w-2 h-2 rounded-full ${getRoleColor(user.role)}`} />
-                      <Badge variant="outline" className="text-xs">{user.role}</Badge>
-                      <Badge variant="secondary" className="text-xs bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200">
-                        {user.previousStatus}
-                      </Badge>
-                      {hasPermission('manager') && user.canReactivate && (
-                        <ReactivateUserDialog user={user} onReactivate={reactivateUser} />
-                      )}
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-                    <div className="min-w-0">
-                      <div className="text-xs sm:text-sm font-medium">Email</div>
-                      <div className="text-xs sm:text-sm text-muted-foreground truncate">{user.email}</div>
-                    </div>
-                    <div className="min-w-0">
-                      <div className="text-xs sm:text-sm font-medium">Location</div>
-                      <div className="text-xs sm:text-sm text-muted-foreground">{user.location}</div>
-                    </div>
-                    <div className="min-w-0">
-                      <div className="text-xs sm:text-sm font-medium">Last Login</div>
-                      <div className="text-xs sm:text-sm text-muted-foreground">
-                        {user.metadata && typeof user.metadata === 'object' && (user.metadata as any)?.lastLogin 
-                          ? new Date((user.metadata as any).lastLogin).toLocaleDateString() 
-                          : 'Never'}
-                      </div>
-                    </div>
-                    <div className="min-w-0">
-                      <div className="text-xs sm:text-sm font-medium">Archived</div>
-                      <div className="text-xs sm:text-sm text-muted-foreground">
-                        {user.archivedAt.toLocaleDateString()}
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+        <TabsContent value="roles" className="space-y-4">
+          <div className="text-center py-8 text-muted-foreground">
+            <Users className="h-12 w-12 mx-auto mb-2 opacity-50" />
+            <p className="text-sm sm:text-base">Roles and Permissions management interface</p>
+            <p className="text-xs text-muted-foreground mt-2">Coming soon...</p>
           </div>
         </TabsContent>
 
