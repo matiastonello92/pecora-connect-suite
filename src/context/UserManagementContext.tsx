@@ -202,17 +202,59 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
     loadUsers();
     loadPendingInvitations();
 
-    // Set up real-time subscriptions
+    // Set up real-time subscriptions with more specific event handling
     const profilesChannel = supabase
       .channel('profiles-changes')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'profiles' }, () => {
+      .on('postgres_changes', { 
+        event: 'INSERT', 
+        schema: 'public', 
+        table: 'profiles' 
+      }, () => {
+        console.log('Profile inserted - refreshing data');
+        loadUsers();
+      })
+      .on('postgres_changes', { 
+        event: 'UPDATE', 
+        schema: 'public', 
+        table: 'profiles' 
+      }, () => {
+        console.log('Profile updated - refreshing data');
+        loadUsers();
+      })
+      .on('postgres_changes', { 
+        event: 'DELETE', 
+        schema: 'public', 
+        table: 'profiles' 
+      }, () => {
+        console.log('Profile deleted - refreshing data');
         loadUsers();
       })
       .subscribe();
 
     const invitationsChannel = supabase
       .channel('invitations-changes')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'user_invitations' }, () => {
+      .on('postgres_changes', { 
+        event: 'INSERT', 
+        schema: 'public', 
+        table: 'user_invitations' 
+      }, () => {
+        console.log('Invitation created - refreshing data');
+        loadPendingInvitations();
+      })
+      .on('postgres_changes', { 
+        event: 'UPDATE', 
+        schema: 'public', 
+        table: 'user_invitations' 
+      }, () => {
+        console.log('Invitation updated - refreshing data');
+        loadPendingInvitations();
+      })
+      .on('postgres_changes', { 
+        event: 'DELETE', 
+        schema: 'public', 
+        table: 'user_invitations' 
+      }, () => {
+        console.log('Invitation deleted - refreshing data');
         loadPendingInvitations();
       })
       .subscribe();
@@ -253,8 +295,9 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
         description: "User deleted successfully",
       });
 
-      // Refresh data to update the UI
-      refreshData();
+      // The real-time subscription will automatically refresh the data
+      // But also manually refresh as a fallback
+      setTimeout(() => refreshData(), 100);
     } catch (error: any) {
       toast({
         title: "Error",
@@ -344,8 +387,9 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
         description: "Invitation deleted successfully",
       });
 
-      // Refresh data to update the UI
-      refreshData();
+      // The real-time subscription will automatically refresh the data
+      // But also manually refresh as a fallback
+      setTimeout(() => refreshData(), 100);
     } catch (error: any) {
       toast({
         title: "Error",
