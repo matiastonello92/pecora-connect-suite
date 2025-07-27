@@ -44,9 +44,13 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 
 const AppContent = () => {
+  console.log('📱 AppContent rendering...');
   const { isAuthenticated, isLoading, user } = useAuth();
+  
+  console.log('🔍 Auth state:', { isAuthenticated, isLoading, user: user?.id });
 
   if (isLoading) {
+    console.log('⏳ Showing loading state...');
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -55,6 +59,7 @@ const AppContent = () => {
   }
 
   if (!isAuthenticated) {
+    console.log('🔐 User not authenticated, showing login...');
     return (
       <Routes>
         <Route path="/" element={<LoginForm />} />
@@ -66,84 +71,83 @@ const AppContent = () => {
     );
   }
 
+  console.log('✅ User authenticated, loading main app...');
   return (
-    <AppLayout>
-      <Routes>
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        {/* Placeholder routes for future implementation */}
-        <Route path="/inventory" element={<Inventory />} />
-        <Route path="/inventory/kitchen" element={<KitchenInventory />} />
-        <Route path="/checklists" element={<Checklists />} />
-        <Route path="/communication" element={<Communication />} />
-        <Route path="/cash-register" element={<CashRegister />} />
-        <Route path="/financial" element={<Financial />} />
-        <Route path="/reports" element={<Reports />} />
-        <Route path="/equipment" element={<Equipment />} />
-        <Route path="/users" element={<UserManagement />} />
-        <Route path="/users/invitations" element={<UserManagement />} />
-        <Route path="/users/roles" element={<UserManagement />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/settings" element={<Settings />} />
-        {/* Supplier routes */}
-        <Route path="/suppliers/orders" element={<Suppliers />} />
-        <Route path="/suppliers/list" element={<Suppliers />} />
-        <Route path="/suppliers/status" element={<Suppliers />} />
-        <Route path="/suppliers/archived" element={<Suppliers />} />
-        {/* Task routes */}
-        <Route path="/tasks/assigned" element={<Tasks />} />
-        <Route path="/tasks/create" element={<Tasks />} />
-        <Route path="/tasks/history" element={<Tasks />} />
-        {/* Maintenance routes */}
-        <Route path="/maintenance/report" element={<Maintenance />} />
-        <Route path="/maintenance/history" element={<Maintenance />} />
-        <Route path="/maintenance/scheduled" element={<Maintenance />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </AppLayout>
+    <InventoryProvider>
+      <KitchenInventoryProvider>
+        <ChecklistProvider>
+          <CommunicationProvider>
+            <ChatProvider>
+              <UnreadMessagesProvider>
+                <CashRegisterProvider>
+                  <ReportsProvider>
+                    <EquipmentProvider>
+                      <UserManagementProvider>
+                        <FinancialProvider>
+                          <LocationProvider>
+                            <AppLayout>
+                              <Routes>
+                                <Route path="/" element={<Dashboard />} />
+                                <Route path="/dashboard" element={<Dashboard />} />
+                                <Route path="/inventory" element={<Inventory />} />
+                                <Route path="/inventory/kitchen" element={<KitchenInventory />} />
+                                <Route path="/checklists" element={<Checklists />} />
+                                <Route path="/communication" element={<Communication />} />
+                                <Route path="/cash-register" element={<CashRegister />} />
+                                <Route path="/financial" element={<Financial />} />
+                                <Route path="/reports" element={<Reports />} />
+                                <Route path="/equipment" element={<Equipment />} />
+                                <Route path="/users" element={<UserManagement />} />
+                                <Route path="/users/invitations" element={<UserManagement />} />
+                                <Route path="/users/roles" element={<UserManagement />} />
+                                <Route path="/profile" element={<Profile />} />
+                                <Route path="/settings" element={<Settings />} />
+                                <Route path="/suppliers/orders" element={<Suppliers />} />
+                                <Route path="/suppliers/list" element={<Suppliers />} />
+                                <Route path="/suppliers/status" element={<Suppliers />} />
+                                <Route path="/suppliers/archived" element={<Suppliers />} />
+                                <Route path="/tasks/assigned" element={<Tasks />} />
+                                <Route path="/tasks/create" element={<Tasks />} />
+                                <Route path="/tasks/history" element={<Tasks />} />
+                                <Route path="/maintenance/report" element={<Maintenance />} />
+                                <Route path="/maintenance/history" element={<Maintenance />} />
+                                <Route path="/maintenance/scheduled" element={<Maintenance />} />
+                                <Route path="*" element={<NotFound />} />
+                              </Routes>
+                            </AppLayout>
+                          </LocationProvider>
+                        </FinancialProvider>
+                      </UserManagementProvider>
+                    </EquipmentProvider>
+                  </ReportsProvider>
+                </CashRegisterProvider>
+              </UnreadMessagesProvider>
+            </ChatProvider>
+          </CommunicationProvider>
+        </ChecklistProvider>
+      </KitchenInventoryProvider>
+    </InventoryProvider>
   );
 };
 
 const App: React.FC = () => {
+  console.log('🔄 App component rendering...');
+  
   return (
-    <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <AuthProvider>
-          <InventoryProvider>
-            <KitchenInventoryProvider>
-              <ChecklistProvider>
-                <CommunicationProvider>
-                  <ChatProvider>
-                    <UnreadMessagesProvider>
-                     <CashRegisterProvider>
-                      <ReportsProvider>
-                        <EquipmentProvider>
-                          <UserManagementProvider>
-                            <FinancialProvider>
-                               <LocationProvider>
-                                 <ErrorBoundary>
-                                   <TooltipProvider>
-                                     <AppContent />
-                                     <NotificationHandler />
-                                     <Toaster />
-                                     <Sonner />
-                                   </TooltipProvider>
-                                 </ErrorBoundary>
-                                </LocationProvider>
-                             </FinancialProvider>
-                           </UserManagementProvider>
-                         </EquipmentProvider>
-                       </ReportsProvider>
-                     </CashRegisterProvider>
-                    </UnreadMessagesProvider>
-                  </ChatProvider>
-                </CommunicationProvider>
-              </ChecklistProvider>
-            </KitchenInventoryProvider>
-          </InventoryProvider>
-        </AuthProvider>
-      </BrowserRouter>
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <BrowserRouter>
+          <AuthProvider>
+            <TooltipProvider>
+              <AppContent />
+              <NotificationHandler />
+              <Toaster />
+              <Sonner />
+            </TooltipProvider>
+          </AuthProvider>
+        </BrowserRouter>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 };
 
