@@ -64,7 +64,14 @@ export const InviteUserDialog = () => {
 
     setIsLoading(true);
 
-    const result = await createInvitation(email, firstName, lastName, role, location as LocationType);
+    const result = await createInvitation({
+      email,
+      firstName,
+      lastName,
+      role,
+      location: location as LocationType,
+      accessLevel: 'base'
+    });
     
     if (result.error) {
       toast({

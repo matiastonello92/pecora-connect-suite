@@ -91,7 +91,16 @@ export const EnhancedInviteUserDialog = () => {
 
     try {
       // TODO: Update createInvitation to handle new fields
-      const result = await createInvitation(email, firstName, lastName, role, location as LocationType);
+      const result = await createInvitation({
+        email,
+        firstName,
+        lastName,
+        role,
+        location: location as LocationType,
+        restaurantRole: restaurantRole || undefined,
+        accessLevel,
+        customPermissions: Object.keys(customPermissions).length > 0 ? customPermissions : undefined
+      });
       
       if (result.error) {
         toast({

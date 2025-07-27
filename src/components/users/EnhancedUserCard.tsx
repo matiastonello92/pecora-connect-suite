@@ -18,6 +18,7 @@ interface EnhancedUserCardProps {
   onDelete: (userId: string) => void;
   onUpdate: () => void;
   hasPermission: (permission: string) => boolean;
+  showPermissions?: boolean;
 }
 
 export const EnhancedUserCard = ({ user, onDelete, onUpdate, hasPermission, showPermissions = false }: EnhancedUserCardProps) => {

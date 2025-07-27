@@ -321,16 +321,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return { error: error.message };
       }
 
-      // If custom permissions are provided, store them
-      if (data.customPermissions && Object.keys(data.customPermissions).length > 0) {
-        // Store custom permissions in invitation metadata for later use
-        await supabase
-          .from('user_invitations')
-          .update({ 
-            metadata: { customPermissions: data.customPermissions }
-          })
-          .eq('id', inviteResult.id);
-      }
+      // Custom permissions will be handled when the user completes registration
+      // For now, we store the invitation without custom permissions
 
       // Send invitation email
       try {
