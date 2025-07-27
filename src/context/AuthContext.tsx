@@ -15,7 +15,8 @@ export interface User {
   lastName: string;
   role: UserRole;
   department: Department;
-  location: string;
+  location: string; // Keep for backward compatibility
+  locations: string[]; // New multiple locations field
   language: Language;
   isActive: boolean;
   lastLogin?: Date;
@@ -29,7 +30,8 @@ interface Profile {
   first_name: string;
   last_name: string;
   role: string;
-  location: string;
+  location: string; // Keep for backward compatibility
+  locations: string[]; // New multiple locations field
   department?: string;
   position?: string;
   phone?: string;
@@ -148,6 +150,7 @@ const transformProfileToUser = (profile: Profile, supabaseUser: SupabaseUser): U
     role: profile.role as UserRole,
     department: (profile.department || 'service') as Department,
     location: profile.location,
+    locations: profile.locations || [profile.location], // Use new locations array or fallback to single location
     language: 'en' as Language, // Default to English, can be updated later
     isActive: profile.status === 'active' || profile.status == null,
     lastLogin: profile.last_login_at ? new Date(profile.last_login_at) : undefined,

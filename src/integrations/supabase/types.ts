@@ -1294,6 +1294,16 @@ export type Database = {
           message: string
         }[]
       }
+      ensure_chats_for_all_locations: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          action: string
+          location_code: string
+          chat_type: string
+          chat_id: string
+          message: string
+        }[]
+      }
       ensure_default_chats: {
         Args: Record<PropertyKey, never>
         Returns: undefined
@@ -1373,6 +1383,16 @@ export type Database = {
         Args: { check_email: string }
         Returns: boolean
       }
+      sync_user_chat_memberships: {
+        Args: { target_user_id: string }
+        Returns: {
+          action: string
+          location_code: string
+          chat_type: string
+          chat_id: string
+          message: string
+        }[]
+      }
       user_has_access_to_location: {
         Args: { check_location: string; user_uuid?: string }
         Returns: boolean
@@ -1402,6 +1422,15 @@ export type Database = {
           error_code: string
           error_message: string
           invitation_data: Json
+        }[]
+      }
+      validate_location_system_health: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          check_name: string
+          status: string
+          details: string
+          count: number
         }[]
       }
     }

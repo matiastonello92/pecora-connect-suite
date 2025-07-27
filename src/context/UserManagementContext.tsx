@@ -143,6 +143,7 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
         hasCustomPermissions: profile.has_custom_permissions || false,
         department: profile.department || '',
         location: profile.location as LocationType || 'menton',
+        locations: profile.locations || [profile.location as LocationType || 'menton'], // New locations field
         position: profile.position || '',
         status: profile.status as UserStatus,
         employmentType: 'full-time' as EmploymentType,

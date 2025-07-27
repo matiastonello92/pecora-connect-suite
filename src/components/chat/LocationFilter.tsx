@@ -5,7 +5,12 @@ import { Badge } from '@/components/ui/badge';
 import { useLocation } from '@/context/LocationContext';
 
 export const LocationFilter: React.FC = () => {
-  const { activeLocation, setActiveLocation, availableLocations, isViewingAllLocations } = useLocation();
+  const { activeLocation, setActiveLocation, availableLocations, isViewingAllLocations, canSwitchLocations } = useLocation();
+
+  // Don't show location filter if user only has access to one location
+  if (!canSwitchLocations) {
+    return null;
+  }
 
   return (
     <div className="flex items-center space-x-2 px-3 py-2 bg-muted/30 rounded-lg border border-border">

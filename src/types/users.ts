@@ -86,7 +86,8 @@ export interface UserProfile {
   position: string;
   employmentType: EmploymentType;
   status: UserStatus;
-  location: LocationType;
+  location: LocationType; // Keep for backward compatibility
+  locations: string[]; // New multiple locations field
   startDate: Date;
   endDate?: Date;
   language: 'en' | 'fr' | 'it';

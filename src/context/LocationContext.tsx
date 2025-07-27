@@ -1,65 +1,77 @@
 import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
-import { LocationType } from '@/types/users';
 import { useAuth } from './AuthContext';
-
-type ActiveLocationType = 'menton' | 'lyon' | 'all_locations';
+import { useActiveLocations, Location, userHasMultipleLocations } from '@/hooks/useLocations';
 
 interface LocationContextType {
-  activeLocation: ActiveLocationType;
-  setActiveLocation: (location: ActiveLocationType) => void;
+  activeLocation: string;
+  setActiveLocation: (location: string) => void;
   canSwitchLocations: boolean;
-  availableLocations: { value: ActiveLocationType; label: string }[];
+  availableLocations: { value: string; label: string }[];
   isViewingAllLocations: boolean;
+  userLocations: string[];
+  allActiveLocations: Location[];
 }
 
 const LocationContext = createContext<LocationContextType | undefined>(undefined);
 
 export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user } = useAuth();
-  const [activeLocation, setActiveLocationState] = useState<ActiveLocationType>('menton');
+  const { data: allActiveLocations = [], isLoading } = useActiveLocations();
+  
+  // Get user's locations from the new locations array field
+  const userLocations = user?.locations || [];
+  
+  // Set initial active location to first user location or fallback
+  const [activeLocation, setActiveLocationState] = useState<string>(
+    userLocations[0] || 'menton'
+  );
 
-  // Determine if user can switch locations
-  const canSwitchLocations = user?.location === 'all_locations';
+  // User can switch locations if they have multiple locations
+  const canSwitchLocations = userHasMultipleLocations(userLocations);
 
-  // Available locations for switching - memoized to prevent unnecessary re-renders
+  // Available locations for switching - based on user's assigned locations
   const availableLocations = useMemo(() => {
-    const locations = [
-      { value: 'menton' as ActiveLocationType, label: 'Menton' },
-      { value: 'lyon' as ActiveLocationType, label: 'Lyon' }
-    ];
+    const userAccessibleLocations = allActiveLocations.filter(location => 
+      userLocations.includes(location.code)
+    );
     
-    // Add "All Locations" option for users who can switch locations
+    const locations = userAccessibleLocations.map(location => ({
+      value: location.code,
+      label: location.name
+    }));
+    
+    // Add "All Locations" option only for users with multiple locations
     if (canSwitchLocations) {
-      locations.unshift({ value: 'all_locations' as ActiveLocationType, label: 'All Locations' });
+      locations.unshift({ value: 'all_locations', label: 'All Locations' });
     }
     
     return locations;
-  }, [canSwitchLocations]);
+  }, [allActiveLocations, userLocations, canSwitchLocations]);
 
-  // Set default location based on user's location
+  // Set default location based on user's first location
   useEffect(() => {
-    if (user?.location && user.location !== 'all_locations') {
-      setActiveLocationState(user.location as ActiveLocationType);
+    if (userLocations.length > 0 && !userLocations.includes(activeLocation)) {
+      setActiveLocationState(userLocations[0]);
     }
-  }, [user?.location]);
+  }, [userLocations, activeLocation]);
 
-  const setActiveLocation = (location: ActiveLocationType) => {
-    if (canSwitchLocations) {
+  const setActiveLocation = (location: string) => {
+    if (canSwitchLocations || userLocations.includes(location)) {
       setActiveLocationState(location);
       // Store in localStorage for persistence
       localStorage.setItem('activeLocation', location);
     }
   };
 
-  // Load saved location on mount
+  // Load saved location on mount if valid
   useEffect(() => {
     if (canSwitchLocations) {
-      const saved = localStorage.getItem('activeLocation') as ActiveLocationType;
-      if (saved && availableLocations.some(loc => loc.value === saved)) {
+      const saved = localStorage.getItem('activeLocation');
+      if (saved && (saved === 'all_locations' || userLocations.includes(saved))) {
         setActiveLocationState(saved);
       }
     }
-  }, [canSwitchLocations, availableLocations]);
+  }, [canSwitchLocations, userLocations]);
 
   const isViewingAllLocations = activeLocation === 'all_locations';
 
@@ -68,7 +80,9 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     setActiveLocation,
     canSwitchLocations,
     availableLocations,
-    isViewingAllLocations
+    isViewingAllLocations,
+    userLocations,
+    allActiveLocations
   };
 
   return (

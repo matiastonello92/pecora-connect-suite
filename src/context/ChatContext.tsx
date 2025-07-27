@@ -181,7 +181,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Get user's profile first to determine location access
       const { data: profiles, error: profileError } = await supabase
         .from('profiles')
-        .select('location, role, access_level, first_name, last_name, email')
+        .select('location, locations, role, access_level, first_name, last_name, email')
         .eq('user_id', user.id);
 
       console.log('👤 Profile query result:', { profiles, profileError });
@@ -279,14 +279,9 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             // Private chats: user must be a participant
             hasAccess = !!participant;
           } else if (chat.type === 'global' || chat.type === 'announcements') {
-            // Global/announcement chats: based on location access
-            if (user.location === 'all_locations') {
-              // Super admin sees all chats (menton and lyon)
-              hasAccess = chat.location === 'menton' || chat.location === 'lyon';
-            } else {
-              // Regular users see their location's chats
-              hasAccess = chat.location === user.location;
-            }
+            // Global/announcement chats: based on location access using new locations array
+            const userLocations = user.locations || [user.location]; // Fallback to old location field
+            hasAccess = userLocations.includes(chat.location);
             
             // ALSO check if user is a participant (they should be auto-joined)
             if (hasAccess && !participant) {
