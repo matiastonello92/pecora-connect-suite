@@ -687,6 +687,39 @@ export type Database = {
           },
         ]
       }
+      message_reminders: {
+        Row: {
+          chat_id: string
+          created_at: string
+          id: string
+          message_id: string
+          scheduled_at: string
+          sent_at: string | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          chat_id: string
+          created_at?: string
+          id?: string
+          message_id: string
+          scheduled_at: string
+          sent_at?: string | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          chat_id?: string
+          created_at?: string
+          id?: string
+          message_id?: string
+          scheduled_at?: string
+          sent_at?: string | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       messages: {
         Row: {
           content: string

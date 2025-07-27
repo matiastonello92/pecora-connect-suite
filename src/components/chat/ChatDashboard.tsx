@@ -9,6 +9,8 @@ import { Separator } from '@/components/ui/separator';
 import { useChatContext } from '@/context/ChatContext';
 import { useTranslation } from '@/lib/i18n';
 import { useAuth } from '@/context/AuthContext';
+import { useUnreadMessages } from '@/context/UnreadMessagesContext';
+import { useMessageReminders } from '@/hooks/useMessageReminders';
 import { formatDistanceToNow } from 'date-fns';
 import { enUS, fr, it } from 'date-fns/locale';
 import {
@@ -31,6 +33,7 @@ import { ChatType } from '@/types/communication';
 import { ChatInterface } from './ChatInterface';
 import { ConnectionRequestManager } from './ConnectionRequestManager';
 import { GroupManagement } from './GroupManagement';
+import { NotificationBadge } from '@/components/ui/notification-badge';
 
 const locales = { en: enUS, fr, it };
 
@@ -45,6 +48,8 @@ export const ChatDashboard: React.FC = () => {
     createChat
   } = useChatContext();
   const { user, language } = useAuth();
+  const { unreadCountByChat, markChatAsRead } = useUnreadMessages();
+  const { processReminders } = useMessageReminders();
   const { t } = useTranslation(language);
   const [showCreateChat, setShowCreateChat] = useState(false);
   const [showConnections, setShowConnections] = useState(false);
@@ -77,6 +82,26 @@ export const ChatDashboard: React.FC = () => {
       window.removeEventListener('openConnectionRequests', handleOpenConnectionRequests);
     };
   }, [filteredChats, setActiveChat]);
+
+  // Process reminders periodically
+  useEffect(() => {
+    if (!user) return;
+
+    // Process reminders immediately
+    processReminders();
+
+    // Set up interval to process reminders every 5 minutes
+    const interval = setInterval(processReminders, 5 * 60 * 1000);
+
+    return () => clearInterval(interval);
+  }, [user, processReminders]);
+
+  // Auto-mark chat as read when opened
+  useEffect(() => {
+    if (activeChat) {
+      markChatAsRead(activeChat.id);
+    }
+  }, [activeChat, markChatAsRead]);
   const [showGroups, setShowGroups] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -307,7 +332,9 @@ export const ChatDashboard: React.FC = () => {
                           <div className="flex items-start justify-between">
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center space-x-2">
-                                <h3 className="font-semibold text-sm truncate text-foreground">
+                                <h3 className={`text-sm truncate text-foreground ${
+                                  unreadCountByChat[chat.id] > 0 ? 'font-bold' : 'font-semibold'
+                                }`}>
                                   {getChatName(chat)}
                                 </h3>
                                 {chat.type === 'announcements' && (
@@ -331,14 +358,13 @@ export const ChatDashboard: React.FC = () => {
                                 </span>
                               )}
                               
-                              <div className="flex items-center space-x-1">
-                                {chat.unread_count > 0 && (
-                                  <Badge 
-                                    variant="default" 
-                                    className="h-5 min-w-[20px] text-xs bg-primary text-primary-foreground flex items-center justify-center rounded-full"
-                                  >
-                                    {chat.unread_count > 99 ? '99+' : chat.unread_count}
-                                  </Badge>
+                              <div className="flex items-center space-x-1 relative">
+                                {unreadCountByChat[chat.id] > 0 && (
+                                  <NotificationBadge
+                                    count={unreadCountByChat[chat.id]}
+                                    size="sm"
+                                    className="static transform-none h-5 min-w-[20px] -top-0 -right-0"
+                                  />
                                 )}
                                 {chat.participants?.some((p: any) => p.is_muted) && (
                                   <VolumeX className="h-3 w-3 text-muted-foreground" />
