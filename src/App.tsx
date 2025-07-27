@@ -85,6 +85,7 @@ const AppContent = () => {
                       <UserManagementProvider>
                         <FinancialProvider>
                           <LocationProvider>
+                            <NotificationHandler />
                             <AppLayout>
                               <Routes>
                                 <Route path="/" element={<Dashboard />} />
@@ -140,7 +141,6 @@ const App: React.FC = () => {
           <AuthProvider>
             <TooltipProvider>
               <AppContent />
-              <NotificationHandler />
               <Toaster />
               <Sonner />
             </TooltipProvider>
