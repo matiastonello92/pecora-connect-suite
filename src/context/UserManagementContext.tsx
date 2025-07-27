@@ -268,9 +268,11 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
         event: 'DELETE', 
         schema: 'public', 
         table: 'user_invitations' 
-      }, () => {
-        console.log('Invitation deleted - refreshing data');
-        loadPendingInvitations();
+      }, (payload) => {
+        console.log('Invitation deleted via real-time:', payload.old?.id);
+        // Always refresh to ensure consistency after deletion
+        // The optimistic UI update handles immediate removal
+        setTimeout(() => loadPendingInvitations(), 50);
       })
       .subscribe();
 
@@ -383,7 +385,10 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
     try {
       // Find the invitation
       const invitation = state.pendingInvitations.find(inv => inv.id === invitationId);
-      if (!invitation) throw new Error('Invitation not found');
+      if (!invitation) {
+        console.log('Invitation not found in state:', invitationId);
+        return; // Already deleted, don't show error
+      }
 
       console.log('Deleting invitation:', invitationId, invitation.email);
 
@@ -402,6 +407,7 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
 
       if (error) {
         // If database deletion fails, restore the invitation to the local state
+        console.error('Database deletion failed:', error);
         dispatch({
           type: 'ADD_PENDING_INVITATION',
           payload: invitation
@@ -416,11 +422,8 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
         description: "Invitation permanently deleted. The invitation link is now invalid.",
       });
 
-      // Force a refresh of pending invitations to ensure UI is in sync
-      setTimeout(() => {
-        console.log('Forcing refresh of pending invitations');
-        loadPendingInvitations();
-      }, 100);
+      // DO NOT call loadPendingInvitations here - let real-time subscription handle it
+      // The real-time subscription will detect the DELETE and update the state accordingly
       
     } catch (error: any) {
       console.error('Failed to delete invitation:', error);
