@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useMemo } from '
 import { LocationType } from '@/types/users';
 import { useAuth } from './AuthContext';
 
-type ActiveLocationType = 'menton' | 'lyon' | 'monaco' | 'nice' | 'cannes' | 'antibes' | 'all_locations';
+type ActiveLocationType = 'menton' | 'lyon' | 'all_locations';
 
 interface LocationContextType {
   activeLocation: ActiveLocationType;
@@ -25,11 +25,7 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const availableLocations = useMemo(() => {
     const locations = [
       { value: 'menton' as ActiveLocationType, label: 'Menton' },
-      { value: 'lyon' as ActiveLocationType, label: 'Lyon' },
-      { value: 'monaco' as ActiveLocationType, label: 'Monaco' },
-      { value: 'nice' as ActiveLocationType, label: 'Nice' },
-      { value: 'cannes' as ActiveLocationType, label: 'Cannes' },
-      { value: 'antibes' as ActiveLocationType, label: 'Antibes' }
+      { value: 'lyon' as ActiveLocationType, label: 'Lyon' }
     ];
     
     // Add "All Locations" option for users who can switch locations

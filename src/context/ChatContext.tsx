@@ -546,7 +546,10 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // First apply location filter
     if (!isViewingAllLocations) {
       // If not viewing all locations, only show chats for the active location
-      if (chat.location !== activeLocation) return false;
+      // Exception: always show global and announcement chats for user's location or if they have all_locations access
+      const shouldShowChat = chat.location === activeLocation || 
+        (chat.type === 'global' || chat.type === 'announcements');
+      if (!shouldShowChat) return false;
     }
     
     // Then apply search filter
