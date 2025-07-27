@@ -248,7 +248,7 @@ export const AppSidebar = () => {
 
         {/* Main Navigation */}
         <SidebarGroup>
-          <SidebarGroupLabel className="px-4 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+          <SidebarGroupLabel className="px-4 py-2 text-xs font-semibold text-muted-foreground tracking-wider">
             {!isCollapsed && t('navigation')}
           </SidebarGroupLabel>
           <SidebarGroupContent>
