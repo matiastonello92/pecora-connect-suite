@@ -28,7 +28,7 @@ export const UserEditDialog = ({ user, isOpen, onOpenChange, onUserUpdated }: Us
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [role, setRole] = useState<UserRole>('base');
-  const [restaurantRole, setRestaurantRole] = useState<RestaurantRole | ''>('');
+  const [restaurantRole, setRestaurantRole] = useState<RestaurantRole | 'none'>('none');
   const [accessLevel, setAccessLevel] = useState<AccessLevel>('base');
   const [location, setLocation] = useState<LocationType>('menton');
   const [department, setDepartment] = useState('');
@@ -41,7 +41,7 @@ export const UserEditDialog = ({ user, isOpen, onOpenChange, onUserUpdated }: Us
       setFirstName(user.firstName);
       setLastName(user.lastName);
       setRole(user.role);
-      setRestaurantRole(user.restaurantRole || '');
+      setRestaurantRole(user.restaurantRole || 'none');
       setAccessLevel(user.accessLevel);
       setLocation(user.location);
       setDepartment(user.department);
@@ -58,7 +58,7 @@ export const UserEditDialog = ({ user, isOpen, onOpenChange, onUserUpdated }: Us
           first_name: firstName,
           last_name: lastName,
           role,
-          restaurant_role: restaurantRole || null,
+          restaurant_role: restaurantRole === 'none' ? null : restaurantRole,
           access_level: accessLevel,
           location,
           department,
@@ -159,12 +159,12 @@ export const UserEditDialog = ({ user, isOpen, onOpenChange, onUserUpdated }: Us
           {/* Restaurant Role */}
           <div className="space-y-2">
             <Label htmlFor="restaurantRole">Restaurant Role</Label>
-            <Select value={restaurantRole} onValueChange={(value: RestaurantRole | '') => setRestaurantRole(value)} disabled={saving}>
+            <Select value={restaurantRole} onValueChange={(value: RestaurantRole | 'none') => setRestaurantRole(value)} disabled={saving}>
               <SelectTrigger>
                 <SelectValue placeholder="Select restaurant role (optional)" />
               </SelectTrigger>
                <SelectContent>
-                 <SelectItem value="">No specific role</SelectItem>
+                 <SelectItem value="none">No specific role</SelectItem>
                  {Object.entries(RESTAURANT_ROLE_LABELS).map(([value, label]) => (
                    <SelectItem key={value} value={value}>{label}</SelectItem>
                  ))}

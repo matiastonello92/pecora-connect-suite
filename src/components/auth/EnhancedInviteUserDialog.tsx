@@ -29,7 +29,7 @@ export const EnhancedInviteUserDialog = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [role, setRole] = useState<UserRole>('base');
-  const [restaurantRole, setRestaurantRole] = useState<RestaurantRole | ''>('');
+  const [restaurantRole, setRestaurantRole] = useState<RestaurantRole | 'none'>('none');
   const [accessLevel, setAccessLevel] = useState<AccessLevel>('base');
   const [location, setLocation] = useState<LocationType | ''>('');
   const [hasCustomPermissions, setHasCustomPermissions] = useState(false);
@@ -67,7 +67,7 @@ export const EnhancedInviteUserDialog = () => {
     setFirstName('');
     setLastName('');
     setRole('base');
-    setRestaurantRole('');
+    setRestaurantRole('none');
     setAccessLevel('base');
     setLocation('');
     setHasCustomPermissions(false);
@@ -116,7 +116,7 @@ export const EnhancedInviteUserDialog = () => {
         firstName,
         lastName,
         role: role as UserRole,
-        restaurantRole: restaurantRole || undefined,
+        restaurantRole: restaurantRole === 'none' ? undefined : restaurantRole as RestaurantRole,
         accessLevel: accessLevel as AccessLevel,
         location: location as LocationType,
         customPermissions: hasCustomPermissions ? customPermissions : undefined
@@ -243,12 +243,12 @@ export const EnhancedInviteUserDialog = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="restaurantRole">Restaurant Role</Label>
-                <Select value={restaurantRole} onValueChange={(value: RestaurantRole | '') => setRestaurantRole(value)} disabled={isLoading}>
+                <Select value={restaurantRole} onValueChange={(value: RestaurantRole | 'none') => setRestaurantRole(value)} disabled={isLoading}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select restaurant role (optional)" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">No specific role</SelectItem>
+                    <SelectItem value="none">No specific role</SelectItem>
                     {Object.entries(RESTAURANT_ROLE_LABELS).map(([value, label]) => (
                       <SelectItem key={value} value={value}>
                         {t(`roles.${value}`) || label}

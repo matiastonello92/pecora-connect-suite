@@ -55,7 +55,7 @@ export const ProfileSecurity = ({ user }: ProfileSecurityProps) => {
       if (field === 'role') {
         updateData.role = value;
       } else if (field === 'restaurant_role') {
-        updateData.restaurant_role = value || null;
+        updateData.restaurant_role = value === 'none' ? null : value;
       } else if (field === 'access_level') {
         updateData.access_level = value;
       } else if (field === 'location') {
@@ -205,7 +205,7 @@ export const ProfileSecurity = ({ user }: ProfileSecurityProps) => {
             <div className="space-y-2">
               <label className="text-sm font-medium">{t('profile.fields.restaurantRole')}</label>
               <Select
-                value={user.restaurantRole || ''}
+                value={user.restaurantRole || 'none'}
                 onValueChange={(value) => handleRoleChange('restaurant_role', value)}
                 disabled={isUpdating}
               >
@@ -213,7 +213,7 @@ export const ProfileSecurity = ({ user }: ProfileSecurityProps) => {
                   <SelectValue placeholder="Select restaurant role" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">No specific role</SelectItem>
+                  <SelectItem value="none">No specific role</SelectItem>
                   {Object.entries(RESTAURANT_ROLE_LABELS).map(([value, label]) => (
                     <SelectItem key={value} value={value}>{label}</SelectItem>
                   ))}

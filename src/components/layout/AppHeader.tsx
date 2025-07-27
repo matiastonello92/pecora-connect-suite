@@ -1,5 +1,6 @@
 import { useAuth } from '@/context/AuthContext';
 import { useTranslation, Language, languages } from '@/lib/i18n';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { LocationClock } from '@/components/ui/location-clock';
@@ -19,6 +20,7 @@ import { NotificationCenter, useNotificationCount } from '@/components/notificat
 
 export const AppHeader = () => {
   const { user, logout, language, setLanguage } = useAuth();
+  const navigate = useNavigate();
   const { t } = useTranslation(language);
   const unreadCount = useNotificationCount();
 
@@ -128,7 +130,7 @@ export const AppHeader = () => {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => navigate('/app/profile')}>
               <User className="mr-2 h-4 w-4" />
               {t('profile')}
             </DropdownMenuItem>

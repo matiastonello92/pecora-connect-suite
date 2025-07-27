@@ -304,7 +304,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         first_name: data.firstName,
         last_name: data.lastName,
         role: data.role,
-        restaurant_role: data.restaurantRole || null,
+        restaurant_role: (data.restaurantRole && data.restaurantRole !== ('none' as any)) ? data.restaurantRole : null,
         access_level: data.accessLevel,
         location: data.location,
         invited_by: state.user?.id,
