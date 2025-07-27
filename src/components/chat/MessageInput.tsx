@@ -5,6 +5,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { useChatContext } from '@/context/ChatContext';
 import { useAuth } from '@/context/AuthContext';
 import { useTranslation } from '@/lib/i18n';
+import { sanitizeMessage, containsInappropriateContent, validateFileUpload } from '@/utils/security';
+import { useToast } from '@/hooks/use-toast';
+import { auditLogger, auditActions } from '@/utils/auditLog';
 import {
   Send,
   Plus,
@@ -31,8 +34,9 @@ export const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage }) => 
   const [isRecording, setIsRecording] = useState(false);
   const [uploadingFile, setUploadingFile] = useState<File | null>(null);
   const { uploadMedia } = useChatContext();
-  const { language } = useAuth();
+  const { language, user } = useAuth();
   const { t } = useTranslation(language);
+  const { toast } = useToast();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
@@ -40,12 +44,35 @@ export const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage }) => 
   const handleSend = useCallback(async () => {
     if (!message.trim()) return;
     
-    onSendMessage(message.trim());
+    // Sanitize the message
+    const sanitizedMessage = sanitizeMessage(message.trim());
+    
+    // Check for inappropriate content
+    if (containsInappropriateContent(sanitizedMessage)) {
+      toast({
+        title: "Message blocked",
+        description: "Your message contains inappropriate content and was not sent.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    // Check message length
+    if (sanitizedMessage.length > 1000) {
+      toast({
+        title: "Message too long",
+        description: "Please keep your message under 1000 characters.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    onSendMessage(sanitizedMessage);
     setMessage('');
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
     }
-  }, [message, onSendMessage]);
+  }, [message, onSendMessage, toast]);
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -55,7 +82,12 @@ export const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage }) => 
   };
 
   const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setMessage(e.target.value);
+    const value = e.target.value;
+    
+    // Limit input length in real-time
+    if (value.length <= 1000) {
+      setMessage(value);
+    }
     
     // Auto-resize textarea
     const textarea = e.target;
@@ -69,16 +101,36 @@ export const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage }) => 
   };
 
   const handleFileUpload = async (file: File, type: ChatMessageType) => {
+    // Validate file before upload
+    const validation = validateFileUpload(file);
+    if (!validation.isValid) {
+      toast({
+        title: "Invalid file",
+        description: validation.error,
+        variant: "destructive"
+      });
+      return;
+    }
+
     setUploadingFile(file);
     setShowAttachMenu(false);
     
     try {
       const mediaUrl = await uploadMedia(file, 'temp-chat-id'); // Will be replaced with actual chat ID
       if (mediaUrl) {
+        // Log file upload for audit
+        if (user) {
+          await auditLogger.logFileUpload(user.id, file.name, file.size, file.type);
+        }
         onSendMessage(file.name, type, mediaUrl);
       }
     } catch (error) {
       console.error('Error uploading file:', error);
+      toast({
+        title: "Upload failed",
+        description: "Failed to upload file. Please try again.",
+        variant: "destructive"
+      });
     } finally {
       setUploadingFile(null);
     }

@@ -110,6 +110,16 @@ export const LoginForm = () => {
                 className="font-inter h-11 sm:h-12 text-base"
                 required
               />
+              <div className="text-xs text-muted-foreground space-y-1">
+                <p>Password must contain:</p>
+                <ul className="list-disc list-inside space-y-0.5">
+                  <li>At least 8 characters</li>
+                  <li>One uppercase letter</li>
+                  <li>One lowercase letter</li>
+                  <li>One number</li>
+                  <li>One special character</li>
+                </ul>
+              </div>
             </div>
 
             <Button

@@ -2,6 +2,7 @@ import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { Language } from '@/lib/i18n';
 import { supabase } from '@/integrations/supabase/client';
 import { User as SupabaseUser, Session } from '@supabase/supabase-js';
+import { authRateLimiter, validatePassword, updateLastActivity, getLastActivity, isSessionExpired } from '@/utils/security';
 
 export type UserRole = 'base' | 'manager' | 'super_admin';
 export type Department = 'kitchen' | 'pizzeria' | 'service' | 'finance' | 'manager' | 'super_manager' | 'general_manager';
@@ -187,6 +188,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = async (email: string, password: string): Promise<{ error?: string }> => {
     dispatch({ type: 'SET_LOADING', payload: true });
     
+    // Rate limiting check
+    if (!authRateLimiter.isAllowed(email)) {
+      const remainingTime = Math.ceil(authRateLimiter.getRemainingTime(email) / 60000);
+      dispatch({ type: 'AUTH_FAILURE' });
+      return { error: `Too many login attempts. Please try again in ${remainingTime} minutes.` };
+    }
+    
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
@@ -199,6 +207,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
 
       if (data.user && data.session) {
+        // Reset rate limiter on successful login
+        authRateLimiter.reset(email);
+        
+        // Update last activity
+        updateLastActivity();
+        
         // Fetch user profile from database
         const profile = await fetchUserProfile(data.user.id);
         if (profile) {
@@ -220,6 +234,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signUp = async (email: string, password: string): Promise<{ error?: string }> => {
+    // Validate password strength
+    const validation = validatePassword(password);
+    if (!validation.isValid) {
+      return { error: validation.errors.join('. ') };
+    }
+    
     try {
       const { data, error } = await supabase.auth.signUp({
         email,
@@ -338,6 +358,35 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (state.user.role === 'super_admin') return true;
     return departments.includes(state.user.department as Department);
   };
+
+  // Set up session timeout monitoring
+  useEffect(() => {
+    if (!state.isAuthenticated) return;
+
+    const checkSessionTimeout = () => {
+      const lastActivity = getLastActivity();
+      if (isSessionExpired(lastActivity)) {
+        logout();
+      }
+    };
+
+    // Check session timeout every minute
+    const timeoutInterval = setInterval(checkSessionTimeout, 60000);
+
+    // Update activity on user interaction
+    const updateActivity = () => updateLastActivity();
+    const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
+    events.forEach(event => {
+      document.addEventListener(event, updateActivity, true);
+    });
+
+    return () => {
+      clearInterval(timeoutInterval);
+      events.forEach(event => {
+        document.removeEventListener(event, updateActivity, true);
+      });
+    };
+  }, [state.isAuthenticated]);
 
   // Check for existing session and set up auth listener
   useEffect(() => {
