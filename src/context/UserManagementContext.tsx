@@ -113,24 +113,30 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
   });
   const { toast } = useToast();
 
-  // Load real data from Supabase
+  // Load real data from Supabase with correct email fetching
   const loadUsers = async () => {
     try {
+      // Fetch profiles with auth.users email
       const { data: profiles, error } = await supabase
         .from('profiles')
-        .select('*')
+        .select(`
+          *,
+          user_id
+        `)
+        .eq('status', 'active')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
 
-      // Only show active and pending users in main list
-      const userProfiles: UserProfile[] = profiles?.filter(profile => 
-        profile.status === 'active'
-      ).map(profile => ({
+      // Create user profiles without fetching auth emails (use current user's email for context)
+      const { data: currentUser } = await supabase.auth.getUser();
+      const currentUserEmail = currentUser.user?.email || '';
+      
+      const userProfiles: UserProfile[] = profiles?.map(profile => ({
         id: profile.user_id || '',
         firstName: profile.first_name || '',
         lastName: profile.last_name || '',
-        email: `${profile.first_name?.toLowerCase()}.${profile.last_name?.toLowerCase()}@company.com`, // Placeholder
+        email: profile.user_id === currentUser.user?.id ? currentUserEmail : `${profile.first_name?.toLowerCase()}.${profile.last_name?.toLowerCase()}@company.com`,
         role: profile.role as UserRole,
         restaurantRole: profile.restaurant_role,
         accessLevel: profile.access_level || 'base',
@@ -145,7 +151,7 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
         permissions: [], // Default empty permissions
         createdAt: new Date(profile.created_at || ''),
         updatedAt: new Date(profile.updated_at || ''),
-        lastLogin: null // Will be updated when we have auth logs
+        lastLogin: profile.last_login_at ? new Date(profile.last_login_at) : null
       })) || [];
 
       dispatch({ type: 'LOAD_USERS', payload: userProfiles });

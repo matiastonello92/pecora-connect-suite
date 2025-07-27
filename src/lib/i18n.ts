@@ -461,9 +461,11 @@ export const translations = {
     
     // Locations
     'locations.all_locations': 'All Locations',
-    'locations.pecora_negra_aosta': 'Pecora Negra Aosta',
-    'locations.pecora_negra_saint_pierre': 'Pecora Negra Saint-Pierre',
-    'locations.pecora_negra_gressoney': 'Pecora Negra Gressoney',
+    'locations.menton': 'Menton',
+    'locations.monaco': 'Monaco',
+    'locations.nice': 'Nice',
+    'locations.cannes': 'Cannes',
+    'locations.antibes': 'Antibes',
     
     // Common
     'common.error': 'Error'

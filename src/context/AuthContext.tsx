@@ -34,6 +34,7 @@ interface Profile {
   position?: string;
   phone?: string;
   status?: string;
+  last_login_at?: string;
   created_at: string;
   updated_at: string;
 }
@@ -149,6 +150,7 @@ const transformProfileToUser = (profile: Profile, supabaseUser: SupabaseUser): U
     location: profile.location,
     language: 'en' as Language, // Default to English, can be updated later
     isActive: profile.status === 'active' || profile.status == null,
+    lastLogin: profile.last_login_at ? new Date(profile.last_login_at) : undefined,
     createdAt: new Date(profile.created_at),
     updatedAt: new Date(profile.updated_at),
   };
