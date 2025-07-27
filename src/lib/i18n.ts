@@ -134,6 +134,29 @@ export const translations = {
     notes: 'Notes',
     welcome: 'Welcome',
     profile: 'Profile',
+    financial: 'Financial',
+    
+    // Dashboard specific
+    pendingInventories: 'Pending Inventories',
+    openChecklists: 'Open Checklists', 
+    unreadMessages: 'Unread Messages',
+    equipmentAlerts: 'Equipment Alerts',
+    requiresAttention: 'Requires attention',
+    noRecentActivity: 'No recent activity',
+    quickActions: 'Quick Actions',
+    updateInventory: 'Update Inventory',
+    completeChecklist: 'Complete Checklist',
+    cashRegister: 'Cash Register',
+    sendMessage: 'Send Message',
+    financialAccessDescription: 'Access daily cash closure and financial reports',
+    openFinancialSection: 'Open Financial Section',
+    viewReports: 'View Reports',
+    
+    // User Management
+    userManagementDescription: 'Staff and user administration',
+    activeUsers: 'Active Users',
+    pendingInvites: 'Pending Invites',
+    archivedUsers: 'Archived Users',
     
     // Missing common translations
     common: {
@@ -762,7 +785,7 @@ export const translations = {
 
 // Simple translation hook
 export const useTranslation = (language: Language = 'en') => {
-  const t = (key: string, params?: Record<string, any>) => {
+  const t = (key: string, params?: Record<string, any>): string => {
     const keys = key.split('.');
     let value: any = translations[language];
     
@@ -779,7 +802,15 @@ export const useTranslation = (language: Language = 'en') => {
     }
     
     if (typeof value !== 'string') {
-      return key; // Return the key if translation not found
+      // If still not found, return a readable fallback
+      // Convert snake_case or camelCase to Title Case
+      const fallback = key.split('.').pop() || key;
+      return fallback
+        .replace(/[_-]/g, ' ')
+        .replace(/([a-z])([A-Z])/g, '$1 $2')
+        .split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .join(' ');
     }
     
     // Simple template replacement
@@ -793,4 +824,10 @@ export const useTranslation = (language: Language = 'en') => {
   };
   
   return { t };
+};
+
+// Export a global translation function for immediate use
+export const getTranslation = (key: string, language: Language = 'en', params?: Record<string, any>): string => {
+  const { t } = useTranslation(language);
+  return t(key, params);
 };

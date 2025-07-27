@@ -66,7 +66,7 @@ export const UserManagement = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="min-w-0 flex-1">
           <h1 className="text-2xl sm:text-3xl font-bold">{t('userManagement')}</h1>
-          <p className="text-sm sm:text-base text-muted-foreground">Staff and user administration</p>
+          <p className="text-sm sm:text-base text-muted-foreground">{t('userManagementDescription')}</p>
         </div>
         <div className="shrink-0">
           <EnhancedInviteUserDialog />
@@ -80,7 +80,7 @@ export const UserManagement = () => {
               <Users className="h-6 w-6 sm:h-8 sm:w-8 text-blue-500 shrink-0" />
               <div className="min-w-0">
                 <div className="text-lg sm:text-2xl font-bold">{users.length}</div>
-                <div className="text-xs sm:text-sm text-muted-foreground">Active Users</div>
+                <div className="text-xs sm:text-sm text-muted-foreground">{t('activeUsers')}</div>
               </div>
             </div>
           </CardContent>
@@ -91,7 +91,7 @@ export const UserManagement = () => {
               <Mail className="h-6 w-6 sm:h-8 sm:w-8 text-orange-500 shrink-0" />
               <div className="min-w-0">
                 <div className="text-lg sm:text-2xl font-bold">{pendingInvitations.length}</div>
-                <div className="text-xs sm:text-sm text-muted-foreground">Pending Invites</div>
+                <div className="text-xs sm:text-sm text-muted-foreground">{t('pendingInvites')}</div>
               </div>
             </div>
           </CardContent>
@@ -102,7 +102,7 @@ export const UserManagement = () => {
               <Archive className="h-6 w-6 sm:h-8 sm:w-8 text-gray-500 shrink-0" />
               <div className="min-w-0">
                 <div className="text-lg sm:text-2xl font-bold">{archivedUsers.filter(user => user.previousStatus === 'active').length}</div>
-                <div className="text-xs sm:text-sm text-muted-foreground">Archived Users</div>
+                <div className="text-xs sm:text-sm text-muted-foreground">{t('archivedUsers')}</div>
               </div>
             </div>
           </CardContent>
@@ -111,9 +111,9 @@ export const UserManagement = () => {
 
       <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-4 sm:space-y-6">
         <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="users" className="text-sm">Users</TabsTrigger>
-          <TabsTrigger value="invitations" className="text-sm">Invitations</TabsTrigger>
-          <TabsTrigger value="roles" className="text-sm">Roles & Permissions</TabsTrigger>
+          <TabsTrigger value="users" className="text-sm">{t('users')}</TabsTrigger>
+          <TabsTrigger value="invitations" className="text-sm">{t('invitations')}</TabsTrigger>
+          <TabsTrigger value="roles" className="text-sm">{t('rolesPermissions')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="users" className="space-y-4">

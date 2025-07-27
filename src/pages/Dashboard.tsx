@@ -28,26 +28,26 @@ export default function Dashboard() {
   // All stats now start with 0 - will be populated with real data
   const stats = [
     {
-      title: 'Pending Inventories',
+      title: t('pendingInventories'),
       value: '0',
       icon: Package,
       color: 'bg-orange-500',
       urgent: false,
     },
     {
-      title: 'Open Checklists',
+      title: t('openChecklists'),
       value: '0',
       icon: CheckSquare,
       color: 'bg-blue-500',
     },
     {
-      title: 'Unread Messages',
+      title: t('unreadMessages'),
       value: '0',
       icon: MessageSquare,
       color: 'bg-green-500',
     },
     {
-      title: 'Equipment Alerts',
+      title: t('equipmentAlerts'),
       value: '0',
       icon: AlertTriangle,
       color: 'bg-red-500',
@@ -111,10 +111,10 @@ export default function Dashboard() {
       {/* Stats Grid - Now clickable */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         {stats.map((stat, index) => {
-          const linkTo = stat.title === 'Pending Inventories' ? '/inventory' :
-                        stat.title === 'Open Checklists' ? '/checklists' :
-                        stat.title === 'Unread Messages' ? '/communication' :
-                        stat.title === 'Equipment Alerts' ? '/equipment' : '#';
+          const linkTo = stat.title === t('pendingInventories') ? '/inventory' :
+                        stat.title === t('openChecklists') ? '/checklists' :
+                        stat.title === t('unreadMessages') ? '/communication' :
+                        stat.title === t('equipmentAlerts') ? '/equipment' : '#';
           
           return (
             <Link key={index} to={linkTo}>
@@ -132,7 +132,7 @@ export default function Dashboard() {
                   {stat.urgent && (
                     <div className="flex items-center mt-2 text-sm text-red-600">
                       <AlertTriangle className="h-3 w-3 mr-1" />
-                      Requires attention
+                      {t('requiresAttention')}
                     </div>
                   )}
                 </CardContent>
@@ -148,10 +148,10 @@ export default function Dashboard() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 font-playfair text-green-800">
               <DollarSign className="h-6 w-6" />
-              {t('financial') || 'Financial Management'}
+              {t('financial')}
             </CardTitle>
             <p className="text-green-600 text-sm">
-              Access daily cash closure and financial reports
+              {t('financialAccessDescription')}
             </p>
           </CardHeader>
           <CardContent>
@@ -159,13 +159,13 @@ export default function Dashboard() {
               <Link to="/financial">
                 <Button className="bg-green-600 hover:bg-green-700 text-white">
                   <Calculator className="h-4 w-4 mr-2" />
-                  {t('openFinancialSection') || 'Open Financial Section'}
+                  {t('openFinancialSection')}
                 </Button>
               </Link>
               <Link to="/financial">
                 <Button variant="outline" className="border-green-300 text-green-700 hover:bg-green-50">
                   <TrendingUp className="h-4 w-4 mr-2" />
-                  {t('viewReports') || 'View Reports'}
+                  {t('viewReports')}
                 </Button>
               </Link>
             </div>
@@ -178,7 +178,7 @@ export default function Dashboard() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2 font-playfair">
             <Calendar className="h-5 w-5" />
-            Recent Activity
+            {t('recentActivity')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -186,7 +186,7 @@ export default function Dashboard() {
             <div className="flex items-center justify-center py-8">
               <div className="text-center text-muted-foreground">
                 <Calendar className="h-12 w-12 mx-auto mb-2 opacity-50" />
-                <p>No recent activity</p>
+                <p>{t('noRecentActivity')}</p>
               </div>
             </div>
           </div>
@@ -196,35 +196,35 @@ export default function Dashboard() {
       {/* Quick Actions - Now with navigation */}
       <Card>
         <CardHeader>
-          <CardTitle className="font-playfair">Quick Actions</CardTitle>
+          <CardTitle className="font-playfair">{t('quickActions')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
             <Link to="/inventory">
               <Button variant="outline" className="flex flex-col items-center p-3 sm:p-4 h-auto w-full">
                 <Package className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600 mb-2" />
-                <span className="text-xs sm:text-sm font-medium text-center">Update Inventory</span>
+                <span className="text-xs sm:text-sm font-medium text-center">{t('updateInventory')}</span>
               </Button>
             </Link>
             
             <Link to="/checklists">
               <Button variant="outline" className="flex flex-col items-center p-3 sm:p-4 h-auto w-full">
                 <CheckSquare className="h-6 w-6 sm:h-8 sm:w-8 text-green-600 mb-2" />
-                <span className="text-xs sm:text-sm font-medium text-center">Complete Checklist</span>
+                <span className="text-xs sm:text-sm font-medium text-center">{t('completeChecklist')}</span>
               </Button>
             </Link>
             
             <Link to="/cash-register">
               <Button variant="outline" className="flex flex-col items-center p-3 sm:p-4 h-auto w-full">
                 <Calculator className="h-6 w-6 sm:h-8 sm:w-8 text-purple-600 mb-2" />
-                <span className="text-xs sm:text-sm font-medium text-center">Cash Register</span>
+                <span className="text-xs sm:text-sm font-medium text-center">{t('cashRegister')}</span>
               </Button>
             </Link>
             
             <Link to="/communication">
               <Button variant="outline" className="flex flex-col items-center p-3 sm:p-4 h-auto w-full">
                 <MessageSquare className="h-6 w-6 sm:h-8 sm:w-8 text-orange-600 mb-2" />
-                <span className="text-xs sm:text-sm font-medium text-center">Send Message</span>
+                <span className="text-xs sm:text-sm font-medium text-center">{t('sendMessage')}</span>
               </Button>
             </Link>
 
@@ -232,7 +232,7 @@ export default function Dashboard() {
               <Link to="/financial">
                 <Button variant="outline" className="flex flex-col items-center p-3 sm:p-4 h-auto w-full border-green-300 hover:bg-green-50">
                   <DollarSign className="h-6 w-6 sm:h-8 sm:w-8 text-green-600 mb-2" />
-                  <span className="text-xs sm:text-sm font-medium text-center">Financial</span>
+                  <span className="text-xs sm:text-sm font-medium text-center">{t('financial')}</span>
                 </Button>
               </Link>
             )}
