@@ -58,6 +58,12 @@ interface ChatContextType {
   // Manual refresh and recovery
   refreshChats: () => Promise<void>;
   ensureUserInChats: () => Promise<void>;
+  
+  // Error state
+  error: string | null;
+  
+  // Emergency recovery
+  emergencyFixAuth: () => Promise<void>;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -82,6 +88,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(false);
   const [sendingMessage, setSendingMessage] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Load chats and connection requests when user or location changes
   useEffect(() => {
@@ -160,21 +167,67 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [activeChat]);
 
   const loadChats = async () => {
-    if (!user) return;
-    
+    if (!user?.id) {
+      console.log('❌ No user ID available for loading chats');
+      return;
+    }
+
     setLoading(true);
+    setError(null);
+    
     try {
-      console.log('🔄 Loading chats for user:', user.id, 'location:', user.location);
+      console.log('🔍 Loading chats for user:', user.id);
       
-      // First ensure default chats exist with better error handling
-      try {
-        const { error: ensureError } = await supabase.rpc('ensure_default_chats');
-        if (ensureError) {
-          console.warn('⚠️ Error ensuring default chats:', ensureError);
-          // Continue anyway - user might still see existing chats
-        } else {
-          console.log('✅ Default chats ensured successfully');
+      // Get user's profile first to determine location access
+      const { data: profiles, error: profileError } = await supabase
+        .from('profiles')
+        .select('location, role, access_level, first_name, last_name, email')
+        .eq('user_id', user.id);
+
+      console.log('👤 Profile query result:', { profiles, profileError });
+
+      if (profileError) {
+        console.error('❌ Error fetching user profile:', profileError);
+        setError(`Failed to fetch user profile: ${profileError.message}`);
+        return;
+      }
+
+      if (!profiles || profiles.length === 0) {
+        console.warn('⚠️ No profile found for user:', user.id);
+        
+        // Try to debug the authentication state
+        try {
+          const { data: debugData } = await supabase.rpc('debug_user_auth_state');
+          console.log('🔧 Debug auth state:', debugData);
+          
+          // Try to create emergency profile
+          const { data: emergencyProfile } = await supabase.rpc('emergency_create_user_profile', {
+            target_user_id: user.id,
+            user_email: user.email || undefined
+          });
+          console.log('🚨 Emergency profile creation:', emergencyProfile);
+          
+          if (emergencyProfile?.[0]?.success) {
+            // Retry loading chats after profile creation
+            console.log('✅ Emergency profile created, retrying chat load...');
+            setTimeout(() => loadChats(), 1000);
+            return;
+          }
+        } catch (emergencyError) {
+          console.error('❌ Emergency profile creation failed:', emergencyError);
         }
+        
+        setError('⚠️ User profile not found. Try clicking "Fix Authentication" button below.');
+        return;
+      }
+
+      const userProfile = profiles[0];
+      console.log('✅ User profile found:', userProfile);
+      
+      // First ensure default chats exist with enhanced error handling
+      try {
+        const { data: chatEnsureResult } = await supabase.rpc('emergency_ensure_all_default_chats');
+        console.log('🏗️ Chat creation result:', chatEnsureResult);
       } catch (ensureError) {
         console.warn('⚠️ Exception ensuring default chats:', ensureError);
       }
@@ -703,8 +756,8 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!user) return;
     
     try {
-      // Call the backfill function to ensure user is in appropriate chats
-      const { data, error } = await supabase.rpc('backfill_user_chat_memberships');
+      // Use the new emergency function to join current user to chats
+      const { data, error } = await supabase.rpc('emergency_join_current_user_to_chats');
       
       if (error) {
         console.error('Error ensuring user in chats:', error);
@@ -712,9 +765,11 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return;
       }
       
-      const result = data?.[0];
-      if (result?.memberships_added > 0) {
-        toast.success(`Successfully joined ${result.memberships_added} chat(s)`);
+      console.log('🔧 Emergency join result:', data);
+      
+      const joinedCount = data?.filter(r => r.action === 'JOINED').length || 0;
+      if (joinedCount > 0) {
+        toast.success(`Successfully joined ${joinedCount} chat(s)`);
         await loadChats();
       } else {
         toast.success('You are already in all appropriate chats');
@@ -722,6 +777,40 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } catch (error: any) {
       console.error('Error ensuring user in chats:', error);
       toast.error('Failed to join missing chats. Please contact support.');
+    }
+  };
+
+  // Emergency authentication fix function
+  const emergencyFixAuth = async () => {
+    if (!user?.id) {
+      toast.error('No authenticated user found');
+      return;
+    }
+    
+    try {
+      // First try to create emergency profile if missing
+      const { data: profileResult } = await supabase.rpc('emergency_create_user_profile', {
+        target_user_id: user.id,
+        user_email: user.email || undefined
+      });
+      
+      console.log('🚨 Emergency profile creation result:', profileResult);
+      
+      // Then ensure all default chats exist
+      const { data: chatsResult } = await supabase.rpc('emergency_ensure_all_default_chats');
+      console.log('🏗️ Emergency chats creation result:', chatsResult);
+      
+      // Then join user to appropriate chats
+      const { data: joinResult } = await supabase.rpc('emergency_join_current_user_to_chats');
+      console.log('🔧 Emergency join result:', joinResult);
+      
+      // Refresh the chat list
+      await loadChats();
+      
+      toast.success('Emergency authentication fix completed! Please check if your chats are now visible.');
+    } catch (error: any) {
+      console.error('❌ Emergency fix failed:', error);
+      toast.error(`Emergency fix failed: ${error.message}`);
     }
   };
 
@@ -754,7 +843,9 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       sendingMessage,
       uploadMedia,
       refreshChats,
-      ensureUserInChats
+      ensureUserInChats,
+      error,
+      emergencyFixAuth
     }}>
       {children}
     </ChatContext.Provider>

@@ -1215,6 +1215,49 @@ export type Database = {
         Args: { other_user_id: string }
         Returns: string
       }
+      debug_user_auth_state: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          auth_user_id: string
+          profile_exists: boolean
+          profile_data: Json
+          expected_chats: string[]
+          actual_chat_memberships: string[]
+          issues: string[]
+        }[]
+      }
+      emergency_create_user_profile: {
+        Args: {
+          target_user_id: string
+          user_email?: string
+          user_location?: string
+        }
+        Returns: {
+          success: boolean
+          message: string
+          profile_data: Json
+        }[]
+      }
+      emergency_ensure_all_default_chats: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          action: string
+          chat_type: string
+          location: string
+          chat_id: string
+          chat_name: string
+        }[]
+      }
+      emergency_join_current_user_to_chats: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          action: string
+          chat_type: string
+          location: string
+          chat_id: string
+          message: string
+        }[]
+      }
       ensure_default_chats: {
         Args: Record<PropertyKey, never>
         Returns: undefined
@@ -1243,6 +1286,16 @@ export type Database = {
         Args: { user_role?: string }
         Returns: {
           location: string
+        }[]
+      }
+      get_comprehensive_chat_status: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          total_chats: number
+          total_users: number
+          total_memberships: number
+          chats_detail: Json
+          users_without_chats: Json
         }[]
       }
       get_connection_status: {

@@ -54,7 +54,9 @@ export const ChatDashboard: React.FC = () => {
     loading,
     createChat,
     refreshChats,
-    ensureUserInChats
+    ensureUserInChats,
+    error,
+    emergencyFixAuth
   } = useChatContext();
   const { user, language } = useAuth();
   const { unreadCountByChat, markChatAsRead } = useUnreadMessages();
@@ -344,7 +346,7 @@ export const ChatDashboard: React.FC = () => {
                 {/* Recovery buttons */}
                 {!searchTerm && (
                   <div className="flex flex-col items-center gap-2">
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 flex-wrap justify-center">
                       <Button size="sm" variant="outline" onClick={handleRefreshChats}>
                         <RefreshCw className="h-3 w-3 mr-1" />
                         Refresh
@@ -353,11 +355,26 @@ export const ChatDashboard: React.FC = () => {
                         <Users className="h-3 w-3 mr-1" />
                         Join Chats
                       </Button>
+                      <Button size="sm" variant="destructive" onClick={emergencyFixAuth}>
+                        <AlertTriangle className="h-3 w-3 mr-1" />
+                        Fix Auth
+                      </Button>
                     </div>
                     <Button size="sm" variant="ghost" onClick={() => setShowDebugInfo(!showDebugInfo)}>
                       <Bug className="h-3 w-3 mr-1" />
                       {showDebugInfo ? 'Hide' : 'Show'} Debug Info
                     </Button>
+                  </div>
+                )}
+
+                {/* Error Display */}
+                {error && (
+                  <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg text-left text-xs">
+                    <div className="flex items-center gap-2 mb-2">
+                      <AlertTriangle className="h-3 w-3 text-red-600" />
+                      <span className="font-medium text-red-900">Error</span>
+                    </div>
+                    <div className="text-red-700">{error}</div>
                   </div>
                 )}
 
@@ -370,10 +387,12 @@ export const ChatDashboard: React.FC = () => {
                     </div>
                     <div className="space-y-1 text-muted-foreground">
                       <div><strong>User ID:</strong> {user?.id}</div>
+                      <div><strong>User Email:</strong> {user?.email}</div>
                       <div><strong>User Location:</strong> {user?.location}</div>
                       <div><strong>Total Chats:</strong> {chats.length}</div>
                       <div><strong>Filtered Chats:</strong> {filteredChats.length}</div>
                       <div><strong>Chat Names:</strong> {filteredChats.map(c => c.name).join(', ') || 'None'}</div>
+                      <div><strong>Error State:</strong> {error || 'None'}</div>
                     </div>
                   </div>
                 )}
