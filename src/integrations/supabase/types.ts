@@ -1176,6 +1176,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      backfill_user_chat_memberships: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          user_count: number
+          memberships_added: number
+        }[]
+      }
       can_access_all_locations: {
         Args: Record<PropertyKey, never>
         Returns: boolean
@@ -1245,6 +1252,15 @@ export type Database = {
       is_email_permanently_deleted: {
         Args: { check_email: string }
         Returns: boolean
+      }
+      validate_chat_system_health: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          check_name: string
+          status: string
+          details: string
+          user_count: number
+        }[]
       }
       validate_invitation_comprehensive: {
         Args: { token_to_check: string }

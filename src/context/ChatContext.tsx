@@ -54,6 +54,10 @@ interface ChatContextType {
   
   // Media upload
   uploadMedia: (file: File, chatId: string) => Promise<string | null>;
+  
+  // Manual refresh and recovery
+  refreshChats: () => Promise<void>;
+  ensureUserInChats: () => Promise<void>;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -660,6 +664,39 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  // Manual refresh function for recovery
+  const refreshChats = async () => {
+    await loadChats();
+    toast.success('Chat list refreshed');
+  };
+
+  // Ensure user is properly joined to their chats
+  const ensureUserInChats = async () => {
+    if (!user) return;
+    
+    try {
+      // Call the backfill function to ensure user is in appropriate chats
+      const { data, error } = await supabase.rpc('backfill_user_chat_memberships');
+      
+      if (error) {
+        console.error('Error ensuring user in chats:', error);
+        toast.error('Failed to join missing chats. Please contact support.');
+        return;
+      }
+      
+      const result = data?.[0];
+      if (result?.memberships_added > 0) {
+        toast.success(`Successfully joined ${result.memberships_added} chat(s)`);
+        await loadChats();
+      } else {
+        toast.success('You are already in all appropriate chats');
+      }
+    } catch (error: any) {
+      console.error('Error ensuring user in chats:', error);
+      toast.error('Failed to join missing chats. Please contact support.');
+    }
+  };
+
   return (
     <ChatContext.Provider value={{
       chats,
@@ -687,7 +724,9 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       filteredChats,
       loading,
       sendingMessage,
-      uploadMedia
+      uploadMedia,
+      refreshChats,
+      ensureUserInChats
     }}>
       {children}
     </ChatContext.Provider>
