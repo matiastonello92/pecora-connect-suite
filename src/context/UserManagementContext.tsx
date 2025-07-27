@@ -385,7 +385,8 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
       const invitation = state.pendingInvitations.find(inv => inv.id === invitationId);
       if (!invitation) throw new Error('Invitation not found');
 
-      // Delete the invitation from the database directly - no archiving for pending users
+      // Permanently delete the invitation from the database - no archiving for pending users
+      // This will immediately invalidate any invitation tokens and remove all traces
       const { error } = await supabase
         .from('user_invitations')
         .delete()
@@ -393,9 +394,15 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
 
       if (error) throw error;
 
+      // Immediately update local state to reflect the deletion
+      dispatch({
+        type: 'REMOVE_PENDING_INVITATION',
+        payload: invitationId
+      });
+
       toast({
         title: "Success",
-        description: "Invitation deleted successfully",
+        description: "Invitation permanently deleted. The invitation link is now invalid.",
       });
 
       // The real-time subscription will automatically refresh the data
