@@ -133,6 +133,7 @@ export const translations = {
     quantity: 'Quantity',
     notes: 'Notes',
     welcome: 'Welcome',
+    welcomeMessage: 'Welcome back!',
     profile: 'Profile',
     financial: 'Financial',
     
@@ -654,6 +655,7 @@ export const translations = {
     quantity: 'Quantité',
     notes: 'Notes',
     welcome: 'Bienvenue',
+    welcomeMessage: 'Bon retour !',
     profile: 'Profil',
     
     // Missing common translations
@@ -798,6 +800,7 @@ export const translations = {
     quantity: 'Quantità',
     notes: 'Note',
     welcome: 'Benvenuto',
+    welcomeMessage: 'Bentornato!',
     profile: 'Profilo',
     
     // Missing common translations
@@ -822,24 +825,45 @@ export const translations = {
 // Simple translation hook
 export const useTranslation = (language: Language = 'en') => {
   const t = (key: string, params?: Record<string, any>): string => {
-    const keys = key.split('.');
-    let value: any = translations[language];
-    
-    for (const k of keys) {
-      value = value?.[k];
-    }
-    
-    if (typeof value !== 'string') {
-      // Fallback to English
-      value = translations.en;
+    try {
+      const keys = key.split('.');
+      let value: any = translations[language];
+      
       for (const k of keys) {
         value = value?.[k];
       }
-    }
-    
-    if (typeof value !== 'string') {
-      // If still not found, return a readable fallback
-      // Convert snake_case or camelCase to Title Case
+      
+      if (typeof value !== 'string') {
+        // Fallback to English
+        value = translations.en;
+        for (const k of keys) {
+          value = value?.[k];
+        }
+      }
+      
+      if (typeof value !== 'string') {
+        // If still not found, return a readable fallback
+        // Convert snake_case or camelCase to Title Case
+        const fallback = key.split('.').pop() || key;
+        return fallback
+          .replace(/[_-]/g, ' ')
+          .replace(/([a-z])([A-Z])/g, '$1 $2')
+          .split(' ')
+          .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+          .join(' ');
+      }
+      
+      // Simple template replacement
+      if (params) {
+        return value.replace(/\{\{(\w+)\}\}/g, (match: string, paramKey: string) => {
+          return params[paramKey] || match;
+        });
+      }
+      
+      return value;
+    } catch (error) {
+      // Always return a string, never an Error object
+      console.warn('Translation error for key:', key, error);
       const fallback = key.split('.').pop() || key;
       return fallback
         .replace(/[_-]/g, ' ')
@@ -848,15 +872,6 @@ export const useTranslation = (language: Language = 'en') => {
         .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
         .join(' ');
     }
-    
-    // Simple template replacement
-    if (params) {
-      return value.replace(/\{\{(\w+)\}\}/g, (match: string, paramKey: string) => {
-        return params[paramKey] || match;
-      });
-    }
-    
-    return value;
   };
   
   return { t };
