@@ -5,7 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Edit, Save } from 'lucide-react';
+import { Loader2, Edit, Save, AlertCircle } from 'lucide-react';
+import { MultiLocationSelect } from '@/components/ui/location-select';
 import { 
   UserProfile, 
   UserRole,
@@ -30,7 +31,8 @@ export const UserEditDialog = ({ user, isOpen, onOpenChange, onUserUpdated }: Us
   const [role, setRole] = useState<UserRole>('base');
   const [restaurantRole, setRestaurantRole] = useState<RestaurantRole | 'none'>('none');
   const [accessLevel, setAccessLevel] = useState<AccessLevel>('base');
-  const [location, setLocation] = useState<LocationType>('menton');
+  const [locations, setLocations] = useState<string[]>([]);
+  const [locationError, setLocationError] = useState('');
   const [department, setDepartment] = useState('');
   const [position, setPosition] = useState('');
   const [saving, setSaving] = useState(false);
@@ -43,13 +45,26 @@ export const UserEditDialog = ({ user, isOpen, onOpenChange, onUserUpdated }: Us
       setRole(user.role);
       setRestaurantRole(user.restaurantRole || 'none');
       setAccessLevel(user.accessLevel);
-      setLocation(((user.locations && user.locations[0]) || user.location) as LocationType); // Use first location or fallback
+      setLocations(user.locations || [user.location].filter(Boolean)); // Use locations array or fallback to single location
+      setLocationError('');
       setDepartment(user.department);
       setPosition(user.position);
     }
   }, [isOpen, user]);
 
   const handleSave = async () => {
+    // Validate locations first
+    if (locations.length === 0) {
+      setLocationError('At least one location must be selected.');
+      toast({
+        title: "Validation Error",
+        description: "At least one location must be selected.",
+        variant: "destructive",
+      });
+      return;
+    }
+    setLocationError('');
+
     setSaving(true);
     try {
       const { error } = await supabase
@@ -60,7 +75,8 @@ export const UserEditDialog = ({ user, isOpen, onOpenChange, onUserUpdated }: Us
           role,
           restaurant_role: restaurantRole === 'none' ? null : restaurantRole,
           access_level: accessLevel,
-          location,
+          location: locations[0], // Keep single location for backward compatibility
+          locations: locations,
           department,
           position,
           updated_at: new Date().toISOString()
@@ -141,19 +157,21 @@ export const UserEditDialog = ({ user, isOpen, onOpenChange, onUserUpdated }: Us
             </div>
           </div>
 
-          {/* Location */}
+          {/* Locations */}
           <div className="space-y-2">
-            <Label htmlFor="location">Location</Label>
-            <Select value={location} onValueChange={(value: LocationType) => setLocation(value)} disabled={saving}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="menton">Menton</SelectItem>
-                <SelectItem value="lyon">Lyon</SelectItem>
-                <SelectItem value="all_locations">All Locations</SelectItem>
-              </SelectContent>
-            </Select>
+            <Label htmlFor="locations">Locations *</Label>
+            <MultiLocationSelect
+              value={locations}
+              onValueChange={setLocations}
+              placeholder="Select locations"
+              disabled={saving}
+            />
+            {locationError && (
+              <div className="flex items-center gap-2 text-sm text-destructive">
+                <AlertCircle className="h-4 w-4" />
+                {locationError}
+              </div>
+            )}
           </div>
 
           {/* Restaurant Role */}

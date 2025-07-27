@@ -10,7 +10,8 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from '@/lib/i18n';
-import { Loader2, UserPlus, ChevronDown, ChevronRight, Settings } from 'lucide-react';
+import { Loader2, UserPlus, ChevronDown, ChevronRight, Settings, AlertCircle } from 'lucide-react';
+import { MultiLocationSelect } from '@/components/ui/location-select';
 import { 
   LocationType, 
   RestaurantRole, 
@@ -31,7 +32,8 @@ export const EnhancedInviteUserDialog = () => {
   const [role, setRole] = useState<UserRole>('base');
   const [restaurantRole, setRestaurantRole] = useState<RestaurantRole | 'none'>('none');
   const [accessLevel, setAccessLevel] = useState<AccessLevel>('base');
-  const [location, setLocation] = useState<LocationType | ''>('');
+  const [locations, setLocations] = useState<string[]>([]);
+  const [locationError, setLocationError] = useState('');
   const [hasCustomPermissions, setHasCustomPermissions] = useState(false);
   const [customPermissions, setCustomPermissions] = useState<Partial<Record<AppModule, ModulePermissions>>>({});
   const [isLoading, setIsLoading] = useState(false);
@@ -69,7 +71,8 @@ export const EnhancedInviteUserDialog = () => {
     setRole('base');
     setRestaurantRole('none');
     setAccessLevel('base');
-    setLocation('');
+    setLocations([]);
+    setLocationError('');
     setHasCustomPermissions(false);
     setCustomPermissions({});
   };
@@ -77,7 +80,19 @@ export const EnhancedInviteUserDialog = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!email || !firstName || !lastName || !role || !location || !accessLevel) {
+    // Validate locations first
+    if (locations.length === 0) {
+      setLocationError('At least one location must be selected.');
+      toast({
+        title: "Validation Error",
+        description: "At least one location must be selected.",
+        variant: "destructive",
+      });
+      return;
+    }
+    setLocationError('');
+    
+    if (!email || !firstName || !lastName || !role || !accessLevel) {
       toast({
         title: "Error",
         description: "Please fill in all required fields",
@@ -118,7 +133,8 @@ export const EnhancedInviteUserDialog = () => {
         role: role as UserRole,
         restaurantRole: restaurantRole === 'none' ? undefined : restaurantRole as RestaurantRole,
         accessLevel: accessLevel as AccessLevel,
-        location: location as LocationType,
+        location: locations[0] as LocationType, // Use first location for backward compatibility
+        locations: locations,
         customPermissions: hasCustomPermissions ? customPermissions : undefined
       };
 
@@ -212,17 +228,19 @@ export const EnhancedInviteUserDialog = () => {
             <h3 className="text-lg font-medium">Role Assignment</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="location">Location *</Label>
-                <Select value={location} onValueChange={(value: LocationType) => setLocation(value)} disabled={isLoading}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select location" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="menton">Menton</SelectItem>
-                    <SelectItem value="lyon">Lyon</SelectItem>
-                    <SelectItem value="all_locations">All Locations</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Label htmlFor="locations">Locations *</Label>
+                <MultiLocationSelect
+                  value={locations}
+                  onValueChange={setLocations}
+                  placeholder="Select locations"
+                  disabled={isLoading}
+                />
+                {locationError && (
+                  <div className="flex items-center gap-2 text-sm text-destructive">
+                    <AlertCircle className="h-4 w-4" />
+                    {locationError}
+                  </div>
+                )}
               </div>
 
               <div className="space-y-2">
