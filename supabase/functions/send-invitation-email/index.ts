@@ -80,52 +80,98 @@ const handler = async (req: Request): Promise<Response> => {
         'X-Entity-Ref-ID': `invitation-${invitationToken}`,
       },
       html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-          <div style="text-align: center; margin-bottom: 30px;">
-            <h1 style="color: #333; margin: 0;">${isResend ? 'New Team Invitation!' : 'You\'re Invited!'}</h1>
-            ${isResend ? '<p style="color: #666; margin: 10px 0 0 0; font-size: 14px;">This is a new invitation with an updated link.</p>' : ''}
+        <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f8fafc;">
+          <!-- Header -->
+          <div style="text-align: center; margin-bottom: 40px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 20px; border-radius: 12px;">
+            <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+              ${isResend ? '🔄 New Invitation!' : '🎉 You\'re Invited!'}
+            </h1>
+            ${isResend ? '<p style="color: rgba(255,255,255,0.9); margin: 10px 0 0 0; font-size: 16px;">This is a fresh invitation with an updated link.</p>' : '<p style="color: rgba(255,255,255,0.9); margin: 10px 0 0 0; font-size: 16px;">Join our team at La Pecoranegra</p>'}
           </div>
           
-          <div style="background: #f9f9f9; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-            <p style="margin: 0 0 15px 0; color: #333; font-size: 16px;">
-              Hi ${firstName},
+          <!-- Main Content -->
+          <div style="background: #ffffff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin-bottom: 30px;">
+            <p style="margin: 0 0 20px 0; color: #334155; font-size: 18px; line-height: 1.6;">
+              Hi <strong>${firstName}</strong>,
             </p>
-            <p style="margin: 0 0 15px 0; color: #333; font-size: 16px;">
-              ${invitedByName} has ${isResend ? 'sent you a new' : ''} invitation to join our team as a <strong>${role}</strong> at <strong>${location}</strong>.
+            <p style="margin: 0 0 20px 0; color: #334155; font-size: 16px; line-height: 1.6;">
+              ${invitedByName} has ${isResend ? 'sent you a new' : 'invited you to join our'} team as a <strong style="color: #667eea;">${role}</strong> at <strong style="color: #667eea;">${location}</strong>.
             </p>
-            <p style="margin: 0; color: #333; font-size: 16px;">
-              Click the button below to accept your invitation and set up your account.
+            <p style="margin: 0 0 20px 0; color: #334155; font-size: 16px; line-height: 1.6;">
+              Click the button below to accept your invitation and set up your account securely.
             </p>
-            ${isResend ? '<p style="margin: 15px 0 0 0; color: #e74c3c; font-size: 14px; font-weight: bold;">⚠️ This is a new link that replaces any previous invitation.</p>' : ''}
+            ${isResend ? '<div style="background: #fee2e2; border: 1px solid #fecaca; border-radius: 8px; padding: 16px; margin: 20px 0;"><p style="margin: 0; color: #dc2626; font-size: 14px; font-weight: 600;">⚠️ This new link replaces any previous invitation. Previous links are now invalid.</p></div>' : ''}
           </div>
-          
-          <div style="text-align: center; margin: 30px 0;">
+           
+          <!-- CTA Button -->
+          <div style="text-align: center; margin: 40px 0;">
             <a href="${invitationLink}" 
-               style="background: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">
-              ${isResend ? 'Accept New Invitation' : 'Accept Invitation'}
+               style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                      color: #ffffff; 
+                      padding: 16px 32px; 
+                      text-decoration: none; 
+                      border-radius: 8px; 
+                      font-weight: 600; 
+                      font-size: 16px;
+                      display: inline-block; 
+                      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+                      transition: all 0.3s ease;">
+              ${isResend ? '🔗 Accept New Invitation' : '✨ Accept Invitation & Register'}
             </a>
           </div>
           
-          <div style="border-top: 1px solid #eee; padding-top: 20px; margin-top: 30px;">
-            <p style="color: #666; font-size: 14px; margin: 0 0 10px 0;">
-              <strong>Your Details:</strong>
-            </p>
-            <ul style="color: #666; font-size: 14px; margin: 0; padding-left: 20px;">
-              <li>Name: ${firstName} ${lastName}</li>
-              <li>Role: ${role}</li>
-              <li>Location: ${location}</li>
-              <li>Email: ${email}</li>
-            </ul>
-            ${isResend ? `<p style="color: #666; font-size: 12px; margin: 15px 0 0 0;">Invitation sent: ${new Date().toLocaleString()}</p>` : ''}
+          <!-- Details Section -->
+          <div style="background: #f1f5f9; padding: 30px; border-radius: 12px; margin: 30px 0;">
+            <h3 style="color: #1e293b; font-size: 18px; margin: 0 0 16px 0; font-weight: 600;">
+              📋 Your Details:
+            </h3>
+            <table style="width: 100%; border-collapse: collapse;">
+              <tr>
+                <td style="padding: 8px 0; color: #64748b; font-weight: 500; width: 30%;">Name:</td>
+                <td style="padding: 8px 0; color: #334155; font-weight: 600;">${firstName} ${lastName}</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px 0; color: #64748b; font-weight: 500;">Role:</td>
+                <td style="padding: 8px 0; color: #334155; font-weight: 600;">${role}</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px 0; color: #64748b; font-weight: 500;">Location:</td>
+                <td style="padding: 8px 0; color: #334155; font-weight: 600;">${location}</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px 0; color: #64748b; font-weight: 500;">Email:</td>
+                <td style="padding: 8px 0; color: #334155; font-weight: 600;">${email}</td>
+              </tr>
+            </table>
+            ${isResend ? `<p style="color: #64748b; font-size: 14px; margin: 16px 0 0 0;">📅 New invitation sent: ${new Date().toLocaleString()}</p>` : ''}
           </div>
           
-          <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
-            <p style="color: #999; font-size: 12px; margin: 0; text-align: center;">
+          <!-- Security Notice -->
+          <div style="background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 8px; padding: 20px; margin: 30px 0;">
+            <h4 style="color: #065f46; margin: 0 0 10px 0; font-size: 16px;">🔒 Security Notice:</h4>
+            <ul style="color: #047857; margin: 0; padding-left: 20px; font-size: 14px; line-height: 1.5;">
+              <li>This invitation is valid for 7 days</li>
+              <li>The link can only be used once</li>
+              <li>Your account will be securely created upon registration</li>
+              ${isResend ? '<li><strong>Previous invitation links are now invalid</strong></li>' : ''}
+            </ul>
+          </div>
+          
+          <!-- Footer -->
+          <div style="text-align: center; margin-top: 40px; padding-top: 30px; border-top: 1px solid #e2e8f0;">
+            <p style="color: #64748b; font-size: 14px; margin: 0 0 10px 0;">
+              This invitation was sent by ${invitedByName} from La Pecoranegra Management System
+            </p>
+            <p style="color: #94a3b8; font-size: 12px; margin: 0;">
               If you didn't expect this invitation, you can safely ignore this email.
               <br>
-              This invitation will expire in 7 days.
-              ${isResend ? '<br><strong>Note:</strong> Any previous invitation links are now invalid.' : ''}
+              ${isResend ? '<strong>Note:</strong> This replaces any previous invitation links which are now invalid.' : ''}
             </p>
+            <div style="margin-top: 20px;">
+              <p style="color: #94a3b8; font-size: 11px; margin: 0;">
+                © ${new Date().getFullYear()} La Pecoranegra Restaurant Management • managementpn.services
+              </p>
+            </div>
           </div>
         </div>
       `,

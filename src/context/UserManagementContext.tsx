@@ -599,20 +599,30 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
 
   const resendInvitation = async (invitation: PendingInvitation) => {
     try {
-      // Generate a new invitation token for security
-      const newToken = crypto.randomUUID();
+      console.log('Resending invitation for:', invitation.email);
       
-      // Update the invitation with new token and extended expiry
+      // Update the invitation - the database trigger will generate new token and expiry
       const { error: updateError } = await supabase
         .from('user_invitations')
         .update({
-          invitation_token: newToken,
-          expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days from now
-          created_at: new Date().toISOString() // Update timestamp to track resend
+          // The trigger will automatically generate new token and expiry
+          // We just need to update the record to trigger it
+          status: 'pending' // Ensure status is pending
         })
         .eq('id', invitation.id);
 
       if (updateError) throw updateError;
+
+      // Get the updated invitation with new token
+      const { data: updatedInvitation, error: fetchError } = await supabase
+        .from('user_invitations')
+        .select('invitation_token')
+        .eq('id', invitation.id)
+        .single();
+
+      if (fetchError || !updatedInvitation) {
+        throw new Error('Failed to get updated invitation token');
+      }
 
       // Get current user name for personalization
       const { data: currentUserProfile } = await supabase
@@ -625,7 +635,7 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
         ? `${currentUserProfile.first_name} ${currentUserProfile.last_name}`
         : 'Admin';
 
-      // Send email with new token and resend indicator
+      // Send email with updated token
       const { error } = await supabase.functions.invoke('send-invitation-email', {
         body: {
           email: invitation.email,
@@ -633,9 +643,9 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
           lastName: invitation.last_name,
           role: invitation.role,
           location: invitation.location,
-          invitationToken: newToken, // Use new token
+          invitationToken: updatedInvitation.invitation_token,
           invitedByName,
-          isResend: true // Flag to indicate this is a resend
+          isResend: true
         }
       });
 

@@ -152,7 +152,7 @@ export const CompleteSignup = () => {
     setLanguage(selectedLanguage);
 
     try {
-      // Final token validation before user creation using the validation function
+      // Final token validation before user creation
       const finalValidation = await validateInvitationToken(tokenFromUrl);
       
       if (!finalValidation.isValid) {
@@ -161,11 +161,15 @@ export const CompleteSignup = () => {
         throw new Error(errorMessage);
       }
 
+      console.log('Starting signup process for email:', email);
+      
       // Create the user account
+      const redirectUrl = `${window.location.origin}/app/dashboard`;
       const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
         options: {
+          emailRedirectTo: redirectUrl,
           data: {
             first_name: firstName,
             last_name: lastName,
@@ -174,43 +178,49 @@ export const CompleteSignup = () => {
       });
 
       if (signUpError || !signUpData.user) {
+        console.error('Signup error:', signUpError);
         throw new Error(signUpError?.message || 'Registration failed');
       }
 
-      // Create the profile
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .insert({
-          user_id: signUpData.user.id,
-          first_name: firstName,
-          last_name: lastName,
-          email: email, // CRITICAL: Save the email
-          role,
-          restaurant_role: invitationData.restaurant_role,
-          access_level: invitationData.access_level,
-          location,
-          department: location, // Use location as department for now
-          position: 'Staff', // Default position
-          status: 'active'
+      console.log('User account created successfully:', signUpData.user.id);
+
+      
+      // Use the comprehensive completion function
+      const { data: completionResult, error: completionError } = await supabase
+        .rpc('complete_invitation_signup', {
+          token_to_complete: tokenFromUrl,
+          user_email: email,
+          new_user_id: signUpData.user.id
         });
 
-      if (profileError) {
-        throw new Error('Failed to create user profile');
+      if (completionError || !completionResult || completionResult.length === 0) {
+        console.error('Invitation completion error:', completionError);
+        
+        // Clean up the auth user since invitation completion failed
+        try {
+          await supabase.auth.admin.deleteUser(signUpData.user.id);
+        } catch (cleanupError) {
+          console.warn('Failed to cleanup auth user:', cleanupError);
+        }
+        
+        throw new Error('Failed to complete invitation process. Please contact support.');
       }
 
-      // Mark invitation as completed and invalidate token
-      const { error: updateError } = await supabase
-        .from('user_invitations')
-        .update({ 
-          status: 'completed', 
-          completed_at: new Date().toISOString() 
-        })
-        .eq('id', invitationData.id);
-
-      if (updateError) {
-        console.error('Failed to mark invitation as completed:', updateError);
-        // Don't throw error as user creation was successful - just log internally
+      const result = completionResult[0];
+      if (!result.success) {
+        console.error('Invitation completion failed:', result.error_message);
+        
+        // Clean up the auth user since invitation completion failed
+        try {
+          await supabase.auth.admin.deleteUser(signUpData.user.id);
+        } catch (cleanupError) {
+          console.warn('Failed to cleanup auth user:', cleanupError);
+        }
+        
+        throw new Error(result.error_message || 'Failed to complete registration.');
       }
+
+      console.log('Invitation completed successfully');
 
       // Audit log the successful registration
       await auditLogger.logUserAction(

@@ -11,9 +11,9 @@ export const validateInvitationToken = async (token: string): Promise<Invitation
   try {
     console.log('Validating invitation token:', token);
     
-    // Use the database function for comprehensive validation
+    // Use the improved database function for comprehensive validation
     const { data, error } = await supabase
-      .rpc('validate_invitation_token', { token_to_check: token });
+      .rpc('validate_invitation_comprehensive', { token_to_check: token });
 
     if (error) {
       console.error('Database error during token validation:', error);
@@ -61,6 +61,8 @@ export const getInvitationErrorMessage = (errorCode: string): string => {
       return 'This invitation has expired. Please contact your administrator for a new invitation.';
     case 'INVALID_STATUS':
       return 'This invitation is no longer valid. Please contact your administrator for a new invitation.';
+    case 'USER_EXISTS':
+      return 'A user with this email already exists. Please contact your administrator if you need assistance logging in.';
     case 'DATABASE_ERROR':
       return 'Failed to validate invitation. Please try again or contact support.';
     case 'VALIDATION_FAILED':
@@ -74,9 +76,11 @@ export const getInvitationErrorMessage = (errorCode: string): string => {
 
 export const cleanupExpiredInvitations = async (): Promise<void> => {
   try {
-    const { error } = await supabase.rpc('cleanup_expired_invitations');
+    const { error } = await supabase.rpc('cleanup_invitation_system');
     if (error) {
       console.error('Failed to cleanup expired invitations:', error);
+    } else {
+      console.log('Successfully cleaned up invitation system');
     }
   } catch (error) {
     console.error('Error during invitation cleanup:', error);
