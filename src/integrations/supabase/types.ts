@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       archived_users: {
         Row: {
+          access_level: Database["public"]["Enums"]["access_level"] | null
           archived_at: string
           archived_by: string | null
           can_reactivate: boolean | null
@@ -31,9 +32,11 @@ export type Database = {
           position: string | null
           previous_status: string
           reason: string | null
+          restaurant_role: Database["public"]["Enums"]["restaurant_role"] | null
           role: string
         }
         Insert: {
+          access_level?: Database["public"]["Enums"]["access_level"] | null
           archived_at?: string
           archived_by?: string | null
           can_reactivate?: boolean | null
@@ -49,9 +52,13 @@ export type Database = {
           position?: string | null
           previous_status: string
           reason?: string | null
+          restaurant_role?:
+            | Database["public"]["Enums"]["restaurant_role"]
+            | null
           role: string
         }
         Update: {
+          access_level?: Database["public"]["Enums"]["access_level"] | null
           archived_at?: string
           archived_by?: string | null
           can_reactivate?: boolean | null
@@ -67,6 +74,9 @@ export type Database = {
           position?: string | null
           previous_status?: string
           reason?: string | null
+          restaurant_role?:
+            | Database["public"]["Enums"]["restaurant_role"]
+            | null
           role?: string
         }
         Relationships: []
@@ -900,45 +910,88 @@ export type Database = {
       }
       profiles: {
         Row: {
+          access_level: Database["public"]["Enums"]["access_level"]
           created_at: string | null
           department: string | null
           first_name: string
+          has_custom_permissions: boolean
           id: string
           last_name: string
           location: string
           phone: string | null
           position: string | null
+          restaurant_role: Database["public"]["Enums"]["restaurant_role"] | null
           role: string
           status: string | null
           updated_at: string | null
           user_id: string | null
         }
         Insert: {
+          access_level?: Database["public"]["Enums"]["access_level"]
           created_at?: string | null
           department?: string | null
           first_name: string
+          has_custom_permissions?: boolean
           id?: string
           last_name: string
           location: string
           phone?: string | null
           position?: string | null
+          restaurant_role?:
+            | Database["public"]["Enums"]["restaurant_role"]
+            | null
           role: string
           status?: string | null
           updated_at?: string | null
           user_id?: string | null
         }
         Update: {
+          access_level?: Database["public"]["Enums"]["access_level"]
           created_at?: string | null
           department?: string | null
           first_name?: string
+          has_custom_permissions?: boolean
           id?: string
           last_name?: string
           location?: string
           phone?: string | null
           position?: string | null
+          restaurant_role?:
+            | Database["public"]["Enums"]["restaurant_role"]
+            | null
           role?: string
           status?: string | null
           updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      role_audit_log: {
+        Row: {
+          action: string
+          changed_user_id: string
+          created_at: string
+          id: string
+          new_values: Json | null
+          old_values: Json | null
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          changed_user_id: string
+          created_at?: string
+          id?: string
+          new_values?: Json | null
+          old_values?: Json | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          changed_user_id?: string
+          created_at?: string
+          id?: string
+          new_values?: Json | null
+          old_values?: Json | null
           user_id?: string | null
         }
         Relationships: []
@@ -984,6 +1037,7 @@ export type Database = {
       }
       user_invitations: {
         Row: {
+          access_level: Database["public"]["Enums"]["access_level"]
           completed_at: string | null
           created_at: string | null
           email: string
@@ -994,10 +1048,12 @@ export type Database = {
           invited_by: string | null
           last_name: string
           location: string
+          restaurant_role: Database["public"]["Enums"]["restaurant_role"] | null
           role: string
           status: string | null
         }
         Insert: {
+          access_level?: Database["public"]["Enums"]["access_level"]
           completed_at?: string | null
           created_at?: string | null
           email: string
@@ -1008,10 +1064,14 @@ export type Database = {
           invited_by?: string | null
           last_name: string
           location: string
+          restaurant_role?:
+            | Database["public"]["Enums"]["restaurant_role"]
+            | null
           role: string
           status?: string | null
         }
         Update: {
+          access_level?: Database["public"]["Enums"]["access_level"]
           completed_at?: string | null
           created_at?: string | null
           email?: string
@@ -1022,8 +1082,47 @@ export type Database = {
           invited_by?: string | null
           last_name?: string
           location?: string
+          restaurant_role?:
+            | Database["public"]["Enums"]["restaurant_role"]
+            | null
           role?: string
           status?: string | null
+        }
+        Relationships: []
+      }
+      user_permissions: {
+        Row: {
+          can_delete: boolean
+          can_read: boolean
+          can_validate: boolean
+          can_write: boolean
+          created_at: string
+          id: string
+          module: Database["public"]["Enums"]["app_module"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          can_delete?: boolean
+          can_read?: boolean
+          can_validate?: boolean
+          can_write?: boolean
+          created_at?: string
+          id?: string
+          module: Database["public"]["Enums"]["app_module"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          can_delete?: boolean
+          can_read?: boolean
+          can_validate?: boolean
+          can_write?: boolean
+          created_at?: string
+          id?: string
+          module?: Database["public"]["Enums"]["app_module"]
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -1058,6 +1157,18 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: string
       }
+      get_user_access_level: {
+        Args: { user_uuid?: string }
+        Returns: Database["public"]["Enums"]["access_level"]
+      }
+      has_module_permission: {
+        Args: {
+          module_name: Database["public"]["Enums"]["app_module"]
+          permission_type?: string
+          user_uuid?: string
+        }
+        Returns: boolean
+      }
       validate_invitation_token: {
         Args: { token_to_check: string }
         Returns: {
@@ -1069,10 +1180,51 @@ export type Database = {
       }
     }
     Enums: {
+      access_level:
+        | "base"
+        | "manager_sala"
+        | "manager_cucina"
+        | "general_manager"
+        | "assistant_manager"
+        | "financial_department"
+        | "communication_department"
+        | "observer"
+      app_module:
+        | "chat"
+        | "inventory_sala"
+        | "inventory_kitchen"
+        | "checklists"
+        | "suppliers"
+        | "equipment"
+        | "financial"
+        | "cash_closure"
+        | "reports"
+        | "tasks"
+        | "communication"
+        | "announcements"
+        | "user_management"
       chat_type: "private" | "group" | "global" | "announcements"
       connection_status: "pending" | "accepted" | "declined" | "blocked"
       message_type: "text" | "image" | "voice" | "document" | "system"
       notification_priority: "normal" | "urgent" | "forced"
+      restaurant_role:
+        | "waiter"
+        | "runner"
+        | "bartender"
+        | "floor_manager"
+        | "location_director"
+        | "general_director"
+        | "cook"
+        | "kitchen_assistant"
+        | "pizza_chef"
+        | "dishwasher"
+        | "stock_manager"
+        | "cleaning_staff"
+        | "accountant"
+        | "procurement_manager"
+        | "social_media_manager"
+        | "maintenance_manager"
+        | "human_resources"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1200,10 +1352,54 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      access_level: [
+        "base",
+        "manager_sala",
+        "manager_cucina",
+        "general_manager",
+        "assistant_manager",
+        "financial_department",
+        "communication_department",
+        "observer",
+      ],
+      app_module: [
+        "chat",
+        "inventory_sala",
+        "inventory_kitchen",
+        "checklists",
+        "suppliers",
+        "equipment",
+        "financial",
+        "cash_closure",
+        "reports",
+        "tasks",
+        "communication",
+        "announcements",
+        "user_management",
+      ],
       chat_type: ["private", "group", "global", "announcements"],
       connection_status: ["pending", "accepted", "declined", "blocked"],
       message_type: ["text", "image", "voice", "document", "system"],
       notification_priority: ["normal", "urgent", "forced"],
+      restaurant_role: [
+        "waiter",
+        "runner",
+        "bartender",
+        "floor_manager",
+        "location_director",
+        "general_director",
+        "cook",
+        "kitchen_assistant",
+        "pizza_chef",
+        "dishwasher",
+        "stock_manager",
+        "cleaning_staff",
+        "accountant",
+        "procurement_manager",
+        "social_media_manager",
+        "maintenance_manager",
+        "human_resources",
+      ],
     },
   },
 } as const

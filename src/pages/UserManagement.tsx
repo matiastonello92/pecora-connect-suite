@@ -5,7 +5,8 @@ import { useUserManagement } from '@/context/UserManagementContext';
 import { DeleteUserDialog } from '@/components/ui/delete-user-dialog';
 import { DeleteInvitationDialog } from '@/components/ui/delete-invitation-dialog';
 import { ReactivateUserDialog } from '@/components/ui/reactivate-user-dialog';
-import { InviteUserDialog } from '@/components/auth/InviteUserDialog';
+import { EnhancedInviteUserDialog } from '@/components/auth/EnhancedInviteUserDialog';
+import { EnhancedUserCard } from '@/components/users/EnhancedUserCard';
 import { useTranslation } from '@/lib/i18n';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -68,7 +69,7 @@ export const UserManagement = () => {
           <p className="text-sm sm:text-base text-muted-foreground">Staff and user administration</p>
         </div>
         <div className="shrink-0">
-          <InviteUserDialog />
+          <EnhancedInviteUserDialog />
         </div>
       </div>
 
@@ -119,55 +120,13 @@ export const UserManagement = () => {
           <div className="grid gap-3 sm:gap-4">
             {/* Active Users */}
             {users.map((user) => (
-              <Card key={user.id}>
-                <CardHeader className="pb-3 sm:pb-4">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-8 h-8 sm:w-10 sm:h-10 bg-primary/10 rounded-full flex items-center justify-center shrink-0">
-                        <Users className="h-4 w-4 sm:h-5 sm:w-5" />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <CardTitle className="text-sm sm:text-base truncate">
-                          {user.firstName} {user.lastName}
-                        </CardTitle>
-                        <p className="text-xs sm:text-sm text-muted-foreground truncate">{user.position}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2 shrink-0">
-                      <div className={`w-2 h-2 rounded-full ${getRoleColor(user.role)}`} />
-                      <Badge variant="outline" className="text-xs">{user.role}</Badge>
-                      <Badge variant={user.status === 'active' ? 'default' : 'secondary'} className="text-xs">
-                        {user.status}
-                      </Badge>
-                      {hasPermission('manager') && (
-                        <DeleteUserDialog user={user} onDelete={deleteUser} />
-                      )}
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-                    <div className="min-w-0">
-                      <div className="text-xs sm:text-sm font-medium">Email</div>
-                      <div className="text-xs sm:text-sm text-muted-foreground truncate">{user.email}</div>
-                    </div>
-                    <div className="min-w-0">
-                      <div className="text-xs sm:text-sm font-medium">Department</div>
-                      <div className="text-xs sm:text-sm text-muted-foreground">{user.department}</div>
-                    </div>
-                    <div className="min-w-0">
-                      <div className="text-xs sm:text-sm font-medium">Employment</div>
-                      <div className="text-xs sm:text-sm text-muted-foreground">{user.employmentType}</div>
-                    </div>
-                    <div className="min-w-0">
-                      <div className="text-xs sm:text-sm font-medium">Last Login</div>
-                      <div className="text-xs sm:text-sm text-muted-foreground">
-                        {user.lastLogin?.toLocaleDateString() || 'Never'}
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+              <EnhancedUserCard
+                key={user.id}
+                user={user}
+                onDelete={deleteUser}
+                onUpdate={() => window.location.reload()}
+                hasPermission={hasPermission}
+              />
             ))}
             
             {/* Archived Users Section */}

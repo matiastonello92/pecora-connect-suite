@@ -129,6 +129,9 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
         lastName: profile.last_name || '',
         email: `${profile.first_name?.toLowerCase()}.${profile.last_name?.toLowerCase()}@company.com`, // Placeholder
         role: profile.role as UserRole,
+        restaurantRole: profile.restaurant_role,
+        accessLevel: profile.access_level || 'base',
+        hasCustomPermissions: profile.has_custom_permissions || false,
         department: profile.department || '',
         location: profile.location as LocationType || 'menton',
         position: profile.position || '',
