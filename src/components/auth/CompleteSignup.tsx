@@ -169,10 +169,10 @@ export const CompleteSignup = () => {
 
       toast({
         title: "Success",
-        description: "Account created successfully! Please check your email to verify your account.",
+        description: "Account created successfully! Welcome to the team!",
       });
 
-      // Redirect to login
+      // Redirect to login - the real-time subscriptions will automatically update the user list
       navigate('/');
     } catch (error: any) {
       toast({

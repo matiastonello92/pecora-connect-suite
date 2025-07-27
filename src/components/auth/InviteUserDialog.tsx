@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useAuth, UserRole } from '@/context/AuthContext';
+import { useUserManagement } from '@/context/UserManagementContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -19,6 +20,7 @@ export const InviteUserDialog = () => {
   const [isLoading, setIsLoading] = useState(false);
   
   const { createInvitation, hasPermission } = useAuth();
+  const { users, pendingInvitations, refreshData } = useUserManagement();
   const { toast } = useToast();
 
   // Only allow managers and super_admins to invite users
@@ -33,6 +35,28 @@ export const InviteUserDialog = () => {
       toast({
         title: "Error",
         description: "Please fill in all fields",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Check for duplicate email in existing users
+    const existingUser = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+    if (existingUser) {
+      toast({
+        title: "Error",
+        description: "A user with this email already exists",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Check for duplicate email in pending invitations
+    const existingInvitation = pendingInvitations.find(i => i.email.toLowerCase() === email.toLowerCase());
+    if (existingInvitation) {
+      toast({
+        title: "Error",
+        description: "An invitation has already been sent to this email",
         variant: "destructive",
       });
       return;
@@ -53,6 +77,9 @@ export const InviteUserDialog = () => {
         title: "Success",
         description: `Invitation sent to ${email}`,
       });
+      
+      // Refresh data to show new pending invitation
+      refreshData();
       
       // Reset form
       setEmail('');
