@@ -1,56 +1,100 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
-import { Language } from '@/lib/i18n';
 import { supabase } from '@/integrations/supabase/client';
-import { User as SupabaseUser, Session } from '@supabase/supabase-js';
-import { authRateLimiter, validatePassword, updateLastActivity, getLastActivity, isSessionExpired } from '@/utils/security';
-import { InvitationData, RestaurantRole, AccessLevel, AppModule, ModulePermissions } from '@/types/users';
+import { validatePassword } from '@/utils/security';
+import { createError, showErrorToUser } from '@/utils/errorHandling';
 
-export type UserRole = 'base' | 'manager' | 'super_admin';
-export type Department = 'kitchen' | 'pizzeria' | 'service' | 'finance' | 'manager' | 'super_manager' | 'general_manager';
+export type Language = 'en' | 'fr' | 'it';
+
+// Re-export types from users.ts for compatibility
+export type { UserRole, AccessLevel, RestaurantRole, AppModule } from '@/types/users';
+
+// Rate limiting for login attempts
+class RateLimiter {
+  private attempts: Map<string, { count: number; firstAttempt: number }> = new Map();
+  private maxAttempts = 5;
+  private windowMs = 15 * 60 * 1000; // 15 minutes
+
+  isAllowed(email: string): boolean {
+    const now = Date.now();
+    const userAttempts = this.attempts.get(email);
+    
+    if (!userAttempts) {
+      this.attempts.set(email, { count: 1, firstAttempt: now });
+      return true;
+    }
+    
+    if (now - userAttempts.firstAttempt > this.windowMs) {
+      this.attempts.set(email, { count: 1, firstAttempt: now });
+      return true;
+    }
+    
+    if (userAttempts.count >= this.maxAttempts) {
+      return false;
+    }
+    
+    userAttempts.count++;
+    return true;
+  }
+  
+  getRemainingTime(email: string): number {
+    const userAttempts = this.attempts.get(email);
+    if (!userAttempts) return 0;
+    
+    return Math.max(0, this.windowMs - (Date.now() - userAttempts.firstAttempt));
+  }
+  
+  reset(email: string): void {
+    this.attempts.delete(email);
+  }
+}
+
+const authRateLimiter = new RateLimiter();
 
 export interface User {
   id: string;
   email: string;
   firstName: string;
   lastName: string;
-  role: UserRole;
-  department: Department;
-  location: string; // Keep for backward compatibility
-  locations: string[]; // New multiple locations field
+  role: string;
   language: Language;
-  isActive: boolean;
-  lastLogin?: Date;
-  createdAt: Date;
-  updatedAt: Date;
+  location: string;
+  locations: string[];
+  accessLevel: string;
+  restaurantRole?: string;
+  department?: string;
+  position?: string;
+  avatarUrl?: string;
+  phone?: string;
+  hasCustomPermissions?: boolean;
 }
 
-interface Profile {
-  id: string;
+export interface Profile {
   user_id: string;
   first_name: string;
   last_name: string;
+  email?: string;
   role: string;
-  location: string; // Keep for backward compatibility
-  locations: string[]; // New multiple locations field
+  restaurant_role?: string;
+  access_level: string;
+  location: string;
+  locations?: string[];
   department?: string;
   position?: string;
+  avatar_url?: string;
   phone?: string;
-  status?: string;
-  last_login_at?: string;
-  created_at: string;
-  updated_at: string;
+  has_custom_permissions?: boolean;
 }
 
 interface AuthState {
   user: User | null;
-  session: Session | null;
+  session: any | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   language: Language;
 }
 
 type AuthAction =
-  | { type: 'AUTH_SUCCESS'; payload: { user: User; session: Session } }
+  | { type: 'AUTH_SUCCESS'; payload: { user: User; session: any } }
   | { type: 'AUTH_FAILURE' }
   | { type: 'SET_LOADING'; payload: boolean }
   | { type: 'SET_LANGUAGE'; payload: Language }
@@ -60,7 +104,7 @@ const initialState: AuthState = {
   user: null,
   session: null,
   isAuthenticated: false,
-  isLoading: true, // Start with true to show loading while checking session
+  isLoading: true,
   language: 'en',
 };
 
@@ -73,7 +117,6 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
         session: action.payload.session,
         isAuthenticated: true,
         isLoading: false,
-        language: action.payload.user.language,
       };
     case 'AUTH_FAILURE':
       return {
@@ -92,7 +135,6 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
       return {
         ...state,
         language: action.payload,
-        user: state.user ? { ...state.user, language: action.payload } : null,
       };
     case 'UPDATE_USER':
       return {
@@ -106,14 +148,14 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
 
 interface AuthContextType extends AuthState {
   login: (email: string, password: string) => Promise<{ error?: string }>;
-  logout: () => void;
+  logout: () => Promise<void>;
   signUp: (email: string, password: string) => Promise<{ error?: string }>;
   resetPassword: (email: string) => Promise<{ error?: string }>;
   setLanguage: (language: Language) => void;
   updateUser: (updates: Partial<User>) => void;
-  hasPermission: (requiredRole: UserRole) => boolean;
-  hasAccess: (departments: Department[]) => boolean;
-  createInvitation: (data: InvitationData) => Promise<{ error?: string }>;
+  hasPermission: (permission: string, module?: string) => boolean;
+  hasAccess: (requiredRole: string | string[]) => boolean;
+  createInvitation: (invitationData: any) => Promise<{ error?: string }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -125,66 +167,59 @@ const fetchUserProfile = async (userId: string): Promise<Profile | null> => {
       .from('profiles')
       .select('*')
       .eq('user_id', userId)
-      .maybeSingle();
+      .single();
 
     if (error) {
-      return null;
-    }
-
-    if (!data) {
+      console.error('Error fetching user profile:', error);
       return null;
     }
 
     return data;
   } catch (error) {
+    console.error('Exception fetching user profile:', error);
     return null;
   }
 };
 
-const transformProfileToUser = (profile: Profile, supabaseUser: SupabaseUser): User => {
-  const user = {
+const transformProfileToUser = (profile: Profile, authUser: any): User => {
+  return {
     id: profile.user_id,
-    email: supabaseUser.email || '',
+    email: profile.email || authUser.email,
     firstName: profile.first_name,
     lastName: profile.last_name,
-    role: profile.role as UserRole,
-    department: (profile.department || 'service') as Department,
+    role: profile.role,
+    language: 'en', // Default language
     location: profile.location,
-    locations: profile.locations || [profile.location], // Use new locations array or fallback to single location
-    language: 'en' as Language, // Default to English, can be updated later
-    isActive: profile.status === 'active' || profile.status == null,
-    lastLogin: profile.last_login_at ? new Date(profile.last_login_at) : undefined,
-    createdAt: new Date(profile.created_at),
-    updatedAt: new Date(profile.updated_at),
+    locations: profile.locations || [profile.location],
+    accessLevel: profile.access_level,
+    restaurantRole: profile.restaurant_role,
+    department: profile.department,
+    position: profile.position,
+    avatarUrl: profile.avatar_url,
+    phone: profile.phone,
+    hasCustomPermissions: profile.has_custom_permissions || false,
   };
-  
-  return user;
 };
 
 const updateUserProfile = async (updates: Partial<User>): Promise<void> => {
   try {
-    const { data: userData } = await supabase.auth.getUser();
-    if (!userData.user) return;
-
-    const profileUpdates: any = {};
-    
-    if (updates.firstName) profileUpdates.first_name = updates.firstName;
-    if (updates.lastName) profileUpdates.last_name = updates.lastName;
-    if (updates.role) profileUpdates.role = updates.role;
-    if (updates.department) profileUpdates.department = updates.department;
-    if (updates.location) profileUpdates.location = updates.location;
-    if (updates.isActive !== undefined) profileUpdates.status = updates.isActive ? 'active' : 'inactive';
-
     const { error } = await supabase
       .from('profiles')
-      .update(profileUpdates)
-      .eq('user_id', userData.user.id);
+      .update({
+        first_name: updates.firstName,
+        last_name: updates.lastName,
+        phone: updates.phone,
+        position: updates.position,
+        department: updates.department,
+      })
+      .eq('user_id', updates.id);
 
     if (error) {
-      // Handle error silently
+      throw error;
     }
   } catch (error) {
-    // Handle error silently
+    console.error('Error updating user profile:', error);
+    throw error;
   }
 };
 
@@ -215,9 +250,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (data.user && data.session) {
         // Reset rate limiter on successful login
         authRateLimiter.reset(email);
-        
-        // Update last activity
-        updateLastActivity();
         
         // Fetch user profile from database
         const profile = await fetchUserProfile(data.user.id);
@@ -298,194 +330,85 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     dispatch({ type: 'UPDATE_USER', payload: updates });
     // Update user profile in database
     if (state.user && state.session) {
-      updateUserProfile(updates);
+      updateUserProfile({ ...state.user, ...updates });
     }
   };
 
-  const createInvitation = async (data: InvitationData): Promise<{ error?: string }> => {
+  const hasPermission = (permission: string, module?: string): boolean => {
+    if (!state.user) return false;
+    
+    // Basic role-based permissions
+    const role = state.user.role;
+    
+    if (role === 'super_admin') return true;
+    if (role === 'manager') return true;
+    
+    // Add more specific permission logic here
+    return false;
+  };
+
+  const hasAccess = (requiredRole: string | string[]): boolean => {
+    if (!state.user) return false;
+    
+    const userRole = state.user.role;
+    const roles = Array.isArray(requiredRole) ? requiredRole : [requiredRole];
+    
+    return roles.includes(userRole);
+  };
+
+  const createInvitation = async (invitationData: any): Promise<{ error?: string }> => {
     try {
-      console.log('Creating invitation for:', data.email);
-      
-      // Delete any existing pending invitation for this email first to allow re-inviting
-      await supabase
+      const { error } = await supabase
         .from('user_invitations')
-        .delete()
-        .eq('email', data.email)
-        .eq('status', 'pending');
-
-      const invitationData = {
-        email: data.email,
-        first_name: data.firstName,
-        last_name: data.lastName,
-        role: data.role,
-        restaurant_role: (data.restaurantRole && data.restaurantRole !== ('none' as any)) ? data.restaurantRole : null,
-        access_level: data.accessLevel,
-        location: data.location,
-        invited_by: state.user?.id,
-        expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-        metadata: data.customPermissions ? JSON.stringify({ customPermissions: data.customPermissions }) : JSON.stringify({})
-      };
-
-      console.log('Inserting invitation data:', invitationData);
-
-      const { data: inviteResult, error } = await supabase
-        .from('user_invitations')
-        .insert(invitationData)
-        .select()
-        .single();
+        .insert(invitationData);
 
       if (error) {
-        console.error('Failed to insert invitation:', error);
         return { error: error.message };
-      }
-
-      console.log('Invitation created:', inviteResult);
-
-      // Send invitation email with proper error handling
-      try {
-        const { data: emailResult, error: emailError } = await supabase.functions.invoke('send-invitation-email', {
-          body: {
-            email: data.email,
-            firstName: data.firstName,
-            lastName: data.lastName,
-            role: data.role,
-            location: data.location,
-            invitationToken: inviteResult.invitation_token,
-            invitedByName: `${state.user?.firstName} ${state.user?.lastName}`,
-            isResend: false
-          }
-        });
-
-        if (emailError) {
-          console.error('Email sending failed:', emailError);
-          // Delete the invitation since email failed
-          await supabase
-            .from('user_invitations')
-            .delete()
-            .eq('id', inviteResult.id);
-          
-          return { error: `Failed to send invitation email. Please verify that managementpn.services domain is configured in Resend: ${emailError.message}` };
-        }
-
-        console.log('Invitation email sent successfully:', emailResult);
-      } catch (emailError: any) {
-        console.error('Email sending exception:', emailError);
-        // Delete the invitation since email failed
-        await supabase
-          .from('user_invitations')
-          .delete()
-          .eq('id', inviteResult.id);
-        
-        return { error: `Failed to send invitation email: ${emailError.message}` };
       }
 
       return {};
     } catch (error: any) {
-      console.error('Error creating invitation:', error);
       return { error: error.message || 'Failed to create invitation' };
     }
   };
 
-  const hasPermission = (requiredRole: UserRole): boolean => {
-    if (!state.user) return false;
-    
-    const roleHierarchy = {
-      base: 0,
-      manager: 1,
-      super_admin: 2,
-    };
-    
-    return roleHierarchy[state.user.role as keyof typeof roleHierarchy] >= roleHierarchy[requiredRole as keyof typeof roleHierarchy];
-  };
-
-  const hasAccess = (departments: Department[]): boolean => {
-    if (!state.user) return false;
-    if (state.user.role === 'super_admin') return true;
-    return departments.includes(state.user.department as Department);
-  };
-
-  // Set up session timeout monitoring
-  useEffect(() => {
-    if (!state.isAuthenticated) return;
-
-    const checkSessionTimeout = () => {
-      const lastActivity = getLastActivity();
-      if (isSessionExpired(lastActivity)) {
-        logout();
-      }
-    };
-
-    // Check session timeout every minute
-    const timeoutInterval = setInterval(checkSessionTimeout, 60000);
-
-    // Update activity on user interaction
-    const updateActivity = () => updateLastActivity();
-    const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
-    events.forEach(event => {
-      document.addEventListener(event, updateActivity, true);
-    });
-
-    return () => {
-      clearInterval(timeoutInterval);
-      events.forEach(event => {
-        document.removeEventListener(event, updateActivity, true);
-      });
-    };
-  }, [state.isAuthenticated]);
-
-  // Check for existing session and set up auth listener
+  // Set up authentication state listener with improved session handling
   useEffect(() => {
     let isMounted = true;
-    
-    // Force loading to false after a reasonable timeout to prevent infinite loading
-    const forceLoadingTimeout = setTimeout(() => {
-      if (isMounted) {
-        // Try one more time to get session before giving up
-        supabase.auth.getSession().then(({ data: { session } }) => {
-          if (session?.user && isMounted) {
-            setTimeout(async () => {
-              if (!isMounted) return;
-              const profile = await fetchUserProfile(session.user.id);
-              if (profile && isMounted) {
-                const user = transformProfileToUser(profile, session.user);
-                dispatch({ type: 'AUTH_SUCCESS', payload: { user, session } });
-              } else if (isMounted) {
-                dispatch({ type: 'AUTH_FAILURE' });
-              }
-            }, 50);
-          } else if (isMounted) {
-            dispatch({ type: 'AUTH_FAILURE' });
-          }
-        }).catch(() => {
-          if (isMounted) dispatch({ type: 'AUTH_FAILURE' });
-        });
-      }
-    }, 1500);
+    let initTimeout: NodeJS.Timeout;
 
-    const handleAuthState = (event: string, session: any) => {
+    const handleAuthState = async (event: string, session: any) => {
+      console.log('🔐 Auth state change:', event, !!session?.user);
+      
       if (!isMounted) return;
       
-      clearTimeout(forceLoadingTimeout);
-      
       if (session?.user) {
-        setTimeout(async () => {
-          if (!isMounted) return;
-          
-          try {
-            const profile = await fetchUserProfile(session.user.id);
-            if (profile && isMounted) {
-              const user = transformProfileToUser(profile, session.user);
-              dispatch({ type: 'AUTH_SUCCESS', payload: { user, session } });
-            } else if (isMounted) {
-              dispatch({ type: 'AUTH_FAILURE' });
-            }
-          } catch (error) {
-            if (isMounted) {
-              dispatch({ type: 'AUTH_FAILURE' });
-            }
+        try {
+          console.log('👤 Fetching profile for user:', session.user.id);
+          const profile = await fetchUserProfile(session.user.id);
+          if (profile && isMounted) {
+            const user = transformProfileToUser(profile, session.user);
+            console.log('✅ Auth success with profile:', user.email);
+            dispatch({ type: 'AUTH_SUCCESS', payload: { user, session } });
+            
+            // Notify other components that auth is ready
+            setTimeout(() => {
+              window.dispatchEvent(new CustomEvent('authReady', { 
+                detail: { user, session } 
+              }));
+            }, 100);
+          } else if (isMounted) {
+            console.warn('⚠️ No profile found, auth failure');
+            dispatch({ type: 'AUTH_FAILURE' });
           }
-        }, 100);
+        } catch (error) {
+          console.error('❌ Error in auth state handler:', error);
+          if (isMounted) {
+            dispatch({ type: 'AUTH_FAILURE' });
+          }
+        }
       } else if (isMounted) {
+        console.log('🚫 No session, auth failure');
         dispatch({ type: 'AUTH_FAILURE' });
       }
     };
@@ -493,43 +416,45 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(handleAuthState);
 
-    // Check for existing session
-    supabase.auth.getSession().then(({ data: { session }, error }) => {
-      if (!isMounted) return;
-      
-      clearTimeout(forceLoadingTimeout);
-      
-      if (error || !session?.user) {
-        dispatch({ type: 'AUTH_FAILURE' });
-        return;
-      }
-
-      setTimeout(async () => {
-        if (!isMounted) return;
+    // Initialize session check with timeout
+    const initializeAuth = async () => {
+      try {
+        console.log('🔍 Checking for existing session...');
+        const { data: { session }, error } = await supabase.auth.getSession();
         
-        try {
-          const profile = await fetchUserProfile(session.user.id);
-          if (profile && isMounted) {
-            const user = transformProfileToUser(profile, session.user);
-            dispatch({ type: 'AUTH_SUCCESS', payload: { user, session } });
-          } else if (isMounted) {
-            dispatch({ type: 'AUTH_FAILURE' });
-          }
-        } catch (error) {
-          if (isMounted) {
-            dispatch({ type: 'AUTH_FAILURE' });
-          }
+        if (error) {
+          console.error('❌ Session error:', error);
+          if (isMounted) dispatch({ type: 'AUTH_FAILURE' });
+          return;
         }
-      }, 100);
-    }).catch(() => {
-      if (isMounted) {
+
+        if (session?.user) {
+          console.log('✅ Found existing session');
+          await handleAuthState('INITIAL_SESSION', session);
+        } else {
+          console.log('🚫 No existing session');
+          if (isMounted) dispatch({ type: 'AUTH_FAILURE' });
+        }
+      } catch (error) {
+        console.error('❌ Error initializing auth:', error);
+        if (isMounted) dispatch({ type: 'AUTH_FAILURE' });
+      }
+    };
+
+    // Initialize immediately
+    initializeAuth();
+
+    // Set timeout fallback
+    initTimeout = setTimeout(() => {
+      if (isMounted && state.isLoading) {
+        console.log('⏰ Auth initialization timeout, forcing completion');
         dispatch({ type: 'AUTH_FAILURE' });
       }
-    });
+    }, 3000);
 
     return () => {
       isMounted = false;
-      clearTimeout(forceLoadingTimeout);
+      clearTimeout(initTimeout);
       subscription.unsubscribe();
     };
   }, []);

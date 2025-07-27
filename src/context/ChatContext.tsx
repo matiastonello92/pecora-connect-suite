@@ -92,10 +92,33 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Load chats and connection requests when user or location changes
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      console.log('🚫 No user in ChatContext, waiting...');
+      return;
+    }
     
-    loadChats();
-    loadConnectionRequests();
+    console.log('🚀 User available in ChatContext, loading chats...');
+    
+    // Small delay to ensure session is fully established
+    const loadTimeout = setTimeout(() => {
+      loadChats();
+      loadConnectionRequests();
+    }, 500);
+    
+    // Also listen for auth ready event
+    const handleAuthReady = () => {
+      console.log('🔐 Auth ready event received, loading chats...');
+      clearTimeout(loadTimeout);
+      loadChats();
+      loadConnectionRequests();
+    };
+    
+    window.addEventListener('authReady', handleAuthReady);
+    
+    return () => {
+      clearTimeout(loadTimeout);
+      window.removeEventListener('authReady', handleAuthReady);
+    };
     
     // Set up real-time subscriptions
     const chatsChannel = supabase
@@ -172,11 +195,19 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return;
     }
 
+    // Verify we have a valid session before making queries
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session?.access_token) {
+      console.error('❌ No valid session token for chat queries');
+      setError('Authentication session expired. Please refresh the page.');
+      return;
+    }
+
     setLoading(true);
     setError(null);
     
     try {
-      console.log('🔍 Loading chats for user:', user.id);
+      console.log('🔍 Loading chats for user with valid session:', user.id);
       
       // Get user's profile first to determine location access
       const { data: profiles, error: profileError } = await supabase

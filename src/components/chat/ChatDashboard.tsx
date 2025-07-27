@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
+import { supabase } from '@/integrations/supabase/client';
 import { useChatContext } from '@/context/ChatContext';
 import { useTranslation } from '@/lib/i18n';
 import { useAuth } from '@/context/AuthContext';
@@ -357,9 +358,27 @@ export const ChatDashboard: React.FC = () => {
                 {!searchTerm && (
                   <div className="flex flex-col items-center gap-2">
                     <div className="flex gap-2 flex-wrap justify-center">
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        onClick={async () => {
+                          console.log('🔄 Manual session refresh...');
+                          try {
+                            await supabase.auth.refreshSession();
+                            setTimeout(() => {
+                              handleRefreshChats();
+                            }, 1000);
+                          } catch (error) {
+                            console.error('❌ Session refresh failed:', error);
+                          }
+                        }}
+                      >
+                        <RefreshCw className="h-3 w-3 mr-1" />
+                        Refresh Session
+                      </Button>
                       <Button size="sm" variant="outline" onClick={handleRefreshChats}>
                         <RefreshCw className="h-3 w-3 mr-1" />
-                        Refresh
+                        Refresh Chats
                       </Button>
                       <Button size="sm" variant="outline" onClick={handleEnsureUserInChats}>
                         <Users className="h-3 w-3 mr-1" />
