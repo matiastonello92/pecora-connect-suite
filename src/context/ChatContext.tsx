@@ -158,8 +158,14 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     
     setLoading(true);
     try {
+      console.log('Loading chats for user:', user.id);
+      
       // First ensure default chats exist
-      await supabase.rpc('ensure_default_chats');
+      const { error: ensureError } = await supabase.rpc('ensure_default_chats');
+      if (ensureError) {
+        console.error('Error ensuring default chats:', ensureError);
+        // Continue anyway - user might still see existing chats
+      }
 
       const { data, error } = await supabase
         .from('chats')
@@ -178,24 +184,44 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         `)
         .order('last_message_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error loading chats:', error);
+        toast.error(t('communication.errorLoadingChats'));
+        return;
+      }
+
+      console.log('Raw chats data:', data);
 
       // Calculate unread counts and add last message info
       const chatsWithUnread = await Promise.all(
         (data || []).map(async (chat) => {
           const participant = chat.participants?.find(p => p.user_id === user.id);
           
-          if (!participant) return { ...chat, unread_count: 0 };
+          // For global/announcement chats, user might not be explicitly in participants
+          // but should still see the chat if they have access
+          const hasAccess = participant || 
+            (chat.type === 'global' || chat.type === 'announcements');
+          
+          if (!hasAccess) return null;
 
           // Get unread count
-          const { count } = await supabase
-            .from('chat_messages')
-            .select('*', { count: 'exact', head: true })
-            .eq('chat_id', chat.id)
-            .gt('created_at', participant.last_read_at);
+          let unreadCount = 0;
+          if (participant?.last_read_at) {
+            const { count, error: countError } = await supabase
+              .from('chat_messages')
+              .select('*', { count: 'exact', head: true })
+              .eq('chat_id', chat.id)
+              .gt('created_at', participant.last_read_at);
+            
+            if (countError) {
+              console.error('Error counting unread messages:', countError);
+            } else {
+              unreadCount = count || 0;
+            }
+          }
 
           // Get last message
-          const { data: lastMessage } = await supabase
+          const { data: lastMessage, error: lastMessageError } = await supabase
             .from('chat_messages')
             .select(`
               *,
@@ -209,17 +235,25 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             .limit(1)
             .single();
 
+          if (lastMessageError && lastMessageError.code !== 'PGRST116') {
+            console.error('Error loading last message:', lastMessageError);
+          }
+
           return {
             ...chat,
-            unread_count: count || 0,
-            last_message: lastMessage
+            unread_count: unreadCount,
+            last_message: lastMessage || null
           };
         })
       );
 
-      setChats(chatsWithUnread as unknown as Chat[]);
+      // Filter out null entries (chats user doesn't have access to)
+      const filteredChats = chatsWithUnread.filter(chat => chat !== null);
+      
+      setChats(filteredChats as unknown as Chat[]);
+      console.log('Chats loaded successfully:', filteredChats.length);
     } catch (error: any) {
-      console.error('Error loading chats:', error);
+      console.error('Unexpected error loading chats:', error);
       toast.error(t('communication.errorLoadingChats'));
     } finally {
       setLoading(false);

@@ -27,18 +27,15 @@ export const useMessageReminders = () => {
         .from('message_reminders')
         .select(`
           *,
-          chat:chats(
+          chats(
             id,
             type,
-            name,
-            participants:chat_participants(
-              user:profiles(first_name, last_name)
-            )
+            name
           ),
-          message:chat_messages(
+          chat_messages(
             content,
             sender_id,
-            sender:profiles(first_name, last_name)
+            created_at
           )
         `)
         .eq('user_id', user.id)
@@ -62,11 +59,27 @@ export const useMessageReminders = () => {
 
   const sendReminderNotification = async (reminder: any) => {
     try {
-      const chat = reminder.chat;
-      const message = reminder.message;
-      const sender = message?.sender;
+      const chat = reminder.chats;
+      const message = reminder.chat_messages;
 
-      if (!chat || !message || !sender) return;
+      if (!chat || !message) {
+        console.log('Missing chat or message data for reminder:', reminder.id);
+        await markReminderAsCancelled(reminder.id);
+        return;
+      }
+
+      // Get sender info
+      const { data: sender } = await supabase
+        .from('profiles')
+        .select('first_name, last_name')
+        .eq('user_id', message.sender_id)
+        .single();
+
+      if (!sender) {
+        console.log('Could not find sender for reminder:', reminder.id);
+        await markReminderAsCancelled(reminder.id);
+        return;
+      }
 
       // Check if message is still unread
       const { data: participant } = await supabase
