@@ -224,6 +224,10 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const userProfile = profiles[0];
       console.log('✅ User profile found:', userProfile);
       
+      // Get user's accessible locations
+      const userLocations = userProfile.locations || [userProfile.location || 'menton'];
+      console.log('📍 User locations:', userLocations);
+      
       // First ensure default chats exist with enhanced error handling
       try {
         const { data: chatEnsureResult } = await supabase.rpc('emergency_ensure_all_default_chats');
@@ -232,8 +236,8 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         console.warn('⚠️ Exception ensuring default chats:', ensureError);
       }
 
-      // Build query based on user's location - only show menton and lyon chats
-      console.log('🔍 Querying chats with location filter: [menton, lyon]');
+      // Build query based on user's accessible locations
+      console.log('🔍 Querying chats with location filter:', userLocations);
       
       const { data, error } = await supabase
         .from('chats')
@@ -250,7 +254,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             )
           )
         `)
-        .in('location', ['menton', 'lyon'])
+        .in('location', userLocations.length > 0 ? userLocations : ['menton'])
         .order('last_message_at', { ascending: false });
 
       if (error) {
@@ -643,8 +647,9 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!isViewingAllLocations) {
       // If not viewing all locations, only show chats for the active location
       // Exception: always show global and announcement chats for user's location or if they have all_locations access
+      const userLocations = user?.locations || [user?.location].filter(Boolean) || [];
       const shouldShowChat = chat.location === activeLocation || 
-        (chat.type === 'global' || chat.type === 'announcements');
+        (userLocations.includes(chat.location) && (chat.type === 'global' || chat.type === 'announcements'));
       if (!shouldShowChat) return false;
     }
     
