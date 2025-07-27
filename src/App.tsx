@@ -73,18 +73,18 @@ const AppContent = () => {
 
   console.log('✅ User authenticated, loading main app...');
   return (
-    <InventoryProvider>
-      <KitchenInventoryProvider>
-        <ChecklistProvider>
-          <CommunicationProvider>
-            <ChatProvider>
-              <UnreadMessagesProvider>
-                <CashRegisterProvider>
-                  <ReportsProvider>
-                    <EquipmentProvider>
-                      <UserManagementProvider>
-                        <FinancialProvider>
-                          <LocationProvider>
+    <LocationProvider>
+      <InventoryProvider>
+        <KitchenInventoryProvider>
+          <ChecklistProvider>
+            <CommunicationProvider>
+              <ChatProvider>
+                <UnreadMessagesProvider>
+                  <CashRegisterProvider>
+                    <ReportsProvider>
+                      <EquipmentProvider>
+                        <UserManagementProvider>
+                          <FinancialProvider>
                             <NotificationHandler />
                             <AppLayout>
                               <Routes>
@@ -116,18 +116,18 @@ const AppContent = () => {
                                 <Route path="*" element={<NotFound />} />
                               </Routes>
                             </AppLayout>
-                          </LocationProvider>
-                        </FinancialProvider>
-                      </UserManagementProvider>
-                    </EquipmentProvider>
-                  </ReportsProvider>
-                </CashRegisterProvider>
-              </UnreadMessagesProvider>
-            </ChatProvider>
-          </CommunicationProvider>
-        </ChecklistProvider>
-      </KitchenInventoryProvider>
-    </InventoryProvider>
+                          </FinancialProvider>
+                        </UserManagementProvider>
+                      </EquipmentProvider>
+                    </ReportsProvider>
+                  </CashRegisterProvider>
+                </UnreadMessagesProvider>
+              </ChatProvider>
+            </CommunicationProvider>
+          </ChecklistProvider>
+        </KitchenInventoryProvider>
+      </InventoryProvider>
+    </LocationProvider>
   );
 };
 
