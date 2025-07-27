@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
-import { UserProfile, Shift, TimeEntry, UserRole, UserStatus, LocationType, EmploymentType, ArchivedUser } from '@/types/users';
+import { UserProfile, UserRole, UserStatus, LocationType, EmploymentType, ArchivedUser } from '@/types/users';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
@@ -20,8 +20,6 @@ interface UserManagementState {
   users: UserProfile[];
   pendingInvitations: PendingInvitation[];
   archivedUsers: ArchivedUser[];
-  shifts: Shift[];
-  timeEntries: TimeEntry[];
   loading: boolean;
 }
 
@@ -30,19 +28,13 @@ type UserManagementAction =
   | { type: 'LOAD_USERS'; payload: UserProfile[] }
   | { type: 'LOAD_PENDING_INVITATIONS'; payload: PendingInvitation[] }
   | { type: 'LOAD_ARCHIVED_USERS'; payload: ArchivedUser[] }
-  | { type: 'LOAD_SHIFTS'; payload: Shift[] }
-  | { type: 'LOAD_TIME_ENTRIES'; payload: TimeEntry[] }
   | { type: 'ADD_USER'; payload: UserProfile }
   | { type: 'UPDATE_USER'; payload: UserProfile }
   | { type: 'DELETE_USER'; payload: string }
   | { type: 'ADD_PENDING_INVITATION'; payload: PendingInvitation }
   | { type: 'UPDATE_PENDING_INVITATION'; payload: PendingInvitation }
   | { type: 'REMOVE_PENDING_INVITATION'; payload: string }
-  | { type: 'ADD_ARCHIVED_USER'; payload: ArchivedUser }
-  | { type: 'ADD_SHIFT'; payload: Shift }
-  | { type: 'UPDATE_SHIFT'; payload: Shift }
-  | { type: 'ADD_TIME_ENTRY'; payload: TimeEntry }
-  | { type: 'UPDATE_TIME_ENTRY'; payload: TimeEntry };
+  | { type: 'ADD_ARCHIVED_USER'; payload: ArchivedUser };
 
 const userManagementReducer = (state: UserManagementState, action: UserManagementAction): UserManagementState => {
   switch (action.type) {
@@ -54,10 +46,6 @@ const userManagementReducer = (state: UserManagementState, action: UserManagemen
       return { ...state, pendingInvitations: action.payload };
     case 'LOAD_ARCHIVED_USERS':
       return { ...state, archivedUsers: action.payload };
-    case 'LOAD_SHIFTS':
-      return { ...state, shifts: action.payload };
-    case 'LOAD_TIME_ENTRIES':
-      return { ...state, timeEntries: action.payload };
     case 'ADD_USER':
       return { ...state, users: [...state.users, action.payload] };
     case 'UPDATE_USER':
@@ -88,24 +76,6 @@ const userManagementReducer = (state: UserManagementState, action: UserManagemen
       };
     case 'ADD_ARCHIVED_USER':
       return { ...state, archivedUsers: [...state.archivedUsers, action.payload] };
-    case 'ADD_SHIFT':
-      return { ...state, shifts: [...state.shifts, action.payload] };
-    case 'UPDATE_SHIFT':
-      return {
-        ...state,
-        shifts: state.shifts.map(shift =>
-          shift.id === action.payload.id ? action.payload : shift
-        )
-      };
-    case 'ADD_TIME_ENTRY':
-      return { ...state, timeEntries: [...state.timeEntries, action.payload] };
-    case 'UPDATE_TIME_ENTRY':
-      return {
-        ...state,
-        timeEntries: state.timeEntries.map(entry =>
-          entry.id === action.payload.id ? action.payload : entry
-        )
-      };
     default:
       return state;
   }
@@ -118,14 +88,8 @@ interface UserManagementContextType extends UserManagementState {
   deletePendingInvitation: (invitationId: string) => Promise<void>;
   resendInvitation: (invitation: PendingInvitation) => Promise<void>;
   reactivateUser: (archivedUserId: string) => Promise<void>;
-  addShift: (shift: Omit<Shift, 'id'>) => void;
-  updateShift: (shift: Shift) => void;
-  clockIn: (userId: string, shiftId?: string) => void;
-  clockOut: (userId: string) => void;
   getUsersByDepartment: (department: string) => UserProfile[];
   getUsersByRole: (role: UserRole) => UserProfile[];
-  getActiveShifts: () => Shift[];
-  getTodayTimeEntries: () => TimeEntry[];
   refreshData: () => void;
 }
 
@@ -136,8 +100,6 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
     users: [],
     pendingInvitations: [],
     archivedUsers: [],
-    shifts: [],
-    timeEntries: [],
     loading: false
   });
   const { toast } = useToast();
@@ -152,7 +114,10 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
 
       if (error) throw error;
 
-      const userProfiles: UserProfile[] = profiles?.map(profile => ({
+      // Only show active and pending users in main list
+      const userProfiles: UserProfile[] = profiles?.filter(profile => 
+        profile.status === 'active'
+      ).map(profile => ({
         id: profile.id || '',
         firstName: profile.first_name || '',
         lastName: profile.last_name || '',
@@ -215,7 +180,13 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
 
       if (error) throw error;
 
-      const archivedUsers: ArchivedUser[] = archived?.map(user => ({
+      // Only show users who were active and had logged in at least once
+      const archivedUsers: ArchivedUser[] = archived?.filter(user => 
+        user.previous_status === 'active' && 
+        user.metadata && 
+        typeof user.metadata === 'object' && 
+        (user.metadata as any)?.lastLogin
+      ).map(user => ({
         id: user.id,
         originalUserId: user.original_user_id,
         originalInvitationId: user.original_invitation_id,
@@ -351,26 +322,30 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
       const user = state.users.find(u => u.id === userId);
       if (!user) throw new Error('User not found');
 
-      // Archive the user first
-      const { error: archiveError } = await supabase
-        .from('archived_users')
-        .insert({
-          original_user_id: userId,
-          first_name: user.firstName,
-          last_name: user.lastName,
-          email: user.email,
-          role: user.role,
-          location: user.location,
-          department: user.department,
-          position: user.position,
-          previous_status: 'active',
-          archived_by: (await supabase.auth.getUser()).data.user?.id,
-          reason: 'manual_deletion'
-        });
+      // Only archive users who were active and had logged in
+      if (user.status === 'active' && user.lastLogin) {
+        // Archive the user first
+        const { error: archiveError } = await supabase
+          .from('archived_users')
+          .insert({
+            original_user_id: userId,
+            first_name: user.firstName,
+            last_name: user.lastName,
+            email: user.email,
+            role: user.role,
+            location: user.location,
+            department: user.department,
+            position: user.position,
+            previous_status: 'active',
+            archived_by: (await supabase.auth.getUser()).data.user?.id,
+            reason: 'manual_deletion',
+            metadata: { lastLogin: user.lastLogin?.toISOString() }
+          });
 
-      if (archiveError) throw archiveError;
+        if (archiveError) throw archiveError;
+      }
 
-      // Then delete from profiles table
+      // Delete from profiles table
       const { error } = await supabase
         .from('profiles')
         .delete()
@@ -380,7 +355,7 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
 
       toast({
         title: "Success",
-        description: "User archived successfully",
+        description: "User deleted successfully",
       });
 
       // The real-time subscription will automatically refresh the data
@@ -388,58 +363,12 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
     } catch (error: any) {
       toast({
         title: "Error",
-        description: `Failed to archive user: ${error.message}`,
+        description: `Failed to delete user: ${error.message}`,
         variant: "destructive",
       });
     }
   };
 
-  const addShift = (shiftData: Omit<Shift, 'id'>) => {
-    const newShift: Shift = {
-      ...shiftData,
-      id: Date.now().toString()
-    };
-    dispatch({ type: 'ADD_SHIFT', payload: newShift });
-  };
-
-  const updateShift = (shift: Shift) => {
-    dispatch({ type: 'UPDATE_SHIFT', payload: shift });
-  };
-
-  const clockIn = (userId: string, shiftId?: string) => {
-    const user = state.users.find(u => u.id === userId);
-    if (!user) return;
-
-    const timeEntry: TimeEntry = {
-      id: Date.now().toString(),
-      userId,
-      shiftId,
-      clockIn: new Date(),
-      breakMinutes: 0,
-      department: user.department
-    };
-    dispatch({ type: 'ADD_TIME_ENTRY', payload: timeEntry });
-  };
-
-  const clockOut = (userId: string) => {
-    const activeEntry = state.timeEntries.find(
-      entry => entry.userId === userId && !entry.clockOut
-    );
-    
-    if (activeEntry) {
-      const clockOutTime = new Date();
-      const totalMilliseconds = clockOutTime.getTime() - activeEntry.clockIn.getTime();
-      const totalHours = (totalMilliseconds / (1000 * 60 * 60)) - (activeEntry.breakMinutes / 60);
-      
-      const updatedEntry: TimeEntry = {
-        ...activeEntry,
-        clockOut: clockOutTime,
-        totalHours: Math.round(totalHours * 100) / 100
-      };
-      
-      dispatch({ type: 'UPDATE_TIME_ENTRY', payload: updatedEntry });
-    }
-  };
 
   const getUsersByDepartment = (department: string) => {
     return state.users.filter(user => user.department === department);
@@ -449,40 +378,14 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
     return state.users.filter(user => user.role === role);
   };
 
-  const getActiveShifts = () => {
-    return state.shifts.filter(shift => shift.status === 'active');
-  };
-
-  const getTodayTimeEntries = () => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    return state.timeEntries.filter(entry => entry.clockIn >= today);
-  };
 
   const deletePendingInvitation = async (invitationId: string) => {
     try {
-      // Find the invitation to archive
+      // Find the invitation
       const invitation = state.pendingInvitations.find(inv => inv.id === invitationId);
       if (!invitation) throw new Error('Invitation not found');
 
-      // Archive the pending invitation first
-      const { error: archiveError } = await supabase
-        .from('archived_users')
-        .insert({
-          original_invitation_id: invitationId,
-          first_name: invitation.first_name,
-          last_name: invitation.last_name,
-          email: invitation.email,
-          role: invitation.role,
-          location: invitation.location,
-          previous_status: 'pending',
-          archived_by: (await supabase.auth.getUser()).data.user?.id,
-          reason: 'manual_deletion'
-        });
-
-      if (archiveError) throw archiveError;
-
-      // Delete the invitation from the database - this will make the email link invalid
+      // Delete the invitation from the database directly - no archiving for pending users
       const { error } = await supabase
         .from('user_invitations')
         .delete()
@@ -492,7 +395,7 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
 
       toast({
         title: "Success",
-        description: "Invitation deleted and archived successfully",
+        description: "Invitation deleted successfully",
       });
 
       // The real-time subscription will automatically refresh the data
@@ -612,14 +515,8 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
       deletePendingInvitation,
       resendInvitation,
       reactivateUser,
-      addShift,
-      updateShift,
-      clockIn,
-      clockOut,
       getUsersByDepartment,
       getUsersByRole,
-      getActiveShifts,
-      getTodayTimeEntries,
       refreshData
     }}>
       {children}

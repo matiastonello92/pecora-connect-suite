@@ -114,7 +114,7 @@ export interface ChatNotification {
 }
 
 // Legacy types for backward compatibility
-export type MessageType = 'general' | 'urgent' | 'department' | 'shift';
+export type MessageType = 'general' | 'urgent' | 'department';
 export type MessageStatus = 'sent' | 'delivered' | 'read';
 export type MessagePriority = 'low' | 'medium' | 'high' | 'urgent';
 
@@ -124,7 +124,7 @@ export interface Message {
   to: string[];
   subject: string;
   content: string;
-  type: 'general' | 'urgent' | 'department' | 'shift';
+  type: 'general' | 'urgent' | 'department';
   priority: MessagePriority;
   status: MessageStatus;
   department?: string;
@@ -144,14 +144,4 @@ export interface Announcement {
   createdAt: Date;
   expiresAt?: Date;
   isActive: boolean;
-}
-
-export interface ShiftNote {
-  id: string;
-  shift: 'morning' | 'afternoon' | 'evening' | 'night';
-  date: Date;
-  department: string;
-  notes: string;
-  createdBy: string;
-  createdAt: Date;
 }

@@ -10,15 +10,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Users, Clock, Calendar, UserPlus, Shield, Mail, RefreshCw, Archive } from 'lucide-react';
+import { Users, UserPlus, Mail, RefreshCw, Archive } from 'lucide-react';
 
 export const UserManagement = () => {
   const { language, user, hasPermission } = useAuth();
   const { t } = useTranslation(language);
-  const { users, pendingInvitations, archivedUsers, shifts, getActiveShifts, getTodayTimeEntries, resendInvitation, deleteUser, deletePendingInvitation, reactivateUser } = useUserManagement();
+  const { users, pendingInvitations, archivedUsers, resendInvitation, deleteUser, deletePendingInvitation, reactivateUser } = useUserManagement();
 
-  const activeShifts = getActiveShifts();
-  const todayEntries = getTodayTimeEntries();
 
   const getRoleColor = (role: string) => {
     switch (role) {
@@ -41,36 +39,14 @@ export const UserManagement = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-6">
         <Card>
           <CardContent className="p-3 sm:p-4">
             <div className="flex items-center gap-2">
               <Users className="h-6 w-6 sm:h-8 sm:w-8 text-blue-500 shrink-0" />
               <div className="min-w-0">
-                <div className="text-lg sm:text-2xl font-bold">{users.length + pendingInvitations.length}</div>
-                <div className="text-xs sm:text-sm text-muted-foreground">Total Users</div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-3 sm:p-4">
-            <div className="flex items-center gap-2">
-              <Calendar className="h-6 w-6 sm:h-8 sm:w-8 text-green-500 shrink-0" />
-              <div className="min-w-0">
-                <div className="text-lg sm:text-2xl font-bold">{activeShifts.length}</div>
-                <div className="text-xs sm:text-sm text-muted-foreground">Active Shifts</div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-3 sm:p-4">
-            <div className="flex items-center gap-2">
-              <Clock className="h-6 w-6 sm:h-8 sm:w-8 text-yellow-500 shrink-0" />
-              <div className="min-w-0">
-                <div className="text-lg sm:text-2xl font-bold">{todayEntries.length}</div>
-                <div className="text-xs sm:text-sm text-muted-foreground">Clock-ins Today</div>
+                <div className="text-lg sm:text-2xl font-bold">{users.length}</div>
+                <div className="text-xs sm:text-sm text-muted-foreground">Active Users</div>
               </div>
             </div>
           </CardContent>
@@ -86,14 +62,23 @@ export const UserManagement = () => {
             </div>
           </CardContent>
         </Card>
+        <Card>
+          <CardContent className="p-3 sm:p-4">
+            <div className="flex items-center gap-2">
+              <Archive className="h-6 w-6 sm:h-8 sm:w-8 text-gray-500 shrink-0" />
+              <div className="min-w-0">
+                <div className="text-lg sm:text-2xl font-bold">{archivedUsers.length}</div>
+                <div className="text-xs sm:text-sm text-muted-foreground">Archived Users</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       <Tabs defaultValue="users" className="space-y-4 sm:space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="users" className="text-sm">Users</TabsTrigger>
           <TabsTrigger value="archived" className="text-sm">Archived</TabsTrigger>
-          <TabsTrigger value="shifts" className="text-sm">Shifts</TabsTrigger>
-          <TabsTrigger value="timesheet" className="text-sm">Timesheet</TabsTrigger>
         </TabsList>
 
         <TabsContent value="users" className="space-y-4">
@@ -257,14 +242,18 @@ export const UserManagement = () => {
                       <div className="text-xs sm:text-sm text-muted-foreground">{user.location}</div>
                     </div>
                     <div className="min-w-0">
+                      <div className="text-xs sm:text-sm font-medium">Last Login</div>
+                      <div className="text-xs sm:text-sm text-muted-foreground">
+                        {user.metadata && typeof user.metadata === 'object' && (user.metadata as any)?.lastLogin 
+                          ? new Date((user.metadata as any).lastLogin).toLocaleDateString() 
+                          : 'Never'}
+                      </div>
+                    </div>
+                    <div className="min-w-0">
                       <div className="text-xs sm:text-sm font-medium">Archived</div>
                       <div className="text-xs sm:text-sm text-muted-foreground">
                         {user.archivedAt.toLocaleDateString()}
                       </div>
-                    </div>
-                    <div className="min-w-0">
-                      <div className="text-xs sm:text-sm font-medium">Reason</div>
-                      <div className="text-xs sm:text-sm text-muted-foreground">{user.reason || 'Manual deletion'}</div>
                     </div>
                   </div>
                 </CardContent>
@@ -273,19 +262,6 @@ export const UserManagement = () => {
           </div>
         </TabsContent>
 
-        <TabsContent value="shifts">
-          <div className="text-center py-8 text-muted-foreground">
-            <Calendar className="h-12 w-12 mx-auto mb-2 opacity-50" />
-            <p className="text-sm sm:text-base">Shift management interface</p>
-          </div>
-        </TabsContent>
-
-        <TabsContent value="timesheet">
-          <div className="text-center py-8 text-muted-foreground">
-            <Clock className="h-12 w-12 mx-auto mb-2 opacity-50" />
-            <p className="text-sm sm:text-base">Timesheet tracking interface</p>
-          </div>
-        </TabsContent>
       </Tabs>
     </div>
   );

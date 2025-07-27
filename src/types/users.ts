@@ -26,35 +26,6 @@ export interface UserProfile {
   updatedAt: Date;
 }
 
-export interface Shift {
-  id: string;
-  userId: string;
-  user: UserProfile;
-  date: Date;
-  startTime: string;
-  endTime: string;
-  department: string;
-  position: string;
-  status: 'scheduled' | 'active' | 'completed' | 'cancelled';
-  actualStartTime?: Date;
-  actualEndTime?: Date;
-  breakMinutes?: number;
-  notes?: string;
-}
-
-export interface TimeEntry {
-  id: string;
-  userId: string;
-  shiftId?: string;
-  clockIn: Date;
-  clockOut?: Date;
-  breakMinutes: number;
-  totalHours?: number;
-  department: string;
-  approvedBy?: string;
-  approvedAt?: Date;
-  notes?: string;
-}
 
 export interface ArchivedUser {
   id: string;
