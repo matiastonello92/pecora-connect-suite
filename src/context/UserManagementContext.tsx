@@ -136,7 +136,7 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
         id: profile.user_id || '',
         firstName: profile.first_name || '',
         lastName: profile.last_name || '',
-        email: profile.user_id === currentUser.user?.id ? currentUserEmail : `${profile.first_name?.toLowerCase()}.${profile.last_name?.toLowerCase()}@company.com`,
+        email: profile.user_id === currentUser.user?.id ? currentUserEmail : profile.email || `${profile.first_name?.toLowerCase()}.${profile.last_name?.toLowerCase()}@managementpn.services`,
         role: profile.role as UserRole,
         restaurantRole: profile.restaurant_role,
         accessLevel: profile.access_level || 'base',

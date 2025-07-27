@@ -87,13 +87,13 @@ export async function auditUserDeletions(): Promise<DeletionAuditResult> {
     const { data: placeholderUsers, error: placeholderError } = await supabase
       .from('profiles')
       .select('user_id, first_name, last_name, email')
-      .like('email', '%@company.com%');
+      .like('email', '%@managementpn.services%');
 
     if (placeholderError) {
       result.issues.push(`Error checking placeholder emails: ${placeholderError.message}`);
       result.isValid = false;
     } else if (placeholderUsers && placeholderUsers.length > 0) {
-      result.issues.push(`Found ${placeholderUsers.length} users with placeholder @company.com emails`);
+      result.issues.push(`Found ${placeholderUsers.length} users with placeholder @managementpn.services emails`);
       result.isValid = false;
       
         placeholderUsers.forEach((user: any) => {
@@ -152,16 +152,16 @@ export async function validateUserManagementIntegrity(): Promise<{
   const warnings: string[] = [];
 
   try {
-    // Test 1: Check for any @company.com emails in active profiles
+    // Test 1: Check for any @managementpn.services emails in active profiles
     const { data: companyEmails, error: companyError } = await supabase
       .from('profiles')
       .select('email, first_name, last_name')
-      .like('email', '%@company.com%');
+      .like('email', '%@managementpn.services%');
 
     if (companyError) {
       errors.push(`Failed to check for company emails: ${companyError.message}`);
     } else if (companyEmails && companyEmails.length > 0) {
-      warnings.push(`Found ${companyEmails.length} users with @company.com placeholder emails`);
+      warnings.push(`Found ${companyEmails.length} users with @managementpn.services placeholder emails`);
     }
 
     // Test 2: Check for users without real emails

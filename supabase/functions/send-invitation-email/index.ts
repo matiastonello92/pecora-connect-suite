@@ -65,12 +65,12 @@ const handler = async (req: Request): Promise<Response> => {
       : `You're invited to join our team!`;
 
     const emailResponse = await resend.emails.send({
-      from: "Team <onboarding@resend.dev>",
+      from: "Management PN <noreply@managementpn.services>",
       to: [email],
       subject,
       headers: {
         // Prevent email threading by using unique message ID
-        'Message-ID': `<invitation-${uniqueId}-${Date.now()}@resend.dev>`,
+        'Message-ID': `<invitation-${uniqueId}-${Date.now()}@managementpn.services>`,
         // Ensure this doesn't thread with previous emails
         'X-Entity-Ref-ID': `invitation-${invitationToken}`,
       },
