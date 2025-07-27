@@ -22,7 +22,7 @@ export const useMessageReminders = () => {
     if (!user) return;
 
     try {
-      // Get pending reminders that are due
+      // Get pending reminders that are due (with proper joins)
       const { data: reminders, error } = await supabase
         .from('message_reminders')
         .select(`
@@ -31,11 +31,6 @@ export const useMessageReminders = () => {
             id,
             type,
             name
-          ),
-          chat_messages(
-            content,
-            sender_id,
-            created_at
           )
         `)
         .eq('user_id', user.id)
@@ -60,10 +55,22 @@ export const useMessageReminders = () => {
   const sendReminderNotification = async (reminder: any) => {
     try {
       const chat = reminder.chats;
-      const message = reminder.chat_messages;
 
-      if (!chat || !message) {
-        console.log('Missing chat or message data for reminder:', reminder.id);
+      if (!chat) {
+        console.log('Missing chat data for reminder:', reminder.id);
+        await markReminderAsCancelled(reminder.id);
+        return;
+      }
+
+      // Get the message separately
+      const { data: message, error: messageError } = await supabase
+        .from('chat_messages')
+        .select('content, sender_id, created_at')
+        .eq('id', reminder.message_id)
+        .single();
+
+      if (messageError || !message) {
+        console.log('Missing message data for reminder:', reminder.id, messageError);
         await markReminderAsCancelled(reminder.id);
         return;
       }

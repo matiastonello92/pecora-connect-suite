@@ -236,6 +236,16 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         console.warn('⚠️ Exception ensuring default chats:', ensureError);
       }
 
+      // Ensure user is properly synced to location chats
+      try {
+        const { data: syncResult } = await supabase.rpc('sync_user_chat_memberships', {
+          target_user_id: user.id
+        });
+        console.log('🔄 User sync result:', syncResult);
+      } catch (syncError) {
+        console.warn('⚠️ Exception syncing user to chats:', syncError);
+      }
+
       // Build query based on user's accessible locations
       console.log('🔍 Querying chats with location filter:', userLocations);
       

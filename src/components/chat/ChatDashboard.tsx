@@ -39,6 +39,7 @@ import { ConnectionRequestManager } from './ConnectionRequestManager';
 import { GroupManagement } from './GroupManagement';
 import { ChatSettings } from './ChatSettings';
 import { LocationFilter } from './LocationFilter';
+import { ChatSystemStatus } from './ChatSystemStatus';
 import { NotificationBadge } from '@/components/ui/notification-badge';
 
 const locales = { en: enUS, fr, it };
@@ -65,6 +66,7 @@ export const ChatDashboard: React.FC = () => {
   const { t } = useTranslation(language);
   const [showCreateChat, setShowCreateChat] = useState(false);
   const [showConnections, setShowConnections] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState<string | 'all_locations'>('all_locations');
 
   // Listen for navigation events from notifications
   useEffect(() => {
@@ -217,7 +219,12 @@ export const ChatDashboard: React.FC = () => {
     }
   };
 
-  const sortedChats = [...filteredChats].sort((a, b) => {
+  // Apply location filtering on top of the existing search filtering
+  const locationFilteredChats = selectedLocation === 'all_locations' 
+    ? filteredChats 
+    : filteredChats.filter(chat => chat.location === selectedLocation);
+
+  const sortedChats = [...locationFilteredChats].sort((a, b) => {
     // Announcements and global chats first
     if (a.type === 'announcements' && b.type !== 'announcements') return -1;
     if (b.type === 'announcements' && a.type !== 'announcements') return 1;
@@ -288,7 +295,10 @@ export const ChatDashboard: React.FC = () => {
 
           {/* Location Filter */}
           <div className="mt-3">
-            <LocationFilter />
+            <LocationFilter 
+              selectedLocation={selectedLocation}
+              onLocationChange={setSelectedLocation}
+            />
           </div>
 
           {/* Quick Create Menu */}
@@ -388,16 +398,19 @@ export const ChatDashboard: React.FC = () => {
                     <div className="space-y-1 text-muted-foreground">
                       <div><strong>User ID:</strong> {user?.id}</div>
                       <div><strong>User Email:</strong> {user?.email}</div>
-                      <div><strong>User Location:</strong> {user?.location}</div>
+                      <div><strong>User Locations:</strong> {user?.locations?.join(', ') || user?.location || 'None'}</div>
                       <div><strong>Total Chats:</strong> {chats.length}</div>
-                      <div><strong>Filtered Chats:</strong> {filteredChats.length}</div>
-                      <div><strong>Chat Names:</strong> {filteredChats.map(c => c.name).join(', ') || 'None'}</div>
-                      <div><strong>Error State:</strong> {error || 'None'}</div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            ) : (
+                      <div><strong>Search Filtered:</strong> {filteredChats.length}</div>
+                      <div><strong>Location Filtered:</strong> {locationFilteredChats.length}</div>
+                      <div><strong>Selected Location:</strong> {selectedLocation}</div>
+                       <div><strong>Chat Names:</strong> {filteredChats.map(c => c.name).join(', ') || 'None'}</div>
+                       <div><strong>Error State:</strong> {error || 'None'}</div>
+                     </div>
+                     <ChatSystemStatus />
+                   </div>
+                 )}
+               </div>
+             ) : (
               <div className="space-y-1">
                 {sortedChats.map((chat) => (
                   <div

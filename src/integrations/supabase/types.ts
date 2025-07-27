@@ -756,6 +756,13 @@ export type Database = {
             referencedRelation: "chats"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "message_reminders_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "chat_messages"
+            referencedColumns: ["id"]
+          },
         ]
       }
       messages: {
@@ -1394,6 +1401,14 @@ export type Database = {
       is_email_permanently_deleted: {
         Args: { check_email: string }
         Returns: boolean
+      }
+      sync_all_users_to_location_chats: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          user_count: number
+          total_syncs: number
+          errors: string[]
+        }[]
       }
       sync_user_chat_memberships: {
         Args: { target_user_id: string }
