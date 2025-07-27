@@ -169,7 +169,8 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         // Continue anyway - user might still see existing chats
       }
 
-      const { data, error } = await supabase
+      // Build query based on user's location - only show menton and lyon chats
+      let query = supabase
         .from('chats')
         .select(`
           *,
@@ -184,7 +185,10 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             )
           )
         `)
+        .in('location', ['menton', 'lyon'])
         .order('last_message_at', { ascending: false });
+
+      const { data, error } = await query;
 
       if (error) {
         console.error('Error loading chats:', error);
@@ -199,10 +203,22 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         (data || []).map(async (chat) => {
           const participant = chat.participants?.find(p => p.user_id === user.id);
           
-          // For global/announcement chats, user might not be explicitly in participants
-          // but should still see the chat if they have access
-          const hasAccess = participant || 
-            (chat.type === 'global' || chat.type === 'announcements');
+          // Check if user has access to this chat
+          let hasAccess = false;
+          
+          if (chat.type === 'private') {
+            // Private chats: user must be a participant
+            hasAccess = !!participant;
+          } else if (chat.type === 'global' || chat.type === 'announcements') {
+            // Global/announcement chats: based on location access
+            if (user.location === 'all_locations') {
+              // Super admin sees all chats (menton and lyon)
+              hasAccess = chat.location === 'menton' || chat.location === 'lyon';
+            } else {
+              // Regular users see their location's chats
+              hasAccess = chat.location === user.location;
+            }
+          }
           
           if (!hasAccess) return null;
 
