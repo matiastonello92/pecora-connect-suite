@@ -9,11 +9,14 @@ interface PendingInvitation {
   first_name: string;
   last_name: string;
   role: string;
+  restaurant_role?: string | null;
+  access_level: string;
   location: string;
   status: string;
   created_at: string;
   expires_at: string;
   invitation_token: string;
+  metadata?: any;
 }
 
 interface UserManagementState {
@@ -167,11 +170,14 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
         first_name: invitation.first_name,
         last_name: invitation.last_name,
         role: invitation.role,
+        restaurant_role: invitation.restaurant_role,
+        access_level: invitation.access_level || 'base',
         location: invitation.location,
         status: invitation.status,
         created_at: invitation.created_at,
         expires_at: invitation.expires_at,
-        invitation_token: invitation.invitation_token
+        invitation_token: invitation.invitation_token,
+        metadata: invitation.metadata
       })) || [];
 
       dispatch({ type: 'LOAD_PENDING_INVITATIONS', payload: pendingInvitations });

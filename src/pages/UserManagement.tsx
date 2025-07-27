@@ -211,9 +211,17 @@ export const UserManagement = () => {
                         <p className="text-xs sm:text-sm text-muted-foreground truncate">Invitation Pending</p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2 shrink-0">
+                    <div className="flex items-center gap-2 shrink-0 flex-wrap">
                       <div className={`w-2 h-2 rounded-full ${getRoleColor(invitation.role)}`} />
                       <Badge variant="outline" className="text-xs">{invitation.role}</Badge>
+                      {invitation.restaurant_role && (
+                        <Badge variant="outline" className="text-xs bg-purple-50 text-purple-700 dark:bg-purple-900 dark:text-purple-300">
+                          {invitation.restaurant_role}
+                        </Badge>
+                      )}
+                      <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 dark:bg-blue-900 dark:text-blue-300">
+                        {invitation.access_level}
+                      </Badge>
                       <Badge variant="secondary" className="text-xs bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200">
                         pending
                       </Badge>
@@ -239,9 +247,22 @@ export const UserManagement = () => {
                       <div className="text-xs sm:text-sm text-muted-foreground truncate">{invitation.email}</div>
                     </div>
                     <div className="min-w-0">
+                      <div className="text-xs sm:text-sm font-medium">Restaurant Role</div>
+                      <div className="text-xs sm:text-sm text-muted-foreground">
+                        {invitation.restaurant_role || 'Not assigned'}
+                      </div>
+                    </div>
+                    <div className="min-w-0">
+                      <div className="text-xs sm:text-sm font-medium">Access Level</div>
+                      <div className="text-xs sm:text-sm text-muted-foreground">{invitation.access_level}</div>
+                    </div>
+                    <div className="min-w-0">
                       <div className="text-xs sm:text-sm font-medium">Location</div>
                       <div className="text-xs sm:text-sm text-muted-foreground">{invitation.location}</div>
                     </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mt-3">
                     <div className="min-w-0">
                       <div className="text-xs sm:text-sm font-medium">Invited</div>
                       <div className="text-xs sm:text-sm text-muted-foreground">

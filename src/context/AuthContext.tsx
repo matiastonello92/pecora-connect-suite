@@ -309,6 +309,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         location: data.location,
         invited_by: state.user?.id,
         expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+        metadata: data.customPermissions ? JSON.stringify({ customPermissions: data.customPermissions }) : JSON.stringify({})
       };
 
       const { data: inviteResult, error } = await supabase
@@ -320,9 +321,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (error) {
         return { error: error.message };
       }
-
-      // Custom permissions will be handled when the user completes registration
-      // For now, we store the invitation without custom permissions
 
       // Send invitation email
       try {
@@ -339,6 +337,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         });
       } catch (emailError) {
         // Don't return error for email sending failure - invitation is still created
+        console.warn('Failed to send invitation email:', emailError);
       }
 
       return {};

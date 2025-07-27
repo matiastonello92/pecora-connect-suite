@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
+import { useTranslation } from '@/lib/i18n';
 import { Loader2, UserPlus, ChevronDown, ChevronRight, Settings } from 'lucide-react';
 import { 
   LocationType, 
@@ -35,14 +36,21 @@ export const EnhancedInviteUserDialog = () => {
   const [customPermissions, setCustomPermissions] = useState<Partial<Record<AppModule, ModulePermissions>>>({});
   const [isLoading, setIsLoading] = useState(false);
   
-  const { createInvitation, hasPermission } = useAuth();
+  const { createInvitation, hasPermission, language } = useAuth();
   const { users, pendingInvitations, refreshData } = useUserManagement();
   const { toast } = useToast();
+  const { t } = useTranslation(language);
 
   // Only allow managers and super_admins to invite users
   if (!hasPermission('manager')) {
     return null;
   }
+
+  const modules: AppModule[] = [
+    'chat', 'inventory_sala', 'inventory_kitchen', 'checklists', 
+    'suppliers', 'equipment', 'financial', 'cash_closure', 
+    'reports', 'tasks', 'communication', 'announcements', 'user_management'
+  ];
 
   const handlePermissionChange = (module: AppModule, permission: keyof ModulePermissions, checked: boolean) => {
     setCustomPermissions(prev => ({
@@ -54,10 +62,22 @@ export const EnhancedInviteUserDialog = () => {
     }));
   };
 
+  const resetForm = () => {
+    setEmail('');
+    setFirstName('');
+    setLastName('');
+    setRole('base');
+    setRestaurantRole('');
+    setAccessLevel('base');
+    setLocation('');
+    setHasCustomPermissions(false);
+    setCustomPermissions({});
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!email || !firstName || !lastName || !role || !location) {
+    if (!email || !firstName || !lastName || !role || !location || !accessLevel) {
       toast({
         title: "Error",
         description: "Please fill in all required fields",
@@ -66,7 +86,7 @@ export const EnhancedInviteUserDialog = () => {
       return;
     }
 
-    // Check for duplicate email in existing users
+    // Check for existing user with the same email
     const existingUser = users.find(u => u.email.toLowerCase() === email.toLowerCase());
     if (existingUser) {
       toast({
@@ -77,7 +97,7 @@ export const EnhancedInviteUserDialog = () => {
       return;
     }
 
-    // Check for duplicate email in pending invitations
+    // Check for existing pending invitation
     const existingInvitation = pendingInvitations.find(i => i.email.toLowerCase() === email.toLowerCase());
     if (existingInvitation) {
       toast({
@@ -99,7 +119,7 @@ export const EnhancedInviteUserDialog = () => {
         restaurantRole: restaurantRole || undefined,
         accessLevel: accessLevel as AccessLevel,
         location: location as LocationType,
-        customPermissions: customPermissions
+        customPermissions: hasCustomPermissions ? customPermissions : undefined
       };
 
       const result = await createInvitation(invitationData);
@@ -116,37 +136,22 @@ export const EnhancedInviteUserDialog = () => {
           description: `Invitation sent to ${email}`,
         });
         
-        // Refresh data to show new pending invitation
-        refreshData();
-        
-        // Reset form
-        setEmail('');
-        setFirstName('');
-        setLastName('');
-        setRole('base');
-        setRestaurantRole('');
-        setAccessLevel('base');
-        setLocation('');
-        setHasCustomPermissions(false);
-        setCustomPermissions({});
+        resetForm();
         setIsOpen(false);
+        
+        // Refresh the user management data
+        refreshData();
       }
     } catch (error: any) {
       toast({
         title: "Error",
-        description: error.message || "Failed to send invitation",
+        description: `Failed to send invitation: ${error.message}`,
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   };
-
-  const modules: AppModule[] = [
-    'chat', 'inventory_sala', 'inventory_kitchen', 'checklists', 
-    'suppliers', 'equipment', 'financial', 'cash_closure', 
-    'reports', 'tasks', 'communication', 'announcements', 'user_management'
-  ];
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -156,164 +161,186 @@ export const EnhancedInviteUserDialog = () => {
           Invite User
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-2xl max-w-[95vw] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-4xl max-w-[95vw] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Invite New User</DialogTitle>
         </DialogHeader>
         
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
           {/* Basic Information */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium">Basic Information</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="firstName">First Name *</Label>
+                <Input
+                  id="firstName"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  disabled={isLoading}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="lastName">Last Name *</Label>
+                <Input
+                  id="lastName"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  disabled={isLoading}
+                  required
+                />
+              </div>
+            </div>
+
             <div className="space-y-2">
-              <Label htmlFor="firstName">First Name *</Label>
+              <Label htmlFor="email">Email Address *</Label>
               <Input
-                id="firstName"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="user@pecoranegra.fr"
                 disabled={isLoading}
                 required
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="lastName">Last Name *</Label>
-              <Input
-                id="lastName"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                disabled={isLoading}
-                required
-              />
+          </div>
+
+          {/* Role Assignment */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium">Role Assignment</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="location">Location *</Label>
+                <Select value={location} onValueChange={(value: LocationType) => setLocation(value)} disabled={isLoading}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select location" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="menton">Menton</SelectItem>
+                    <SelectItem value="lyon">Lyon</SelectItem>
+                    <SelectItem value="all_locations">All Locations</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="role">System Role *</Label>
+                <Select value={role} onValueChange={(value: UserRole) => setRole(value)} disabled={isLoading}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="base">Base User</SelectItem>
+                    <SelectItem value="manager">Manager</SelectItem>
+                    <SelectItem value="super_admin">Super Admin</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
-          </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="email">Email Address *</Label>
-            <Input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="user@pecoranegra.fr"
-              disabled={isLoading}
-              required
-            />
-          </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="restaurantRole">Restaurant Role</Label>
+                <Select value={restaurantRole} onValueChange={(value: RestaurantRole | '') => setRestaurantRole(value)} disabled={isLoading}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select restaurant role (optional)" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">No specific role</SelectItem>
+                    {Object.entries(RESTAURANT_ROLE_LABELS).map(([value, label]) => (
+                      <SelectItem key={value} value={value}>
+                        {t(`roles.${value}`) || label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-          {/* Location */}
-          <div className="space-y-2">
-            <Label htmlFor="location">Location *</Label>
-            <Select value={location} onValueChange={(value: LocationType) => setLocation(value)} disabled={isLoading}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select location" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="menton">Menton</SelectItem>
-                <SelectItem value="lyon">Lyon</SelectItem>
-                <SelectItem value="all_locations">All Locations</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Restaurant Role */}
-          <div className="space-y-2">
-            <Label htmlFor="restaurantRole">Restaurant Role</Label>
-            <Select value={restaurantRole} onValueChange={(value: RestaurantRole) => setRestaurantRole(value)} disabled={isLoading}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select restaurant role (optional)" />
-              </SelectTrigger>
-              <SelectContent>
-                {Object.entries(RESTAURANT_ROLE_LABELS).map(([value, label]) => (
-                  <SelectItem key={value} value={value}>{label}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Access Level */}
-          <div className="space-y-2">
-            <Label htmlFor="accessLevel">Access Level *</Label>
-            <Select value={accessLevel} onValueChange={(value: AccessLevel) => setAccessLevel(value)} disabled={isLoading}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {Object.entries(ACCESS_LEVEL_LABELS).map(([value, label]) => (
-                  <SelectItem key={value} value={value}>{label}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Legacy Role (for system compatibility) */}
-          <div className="space-y-2">
-            <Label htmlFor="systemRole">System Role *</Label>
-            <Select value={role} onValueChange={(value: UserRole) => setRole(value)} disabled={isLoading}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="base">Base User</SelectItem>
-                <SelectItem value="manager">Manager</SelectItem>
-                <SelectItem value="super_admin">Super Admin</SelectItem>
-              </SelectContent>
-            </Select>
+              <div className="space-y-2">
+                <Label htmlFor="accessLevel">Access Level *</Label>
+                <Select value={accessLevel} onValueChange={(value: AccessLevel) => setAccessLevel(value)} disabled={isLoading}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(ACCESS_LEVEL_LABELS).map(([value, label]) => (
+                      <SelectItem key={value} value={value}>
+                        {t(`accessLevels.${value}`) || label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
           </div>
 
           {/* Custom Permissions */}
-          <Collapsible open={hasCustomPermissions} onOpenChange={setHasCustomPermissions}>
-            <CollapsibleTrigger asChild>
-              <Button
-                type="button"
-                variant="outline"
-                className="w-full justify-between"
-                disabled={isLoading}
-              >
-                <div className="flex items-center gap-2">
-                  <Settings className="h-4 w-4" />
-                  Advanced Permission Customization
-                </div>
-                {hasCustomPermissions ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-              </Button>
-            </CollapsibleTrigger>
-            <CollapsibleContent className="space-y-4 pt-4">
-              <p className="text-sm text-muted-foreground">
-                Override default access level permissions for specific modules:
-              </p>
-              <div className="grid gap-4">
-                {modules.map((module) => (
-                  <div key={module} className="border rounded-lg p-4">
-                    <h4 className="font-medium mb-3">{MODULE_LABELS[module]}</h4>
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                      {(['can_read', 'can_write', 'can_validate', 'can_delete'] as const).map((permission) => (
-                        <div key={permission} className="flex items-center space-x-2">
-                          <Checkbox
-                            id={`${module}-${permission}`}
-                            checked={customPermissions[module]?.[permission] || false}
-                            onCheckedChange={(checked) => 
-                              handlePermissionChange(module, permission, checked as boolean)
-                            }
-                            disabled={isLoading}
-                          />
-                          <Label 
-                            htmlFor={`${module}-${permission}`} 
-                            className="text-sm font-normal capitalize"
-                          >
-                            {permission.replace('can_', '').replace('_', ' ')}
-                          </Label>
-                        </div>
-                      ))}
-                    </div>
+          <div className="space-y-4">
+            <Collapsible open={hasCustomPermissions} onOpenChange={setHasCustomPermissions}>
+              <CollapsibleTrigger asChild>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full justify-between"
+                  disabled={isLoading}
+                >
+                  <div className="flex items-center gap-2">
+                    <Settings className="h-4 w-4" />
+                    Custom Permissions (Advanced)
                   </div>
-                ))}
-              </div>
-            </CollapsibleContent>
-          </Collapsible>
+                  {hasCustomPermissions ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                </Button>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="space-y-4">
+                <div className="bg-muted/50 p-4 rounded-lg">
+                  <p className="text-sm text-muted-foreground">
+                    Custom permissions override the default access level. Only set permissions that differ from the default.
+                  </p>
+                </div>
+                
+                <div className="grid gap-4">
+                  {modules.map((module) => (
+                    <div key={module} className="border rounded-lg p-4">
+                      <h4 className="font-medium mb-3">
+                        {t(`modules.${module}`) || MODULE_LABELS[module]}
+                      </h4>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        {(['can_read', 'can_write', 'can_validate', 'can_delete'] as const).map((permission) => (
+                          <div key={permission} className="flex items-center space-x-2">
+                            <Checkbox
+                              id={`${module}-${permission}`}
+                              checked={customPermissions[module]?.[permission] || false}
+                              onCheckedChange={(checked) => 
+                                handlePermissionChange(module, permission, checked as boolean)
+                              }
+                              disabled={isLoading}
+                            />
+                            <Label 
+                              htmlFor={`${module}-${permission}`} 
+                              className="text-sm font-normal"
+                            >
+                              {t(`permissions.${permission.replace('can_', '')}`) || permission.replace('can_', '').replace('_', ' ')}
+                            </Label>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
+          </div>
 
-          <div className="flex flex-col sm:flex-row justify-end gap-3 pt-4">
+          <div className="flex flex-col sm:flex-row justify-end gap-3 pt-4 border-t">
             <Button
               type="button"
               variant="outline"
-              onClick={() => setIsOpen(false)}
+              onClick={() => {
+                resetForm();
+                setIsOpen(false);
+              }}
               disabled={isLoading}
             >
               Cancel
