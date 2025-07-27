@@ -1,4 +1,5 @@
 import { useAuth } from '@/context/AuthContext';
+import { useUnreadMessages } from '@/context/UnreadMessagesContext';
 import { useTranslation } from '@/lib/i18n';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
@@ -17,6 +18,7 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar';
 import { Logo } from '@/components/ui/logo';
+import { NotificationBadge } from '@/components/ui/notification-badge';
 import { LocationSwitcher } from './LocationSwitcher';
 import {
   LayoutDashboard,
@@ -162,6 +164,7 @@ const navigationItems = [
 
 export const AppSidebar = () => {
   const { user, language, hasPermission, hasAccess, logout } = useAuth();
+  const { totalUnreadCount, markChatAsRead } = useUnreadMessages();
   const { t } = useTranslation(language);
   const { state } = useSidebar();
   const location = useLocation();
@@ -257,20 +260,36 @@ export const AppSidebar = () => {
                 <SidebarMenuItem key={item.title}>
                   {/* Single page items (like Chat) */}
                   {item.url && !item.submenu ? (
-                    <SidebarMenuButton asChild>
-                      <NavLink
-                        to={item.url}
-                        className={getNavClassName}
-                        title={isCollapsed ? t(item.title) : undefined}
-                      >
-                        <item.icon className="h-5 w-5 flex-shrink-0" />
-                        {!isCollapsed && (
-                          <span className="ml-3 font-inter">
-                            {t(item.title)}
-                          </span>
-                        )}
-                      </NavLink>
-                    </SidebarMenuButton>
+                    <div className="relative">
+                      <SidebarMenuButton asChild>
+                        <NavLink
+                          to={item.url}
+                          className={getNavClassName}
+                          title={isCollapsed ? t(item.title) : undefined}
+                          onClick={() => {
+                            // Mark chat as read when clicking on chat link
+                            if (item.title === 'chat' && totalUnreadCount > 0) {
+                              // This will be handled by the chat context when user enters chat
+                            }
+                          }}
+                        >
+                          <item.icon className="h-5 w-5 flex-shrink-0" />
+                          {!isCollapsed && (
+                            <span className="ml-3 font-inter">
+                              {t(item.title)}
+                            </span>
+                          )}
+                        </NavLink>
+                      </SidebarMenuButton>
+                      {/* Show notification badge for chat */}
+                      {item.title === 'chat' && (
+                        <NotificationBadge 
+                          count={totalUnreadCount}
+                          size={isCollapsed ? 'sm' : 'md'}
+                          className={isCollapsed ? '-top-1 -right-1' : 'top-1 right-2'}
+                        />
+                      )}
+                    </div>
                   ) : (
                     /* Expandable sections */
                     <>

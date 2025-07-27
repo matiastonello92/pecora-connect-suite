@@ -1,6 +1,7 @@
 import { useAuth } from '@/context/AuthContext';
 import { useTranslation } from '@/lib/i18n';
 import { SidebarProvider } from '@/components/ui/sidebar';
+import { UnreadMessagesProvider } from '@/context/UnreadMessagesContext';
 import { AppSidebar } from './AppSidebar';
 import { AppHeader } from './AppHeader';
 
@@ -13,20 +14,22 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
   const { t } = useTranslation(language);
 
   return (
-    <SidebarProvider>
-      <div className="min-h-screen flex w-full bg-background">
-        <AppSidebar />
-        
-        <div className="flex-1 flex flex-col min-w-0">
-          <AppHeader />
+    <UnreadMessagesProvider>
+      <SidebarProvider>
+        <div className="min-h-screen flex w-full bg-background">
+          <AppSidebar />
           
-          <main className="flex-1 p-3 sm:p-4 md:p-6 overflow-auto">
-            <div className="max-w-full">
-              {children}
-            </div>
-          </main>
+          <div className="flex-1 flex flex-col min-w-0">
+            <AppHeader />
+            
+            <main className="flex-1 p-3 sm:p-4 md:p-6 overflow-auto">
+              <div className="max-w-full">
+                {children}
+              </div>
+            </main>
+          </div>
         </div>
-      </div>
-    </SidebarProvider>
+      </SidebarProvider>
+    </UnreadMessagesProvider>
   );
 };

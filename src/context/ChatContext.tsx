@@ -144,6 +144,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     if (activeChat) {
       loadMessages(activeChat.id);
+      // Mark chat as read when opening it
       markAsRead(activeChat.id);
     } else {
       setMessages([]);
@@ -354,12 +355,18 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!user) return;
     
     try {
+      console.log('Marking chat as read in ChatContext:', chatId);
+      
       // Update participant's last_read_at
       await supabase
         .from('chat_participants')
-        .update({ last_read_at: new Date().toISOString() })
-        .eq('chat_id', chatId)
-        .eq('user_id', user.id);
+        .upsert({
+          chat_id: chatId,
+          user_id: user.id,
+          last_read_at: new Date().toISOString()
+        }, {
+          onConflict: 'chat_id,user_id'
+        });
 
       // If specific message, create read receipt
       if (messageId) {
@@ -373,7 +380,11 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
           });
       }
 
-      await loadChats(); // Refresh unread counts
+      // Refresh local chat list
+      await loadChats();
+      
+      // Trigger unread count refresh in UnreadMessagesContext
+      window.dispatchEvent(new CustomEvent('refreshUnreadCounts'));
     } catch (error: any) {
       console.error('Error marking as read:', error);
     }
