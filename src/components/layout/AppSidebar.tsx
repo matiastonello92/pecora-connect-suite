@@ -163,7 +163,7 @@ const navigationItems = [
 ];
 
 export const AppSidebar = () => {
-  const { user, logout } = useSimpleAuth();
+  const { profile, logout } = useSimpleAuth();
   const language = 'en'; // Temporarily hardcode language
   const hasPermission = () => true; // Temporarily allow all permissions
   const hasAccess = () => true; // Temporarily allow all access
@@ -229,10 +229,10 @@ export const AppSidebar = () => {
   };
 
   const filteredItems = navigationItems.filter((item) => {
-    if (!user) return false;
+    if (!profile) return false;
     
     // Super admin can see everything
-    if (user.role === 'super_admin') return true;
+    if (profile.role === 'super_admin') return true;
     
     const hasRolePermission = true; // Allow all for now
     const hasDepartmentAccess = true; // Allow all for now
@@ -353,15 +353,17 @@ export const AppSidebar = () => {
 
         {/* User Footer Section */}
         <div className="mt-auto border-t border-border">
-          {!isCollapsed && user && (
+          {!isCollapsed && profile && (
             <div className="p-4">
               <div className="flex items-center gap-3 mb-3">
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-foreground truncate">
-                    {user.email?.split('@')[0] || 'User'}
+                    {profile.first_name && profile.last_name 
+                      ? `${profile.first_name} ${profile.last_name}`
+                      : profile.email?.split('@')[0] || 'User'}
                   </p>
                   <p className="text-xs text-muted-foreground truncate capitalize">
-                    Admin • All Locations
+                    {profile.role || 'User'} • {(profile.locations || []).join(', ')}
                   </p>
                 </div>
               </div>

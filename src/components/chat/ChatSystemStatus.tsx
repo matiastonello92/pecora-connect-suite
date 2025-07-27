@@ -15,12 +15,12 @@ interface HealthCheck {
 }
 
 export const ChatSystemStatus: React.FC = () => {
-  const { user } = useSimpleAuth();
+  const { profile } = useSimpleAuth();
   const [healthChecks, setHealthChecks] = useState<HealthCheck[]>([]);
   const [loading, setLoading] = useState(false);
 
   const runHealthCheck = async () => {
-    if (!user) return;
+    if (!profile) return;
 
     setLoading(true);
     try {
@@ -64,12 +64,12 @@ export const ChatSystemStatus: React.FC = () => {
   };
 
   const syncCurrentUser = async () => {
-    if (!user) return;
+    if (!profile) return;
 
     setLoading(true);
     try {
       const { data, error } = await supabase.rpc('sync_user_chat_memberships', {
-        target_user_id: user.id
+        target_user_id: profile.user_id
       });
       
       if (error) {
@@ -149,11 +149,12 @@ export const ChatSystemStatus: React.FC = () => {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        {user && (
+        {profile && (
           <div className="mb-4 p-3 bg-muted rounded-lg">
             <div className="text-sm">
-              <div><strong>User:</strong> {user.email}</div>
-              <div><strong>Locations:</strong> {user.user_metadata?.locations?.join(', ') || user.user_metadata?.location || 'None'}</div>
+              <div><strong>User:</strong> {profile.first_name} {profile.last_name} ({profile.email})</div>
+              <div><strong>Locations:</strong> {(profile.locations || []).join(', ') || 'None'}</div>
+              <div><strong>Role:</strong> {profile.role} | <strong>Access Level:</strong> {profile.access_level}</div>
             </div>
           </div>
         )}

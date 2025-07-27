@@ -20,14 +20,14 @@ interface Notification {
 }
 
 export const NotificationCenter: React.FC = () => {
-  const { user } = useSimpleAuth();
+  const { profile } = useSimpleAuth();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
   const [unreadCount, setUnreadCount] = useState(0);
 
   // Load notifications on mount
   useEffect(() => {
-    if (user) {
+    if (profile) {
       loadNotifications();
       
       // Set up real-time subscription
@@ -38,7 +38,7 @@ export const NotificationCenter: React.FC = () => {
             event: '*', 
             schema: 'public', 
             table: 'notifications',
-            filter: `user_id=eq.${user.id}`
+            filter: `user_id=eq.${profile.user_id}`
           }, 
           () => {
             loadNotifications();
@@ -50,16 +50,16 @@ export const NotificationCenter: React.FC = () => {
         subscription.unsubscribe();
       };
     }
-  }, [user]);
+  }, [profile]);
 
   const loadNotifications = async () => {
-    if (!user) return;
+    if (!profile) return;
 
     try {
       const { data, error } = await supabase
         .from('notifications')
         .select('*')
-        .eq('user_id', user.id)
+        .eq('user_id', profile.user_id)
         .order('created_at', { ascending: false })
         .limit(50);
 
@@ -243,18 +243,18 @@ export const NotificationCenter: React.FC = () => {
 
 // Hook for notifications count
 export const useNotificationCount = () => {
-  const { user } = useSimpleAuth();
+  const { profile } = useSimpleAuth();
   const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
-    if (!user) return;
+    if (!profile) return;
 
     const loadCount = async () => {
       try {
         const { count, error } = await supabase
           .from('notifications')
           .select('*', { count: 'exact', head: true })
-          .eq('user_id', user.id)
+          .eq('user_id', profile.user_id)
           .eq('read', false);
 
         if (error) throw error;
@@ -274,7 +274,7 @@ export const useNotificationCount = () => {
           event: '*', 
           schema: 'public', 
           table: 'notifications',
-          filter: `user_id=eq.${user.id}`
+          filter: `user_id=eq.${profile.user_id}`
         }, 
         () => {
           loadCount();
@@ -285,7 +285,7 @@ export const useNotificationCount = () => {
     return () => {
       subscription.unsubscribe();
     };
-  }, [user]);
+  }, [profile]);
 
   return unreadCount;
 };

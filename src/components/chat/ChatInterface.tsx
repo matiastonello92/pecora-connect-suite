@@ -34,7 +34,7 @@ interface ChatInterfaceProps {
 
 export const ChatInterface: React.FC<ChatInterfaceProps> = ({ onBack, onShowInfo }) => {
   const { activeChat, messages, sendMessage, sendingMessage, getConnectionStatus } = useChatContext();
-  const { user } = useSimpleAuth();
+  const { profile } = useSimpleAuth();
   const language = 'en'; // Temporary hardcode
   const { t } = useTranslation(language);
   const [typingUsers, setTypingUsers] = useState<string[]>([]);
@@ -48,13 +48,13 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ onBack, onShowInfo
 
   // Check connection status for private chats
   useEffect(() => {
-    if (activeChat?.type === 'private' && user) {
-      const otherParticipant = activeChat.participants?.find(p => p.user_id !== user.id);
+    if (activeChat?.type === 'private' && profile) {
+      const otherParticipant = activeChat.participants?.find(p => p.user_id !== profile.user_id);
       if (otherParticipant) {
         getConnectionStatus(otherParticipant.user_id).then(setConnectionStatus);
       }
     }
-  }, [activeChat, user, getConnectionStatus]);
+  }, [activeChat, profile, getConnectionStatus]);
 
   if (!activeChat) {
     return (
@@ -79,7 +79,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ onBack, onShowInfo
     
     if (activeChat.type === 'private' && activeChat.participants) {
       const otherParticipant = activeChat.participants.find((p: any) => 
-        p.user_id !== user?.id && p.user?.first_name
+        p.user_id !== profile?.user_id && p.user?.first_name
       );
       if (otherParticipant?.user) {
         return `${otherParticipant.user.first_name} ${otherParticipant.user.last_name}`;
@@ -92,7 +92,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ onBack, onShowInfo
   const getChatSubtitle = () => {
     if (activeChat.type === 'private' && activeChat.participants) {
       const otherParticipant = activeChat.participants.find((p: any) => 
-        p.user_id !== user?.id && p.user?.position
+        p.user_id !== profile?.user_id && p.user?.position
       );
       if (otherParticipant?.user) {
         return otherParticipant.user.position;
@@ -136,15 +136,15 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ onBack, onShowInfo
   };
 
   const isCurrentUserMuted = () => {
-    if (!user || !activeChat.participants) return false;
-    const currentUserParticipant = activeChat.participants.find(p => p.user_id === user.id);
+    if (!profile || !activeChat.participants) return false;
+    const currentUserParticipant = activeChat.participants.find(p => p.user_id === profile.user_id);
     return currentUserParticipant?.is_muted || false;
   };
 
   const canSendMessages = () => {
     // Announcements: only admins and managers can send
     if (activeChat.type === 'announcements') {
-      return user?.user_metadata?.role && ['manager', 'super_admin'].includes(user.user_metadata.role);
+      return profile?.role && ['manager', 'super_admin'].includes(profile.role);
     }
     
     // Private chats: check connection status
@@ -157,7 +157,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ onBack, onShowInfo
   };
 
   const hasAcceptedConnection = () => {
-    if (!user || !activeChat.participants || activeChat.type !== 'private') return true;
+    if (!profile || !activeChat.participants || activeChat.type !== 'private') return true;
     return connectionStatus === 'accepted';
   };
 

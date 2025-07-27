@@ -30,7 +30,7 @@ interface ConnectionRequestManagerProps {
 }
 
 export const ConnectionRequestManager: React.FC<ConnectionRequestManagerProps> = ({ onClose }) => {
-  const { user } = useSimpleAuth();
+  const { profile } = useSimpleAuth();
   const language = 'en'; // Temporary hardcode
   const { users } = useUserManagement();
   const { 
@@ -52,34 +52,29 @@ export const ConnectionRequestManager: React.FC<ConnectionRequestManagerProps> =
 
   // Check if user has privileged role that can bypass location restrictions
   const canAccessAllLocations = () => {
-    if (!user) return false;
-    
-    // Check using auth user role and user management data
-    const currentUserProfile = users.find(u => u.id === user.id);
-    if (!currentUserProfile) return false;
+    if (!profile) return false;
     
     const privilegedRoles = ['general_manager', 'human_resources'];
-    return user?.user_metadata?.role === 'super_admin' || 
-           user?.user_metadata?.role === 'manager' ||
-           currentUserProfile.accessLevel === 'general_manager' ||
-           privilegedRoles.includes(currentUserProfile.restaurantRole || '');
+    return profile.role === 'super_admin' || 
+           profile.role === 'manager' ||
+           profile.access_level === 'general_manager';
   };
 
   // Load available users based on location access
   useEffect(() => {
     const loadAvailableUsers = async () => {
-      if (!user) return;
+      if (!profile) return;
       
       setLoadingUsers(true);
       try {
         let filteredUsers = users.filter(u => 
-          u.id !== user.id && // Exclude current user
+          u.id !== profile.user_id && // Exclude current user
           u.status === 'active' // Only active users
         );
 
         // Apply location filtering for non-privileged users
         if (!canAccessAllLocations()) {
-          const userLocations = user?.user_metadata?.locations || [user?.user_metadata?.location]; // Support both new and old format
+          const userLocations = profile.locations || [profile.location]; // Support both new and old format
           filteredUsers = filteredUsers.filter(u => {
             const targetUserLocations = u.locations || [u.location];
             return userLocations.some(loc => targetUserLocations.includes(loc));
@@ -108,7 +103,7 @@ export const ConnectionRequestManager: React.FC<ConnectionRequestManagerProps> =
     };
 
     loadAvailableUsers();
-  }, [user, users, getConnectionStatus, canSendConnectionRequest]);
+  }, [profile, users, getConnectionStatus, canSendConnectionRequest]);
 
   // Listen for custom event to open connection requests
   useEffect(() => {
@@ -125,16 +120,16 @@ export const ConnectionRequestManager: React.FC<ConnectionRequestManagerProps> =
   }, []);
 
   const incomingRequests = connectionRequests.filter(
-    req => req.recipient_id === user?.id && req.status === 'pending'
+    req => req.recipient_id === profile?.user_id && req.status === 'pending'
   );
   
   const outgoingRequests = connectionRequests.filter(
-    req => req.requester_id === user?.id && req.status === 'pending'
+    req => req.requester_id === profile?.user_id && req.status === 'pending'
   );
   
   const acceptedRequests = connectionRequests.filter(
     req => req.status === 'accepted' && 
-    (req.requester_id === user?.id || req.recipient_id === user?.id)
+    (req.requester_id === profile?.user_id || req.recipient_id === profile?.user_id)
   );
 
   // Filter available users based on search term

@@ -20,7 +20,7 @@ import { LogOut, Settings, User, Globe, Bell, MapPin } from 'lucide-react';
 import { NotificationCenter, useNotificationCount } from '@/components/notifications/NotificationCenter';
 
 export const AppHeader = () => {
-  const { user, logout } = useSimpleAuth();
+  const { profile, logout } = useSimpleAuth();
   const language = 'en'; // Temporarily hardcode language
   const setLanguage = () => {}; // Temporarily disabled
   const navigate = useNavigate();
@@ -36,7 +36,16 @@ export const AppHeader = () => {
   };
 
   const getRoleColor = () => {
-    return 'bg-primary text-primary-foreground';
+    if (!profile) return 'bg-primary text-primary-foreground';
+    
+    switch (profile.role) {
+      case 'super_admin':
+        return 'bg-destructive text-destructive-foreground';
+      case 'manager':
+        return 'bg-yellow-600 text-white';
+      default:
+        return 'bg-primary text-primary-foreground';
+    }
   };
 
   return (
@@ -52,7 +61,7 @@ export const AppHeader = () => {
         
         <div className="hidden lg:block min-w-0">
           <p className="text-sm text-muted-foreground font-inter truncate">
-            {t('welcome')}, {user?.email?.split('@')[0] || 'User'}
+            {t('welcome')}, {profile?.first_name || profile?.email?.split('@')[0] || 'User'}
           </p>
         </div>
       </div>
@@ -115,7 +124,7 @@ export const AppHeader = () => {
               <Avatar className="h-8 w-8 sm:h-10 sm:w-10">
                 <AvatarFallback className={getRoleColor()}>
                   <span className="text-xs sm:text-sm">
-                    {user && getInitials(user.email || '')}
+                    {profile && getInitials(profile.email || '')}
                   </span>
                 </AvatarFallback>
               </Avatar>
@@ -125,13 +134,15 @@ export const AppHeader = () => {
             <DropdownMenuLabel className="font-normal">
               <div className="flex flex-col space-y-1">
                 <p className="text-sm font-medium leading-none truncate">
-                  {user?.email?.split('@')[0] || 'User'}
+                  {profile?.first_name && profile?.last_name 
+                    ? `${profile.first_name} ${profile.last_name}`
+                    : profile?.email?.split('@')[0] || 'User'}
                 </p>
                 <p className="text-xs leading-none text-muted-foreground truncate">
-                  {user?.email}
+                  {profile?.email}
                 </p>
                 <p className="text-xs leading-none text-muted-foreground capitalize">
-                  Admin User
+                  {profile?.role || 'User'} • {(profile?.locations || []).join(', ')}
                 </p>
               </div>
             </DropdownMenuLabel>

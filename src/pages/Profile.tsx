@@ -14,13 +14,13 @@ import { ProfileSettings } from '@/components/profile/ProfileSettings';
 import { ProfilePictureUpload } from '@/components/profile/ProfilePictureUpload';
 
 export const Profile = () => {
-  const { user } = useSimpleAuth();
+  const { profile } = useSimpleAuth();
   const { users } = useUserManagement();
   const navigate = useNavigate();
   const { t } = useTranslation('en');
   const [activeTab, setActiveTab] = useState('information');
 
-  const currentUser = users.find(u => u.id === user?.id);
+  const currentUser = users.find(u => u.id === profile?.user_id);
 
   if (!currentUser) {
     return (
