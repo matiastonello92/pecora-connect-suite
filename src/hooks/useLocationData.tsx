@@ -9,18 +9,14 @@ import { userHasAccessToLocation } from '@/hooks/useLocations';
  */
 export const useEffectiveLocation = () => {
   const { user } = useAuth();
-  const { activeLocation, canSwitchLocations, userLocations } = useLocation();
+  const { activeLocation, userLocations } = useLocation();
 
-  // If user can switch locations, use the active location
-  // Otherwise, use their first assigned location
-  const effectiveLocation = canSwitchLocations 
-    ? activeLocation 
-    : (userLocations[0] || 'menton');
+  // Always use the single active location (no "all_locations" support)
+  const effectiveLocation = activeLocation || userLocations[0] || 'menton';
 
   return {
     effectiveLocation,
-    canSwitchLocations,
-    isLocationRestricted: !canSwitchLocations,
+    isLocationRestricted: userLocations.length === 1,
     userLocations
   };
 };
@@ -29,24 +25,14 @@ export const useEffectiveLocation = () => {
  * Hook to filter data arrays by location based on user's access
  */
 export const useLocationFilter = <T extends { location?: string }>(data: T[]) => {
-  const { effectiveLocation, canSwitchLocations, userLocations } = useEffectiveLocation();
+  const { effectiveLocation } = useEffectiveLocation();
 
-  // Filter data based on user's location access
+  // Filter data to show only items for the single active location
   const filteredData = data.filter(item => {
     if (!item.location) return true; // Include items without location
-
-    // If user can switch locations and viewing all, show items from all user's locations
-    if (canSwitchLocations && effectiveLocation === 'all_locations') {
-      return userHasAccessToLocation(userLocations, item.location);
-    }
-
-    // If user can switch locations, filter by active location
-    if (canSwitchLocations) {
-      return item.location === effectiveLocation;
-    }
-
-    // For single-location users, show items from their accessible locations
-    return userHasAccessToLocation(userLocations, item.location);
+    
+    // Only show items for the current active location
+    return item.location === effectiveLocation;
   });
 
   return filteredData;
@@ -60,8 +46,8 @@ export const useLocationData = () => {
 
   return {
     getLocationForNewRecord: () => {
-      // If viewing all locations, use the user's first location as default
-      return effectiveLocation === 'all_locations' ? userLocations[0] : effectiveLocation;
+      // Always use the current active location for new records
+      return effectiveLocation;
     },
     effectiveLocation,
     userLocations,

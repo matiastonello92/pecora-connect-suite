@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { LocationClock } from '@/components/ui/location-clock';
+import { useLocation } from '@/context/LocationContext';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,7 +16,7 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { LogOut, Settings, User, Globe, Bell } from 'lucide-react';
+import { LogOut, Settings, User, Globe, Bell, MapPin } from 'lucide-react';
 import { NotificationCenter, useNotificationCount } from '@/components/notifications/NotificationCenter';
 
 export const AppHeader = () => {
@@ -23,6 +24,9 @@ export const AppHeader = () => {
   const navigate = useNavigate();
   const { t } = useTranslation(language);
   const unreadCount = useNotificationCount();
+  const { activeLocation, availableLocations } = useLocation();
+  
+  const currentLocationName = availableLocations.find(loc => loc.value === activeLocation)?.label || activeLocation;
 
   const getInitials = (firstName: string, lastName: string) => {
     return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
@@ -43,7 +47,14 @@ export const AppHeader = () => {
     <header className="h-14 sm:h-16 border-b border-border bg-card flex items-center justify-between px-3 sm:px-4 md:px-6 shadow-sm">
       <div className="flex items-center gap-2 sm:gap-4 min-w-0">
         <SidebarTrigger className="text-muted-foreground hover:text-foreground shrink-0" />
-        <div className="hidden md:block min-w-0">
+        
+        {/* Active Location Display */}
+        <Badge variant="secondary" className="flex items-center space-x-1 px-2 py-1 shrink-0">
+          <MapPin className="h-3 w-3" />
+          <span className="text-xs font-medium">{currentLocationName}</span>
+        </Badge>
+        
+        <div className="hidden lg:block min-w-0">
           <p className="text-sm text-muted-foreground font-inter truncate">
             {t('welcome')}, {user?.firstName}
           </p>

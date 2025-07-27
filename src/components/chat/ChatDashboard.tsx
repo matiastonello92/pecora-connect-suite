@@ -61,7 +61,7 @@ export const ChatDashboard: React.FC = () => {
   const { user, language } = useAuth();
   const { unreadCountByChat, markChatAsRead } = useUnreadMessages();
   const { processReminders } = useMessageReminders();
-  const { isViewingAllLocations } = useLocation();
+  const { userLocations } = useLocation();
   const { t } = useTranslation(language);
   const [showCreateChat, setShowCreateChat] = useState(false);
   const [showConnections, setShowConnections] = useState(false);
@@ -435,11 +435,9 @@ export const ChatDashboard: React.FC = () => {
                                  }`}>
                                    {getChatName(chat)}
                                  </h3>
-                                 {isViewingAllLocations && (
-                                   <Badge variant="outline" className="text-xs px-1 py-0 h-4 ml-1">
-                                     {chat.location?.charAt(0).toUpperCase() + chat.location?.slice(1)}
-                                   </Badge>
-                                 )}
+                                  <Badge variant="outline" className="text-xs px-1 py-0 h-4 ml-1">
+                                    {chat.location?.charAt(0).toUpperCase() + chat.location?.slice(1)}
+                                  </Badge>
                                  {chat.type === 'announcements' && (
                                    <Pin className="h-3 w-3 text-orange-500" />
                                  )}

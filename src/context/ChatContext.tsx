@@ -78,7 +78,7 @@ export const useChatContext = () => {
 
 export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user, language } = useAuth();
-  const { activeLocation, isViewingAllLocations } = useLocation();
+  const { userLocations } = useLocation();
   const { t } = useTranslation(language);
   
   const [chats, setChats] = useState<Chat[]>([]);
@@ -153,7 +153,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       supabase.removeChannel(messagesChannel);
       supabase.removeChannel(requestsChannel);
     };
-  }, [user, activeChat, activeLocation]);
+  }, [user, activeChat, userLocations]);
 
   // Load messages when active chat changes
   useEffect(() => {
@@ -641,19 +641,15 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  // Filtered chats based on search and location
+  // Chat module supports multi-location views - show all chats from user's accessible locations
   const filteredChats = chats.filter(chat => {
-    // First apply location filter
-    if (!isViewingAllLocations) {
-      // If not viewing all locations, only show chats for the active location
-      // Exception: always show global and announcement chats for user's location or if they have all_locations access
-      const userLocations = user?.locations || [user?.location].filter(Boolean) || [];
-      const shouldShowChat = chat.location === activeLocation || 
-        (userLocations.includes(chat.location) && (chat.type === 'global' || chat.type === 'announcements'));
-      if (!shouldShowChat) return false;
-    }
+    // Chat module: show chats from all user's accessible locations
+    const userLocations = user?.locations || [user?.location].filter(Boolean) || [];
+    const hasLocationAccess = userLocations.includes(chat.location);
     
-    // Then apply search filter
+    if (!hasLocationAccess) return false;
+    
+    // Apply search filter
     if (!searchTerm) return true;
     
     const searchLower = searchTerm.toLowerCase();

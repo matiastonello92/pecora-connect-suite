@@ -4,6 +4,8 @@ import { SidebarProvider } from '@/components/ui/sidebar';
 import { UnreadMessagesProvider } from '@/context/UnreadMessagesContext';
 import { AppSidebar } from './AppSidebar';
 import { AppHeader } from './AppHeader';
+import { LocationBlocker } from './LocationBlocker';
+import { useLocation } from '@/context/LocationContext';
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -12,6 +14,12 @@ interface AppLayoutProps {
 export const AppLayout = ({ children }: AppLayoutProps) => {
   const { language } = useAuth();
   const { t } = useTranslation(language);
+  const { isLocationBlocked, suggestedLocation } = useLocation();
+
+  // Show location blocker if no valid location is set or if there's a suggested location
+  if (isLocationBlocked || suggestedLocation) {
+    return <LocationBlocker />;
+  }
 
   return (
     <SidebarProvider>
