@@ -16,14 +16,14 @@ import { UserProfile } from '@/types/users';
 
 interface DeleteUserDialogProps {
   user: UserProfile;
-  onDelete: (userId: string) => void;
+  onDelete: (user: UserProfile) => void;
 }
 
 export const DeleteUserDialog = ({ user, onDelete }: DeleteUserDialogProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleDelete = () => {
-    onDelete(user.id);
+    onDelete(user);
     setIsOpen(false);
   };
 

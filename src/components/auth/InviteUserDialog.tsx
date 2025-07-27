@@ -1,14 +1,13 @@
 import { useState } from 'react';
-import { useAuth, UserRole } from '@/context/AuthContext';
-import { useUserManagement } from '@/context/UserManagementContext';
+import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { useToast } from '@/hooks/use-toast';
-import { Loader2, UserPlus } from 'lucide-react';
-import { LocationType } from '@/types/users';
+import { UserPlus, Loader2 } from 'lucide-react';
+import { useAuth, UserRole } from '@/context/AuthContext';
+import { InvitationData, AccessLevel, LocationType } from '@/types/users';
 
 export const InviteUserDialog = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -16,11 +15,10 @@ export const InviteUserDialog = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [role, setRole] = useState<UserRole>('base');
-  const [location, setLocation] = useState<LocationType | ''>('');
+  const [location, setLocation] = useState<LocationType>('menton');
   const [isLoading, setIsLoading] = useState(false);
   
   const { createInvitation, hasPermission } = useAuth();
-  const { users, pendingInvitations, refreshData } = useUserManagement();
   const { toast } = useToast();
 
   // Only allow managers and super_admins to invite users
@@ -34,29 +32,7 @@ export const InviteUserDialog = () => {
     if (!email || !firstName || !lastName || !role || !location) {
       toast({
         title: "Error",
-        description: "Please fill in all fields",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    // Check for duplicate email in existing users
-    const existingUser = users.find(u => u.email.toLowerCase() === email.toLowerCase());
-    if (existingUser) {
-      toast({
-        title: "Error",
-        description: "A user with this email already exists",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    // Check for duplicate email in pending invitations
-    const existingInvitation = pendingInvitations.find(i => i.email.toLowerCase() === email.toLowerCase());
-    if (existingInvitation) {
-      toast({
-        title: "Error",
-        description: "An invitation has already been sent to this email",
+        description: "Please fill in all required fields",
         variant: "destructive",
       });
       return;
@@ -64,14 +40,35 @@ export const InviteUserDialog = () => {
 
     setIsLoading(true);
 
-    const result = await createInvitation({
+    try {
+      // Check for existing user with the same email
+      const existingUser = await fetch(`/api/users/check-email?email=${encodeURIComponent(email)}`);
+      if (existingUser.ok) {
+        const userData = await existingUser.json();
+        if (userData.exists) {
+          toast({
+            title: "Error",
+            description: "A user with this email already exists",
+            variant: "destructive",
+          });
+          setIsLoading(false);
+          return;
+        }
+      }
+    } catch (error) {
+      // Continue with invitation creation if check fails
+    }
+
+    const invitationData: InvitationData = {
       email,
       firstName,
       lastName,
-      role,
-      location: location as LocationType,
-      accessLevel: 'base'
-    });
+      role: role as UserRole,
+      accessLevel: 'base' as AccessLevel,
+      location: location as LocationType
+    };
+
+    const result = await createInvitation(invitationData);
     
     if (result.error) {
       toast({
@@ -85,15 +82,12 @@ export const InviteUserDialog = () => {
         description: `Invitation sent to ${email}`,
       });
       
-      // Refresh data to show new pending invitation
-      refreshData();
-      
       // Reset form
       setEmail('');
       setFirstName('');
       setLastName('');
       setRole('base');
-      setLocation('');
+      setLocation('menton');
       setIsOpen(false);
     }
 
@@ -108,13 +102,13 @@ export const InviteUserDialog = () => {
           Invite User
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md max-w-[95vw] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Invite New User</DialogTitle>
         </DialogHeader>
         
-        <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="firstName">First Name</Label>
               <Input
@@ -122,7 +116,6 @@ export const InviteUserDialog = () => {
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
                 disabled={isLoading}
-                className="h-10 sm:h-11"
                 required
               />
             </div>
@@ -133,7 +126,6 @@ export const InviteUserDialog = () => {
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
                 disabled={isLoading}
-                className="h-10 sm:h-11"
                 required
               />
             </div>
@@ -146,17 +138,30 @@ export const InviteUserDialog = () => {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="user@example.com"
+              placeholder="user@pecoranegra.fr"
               disabled={isLoading}
-              className="h-10 sm:h-11"
               required
             />
           </div>
 
           <div className="space-y-2">
+            <Label htmlFor="location">Location</Label>
+            <Select value={location} onValueChange={(value: LocationType) => setLocation(value)} disabled={isLoading}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="menton">Menton</SelectItem>
+                <SelectItem value="lyon">Lyon</SelectItem>
+                <SelectItem value="all_locations">All Locations</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
             <Label htmlFor="role">Role</Label>
             <Select value={role} onValueChange={(value: UserRole) => setRole(value)} disabled={isLoading}>
-              <SelectTrigger className="h-10 sm:h-11">
+              <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -167,34 +172,19 @@ export const InviteUserDialog = () => {
             </Select>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="location">Location</Label>
-            <Select value={location} onValueChange={(value: LocationType) => setLocation(value)} disabled={isLoading}>
-              <SelectTrigger className="h-10 sm:h-11">
-                <SelectValue placeholder="Select location" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="menton">Menton</SelectItem>
-                <SelectItem value="lyon">Lyon</SelectItem>
-                <SelectItem value="all_locations">All Locations</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-3 pt-4">
+          <div className="flex flex-col sm:flex-row justify-end gap-3">
             <Button
               type="button"
               variant="outline"
               onClick={() => setIsOpen(false)}
               disabled={isLoading}
-              className="h-10 sm:h-11 order-1 sm:order-none"
             >
               Cancel
             </Button>
             <Button
               type="submit"
               disabled={isLoading}
-              className="bg-primary hover:bg-primary/90 text-primary-foreground h-10 sm:h-11"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground"
             >
               {isLoading ? (
                 <>

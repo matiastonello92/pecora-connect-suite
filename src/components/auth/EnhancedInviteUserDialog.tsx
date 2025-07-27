@@ -15,6 +15,7 @@ import {
   RestaurantRole, 
   AccessLevel, 
   AppModule,
+  InvitationData,
   RESTAURANT_ROLE_LABELS,
   ACCESS_LEVEL_LABELS,
   MODULE_LABELS,
@@ -90,17 +91,18 @@ export const EnhancedInviteUserDialog = () => {
     setIsLoading(true);
 
     try {
-      // TODO: Update createInvitation to handle new fields
-      const result = await createInvitation({
+      const invitationData: InvitationData = {
         email,
         firstName,
         lastName,
-        role,
-        location: location as LocationType,
+        role: role as UserRole,
         restaurantRole: restaurantRole || undefined,
-        accessLevel,
-        customPermissions: Object.keys(customPermissions).length > 0 ? customPermissions : undefined
-      });
+        accessLevel: accessLevel as AccessLevel,
+        location: location as LocationType,
+        customPermissions: customPermissions
+      };
+
+      const result = await createInvitation(invitationData);
       
       if (result.error) {
         toast({

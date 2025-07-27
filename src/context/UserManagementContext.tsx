@@ -90,7 +90,7 @@ const userManagementReducer = (state: UserManagementState, action: UserManagemen
 interface UserManagementContextType extends UserManagementState {
   addUser: (user: Omit<UserProfile, 'id' | 'createdAt' | 'updatedAt'>) => void;
   updateUser: (user: UserProfile) => void;
-  deleteUser: (userId: string) => void;
+  deleteUser: (user: UserProfile) => Promise<void>;
   deletePendingInvitation: (invitationId: string) => Promise<void>;
   resendInvitation: (invitation: PendingInvitation) => Promise<void>;
   reactivateUser: (archivedUserId: string) => Promise<void>;
@@ -327,51 +327,48 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
     dispatch({ type: 'UPDATE_USER', payload: updatedUser });
   };
 
-  const deleteUser = async (userId: string) => {
+  const deleteUser = async (user: UserProfile) => {
     try {
-      // Find the user to archive
-      const user = state.users.find(u => u.id === userId);
-      if (!user) throw new Error('User not found');
-
       // Immediately remove user from UI for better UX
-      dispatch({ type: 'REMOVE_USER', payload: userId });
+      dispatch({ type: 'REMOVE_USER', payload: user.id });
 
-      // Archive the user - do this for all active users, not just those with lastLogin
-      if (user.status === 'active') {
-        const { error: archiveError } = await supabase
-          .from('archived_users')
-          .insert({
-            original_user_id: userId,
-            first_name: user.firstName,
-            last_name: user.lastName,
-            email: user.email,
-            role: user.role,
-            location: user.location,
-            department: user.department,
-            position: user.position,
-            previous_status: 'active',
-            archived_by: (await supabase.auth.getUser()).data.user?.id,
-            reason: 'manual_deletion',
-            metadata: { lastLogin: user.lastLogin?.toISOString() }
-          });
+      // Archive the user first
+      const { error: archiveError } = await supabase
+        .from('archived_users')
+        .insert({
+          original_user_id: user.id,
+          first_name: user.firstName,
+          last_name: user.lastName,
+          email: user.email,
+          role: user.role,
+          restaurant_role: user.restaurantRole,
+          access_level: user.accessLevel,
+          location: user.location,
+          department: user.department,
+          position: user.position,
+          previous_status: 'active',
+          archived_by: (await supabase.auth.getUser()).data.user?.id,
+          reason: 'manual_deletion',
+          can_reactivate: true,
+          metadata: { lastLogin: user.lastLogin?.toISOString() || null }
+        });
 
-        if (archiveError) {
-          // Rollback UI change if archive fails
-          dispatch({ type: 'ADD_USER', payload: user });
-          throw archiveError;
-        }
+      if (archiveError) {
+        // Rollback UI change if archive fails
+        dispatch({ type: 'ADD_USER', payload: user });
+        throw archiveError;
       }
 
-      // Delete from profiles table - use the correct primary key column
-      const { error } = await supabase
+      // Delete the user profile
+      const { error: deleteError } = await supabase
         .from('profiles')
         .delete()
-        .eq('id', userId);
+        .eq('id', user.id);
 
-      if (error) {
+      if (deleteError) {
         // Rollback UI change if deletion fails
         dispatch({ type: 'ADD_USER', payload: user });
-        throw error;
+        throw deleteError;
       }
 
       toast({

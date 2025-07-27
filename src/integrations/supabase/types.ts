@@ -1048,6 +1048,7 @@ export type Database = {
           invited_by: string | null
           last_name: string
           location: string
+          metadata: Json | null
           restaurant_role: Database["public"]["Enums"]["restaurant_role"] | null
           role: string
           status: string | null
@@ -1064,6 +1065,7 @@ export type Database = {
           invited_by?: string | null
           last_name: string
           location: string
+          metadata?: Json | null
           restaurant_role?:
             | Database["public"]["Enums"]["restaurant_role"]
             | null
@@ -1082,6 +1084,7 @@ export type Database = {
           invited_by?: string | null
           last_name?: string
           location?: string
+          metadata?: Json | null
           restaurant_role?:
             | Database["public"]["Enums"]["restaurant_role"]
             | null
