@@ -127,7 +127,7 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
       const userProfiles: UserProfile[] = profiles?.filter(profile => 
         profile.status === 'active'
       ).map(profile => ({
-        id: profile.id || '',
+        id: profile.user_id || '',
         firstName: profile.first_name || '',
         lastName: profile.last_name || '',
         email: `${profile.first_name?.toLowerCase()}.${profile.last_name?.toLowerCase()}@company.com`, // Placeholder
@@ -369,7 +369,7 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
       const { error: deleteError } = await supabase
         .from('profiles')
         .delete()
-        .eq('id', user.id);
+        .eq('user_id', user.id);
 
       if (deleteError) {
         // Rollback UI change if deletion fails
