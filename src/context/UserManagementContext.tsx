@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
-import { UserProfile, Shift, TimeEntry, UserRole, UserStatus, LocationType, EmploymentType } from '@/types/users';
+import { UserProfile, Shift, TimeEntry, UserRole, UserStatus, LocationType, EmploymentType, ArchivedUser } from '@/types/users';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
@@ -19,6 +19,7 @@ interface PendingInvitation {
 interface UserManagementState {
   users: UserProfile[];
   pendingInvitations: PendingInvitation[];
+  archivedUsers: ArchivedUser[];
   shifts: Shift[];
   timeEntries: TimeEntry[];
   loading: boolean;
@@ -28,6 +29,7 @@ type UserManagementAction =
   | { type: 'SET_LOADING'; payload: boolean }
   | { type: 'LOAD_USERS'; payload: UserProfile[] }
   | { type: 'LOAD_PENDING_INVITATIONS'; payload: PendingInvitation[] }
+  | { type: 'LOAD_ARCHIVED_USERS'; payload: ArchivedUser[] }
   | { type: 'LOAD_SHIFTS'; payload: Shift[] }
   | { type: 'LOAD_TIME_ENTRIES'; payload: TimeEntry[] }
   | { type: 'ADD_USER'; payload: UserProfile }
@@ -36,6 +38,7 @@ type UserManagementAction =
   | { type: 'ADD_PENDING_INVITATION'; payload: PendingInvitation }
   | { type: 'UPDATE_PENDING_INVITATION'; payload: PendingInvitation }
   | { type: 'REMOVE_PENDING_INVITATION'; payload: string }
+  | { type: 'ADD_ARCHIVED_USER'; payload: ArchivedUser }
   | { type: 'ADD_SHIFT'; payload: Shift }
   | { type: 'UPDATE_SHIFT'; payload: Shift }
   | { type: 'ADD_TIME_ENTRY'; payload: TimeEntry }
@@ -49,6 +52,8 @@ const userManagementReducer = (state: UserManagementState, action: UserManagemen
       return { ...state, users: action.payload };
     case 'LOAD_PENDING_INVITATIONS':
       return { ...state, pendingInvitations: action.payload };
+    case 'LOAD_ARCHIVED_USERS':
+      return { ...state, archivedUsers: action.payload };
     case 'LOAD_SHIFTS':
       return { ...state, shifts: action.payload };
     case 'LOAD_TIME_ENTRIES':
@@ -81,6 +86,8 @@ const userManagementReducer = (state: UserManagementState, action: UserManagemen
         ...state,
         pendingInvitations: state.pendingInvitations.filter(invitation => invitation.id !== action.payload)
       };
+    case 'ADD_ARCHIVED_USER':
+      return { ...state, archivedUsers: [...state.archivedUsers, action.payload] };
     case 'ADD_SHIFT':
       return { ...state, shifts: [...state.shifts, action.payload] };
     case 'UPDATE_SHIFT':
@@ -110,6 +117,7 @@ interface UserManagementContextType extends UserManagementState {
   deleteUser: (userId: string) => void;
   deletePendingInvitation: (invitationId: string) => Promise<void>;
   resendInvitation: (invitation: PendingInvitation) => Promise<void>;
+  reactivateUser: (archivedUserId: string) => Promise<void>;
   addShift: (shift: Omit<Shift, 'id'>) => void;
   updateShift: (shift: Shift) => void;
   clockIn: (userId: string, shiftId?: string) => void;
@@ -127,6 +135,7 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
   const [state, dispatch] = useReducer(userManagementReducer, {
     users: [],
     pendingInvitations: [],
+    archivedUsers: [],
     shifts: [],
     timeEntries: [],
     loading: false
@@ -197,10 +206,45 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
     }
   };
 
+  const loadArchivedUsers = async () => {
+    try {
+      const { data: archived, error } = await supabase
+        .from('archived_users')
+        .select('*')
+        .order('archived_at', { ascending: false });
+
+      if (error) throw error;
+
+      const archivedUsers: ArchivedUser[] = archived?.map(user => ({
+        id: user.id,
+        originalUserId: user.original_user_id,
+        originalInvitationId: user.original_invitation_id,
+        firstName: user.first_name,
+        lastName: user.last_name,
+        email: user.email,
+        role: user.role as UserRole,
+        location: user.location as LocationType,
+        department: user.department,
+        position: user.position,
+        previousStatus: user.previous_status as 'active' | 'pending',
+        archivedBy: user.archived_by,
+        archivedAt: new Date(user.archived_at),
+        reason: user.reason,
+        metadata: user.metadata,
+        canReactivate: user.can_reactivate
+      })) || [];
+
+      dispatch({ type: 'LOAD_ARCHIVED_USERS', payload: archivedUsers });
+    } catch (error) {
+      console.error('Error loading archived users:', error);
+    }
+  };
+
   // Initialize and set up real-time subscriptions
   useEffect(() => {
     loadUsers();
     loadPendingInvitations();
+    loadArchivedUsers();
 
     // Set up real-time subscriptions with more specific event handling
     const profilesChannel = supabase
@@ -259,9 +303,30 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
       })
       .subscribe();
 
+    const archivedChannel = supabase
+      .channel('archived-users-changes')
+      .on('postgres_changes', { 
+        event: 'INSERT', 
+        schema: 'public', 
+        table: 'archived_users' 
+      }, () => {
+        console.log('Archived user created - refreshing data');
+        loadArchivedUsers();
+      })
+      .on('postgres_changes', { 
+        event: 'UPDATE', 
+        schema: 'public', 
+        table: 'archived_users' 
+      }, () => {
+        console.log('Archived user updated - refreshing data');
+        loadArchivedUsers();
+      })
+      .subscribe();
+
     return () => {
       supabase.removeChannel(profilesChannel);
       supabase.removeChannel(invitationsChannel);
+      supabase.removeChannel(archivedChannel);
     };
   }, []);
 
@@ -282,7 +347,30 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
 
   const deleteUser = async (userId: string) => {
     try {
-      // Delete from profiles table - this will cascade to related data
+      // Find the user to archive
+      const user = state.users.find(u => u.id === userId);
+      if (!user) throw new Error('User not found');
+
+      // Archive the user first
+      const { error: archiveError } = await supabase
+        .from('archived_users')
+        .insert({
+          original_user_id: userId,
+          first_name: user.firstName,
+          last_name: user.lastName,
+          email: user.email,
+          role: user.role,
+          location: user.location,
+          department: user.department,
+          position: user.position,
+          previous_status: 'active',
+          archived_by: (await supabase.auth.getUser()).data.user?.id,
+          reason: 'manual_deletion'
+        });
+
+      if (archiveError) throw archiveError;
+
+      // Then delete from profiles table
       const { error } = await supabase
         .from('profiles')
         .delete()
@@ -292,16 +380,15 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
 
       toast({
         title: "Success",
-        description: "User deleted successfully",
+        description: "User archived successfully",
       });
 
       // The real-time subscription will automatically refresh the data
-      // But also manually refresh as a fallback
       setTimeout(() => refreshData(), 100);
     } catch (error: any) {
       toast({
         title: "Error",
-        description: `Failed to delete user: ${error.message}`,
+        description: `Failed to archive user: ${error.message}`,
         variant: "destructive",
       });
     }
@@ -374,6 +461,27 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
 
   const deletePendingInvitation = async (invitationId: string) => {
     try {
+      // Find the invitation to archive
+      const invitation = state.pendingInvitations.find(inv => inv.id === invitationId);
+      if (!invitation) throw new Error('Invitation not found');
+
+      // Archive the pending invitation first
+      const { error: archiveError } = await supabase
+        .from('archived_users')
+        .insert({
+          original_invitation_id: invitationId,
+          first_name: invitation.first_name,
+          last_name: invitation.last_name,
+          email: invitation.email,
+          role: invitation.role,
+          location: invitation.location,
+          previous_status: 'pending',
+          archived_by: (await supabase.auth.getUser()).data.user?.id,
+          reason: 'manual_deletion'
+        });
+
+      if (archiveError) throw archiveError;
+
       // Delete the invitation from the database - this will make the email link invalid
       const { error } = await supabase
         .from('user_invitations')
@@ -384,16 +492,77 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
 
       toast({
         title: "Success",
-        description: "Invitation deleted successfully",
+        description: "Invitation deleted and archived successfully",
       });
 
       // The real-time subscription will automatically refresh the data
-      // But also manually refresh as a fallback
       setTimeout(() => refreshData(), 100);
     } catch (error: any) {
       toast({
         title: "Error",
         description: `Failed to delete invitation: ${error.message}`,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const reactivateUser = async (archivedUserId: string) => {
+    try {
+      const archivedUser = state.archivedUsers.find(user => user.id === archivedUserId);
+      if (!archivedUser || !archivedUser.canReactivate) {
+        throw new Error('User cannot be reactivated');
+      }
+
+      if (archivedUser.previousStatus === 'pending') {
+        // Recreate invitation for pending users
+        const { error } = await supabase
+          .from('user_invitations')
+          .insert({
+            email: archivedUser.email,
+            first_name: archivedUser.firstName,
+            last_name: archivedUser.lastName,
+            role: archivedUser.role,
+            location: archivedUser.location,
+            status: 'pending'
+          });
+
+        if (error) throw error;
+      } else {
+        // Recreate profile for active users
+        const { error } = await supabase
+          .from('profiles')
+          .insert({
+            user_id: archivedUser.originalUserId,
+            first_name: archivedUser.firstName,
+            last_name: archivedUser.lastName,
+            role: archivedUser.role,
+            location: archivedUser.location,
+            department: archivedUser.department,
+            position: archivedUser.position,
+            status: 'active'
+          });
+
+        if (error) throw error;
+      }
+
+      // Mark as reactivated in archived_users table
+      const { error: updateError } = await supabase
+        .from('archived_users')
+        .update({ can_reactivate: false, metadata: { reactivated_at: new Date().toISOString() } })
+        .eq('id', archivedUserId);
+
+      if (updateError) throw updateError;
+
+      toast({
+        title: "Success",
+        description: "User reactivated successfully",
+      });
+
+      setTimeout(() => refreshData(), 100);
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: `Failed to reactivate user: ${error.message}`,
         variant: "destructive",
       });
     }
@@ -431,6 +600,7 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
   const refreshData = () => {
     loadUsers();
     loadPendingInvitations();
+    loadArchivedUsers();
   };
 
   return (
@@ -441,6 +611,7 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
       deleteUser,
       deletePendingInvitation,
       resendInvitation,
+      reactivateUser,
       addShift,
       updateShift,
       clockIn,

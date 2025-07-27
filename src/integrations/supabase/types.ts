@@ -14,6 +14,63 @@ export type Database = {
   }
   public: {
     Tables: {
+      archived_users: {
+        Row: {
+          archived_at: string
+          archived_by: string | null
+          can_reactivate: boolean | null
+          department: string | null
+          email: string
+          first_name: string
+          id: string
+          last_name: string
+          location: string
+          metadata: Json | null
+          original_invitation_id: string | null
+          original_user_id: string | null
+          position: string | null
+          previous_status: string
+          reason: string | null
+          role: string
+        }
+        Insert: {
+          archived_at?: string
+          archived_by?: string | null
+          can_reactivate?: boolean | null
+          department?: string | null
+          email: string
+          first_name: string
+          id?: string
+          last_name: string
+          location: string
+          metadata?: Json | null
+          original_invitation_id?: string | null
+          original_user_id?: string | null
+          position?: string | null
+          previous_status: string
+          reason?: string | null
+          role: string
+        }
+        Update: {
+          archived_at?: string
+          archived_by?: string | null
+          can_reactivate?: boolean | null
+          department?: string | null
+          email?: string
+          first_name?: string
+          id?: string
+          last_name?: string
+          location?: string
+          metadata?: Json | null
+          original_invitation_id?: string | null
+          original_user_id?: string | null
+          position?: string | null
+          previous_status?: string
+          reason?: string | null
+          role?: string
+        }
+        Relationships: []
+      }
       cash_closures: {
         Row: {
           cash_collected: number | null

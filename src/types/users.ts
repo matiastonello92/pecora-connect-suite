@@ -55,3 +55,22 @@ export interface TimeEntry {
   approvedAt?: Date;
   notes?: string;
 }
+
+export interface ArchivedUser {
+  id: string;
+  originalUserId?: string;
+  originalInvitationId?: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  role: UserRole;
+  location: LocationType;
+  department?: string;
+  position?: string;
+  previousStatus: 'active' | 'pending';
+  archivedBy?: string;
+  archivedAt: Date;
+  reason?: string;
+  metadata?: any;
+  canReactivate: boolean;
+}
