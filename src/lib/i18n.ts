@@ -291,6 +291,11 @@ export const translations = {
     'communication.requestSent': 'Connection request sent',
     'communication.requestAccepted': 'Connection request accepted',
     'communication.requestDeclined': 'Connection request declined',
+    'communication.availableUsers': 'Available Users',
+    'communication.noUsersFound': 'No users found',
+    'communication.noAvailableUsers': 'No available users to connect with',
+    'communication.locationRestrictedMessage': 'You can only connect with users from your location',
+    'communication.connect': 'Connect',
     
     // Group Management  
     'communication.createGroup': 'Create Group',

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useChatContext } from '@/context/ChatContext';
 import { useAuth } from '@/context/AuthContext';
+import { useUserManagement } from '@/context/UserManagementContext';
 import { useTranslation } from '@/lib/i18n';
 import { formatDistanceToNow } from 'date-fns';
 import { enUS, fr, it } from 'date-fns/locale';
@@ -18,7 +19,8 @@ import {
   X,
   Clock,
   MessageCircle,
-  ArrowLeft
+  ArrowLeft,
+  MapPin
 } from 'lucide-react';
 
 const locales = { en: enUS, fr, it };
@@ -29,18 +31,79 @@ interface ConnectionRequestManagerProps {
 
 export const ConnectionRequestManager: React.FC<ConnectionRequestManagerProps> = ({ onClose }) => {
   const { user, language } = useAuth();
+  const { users } = useUserManagement();
   const { 
     connectionRequests, 
     sendConnectionRequest, 
-    respondToConnectionRequest 
+    respondToConnectionRequest,
+    canSendConnectionRequest,
+    getConnectionStatus
   } = useChatContext();
   const { t } = useTranslation(language);
   const [searchTerm, setSearchTerm] = useState('');
-  const [showSendRequest, setShowSendRequest] = useState(false);
-  const [recipientEmail, setRecipientEmail] = useState('');
+  const [showUserList, setShowUserList] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<any>(null);
   const [requestMessage, setRequestMessage] = useState('');
+  const [availableUsers, setAvailableUsers] = useState<any[]>([]);
+  const [loadingUsers, setLoadingUsers] = useState(false);
 
   const getLocale = () => locales[language as keyof typeof locales] || enUS;
+
+  // Check if user has privileged role that can bypass location restrictions
+  const canAccessAllLocations = () => {
+    if (!user) return false;
+    
+    // Check using auth user role and user management data
+    const currentUserProfile = users.find(u => u.id === user.id);
+    if (!currentUserProfile) return false;
+    
+    const privilegedRoles = ['general_manager', 'human_resources'];
+    return user.role === 'super_admin' || 
+           user.role === 'manager' ||
+           currentUserProfile.accessLevel === 'general_manager' ||
+           privilegedRoles.includes(currentUserProfile.restaurantRole || '');
+  };
+
+  // Load available users based on location access
+  useEffect(() => {
+    const loadAvailableUsers = async () => {
+      if (!user) return;
+      
+      setLoadingUsers(true);
+      try {
+        let filteredUsers = users.filter(u => 
+          u.id !== user.id && // Exclude current user
+          u.status === 'active' // Only active users
+        );
+
+        // Apply location filtering for non-privileged users
+        if (!canAccessAllLocations()) {
+          filteredUsers = filteredUsers.filter(u => u.location === user.location);
+        }
+
+        // Check connection status for each user
+        const usersWithStatus = await Promise.all(
+          filteredUsers.map(async (targetUser) => {
+            const status = await getConnectionStatus(targetUser.id);
+            const canSend = await canSendConnectionRequest(targetUser.id);
+            return {
+              ...targetUser,
+              connectionStatus: status,
+              canSendRequest: canSend
+            };
+          })
+        );
+
+        setAvailableUsers(usersWithStatus);
+      } catch (error) {
+        console.error('Error loading available users:', error);
+      } finally {
+        setLoadingUsers(false);
+      }
+    };
+
+    loadAvailableUsers();
+  }, [user, users, getConnectionStatus, canSendConnectionRequest]);
 
   const incomingRequests = connectionRequests.filter(
     req => req.recipient_id === user?.id && req.status === 'pending'
@@ -55,16 +118,46 @@ export const ConnectionRequestManager: React.FC<ConnectionRequestManagerProps> =
     (req.requester_id === user?.id || req.recipient_id === user?.id)
   );
 
+  // Filter available users based on search term
+  const filteredAvailableUsers = availableUsers.filter(targetUser => {
+    if (!searchTerm) return targetUser.canSendRequest;
+    
+    const searchLower = searchTerm.toLowerCase();
+    const fullName = `${targetUser.firstName} ${targetUser.lastName}`.toLowerCase();
+    const email = targetUser.email?.toLowerCase() || '';
+    const position = targetUser.position?.toLowerCase() || '';
+    const department = targetUser.department?.toLowerCase() || '';
+    
+    return targetUser.canSendRequest && (
+      fullName.includes(searchLower) ||
+      email.includes(searchLower) ||
+      position.includes(searchLower) ||
+      department.includes(searchLower)
+    );
+  });
+
   const handleSendRequest = async () => {
-    if (!recipientEmail.trim()) return;
+    if (!selectedUser) return;
     
-    // In a real implementation, you'd lookup the user by email
-    // For now, we'll use a placeholder user ID
-    await sendConnectionRequest('placeholder-user-id', requestMessage.trim() || undefined);
+    await sendConnectionRequest(selectedUser.id, requestMessage.trim() || undefined);
     
-    setRecipientEmail('');
+    setSelectedUser(null);
     setRequestMessage('');
-    setShowSendRequest(false);
+    setShowUserList(false);
+    
+    // Refresh available users to update connection status
+    const usersWithStatus = await Promise.all(
+      availableUsers.map(async (targetUser) => {
+        const status = await getConnectionStatus(targetUser.id);
+        const canSend = await canSendConnectionRequest(targetUser.id);
+        return {
+          ...targetUser,
+          connectionStatus: status,
+          canSendRequest: canSend
+        };
+      })
+    );
+    setAvailableUsers(usersWithStatus);
   };
 
   const handleAccept = async (requestId: string) => {
@@ -96,7 +189,7 @@ export const ConnectionRequestManager: React.FC<ConnectionRequestManagerProps> =
             <span>{t('communication.connections')}</span>
           </CardTitle>
           
-          <Button onClick={() => setShowSendRequest(true)}>
+          <Button onClick={() => setShowUserList(true)}>
             <UserPlus className="h-4 w-4 mr-2" />
             {t('communication.sendRequest')}
           </Button>
@@ -115,8 +208,11 @@ export const ConnectionRequestManager: React.FC<ConnectionRequestManagerProps> =
       </CardHeader>
 
       <CardContent>
-        <Tabs defaultValue="incoming" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
+        <Tabs defaultValue="available" className="w-full">
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="available">
+              {t('communication.availableUsers')}
+            </TabsTrigger>
             <TabsTrigger value="incoming" className="flex items-center space-x-2">
               <span>{t('communication.incoming')}</span>
               {incomingRequests.length > 0 && (
@@ -132,6 +228,73 @@ export const ConnectionRequestManager: React.FC<ConnectionRequestManagerProps> =
               {t('communication.connections')}
             </TabsTrigger>
           </TabsList>
+
+          {/* Available Users Tab */}
+          <TabsContent value="available">
+            <ScrollArea className="h-96">
+              {loadingUsers ? (
+                <div className="flex items-center justify-center py-8">
+                  <div className="animate-pulse text-muted-foreground">
+                    {t('common.loading')}
+                  </div>
+                </div>
+              ) : filteredAvailableUsers.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  <UserPlus className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                  <p>{searchTerm ? t('communication.noUsersFound') : t('communication.noAvailableUsers')}</p>
+                  {!canAccessAllLocations() && (
+                    <p className="text-xs mt-2">
+                      {t('communication.locationRestrictedMessage')}
+                    </p>
+                  )}
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {filteredAvailableUsers.map((targetUser) => (
+                    <Card key={targetUser.id} className="hover:bg-accent/50 transition-colors">
+                      <CardContent className="p-4">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-3">
+                            <Avatar>
+                              <AvatarFallback>
+                                {getInitials(`${targetUser.firstName} ${targetUser.lastName}`)}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <h4 className="font-medium">
+                                {targetUser.firstName} {targetUser.lastName}
+                              </h4>
+                              <p className="text-sm text-muted-foreground">
+                                {targetUser.position} • {targetUser.department}
+                              </p>
+                              {canAccessAllLocations() && (
+                                <p className="text-xs text-muted-foreground flex items-center mt-1">
+                                  <MapPin className="h-3 w-3 mr-1" />
+                                  {targetUser.location}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                          
+                          <Button
+                            size="sm"
+                            onClick={() => {
+                              setSelectedUser(targetUser);
+                              setShowUserList(true);
+                            }}
+                            disabled={!targetUser.canSendRequest}
+                          >
+                            <UserPlus className="h-4 w-4 mr-1" />
+                            {t('communication.connect')}
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
+            </ScrollArea>
+          </TabsContent>
 
           {/* Incoming Requests */}
           <TabsContent value="incoming">
@@ -288,18 +451,34 @@ export const ConnectionRequestManager: React.FC<ConnectionRequestManagerProps> =
         </Tabs>
 
         {/* Send Request Modal */}
-        {showSendRequest && (
+        {showUserList && selectedUser && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
             <Card className="w-full max-w-md mx-4">
               <CardHeader>
                 <CardTitle>{t('communication.sendConnectionRequest')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <Input
-                  placeholder={t('communication.recipientEmail')}
-                  value={recipientEmail}
-                  onChange={(e) => setRecipientEmail(e.target.value)}
-                />
+                <div className="flex items-center space-x-3 p-3 bg-muted rounded-lg">
+                  <Avatar>
+                    <AvatarFallback>
+                      {getInitials(`${selectedUser.firstName} ${selectedUser.lastName}`)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <h4 className="font-medium">
+                      {selectedUser.firstName} {selectedUser.lastName}
+                    </h4>
+                    <p className="text-sm text-muted-foreground">
+                      {selectedUser.position} • {selectedUser.department}
+                    </p>
+                    {canAccessAllLocations() && (
+                      <p className="text-xs text-muted-foreground flex items-center">
+                        <MapPin className="h-3 w-3 mr-1" />
+                        {selectedUser.location}
+                      </p>
+                    )}
+                  </div>
+                </div>
                 <textarea
                   placeholder={t('communication.optionalMessage')}
                   value={requestMessage}
@@ -307,7 +486,11 @@ export const ConnectionRequestManager: React.FC<ConnectionRequestManagerProps> =
                   className="w-full p-2 border rounded-lg resize-none h-24"
                 />
                 <div className="flex justify-end space-x-2">
-                  <Button variant="outline" onClick={() => setShowSendRequest(false)}>
+                  <Button variant="outline" onClick={() => {
+                    setShowUserList(false);
+                    setSelectedUser(null);
+                    setRequestMessage('');
+                  }}>
                     {t('common.cancel')}
                   </Button>
                   <Button onClick={handleSendRequest}>
