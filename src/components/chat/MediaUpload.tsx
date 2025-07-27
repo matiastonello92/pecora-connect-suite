@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { useAuth } from '@/context/AuthContext';
+import { useSimpleAuth } from '@/context/SimpleAuthContext';
 import { useTranslation } from '@/lib/i18n';
 import { useToast } from '@/hooks/use-toast';
 import { X, Upload, FileText, Image as ImageIcon, AlertTriangle } from 'lucide-react';
@@ -19,7 +19,8 @@ export const MediaUpload: React.FC<MediaUploadProps> = ({ file, onCancel, onSend
   const [caption, setCaption] = useState('');
   const [isValidFile, setIsValidFile] = useState(true);
   const [validationError, setValidationError] = useState<string>('');
-  const { language } = useAuth();
+  const { user } = useSimpleAuth();
+  const language = 'en'; // Temporary hardcode
   const { t } = useTranslation(language);
   const { toast } = useToast();
 

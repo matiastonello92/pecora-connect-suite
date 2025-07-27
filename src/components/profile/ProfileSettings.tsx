@@ -8,7 +8,7 @@ import { Separator } from '@/components/ui/separator';
 import { Globe, Palette, Lock, Bell, MoonIcon, LogOut } from 'lucide-react';
 import { UserProfile } from '@/types/users';
 import { useTranslation, Language } from '@/lib/i18n';
-import { useAuth } from '@/context/AuthContext';
+import { useSimpleAuth } from '@/context/SimpleAuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { PasswordChangeDialog } from './PasswordChangeDialog';
 
@@ -19,7 +19,7 @@ interface ProfileSettingsProps {
 export const ProfileSettings = ({ user }: ProfileSettingsProps) => {
   const [currentLanguage, setCurrentLanguage] = useState<Language>('en');
   const { t } = useTranslation(currentLanguage);
-  const { logout } = useAuth();
+  const { logout } = useSimpleAuth();
   const { toast } = useToast();
   const [showPasswordDialog, setShowPasswordDialog] = useState(false);
   const [settings, setSettings] = useState({
