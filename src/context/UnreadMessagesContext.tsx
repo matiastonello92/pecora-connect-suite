@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from './AuthContext';
+import { useSimpleAuth } from './SimpleAuthContext';
 
 interface UnreadMessagesContextType {
   totalUnreadCount: number;
@@ -20,7 +20,7 @@ export const useUnreadMessages = () => {
 };
 
 export const UnreadMessagesProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { user } = useAuth();
+  const { user } = useSimpleAuth();
   const [totalUnreadCount, setTotalUnreadCount] = useState(0);
   const [unreadCountByChat, setUnreadCountByChat] = useState<Record<string, number>>({});
 
@@ -218,7 +218,7 @@ export const UnreadMessagesProvider: React.FC<{ children: React.ReactNode }> = (
     if (user) {
       getUnreadCounts();
     }
-  }, [user?.location]);
+  }, []); // Remove location dependency for now
 
   return (
     <UnreadMessagesContext.Provider 

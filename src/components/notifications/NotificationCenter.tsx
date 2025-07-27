@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '@/context/AuthContext';
+import { useSimpleAuth } from '@/context/SimpleAuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -20,7 +20,7 @@ interface Notification {
 }
 
 export const NotificationCenter: React.FC = () => {
-  const { user } = useAuth();
+  const { user } = useSimpleAuth();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -243,7 +243,7 @@ export const NotificationCenter: React.FC = () => {
 
 // Hook for notifications count
 export const useNotificationCount = () => {
-  const { user } = useAuth();
+  const { user } = useSimpleAuth();
   const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {

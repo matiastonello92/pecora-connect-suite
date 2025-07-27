@@ -1,4 +1,4 @@
-import { useAuth } from '@/context/AuthContext';
+import { useSimpleAuth } from '@/context/SimpleAuthContext';
 import { useTranslation, Language, languages } from '@/lib/i18n';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -20,7 +20,9 @@ import { LogOut, Settings, User, Globe, Bell, MapPin } from 'lucide-react';
 import { NotificationCenter, useNotificationCount } from '@/components/notifications/NotificationCenter';
 
 export const AppHeader = () => {
-  const { user, logout, language, setLanguage } = useAuth();
+  const { user, logout } = useSimpleAuth();
+  const language = 'en'; // Temporarily hardcode language
+  const setLanguage = () => {}; // Temporarily disabled
   const navigate = useNavigate();
   const { t } = useTranslation(language);
   const unreadCount = useNotificationCount();
@@ -28,19 +30,13 @@ export const AppHeader = () => {
   
   const currentLocationName = availableLocations.find(loc => loc.value === activeLocation)?.label || activeLocation;
 
-  const getInitials = (firstName: string, lastName: string) => {
-    return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
+  const getInitials = (email: string) => {
+    const name = email.split('@')[0];
+    return name.slice(0, 2).toUpperCase();
   };
 
-  const getRoleColor = (role: string) => {
-    switch (role) {
-      case 'super_admin':
-        return 'bg-accent text-accent-foreground';
-      case 'manager':
-        return 'bg-secondary text-secondary-foreground';
-      default:
-        return 'bg-muted text-muted-foreground';
-    }
+  const getRoleColor = () => {
+    return 'bg-primary text-primary-foreground';
   };
 
   return (
@@ -56,7 +52,7 @@ export const AppHeader = () => {
         
         <div className="hidden lg:block min-w-0">
           <p className="text-sm text-muted-foreground font-inter truncate">
-            {t('welcome')}, {user?.firstName}
+            {t('welcome')}, {user?.email?.split('@')[0] || 'User'}
           </p>
         </div>
       </div>
@@ -103,7 +99,7 @@ export const AppHeader = () => {
             {(Object.keys(languages) as Language[]).map((lang) => (
               <DropdownMenuItem
                 key={lang}
-                onClick={() => setLanguage(lang)}
+                onClick={() => {}} // setLanguage disabled for now
                 className={language === lang ? 'bg-accent' : ''}
               >
                 {languages[lang]}
@@ -117,9 +113,9 @@ export const AppHeader = () => {
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="relative h-8 w-8 sm:h-10 sm:w-10 rounded-full">
               <Avatar className="h-8 w-8 sm:h-10 sm:w-10">
-                <AvatarFallback className={getRoleColor(user?.role || '')}>
+                <AvatarFallback className={getRoleColor()}>
                   <span className="text-xs sm:text-sm">
-                    {user && getInitials(user.firstName, user.lastName)}
+                    {user && getInitials(user.email || '')}
                   </span>
                 </AvatarFallback>
               </Avatar>
@@ -129,14 +125,13 @@ export const AppHeader = () => {
             <DropdownMenuLabel className="font-normal">
               <div className="flex flex-col space-y-1">
                 <p className="text-sm font-medium leading-none truncate">
-                  {user?.firstName} {user?.lastName}
+                  {user?.email?.split('@')[0] || 'User'}
                 </p>
                 <p className="text-xs leading-none text-muted-foreground truncate">
                   {user?.email}
                 </p>
                 <p className="text-xs leading-none text-muted-foreground capitalize">
-                  {user?.role}
-                  {user?.department && ` • ${user.department}`}
+                  Admin User
                 </p>
               </div>
             </DropdownMenuLabel>

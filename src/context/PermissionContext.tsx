@@ -1,5 +1,5 @@
 import { useContext, createContext, ReactNode } from 'react';
-import { useAuth } from '@/context/AuthContext';
+import { useSimpleAuth } from '@/context/SimpleAuthContext';
 import { usePermissions } from '@/hooks/usePermissions';
 import { AppModule, AccessLevel, UserProfile } from '@/types/users';
 
@@ -12,7 +12,7 @@ interface PermissionContextType {
 const PermissionContext = createContext<PermissionContextType | undefined>(undefined);
 
 export const PermissionProvider = ({ children }: { children: ReactNode }) => {
-  const { user } = useAuth();
+  const { user } = useSimpleAuth();
   const { hasPermission: hasModulePermission } = usePermissions({
     userId: user?.id,
     accessLevel: 'base' as AccessLevel

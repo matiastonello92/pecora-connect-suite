@@ -1,4 +1,4 @@
-import { useAuth } from '@/context/AuthContext';
+import { useSimpleAuth } from '@/context/SimpleAuthContext';
 import { useTranslation } from '@/lib/i18n';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { UnreadMessagesProvider } from '@/context/UnreadMessagesContext';
@@ -12,7 +12,7 @@ interface AppLayoutProps {
 }
 
 export const AppLayout = ({ children }: AppLayoutProps) => {
-  const { language } = useAuth();
+  const language = 'en'; // Temporarily hardcode language
   const { t } = useTranslation(language);
   const { isLocationBlocked, suggestedLocation } = useLocation();
 

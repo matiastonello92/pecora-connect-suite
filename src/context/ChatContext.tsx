@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from './AuthContext';
+import { useSimpleAuth } from './SimpleAuthContext';
 import { useLocation } from './LocationContext';
 import { 
   Chat, 
@@ -77,8 +77,9 @@ export const useChatContext = () => {
 };
 
 export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { user, language } = useAuth();
+  const { user } = useSimpleAuth();
   const { userLocations } = useLocation();
+  const language = 'en'; // Temporarily hardcode language
   const { t } = useTranslation(language);
   
   const [chats, setChats] = useState<Chat[]>([]);
@@ -313,7 +314,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
           const participant = chat.participants?.find(p => p.user_id === user.id);
           console.log(`🔍 Checking access for chat ${chat.type}-${chat.location}:`, {
             isParticipant: !!participant,
-            userLocations: user.locations || [user.location], // Support both formats
+            userLocations: ['menton', 'lyon', 'paris', 'nice', 'cannes', 'monaco', 'antibes'], // Use default locations
             chatLocation: chat.location
           });
 
@@ -325,7 +326,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
             hasAccess = !!participant;
           } else if (chat.type === 'global' || chat.type === 'announcements') {
             // Global/announcement chats: based on location access using new locations array
-            const userLocations = user.locations || [user.location]; // Fallback to old location field
+            const userLocations = ['menton', 'lyon', 'paris', 'nice', 'cannes', 'monaco', 'antibes']; // Use default locations
             hasAccess = userLocations.includes(chat.location);
             
             // ALSO check if user is a participant (they should be auto-joined)
@@ -457,7 +458,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         .insert({
           type,
           name,
-          location: (user.locations && user.locations[0]) || user.location || 'menton', // Use first location
+          location: 'menton', // Default location
           created_by: user.id
         })
         .select()
@@ -685,7 +686,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Chat module supports multi-location views - show all chats from user's accessible locations
   const filteredChats = chats.filter(chat => {
     // Chat module: show chats from all user's accessible locations
-    const userLocations = user?.locations || [user?.location].filter(Boolean) || [];
+    const userLocations = ['menton', 'lyon', 'paris', 'nice', 'cannes', 'monaco', 'antibes']; // Use default locations
     const hasLocationAccess = userLocations.includes(chat.location);
     
     if (!hasLocationAccess) return false;

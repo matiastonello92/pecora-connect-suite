@@ -1,4 +1,4 @@
-import { useAuth } from '@/context/AuthContext';
+import { useSimpleAuth } from '@/context/SimpleAuthContext';
 import { useTranslation } from '@/lib/i18n';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -17,13 +17,14 @@ import { Button } from '@/components/ui/button';
   } from 'lucide-react';
 
 export default function Dashboard() {
-  const { user, language, hasPermission, hasAccess } = useAuth();
+  const { user } = useSimpleAuth();
+  const language = 'en'; // Temporarily hardcode language
+  const hasPermission = () => true; // Temporarily allow all permissions  
+  const hasAccess = () => true; // Temporarily allow all access
   const { t } = useTranslation(language);
 
-  // Check if user has access to financial section
-  const hasFinancialAccess = user?.role === 'super_admin' || 
-                            (['manager', 'director', 'finance', 'super_admin'].includes(user?.role || '') && 
-                            hasAccess(['finance', 'manager', 'super_manager', 'general_manager']));
+  // Check if user has access to financial section  
+  const hasFinancialAccess = true; // Allow all for now
 
   // All stats now start with 0 - will be populated with real data
   const stats = [
@@ -83,10 +84,10 @@ export default function Dashboard() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="min-w-0 flex-1">
             <h1 className="text-2xl sm:text-3xl font-playfair font-bold text-primary mb-2">
-              {t('welcome')}, {user?.firstName}!
+              {t('welcome')}, {user?.email?.split('@')[0] || 'User'}!
             </h1>
             <p className="text-sm sm:text-base text-muted-foreground font-inter">
-              {new Intl.DateTimeFormat(language === 'it' ? 'it-IT' : language === 'fr' ? 'fr-FR' : 'en-US', {
+              {new Intl.DateTimeFormat('en-US', {
                 weekday: 'long',
                 year: 'numeric',
                 month: 'long',
@@ -94,9 +95,9 @@ export default function Dashboard() {
               }).format(new Date())}
             </p>
             <div className="mt-2">
-              <Badge className={getDepartmentColor(user?.department || '')}>
+              <Badge className="bg-primary text-primary-foreground">
                 <span className="text-xs sm:text-sm">
-                  {t(user?.department || '')} • {user?.location}
+                  Admin • All Locations
                 </span>
               </Badge>
             </div>

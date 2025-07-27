@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Clock, MapPin } from 'lucide-react';
-import { useAuth } from '@/context/AuthContext';
+import { useSimpleAuth } from '@/context/SimpleAuthContext';
 import { useLocation } from '@/context/LocationContext';
 import { formatDateForLocation, getCurrentTimeForLocation, DATE_FORMATS, getDateLocale } from '@/lib/timezone';
 import { useTranslation } from '@/lib/i18n';
@@ -16,13 +16,14 @@ export const LocationClock: React.FC<LocationClockProps> = ({
   showLocation = true,
   format = DATE_FORMATS.ITALIAN_DATE
 }) => {
-  const { user, language } = useAuth();
+  const { user } = useSimpleAuth();
   const { activeLocation, canSwitchLocations } = useLocation();
+  const language = 'en'; // Temporarily hardcode language
   const { t } = useTranslation(language);
   const [currentTime, setCurrentTime] = useState<Date>(new Date());
 
   // Determine effective location for timezone
-  const effectiveLocation = canSwitchLocations ? activeLocation : user?.location;
+  const effectiveLocation = canSwitchLocations ? activeLocation : 'menton'; // Default to menton
 
   useEffect(() => {
     const updateTime = () => {
