@@ -163,20 +163,42 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 // Helper functions
 const fetchUserProfile = async (userId: string): Promise<Profile | null> => {
   try {
+    console.log('🔍 Starting profile fetch for user:', userId);
+    console.log('🔍 Auth state before profile fetch:', { uid: userId, timestamp: new Date().toISOString() });
+    
     const { data, error } = await supabase
       .from('profiles')
       .select('*')
       .eq('user_id', userId)
-      .single();
+      .maybeSingle(); // Use maybeSingle instead of single to handle no results gracefully
 
     if (error) {
-      console.error('Error fetching user profile:', error);
+      console.error('❌ Error fetching user profile:', error);
+      console.error('❌ Error details:', { code: error.code, message: error.message, details: error.details });
       return null;
     }
 
+    if (!data) {
+      console.warn('⚠️ No profile found for user:', userId);
+      return null;
+    }
+
+    console.log('✅ Profile fetched successfully:', { 
+      userId: data.user_id, 
+      email: data.email, 
+      role: data.role,
+      timestamp: new Date().toISOString()
+    });
+    
     return data;
   } catch (error) {
-    console.error('Exception fetching user profile:', error);
+    console.error('💥 Exception fetching user profile:', error);
+    console.error('💥 Exception details:', { 
+      name: error instanceof Error ? error.name : 'Unknown',
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+      timestamp: new Date().toISOString()
+    });
     return null;
   }
 };
