@@ -36,6 +36,7 @@ import { Financial } from '@/pages/Financial';
 import { Suppliers } from '@/pages/Suppliers';
 import { Tasks } from '@/pages/Tasks';
 import { Maintenance } from '@/pages/Maintenance';
+import { Profile } from '@/pages/Profile';
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -80,6 +81,7 @@ const AppContent = () => {
         <Route path="/users" element={<UserManagement />} />
         <Route path="/users/invitations" element={<UserManagement />} />
         <Route path="/users/roles" element={<UserManagement />} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="/settings" element={<Settings />} />
         {/* Supplier routes */}
         <Route path="/suppliers/orders" element={<Suppliers />} />
