@@ -28,7 +28,10 @@ import {
   CheckCheck,
   Pin,
   Archive,
-  Menu
+  Menu,
+  RefreshCw,
+  Bug,
+  AlertTriangle
 } from 'lucide-react';
 import { ChatType } from '@/types/communication';
 import { ChatInterface } from './ChatInterface';
@@ -43,12 +46,15 @@ const locales = { en: enUS, fr, it };
 export const ChatDashboard: React.FC = () => {
   const {
     filteredChats,
+    chats,
     activeChat,
     setActiveChat,
     searchTerm,
     setSearchTerm,
     loading,
-    createChat
+    createChat,
+    refreshChats,
+    ensureUserInChats
   } = useChatContext();
   const { user, language } = useAuth();
   const { unreadCountByChat, markChatAsRead } = useUnreadMessages();
@@ -108,6 +114,24 @@ export const ChatDashboard: React.FC = () => {
   }, [activeChat, markChatAsRead]);
   const [showGroups, setShowGroups] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [showDebugInfo, setShowDebugInfo] = useState(false);
+
+  // Add recovery functions
+  const handleRefreshChats = async () => {
+    try {
+      await refreshChats();
+    } catch (error) {
+      console.error('Error refreshing chats:', error);
+    }
+  };
+
+  const handleEnsureUserInChats = async () => {
+    try {
+      await ensureUserInChats();
+    } catch (error) {
+      console.error('Error ensuring user in chats:', error);
+    }
+  };
 
   const getLocale = () => enUS;
 
@@ -302,13 +326,57 @@ export const ChatDashboard: React.FC = () => {
                 </div>
               </div>
             ) : sortedChats.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
+              <div className="text-center py-8 text-muted-foreground space-y-4">
                 <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-muted flex items-center justify-center">
                   <MessageSquare className="w-8 h-8" />
                 </div>
-                <p className="text-sm">
-                  {searchTerm ? t('communication.noChatsFound') : t('communication.noChats')}
-                </p>
+                <div>
+                  <p className="text-sm mb-2">
+                    {searchTerm ? t('communication.noChatsFound') : 'No chats found for your location'}
+                  </p>
+                  {!searchTerm && (
+                    <p className="text-xs text-orange-600">
+                      This might indicate an issue with auto-join. Try the recovery options below.
+                    </p>
+                  )}
+                </div>
+                
+                {/* Recovery buttons */}
+                {!searchTerm && (
+                  <div className="flex flex-col items-center gap-2">
+                    <div className="flex gap-2">
+                      <Button size="sm" variant="outline" onClick={handleRefreshChats}>
+                        <RefreshCw className="h-3 w-3 mr-1" />
+                        Refresh
+                      </Button>
+                      <Button size="sm" variant="outline" onClick={handleEnsureUserInChats}>
+                        <Users className="h-3 w-3 mr-1" />
+                        Join Chats
+                      </Button>
+                    </div>
+                    <Button size="sm" variant="ghost" onClick={() => setShowDebugInfo(!showDebugInfo)}>
+                      <Bug className="h-3 w-3 mr-1" />
+                      {showDebugInfo ? 'Hide' : 'Show'} Debug Info
+                    </Button>
+                  </div>
+                )}
+
+                {/* Debug Information */}
+                {showDebugInfo && (
+                  <div className="mt-4 p-3 bg-orange-50 border border-orange-200 rounded-lg text-left text-xs">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Bug className="h-3 w-3 text-orange-600" />
+                      <span className="font-medium text-orange-900">Debug Information</span>
+                    </div>
+                    <div className="space-y-1 text-muted-foreground">
+                      <div><strong>User ID:</strong> {user?.id}</div>
+                      <div><strong>User Location:</strong> {user?.location}</div>
+                      <div><strong>Total Chats:</strong> {chats.length}</div>
+                      <div><strong>Filtered Chats:</strong> {filteredChats.length}</div>
+                      <div><strong>Chat Names:</strong> {filteredChats.map(c => c.name).join(', ') || 'None'}</div>
+                    </div>
+                  </div>
+                )}
               </div>
             ) : (
               <div className="space-y-1">

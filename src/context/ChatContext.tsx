@@ -164,17 +164,25 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     
     setLoading(true);
     try {
-      console.log('Loading chats for user:', user.id);
+      console.log('🔄 Loading chats for user:', user.id, 'location:', user.location);
       
-      // First ensure default chats exist
-      const { error: ensureError } = await supabase.rpc('ensure_default_chats');
-      if (ensureError) {
-        console.error('Error ensuring default chats:', ensureError);
-        // Continue anyway - user might still see existing chats
+      // First ensure default chats exist with better error handling
+      try {
+        const { error: ensureError } = await supabase.rpc('ensure_default_chats');
+        if (ensureError) {
+          console.warn('⚠️ Error ensuring default chats:', ensureError);
+          // Continue anyway - user might still see existing chats
+        } else {
+          console.log('✅ Default chats ensured successfully');
+        }
+      } catch (ensureError) {
+        console.warn('⚠️ Exception ensuring default chats:', ensureError);
       }
 
       // Build query based on user's location - only show menton and lyon chats
-      let query = supabase
+      console.log('🔍 Querying chats with location filter: [menton, lyon]');
+      
+      const { data, error } = await supabase
         .from('chats')
         .select(`
           *,
@@ -192,20 +200,24 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
         .in('location', ['menton', 'lyon'])
         .order('last_message_at', { ascending: false });
 
-      const { data, error } = await query;
-
       if (error) {
-        console.error('Error loading chats:', error);
-        toast.error(t('communication.errorLoadingChats'));
+        console.error('❌ Error loading chats:', error);
+        toast.error(`Chat loading failed: ${error.message}`);
         return;
       }
 
-      console.log('Raw chats data:', data);
+      console.log('📊 Raw chats data received:', data?.length || 0, 'chats');
+      console.log('📋 Chat details:', data?.map(c => `${c.type}-${c.location} (${c.participants?.length || 0} participants)`));
 
       // Calculate unread counts and add last message info
       const chatsWithUnread = await Promise.all(
         (data || []).map(async (chat) => {
           const participant = chat.participants?.find(p => p.user_id === user.id);
+          console.log(`🔍 Checking access for chat ${chat.type}-${chat.location}:`, {
+            isParticipant: !!participant,
+            userLocation: user.location,
+            chatLocation: chat.location
+          });
           
           // Check if user has access to this chat
           let hasAccess = false;
@@ -222,7 +234,14 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
               // Regular users see their location's chats
               hasAccess = chat.location === user.location;
             }
+            
+            // ALSO check if user is a participant (they should be auto-joined)
+            if (hasAccess && !participant) {
+              console.warn(`⚠️ User should have access to ${chat.type}-${chat.location} but is not a participant!`);
+            }
           }
+          
+          console.log(`${hasAccess ? '✅' : '❌'} Access to ${chat.type}-${chat.location}:`, hasAccess);
           
           if (!hasAccess) return null;
 
@@ -272,11 +291,20 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Filter out null entries (chats user doesn't have access to)
       const filteredChats = chatsWithUnread.filter(chat => chat !== null);
       
+      console.log('📈 Final chat list:', filteredChats.length, 'chats accessible');
+      console.log('📝 Chat names:', filteredChats.map(c => c.name));
+      
       setChats(filteredChats as unknown as Chat[]);
-      console.log('Chats loaded successfully:', filteredChats.length);
+      
+      if (filteredChats.length === 0) {
+        console.warn('⚠️ No chats found! This indicates a problem with auto-join.');
+        toast.error('No chats found for your location. Use the Refresh button or contact an administrator.');
+      } else {
+        console.log('✅ Chats loaded successfully:', filteredChats.length);
+      }
     } catch (error: any) {
-      console.error('Unexpected error loading chats:', error);
-      toast.error(t('communication.errorLoadingChats'));
+      console.error('💥 Unexpected error loading chats:', error);
+      toast.error(`Unexpected chat error: ${error.message}`);
     } finally {
       setLoading(false);
     }
