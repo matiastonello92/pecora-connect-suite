@@ -64,6 +64,58 @@ export const translations = {
     reports: 'Reports',
     equipment: 'Equipment',
     
+    // User roles and access levels
+    roles: {
+      waiter: 'Waiter',
+      runner: 'Runner', 
+      bartender: 'Bartender',
+      floor_manager: 'Floor Manager',
+      location_director: 'Location Director',
+      general_director: 'General Director',
+      cook: 'Cook',
+      kitchen_assistant: 'Kitchen Assistant',
+      pizza_chef: 'Pizza Chef',
+      dishwasher: 'Dishwasher',
+      stock_manager: 'Stock Manager',
+      cleaning_staff: 'Cleaning Staff',
+      accountant: 'Accountant',
+      procurement_manager: 'Procurement Manager',
+      social_media_manager: 'Social Media Manager',
+      maintenance_manager: 'Maintenance Manager',
+      human_resources: 'Human Resources'
+    },
+    accessLevels: {
+      base: 'Base User',
+      manager_sala: 'Manager Sala',
+      manager_cucina: 'Manager Cucina',
+      general_manager: 'General Manager',
+      assistant_manager: 'Assistant Manager',
+      financial_department: 'Financial Department',
+      communication_department: 'Communication Department',
+      observer: 'Observer'
+    },
+    modules: {
+      chat: 'Internal Chat',
+      inventory_sala: 'Sala Inventory',
+      inventory_kitchen: 'Kitchen Inventory',
+      checklists: 'Checklists',
+      suppliers: 'Suppliers',
+      equipment: 'Equipment',
+      financial: 'Financial',
+      cash_closure: 'Cash Closure',
+      reports: 'Reports',
+      tasks: 'Tasks',
+      communication: 'Communication',
+      announcements: 'Announcements',
+      user_management: 'User Management'
+    },
+    permissions: {
+      read: 'Read',
+      write: 'Write',
+      validate: 'Validate',
+      delete: 'Delete'
+    },
+    
     // Common
     save: 'Save',
     cancel: 'Cancel',
@@ -317,6 +369,58 @@ export const translations = {
     reports: 'Rapports',
     equipment: 'Équipement',
     
+    // User roles and access levels - French
+    roles: {
+      waiter: 'Serveur',
+      runner: 'Commis de service',
+      bartender: 'Barman',
+      floor_manager: 'Chef de rang',
+      location_director: 'Directeur de lieu',
+      general_director: 'Directeur général',
+      cook: 'Cuisinier',
+      kitchen_assistant: 'Aide-cuisinier',
+      pizza_chef: 'Pizzaiolo',
+      dishwasher: 'Plongeur',
+      stock_manager: 'Gestionnaire stock',
+      cleaning_staff: 'Personnel nettoyage',
+      accountant: 'Comptable',
+      procurement_manager: 'Responsable achats',
+      social_media_manager: 'Responsable réseaux sociaux',
+      maintenance_manager: 'Responsable maintenance',
+      human_resources: 'Ressources humaines'
+    },
+    accessLevels: {
+      base: 'Utilisateur de base',
+      manager_sala: 'Manager Sala',
+      manager_cucina: 'Manager Cuisine',
+      general_manager: 'Directeur général',
+      assistant_manager: 'Directeur adjoint',
+      financial_department: 'Département financier',
+      communication_department: 'Département communication',
+      observer: 'Observateur'
+    },
+    modules: {
+      chat: 'Chat interne',
+      inventory_sala: 'Inventaire Sala',
+      inventory_kitchen: 'Inventaire Cuisine',
+      checklists: 'Listes de contrôle',
+      suppliers: 'Fournisseurs',
+      equipment: 'Équipement',
+      financial: 'Financier',
+      cash_closure: 'Fermeture caisse',
+      reports: 'Rapports',
+      tasks: 'Tâches',
+      communication: 'Communication',
+      announcements: 'Annonces',
+      user_management: 'Gestion utilisateurs'
+    },
+    permissions: {
+      read: 'Lecture',
+      write: 'Écriture',
+      validate: 'Valider',
+      delete: 'Supprimer'
+    },
+    
     // Common
     save: 'Enregistrer',
     cancel: 'Annuler',
@@ -408,6 +512,58 @@ export const translations = {
     userPreferences: 'Preferenze utente',
     reports: 'Rapporti',
     equipment: 'Attrezzatura',
+    
+    // User roles and access levels - Italian
+    roles: {
+      waiter: 'Cameriere',
+      runner: 'Aiuto cameriere',
+      bartender: 'Barista',
+      floor_manager: 'Responsabile sala',
+      location_director: 'Direttore locale',
+      general_director: 'Direttore generale',
+      cook: 'Cuoco',
+      kitchen_assistant: 'Aiuto cuoco',
+      pizza_chef: 'Pizzaiolo',
+      dishwasher: 'Lavapiatti',
+      stock_manager: 'Responsabile magazzino',
+      cleaning_staff: 'Personale pulizie',
+      accountant: 'Contabile',
+      procurement_manager: 'Responsabile acquisti',
+      social_media_manager: 'Responsabile social media',
+      maintenance_manager: 'Responsabile manutenzione',
+      human_resources: 'Risorse umane'
+    },
+    accessLevels: {
+      base: 'Utente base',
+      manager_sala: 'Manager Sala',
+      manager_cucina: 'Manager Cucina',
+      general_manager: 'Direttore generale',
+      assistant_manager: 'Vice direttore',
+      financial_department: 'Dipartimento finanziario',
+      communication_department: 'Dipartimento comunicazione',
+      observer: 'Osservatore'
+    },
+    modules: {
+      chat: 'Chat interna',
+      inventory_sala: 'Inventario Sala',
+      inventory_kitchen: 'Inventario Cucina',
+      checklists: 'Liste di controllo',
+      suppliers: 'Fornitori',
+      equipment: 'Attrezzatura',
+      financial: 'Finanziario',
+      cash_closure: 'Chiusura cassa',
+      reports: 'Rapporti',
+      tasks: 'Compiti',
+      communication: 'Comunicazione',
+      announcements: 'Annunci',
+      user_management: 'Gestione utenti'
+    },
+    permissions: {
+      read: 'Lettura',
+      write: 'Scrittura',
+      validate: 'Convalidare',
+      delete: 'Eliminare'
+    },
     
     // Common
     save: 'Salva',

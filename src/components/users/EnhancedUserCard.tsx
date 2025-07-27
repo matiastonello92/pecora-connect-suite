@@ -20,7 +20,7 @@ interface EnhancedUserCardProps {
   hasPermission: (permission: string) => boolean;
 }
 
-export const EnhancedUserCard = ({ user, onDelete, onUpdate, hasPermission }: EnhancedUserCardProps) => {
+export const EnhancedUserCard = ({ user, onDelete, onUpdate, hasPermission, showPermissions = false }: EnhancedUserCardProps) => {
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [permissionsDialogOpen, setPermissionsDialogOpen] = useState(false);
 

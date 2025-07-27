@@ -3,6 +3,7 @@ import { Language } from '@/lib/i18n';
 import { supabase } from '@/integrations/supabase/client';
 import { User as SupabaseUser, Session } from '@supabase/supabase-js';
 import { authRateLimiter, validatePassword, updateLastActivity, getLastActivity, isSessionExpired } from '@/utils/security';
+import { InvitationData, RestaurantRole, AccessLevel, AppModule, ModulePermissions } from '@/types/users';
 
 export type UserRole = 'base' | 'manager' | 'super_admin';
 export type Department = 'kitchen' | 'pizzeria' | 'service' | 'finance' | 'manager' | 'super_manager' | 'general_manager';
@@ -109,7 +110,7 @@ interface AuthContextType extends AuthState {
   updateUser: (updates: Partial<User>) => void;
   hasPermission: (requiredRole: UserRole) => boolean;
   hasAccess: (departments: Department[]) => boolean;
-  createInvitation: (email: string, firstName: string, lastName: string, role: UserRole, location: string) => Promise<{ error?: string }>;
+  createInvitation: (data: InvitationData) => Promise<{ error?: string }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -296,38 +297,51 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const createInvitation = async (
-    email: string, 
-    firstName: string, 
-    lastName: string, 
-    role: UserRole, 
-    location: string
-  ): Promise<{ error?: string }> => {
+  const createInvitation = async (data: InvitationData): Promise<{ error?: string }> => {
     try {
-      const { data, error } = await supabase.from('user_invitations').insert({
-        email,
-        first_name: firstName,
-        last_name: lastName,
-        role,
-        location,
+      const invitationData = {
+        email: data.email,
+        first_name: data.firstName,
+        last_name: data.lastName,
+        role: data.role,
+        restaurant_role: data.restaurantRole || null,
+        access_level: data.accessLevel,
+        location: data.location,
         invited_by: state.user?.id,
-        expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days from now
-      }).select().single();
+        expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+      };
+
+      const { data: inviteResult, error } = await supabase
+        .from('user_invitations')
+        .insert(invitationData)
+        .select()
+        .single();
 
       if (error) {
         return { error: error.message };
+      }
+
+      // If custom permissions are provided, store them
+      if (data.customPermissions && Object.keys(data.customPermissions).length > 0) {
+        // Store custom permissions in invitation metadata for later use
+        await supabase
+          .from('user_invitations')
+          .update({ 
+            metadata: { customPermissions: data.customPermissions }
+          })
+          .eq('id', inviteResult.id);
       }
 
       // Send invitation email
       try {
         await supabase.functions.invoke('send-invitation-email', {
           body: {
-            email,
-            firstName,
-            lastName,
-            role,
-            location,
-            invitationToken: data.invitation_token,
+            email: data.email,
+            firstName: data.firstName,
+            lastName: data.lastName,
+            role: data.role,
+            location: data.location,
+            invitationToken: inviteResult.invitation_token,
             invitedByName: `${state.user?.firstName} ${state.user?.lastName}`,
           }
         });
