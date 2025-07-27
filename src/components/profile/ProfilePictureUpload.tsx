@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Camera, Upload, X } from 'lucide-react';
 import { UserProfile } from '@/types/users';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@/lib/i18n';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -12,7 +12,7 @@ interface ProfilePictureUploadProps {
 }
 
 export const ProfilePictureUpload = ({ user }: ProfilePictureUploadProps) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('en');
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);

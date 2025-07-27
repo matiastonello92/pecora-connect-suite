@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Shield, Save, RotateCcw } from 'lucide-react';
 import { UserProfile, AppModule, MODULE_LABELS, ModulePermissions } from '@/types/users';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@/lib/i18n';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -16,7 +16,7 @@ interface ProfilePermissionsProps {
 }
 
 export const ProfilePermissions = ({ user }: ProfilePermissionsProps) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('en');
   const { user: currentUser } = useAuth();
   const { toast } = useToast();
   const [permissions, setPermissions] = useState<Partial<Record<AppModule, ModulePermissions>>>({});

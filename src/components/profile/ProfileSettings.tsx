@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Globe, Palette, Lock, Bell, MoonIcon, LogOut } from 'lucide-react';
 import { UserProfile } from '@/types/users';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Language } from '@/lib/i18n';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { PasswordChangeDialog } from './PasswordChangeDialog';
@@ -17,20 +17,22 @@ interface ProfileSettingsProps {
 }
 
 export const ProfileSettings = ({ user }: ProfileSettingsProps) => {
-  const { t, i18n } = useTranslation();
+  const [currentLanguage, setCurrentLanguage] = useState<Language>('en');
+  const { t } = useTranslation(currentLanguage);
   const { logout } = useAuth();
   const { toast } = useToast();
   const [showPasswordDialog, setShowPasswordDialog] = useState(false);
   const [settings, setSettings] = useState({
-    language: i18n.language,
+    language: currentLanguage,
     theme: 'auto',
     notifications: true,
     doNotDisturb: false,
   });
 
-  const handleLanguageChange = (language: string) => {
-    i18n.changeLanguage(language);
-    setSettings(prev => ({ ...prev, language }));
+  const handleLanguageChange = (newLanguage: string) => {
+    const lang = newLanguage as Language;
+    setCurrentLanguage(lang);
+    setSettings(prev => ({ ...prev, language: lang }));
     toast({
       title: t('profile.messages.languageChanged'),
       description: t('profile.messages.languageChangedDesc'),

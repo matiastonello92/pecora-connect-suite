@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Camera, Settings, Shield, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@/lib/i18n';
 import { ProfileInformation } from '@/components/profile/ProfileInformation';
 import { ProfileSettings } from '@/components/profile/ProfileSettings';
 import { ProfileSecurity } from '@/components/profile/ProfileSecurity';
@@ -19,7 +19,7 @@ export const Profile = () => {
   const { user } = useAuth();
   const { users } = useUserManagement();
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t } = useTranslation('en');
   const [activeTab, setActiveTab] = useState('information');
 
   const currentUser = users.find(u => u.id === user?.id);

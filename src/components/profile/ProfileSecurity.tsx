@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { AlertTriangle, Shield, UserX, RotateCcw, History, Download } from 'lucide-react';
 import { UserProfile, UserRole, AccessLevel, LocationType, RESTAURANT_ROLE_LABELS, ACCESS_LEVEL_LABELS } from '@/types/users';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@/lib/i18n';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -15,7 +15,7 @@ interface ProfileSecurityProps {
 }
 
 export const ProfileSecurity = ({ user }: ProfileSecurityProps) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('en');
   const { user: currentUser } = useAuth();
   const { toast } = useToast();
   const [isUpdating, setIsUpdating] = useState(false);

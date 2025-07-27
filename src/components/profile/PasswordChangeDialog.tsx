@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Lock } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@/lib/i18n';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -14,7 +14,7 @@ interface PasswordChangeDialogProps {
 }
 
 export const PasswordChangeDialog = ({ isOpen, onOpenChange }: PasswordChangeDialogProps) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('en');
   const { toast } = useToast();
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');

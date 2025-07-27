@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Mail, AlertTriangle } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@/lib/i18n';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -16,7 +16,7 @@ interface EmailChangeDialogProps {
 }
 
 export const EmailChangeDialog = ({ isOpen, onOpenChange, currentEmail }: EmailChangeDialogProps) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('en');
   const { toast } = useToast();
   const [newEmail, setNewEmail] = useState('');
   const [confirmEmail, setConfirmEmail] = useState('');
