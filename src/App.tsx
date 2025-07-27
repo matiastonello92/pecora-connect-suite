@@ -12,6 +12,7 @@ import { CommunicationProvider } from '@/context/CommunicationContext';
 import { ChatProvider } from '@/context/ChatContext';
 import { UnreadMessagesProvider } from '@/context/UnreadMessagesContext';
 import { NotificationHandler } from '@/components/notifications/NotificationHandler';
+import { ErrorBoundary } from '@/components/common/ErrorBoundary';
 import { CashRegisterProvider } from '@/context/CashRegisterContext';
 import { ReportsProvider } from '@/context/ReportsContext';
 import { EquipmentProvider } from '@/context/EquipmentContext';
@@ -119,14 +120,16 @@ const App: React.FC = () => {
                         <EquipmentProvider>
                           <UserManagementProvider>
                             <FinancialProvider>
-                              <LocationProvider>
-                                 <TooltipProvider>
-                                   <AppContent />
-                                   <NotificationHandler />
-                                   <Toaster />
-                                   <Sonner />
-                                 </TooltipProvider>
-                               </LocationProvider>
+                               <LocationProvider>
+                                 <ErrorBoundary>
+                                   <TooltipProvider>
+                                     <AppContent />
+                                     <NotificationHandler />
+                                     <Toaster />
+                                     <Sonner />
+                                   </TooltipProvider>
+                                 </ErrorBoundary>
+                                </LocationProvider>
                              </FinancialProvider>
                            </UserManagementProvider>
                          </EquipmentProvider>

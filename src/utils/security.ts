@@ -109,17 +109,39 @@ class RateLimiter {
 
 export const authRateLimiter = new RateLimiter();
 
-// Content filtering for inappropriate messages
+// Enhanced content filtering for inappropriate messages
 export const containsInappropriateContent = (message: string): boolean => {
-  // Basic inappropriate content detection
-  // In production, you might want to use a more sophisticated service
+  // Enhanced inappropriate content detection with more comprehensive word list
   const inappropriateWords = [
-    // Add your list of inappropriate words here
-    'spam', 'scam', 'hack', 'exploit'
+    // Spam and scam related
+    'spam', 'scam', 'hack', 'exploit', 'phishing', 'fraud', 'fake',
+    // Hate speech and harassment (basic detection)
+    'harassment', 'bully', 'threaten', 'abuse',
+    // Explicit content markers
+    'explicit', 'inappropriate', 'nsfw',
+    // Malicious content
+    'virus', 'malware', 'trojan', 'keylogger'
   ];
   
   const lowerMessage = message.toLowerCase();
-  return inappropriateWords.some(word => lowerMessage.includes(word));
+  
+  // Check for inappropriate words
+  if (inappropriateWords.some(word => lowerMessage.includes(word))) {
+    return true;
+  }
+  
+  // Check for excessive capitalization (potential shouting/spam)
+  const capsRatio = (message.match(/[A-Z]/g) || []).length / message.length;
+  if (message.length > 10 && capsRatio > 0.7) {
+    return true;
+  }
+  
+  // Check for excessive repetition of characters
+  if (/(.)\1{4,}/.test(message)) {
+    return true;
+  }
+  
+  return false;
 };
 
 // Session timeout management
