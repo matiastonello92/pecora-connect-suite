@@ -16,6 +16,7 @@ interface InvitationEmailRequest {
   location: string;
   invitationToken: string;
   invitedByName: string;
+  isResend?: boolean;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -43,6 +44,7 @@ const handler = async (req: Request): Promise<Response> => {
       location,
       invitationToken,
       invitedByName,
+      isResend = false,
     }: InvitationEmailRequest = await req.json();
 
     console.log("Sending invitation email to:", email);
@@ -53,14 +55,30 @@ const handler = async (req: Request): Promise<Response> => {
     const redirectUrl = `${origin}/auth/complete-signup`;
     const invitationLink = `${Deno.env.get("SUPABASE_URL")}/auth/v1/verify?token=${invitationToken}&type=invite&redirect_to=${encodeURIComponent(redirectUrl)}`;
 
+    // Generate unique identifiers to prevent email threading
+    const timestamp = new Date().toISOString();
+    const uniqueId = Math.random().toString(36).substring(2, 15);
+    
+    // Create subject that prevents threading
+    const subject = isResend 
+      ? `New invitation to join our team - ${firstName}`
+      : `You're invited to join our team!`;
+
     const emailResponse = await resend.emails.send({
       from: "Team <onboarding@resend.dev>",
       to: [email],
-      subject: `You're invited to join our team!`,
+      subject,
+      headers: {
+        // Prevent email threading by using unique message ID
+        'Message-ID': `<invitation-${uniqueId}-${Date.now()}@resend.dev>`,
+        // Ensure this doesn't thread with previous emails
+        'X-Entity-Ref-ID': `invitation-${invitationToken}`,
+      },
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
           <div style="text-align: center; margin-bottom: 30px;">
-            <h1 style="color: #333; margin: 0;">You're Invited!</h1>
+            <h1 style="color: #333; margin: 0;">${isResend ? 'New Team Invitation!' : 'You\'re Invited!'}</h1>
+            ${isResend ? '<p style="color: #666; margin: 10px 0 0 0; font-size: 14px;">This is a new invitation with an updated link.</p>' : ''}
           </div>
           
           <div style="background: #f9f9f9; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
@@ -68,17 +86,18 @@ const handler = async (req: Request): Promise<Response> => {
               Hi ${firstName},
             </p>
             <p style="margin: 0 0 15px 0; color: #333; font-size: 16px;">
-              ${invitedByName} has invited you to join our team as a <strong>${role}</strong> at <strong>${location}</strong>.
+              ${invitedByName} has ${isResend ? 'sent you a new' : ''} invitation to join our team as a <strong>${role}</strong> at <strong>${location}</strong>.
             </p>
             <p style="margin: 0; color: #333; font-size: 16px;">
               Click the button below to accept your invitation and set up your account.
             </p>
+            ${isResend ? '<p style="margin: 15px 0 0 0; color: #e74c3c; font-size: 14px; font-weight: bold;">⚠️ This is a new link that replaces any previous invitation.</p>' : ''}
           </div>
           
           <div style="text-align: center; margin: 30px 0;">
             <a href="${invitationLink}" 
                style="background: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">
-              Accept Invitation
+              ${isResend ? 'Accept New Invitation' : 'Accept Invitation'}
             </a>
           </div>
           
@@ -92,6 +111,7 @@ const handler = async (req: Request): Promise<Response> => {
               <li>Location: ${location}</li>
               <li>Email: ${email}</li>
             </ul>
+            ${isResend ? `<p style="color: #666; font-size: 12px; margin: 15px 0 0 0;">Invitation sent: ${new Date().toLocaleString()}</p>` : ''}
           </div>
           
           <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
@@ -99,6 +119,7 @@ const handler = async (req: Request): Promise<Response> => {
               If you didn't expect this invitation, you can safely ignore this email.
               <br>
               This invitation will expire in 7 days.
+              ${isResend ? '<br><strong>Note:</strong> Any previous invitation links are now invalid.' : ''}
             </p>
           </div>
         </div>

@@ -499,6 +499,33 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
 
   const resendInvitation = async (invitation: PendingInvitation) => {
     try {
+      // Generate a new invitation token for security
+      const newToken = crypto.randomUUID();
+      
+      // Update the invitation with new token and extended expiry
+      const { error: updateError } = await supabase
+        .from('user_invitations')
+        .update({
+          invitation_token: newToken,
+          expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days from now
+          created_at: new Date().toISOString() // Update timestamp to track resend
+        })
+        .eq('id', invitation.id);
+
+      if (updateError) throw updateError;
+
+      // Get current user name for personalization
+      const { data: currentUserProfile } = await supabase
+        .from('profiles')
+        .select('first_name, last_name')
+        .eq('user_id', (await supabase.auth.getUser()).data.user?.id)
+        .single();
+
+      const invitedByName = currentUserProfile 
+        ? `${currentUserProfile.first_name} ${currentUserProfile.last_name}`
+        : 'Admin';
+
+      // Send email with new token and resend indicator
       const { error } = await supabase.functions.invoke('send-invitation-email', {
         body: {
           email: invitation.email,
@@ -506,8 +533,9 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
           lastName: invitation.last_name,
           role: invitation.role,
           location: invitation.location,
-          invitationToken: invitation.invitation_token,
-          invitedByName: 'Admin' // TODO: Get actual user name
+          invitationToken: newToken, // Use new token
+          invitedByName,
+          isResend: true // Flag to indicate this is a resend
         }
       });
 
@@ -515,8 +543,11 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
 
       toast({
         title: "Success",
-        description: `Invitation resent to ${invitation.email}`,
+        description: `New invitation sent to ${invitation.email}`,
       });
+
+      // Refresh data to show updated invitation
+      setTimeout(() => loadPendingInvitations(), 100);
     } catch (error: any) {
       toast({
         title: "Error",
