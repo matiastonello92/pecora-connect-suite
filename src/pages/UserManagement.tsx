@@ -8,11 +8,12 @@ import { ReactivateUserDialog } from '@/components/ui/reactivate-user-dialog';
 import { EnhancedInviteUserDialog } from '@/components/auth/EnhancedInviteUserDialog';
 import { EnhancedUserCard } from '@/components/users/EnhancedUserCard';
 import { useTranslation } from '@/lib/i18n';
+import { useUserDeletionValidation } from '@/hooks/useUserDeletionValidation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Users, UserPlus, Mail, RefreshCw, Archive } from 'lucide-react';
+import { Users, UserPlus, Mail, RefreshCw, Archive, AlertTriangle, Shield } from 'lucide-react';
 
 export const UserManagement = () => {
   const { language, user, hasPermission } = useAuth();
@@ -20,6 +21,7 @@ export const UserManagement = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { users, pendingInvitations, archivedUsers, resendInvitation, deleteUser, deletePendingInvitation, reactivateUser } = useUserManagement();
+  const { hasIssues, errors, warnings, isValidating, runValidation } = useUserDeletionValidation();
 
   // Determine active tab based on route
   const getActiveTab = () => {
@@ -65,10 +67,31 @@ export const UserManagement = () => {
     <div className="space-y-4 sm:space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="min-w-0 flex-1">
-          <h1 className="text-2xl sm:text-3xl font-bold">{t('userManagement')}</h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl sm:text-3xl font-bold">{t('userManagement')}</h1>
+            {hasIssues && (
+              <AlertTriangle className="h-5 w-5 text-destructive" />
+            )}
+          </div>
           <p className="text-sm sm:text-base text-muted-foreground">{t('userManagementDescription')}</p>
+          {hasIssues && (
+            <div className="mt-2 text-sm text-destructive">
+              {errors.length > 0 && `${errors.length} critical issues detected`}
+              {warnings.length > 0 && ` • ${warnings.length} warnings`}
+            </div>
+          )}
         </div>
-        <div className="shrink-0">
+        <div className="shrink-0 flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={runValidation}
+            disabled={isValidating}
+            className="flex items-center gap-2"
+          >
+            <Shield className="h-4 w-4" />
+            {isValidating ? 'Validating...' : 'System Check'}
+          </Button>
           <EnhancedInviteUserDialog />
         </div>
       </div>

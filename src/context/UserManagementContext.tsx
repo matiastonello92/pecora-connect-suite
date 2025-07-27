@@ -341,55 +341,98 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
 
   const deleteUser = async (user: UserProfile) => {
     try {
+      console.log('Starting deletion process for user:', user.email, user.id);
+      
       // Immediately remove user from UI for better UX
       dispatch({ type: 'REMOVE_USER', payload: user.id });
 
-      // Archive the user first
+      // Get current user for audit trail
+      const currentUser = (await supabase.auth.getUser()).data.user;
+      
+      // For hard deletion (permanent removal)
+      // Archive the user with permanent deletion flag
       const { error: archiveError } = await supabase
         .from('archived_users')
         .insert({
           original_user_id: user.id,
           first_name: user.firstName,
           last_name: user.lastName,
-          email: user.email,
+          email: user.email || `${user.firstName}.${user.lastName}@deleted.local`,
           role: user.role,
           restaurant_role: user.restaurantRole,
           access_level: user.accessLevel,
           location: user.location,
           department: user.department,
           position: user.position,
-          previous_status: 'active',
-          archived_by: (await supabase.auth.getUser()).data.user?.id,
-          reason: 'manual_deletion',
-          can_reactivate: true,
-          metadata: { lastLogin: user.lastLogin?.toISOString() || null }
+          previous_status: user.status || 'active',
+          archived_by: currentUser?.id,
+          reason: 'permanent_deletion',
+          can_reactivate: false, // Cannot be reactivated
+          metadata: { 
+            lastLogin: user.lastLogin?.toISOString() || null,
+            permanently_deleted: 'true',
+            deleted_at: new Date().toISOString()
+          }
         });
 
       if (archiveError) {
+        console.error('Archive error:', archiveError);
         // Rollback UI change if archive fails
         dispatch({ type: 'ADD_USER', payload: user });
         throw archiveError;
       }
 
-      // Delete the user profile
+      // Hard delete from profiles table
       const { error: deleteError } = await supabase
         .from('profiles')
         .delete()
         .eq('user_id', user.id);
 
       if (deleteError) {
+        console.error('Profile deletion error:', deleteError);
         // Rollback UI change if deletion fails
         dispatch({ type: 'ADD_USER', payload: user });
         throw deleteError;
       }
 
+      // Delete any pending invitations for this email
+      if (user.email) {
+        const { error: inviteDeleteError } = await supabase
+          .from('user_invitations')
+          .delete()
+          .eq('email', user.email);
+        
+        if (inviteDeleteError) {
+          console.warn('Failed to delete invitation:', inviteDeleteError);
+          // Don't fail the whole operation for this
+        }
+      }
+
+      // Delete from auth.users if possible (this might fail if user doesn't exist in auth)
+      try {
+        const { error: authDeleteError } = await supabase.auth.admin.deleteUser(user.id);
+        if (authDeleteError) {
+          console.warn('Failed to delete from auth (user may not exist in auth):', authDeleteError);
+          // Don't fail the whole operation for this
+        }
+      } catch (authError) {
+        console.warn('Auth deletion not available or failed:', authError);
+      }
+
+      console.log('User deletion completed successfully for:', user.email);
+
       toast({
         title: "Success",
-        description: "User deleted successfully",
+        description: "User permanently deleted and cannot be recreated",
       });
 
       // Load archived users to show the newly archived user immediately
-      setTimeout(() => loadArchivedUsers(), 100);
+      setTimeout(() => {
+        loadArchivedUsers();
+        // Also refresh users to ensure they're gone from active list
+        loadUsers();
+      }, 100);
+      
     } catch (error: any) {
       console.error('Delete user error:', error);
       toast({
@@ -427,7 +470,35 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
         payload: invitationId
       });
 
-      // Permanently delete the invitation from the database - no archiving for pending users
+      // Archive the invitation for audit trail before permanent deletion
+      const { error: archiveError } = await supabase
+        .from('archived_users')
+        .insert({
+          first_name: invitation.first_name,
+          last_name: invitation.last_name,
+          email: invitation.email,
+          role: invitation.role,
+          restaurant_role: invitation.restaurant_role as any,
+          access_level: invitation.access_level as any,
+          location: invitation.location,
+          previous_status: 'pending',
+          archived_by: (await supabase.auth.getUser()).data.user?.id,
+          reason: 'invitation_deletion',
+          can_reactivate: false, // Cannot recreate deleted invitations
+          metadata: { 
+            permanently_deleted: 'true',
+            deleted_at: new Date().toISOString(),
+            original_invitation_id: invitationId,
+            original_invitation_data: invitation
+          }
+        } as any);
+
+      if (archiveError) {
+        console.warn('Failed to archive invitation (continuing with deletion):', archiveError);
+        // Don't fail the deletion for archiving issues
+      }
+
+      // Permanently delete the invitation from the database
       // This will immediately invalidate any invitation tokens and remove all traces
       const { error } = await supabase
         .from('user_invitations')
@@ -448,11 +519,11 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
 
       toast({
         title: "Success",
-        description: "Invitation permanently deleted. The invitation link is now invalid.",
+        description: "Invitation permanently deleted and email blocked from future invitations.",
       });
 
-      // DO NOT call loadPendingInvitations here - let real-time subscription handle it
-      // The real-time subscription will detect the DELETE and update the state accordingly
+      // Refresh archived users to show the deletion record
+      setTimeout(() => loadArchivedUsers(), 100);
       
     } catch (error: any) {
       console.error('Failed to delete invitation:', error);
