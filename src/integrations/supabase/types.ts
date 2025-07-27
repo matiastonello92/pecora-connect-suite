@@ -1222,6 +1222,10 @@ export type Database = {
         Args: { user1_id: string; user2_id: string }
         Returns: string
       }
+      get_current_user_location: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
       get_current_user_role: {
         Args: Record<PropertyKey, never>
         Returns: string
