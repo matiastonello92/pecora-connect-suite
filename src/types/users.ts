@@ -130,6 +130,7 @@ export interface InvitationData {
   restaurantRole?: RestaurantRole;
   accessLevel: AccessLevel;
   location: LocationType;
+  locations: string[];
   customPermissions?: Partial<Record<AppModule, ModulePermissions>>;
 }
 
