@@ -1,23 +1,49 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { useTranslation, Language } from '@/lib/i18n';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Logo } from '@/components/ui/logo';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2 } from 'lucide-react';
+import { Loader2, CheckCircle } from 'lucide-react';
 
 export const LoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [selectedLanguage, setSelectedLanguage] = useState<Language>('en');
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const location = useLocation();
   const { login, isLoading, setLanguage } = useAuth();
   const { t } = useTranslation(selectedLanguage);
   const { toast } = useToast();
+
+  // Check for registration success
+  useEffect(() => {
+    const registrationSuccess = searchParams.get('registration');
+    const state = location.state as { message?: string; email?: string } | null;
+    
+    if (registrationSuccess === 'success' || state?.message) {
+      setShowSuccessMessage(true);
+      toast({
+        title: "Registration Successful!",
+        description: state?.message || "Your account has been created successfully. Please log in.",
+      });
+      
+      if (state?.email) {
+        setEmail(state.email);
+      }
+      
+      // Clear the URL parameters
+      navigate('/', { replace: true, state: null });
+    }
+  }, [searchParams, location.state, toast, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,6 +90,14 @@ export const LoginForm = () => {
         </CardHeader>
         
         <CardContent className="space-y-4 sm:space-y-6">
+          {showSuccessMessage && (
+            <Alert className="border-success/20 bg-success/10">
+              <CheckCircle className="h-4 w-4 text-success" />
+              <AlertDescription className="text-success-foreground">
+                Registration completed successfully! You can now log in with your credentials.
+              </AlertDescription>
+            </Alert>
+          )}
           <div className="space-y-2">
             <Label htmlFor="language" className="font-inter">
               {t('language')}

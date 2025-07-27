@@ -225,16 +225,33 @@ export const CompleteSignup = () => {
       );
 
       toast({
-        title: "Success",
-        description: "Account created successfully! Welcome to the team!",
+        title: "Success", 
+        description: "Account created successfully! Please check your email to verify your account.",
       });
 
-      // Redirect to login - the real-time subscriptions will automatically update the user list
-      navigate('/');
+      // Redirect to login with success state
+      navigate('/?registration=success', { 
+        state: { 
+          message: "Registration completed successfully! Please log in with your credentials.",
+          email: email 
+        }
+      });
     } catch (error: any) {
+      console.error('Registration error:', error);
+      let errorMessage = error.message;
+      
+      // Handle specific Supabase errors
+      if (error.message?.includes('User already registered')) {
+        errorMessage = 'An account with this email already exists. Please try logging in instead.';
+      } else if (error.message?.includes('Invalid token')) {
+        errorMessage = 'This invitation link is invalid or has expired. Please request a new invitation.';
+      } else if (error.message?.includes('Email not confirmed')) {
+        errorMessage = 'Please check your email and click the confirmation link before proceeding.';
+      }
+      
       toast({
-        title: "Error",
-        description: error.message,
+        title: "Registration Failed",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
