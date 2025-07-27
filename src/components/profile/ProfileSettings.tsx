@@ -34,8 +34,8 @@ export const ProfileSettings = ({ user }: ProfileSettingsProps) => {
     setCurrentLanguage(lang);
     setSettings(prev => ({ ...prev, language: lang }));
     toast({
-      title: t('profile.messages.languageChanged'),
-      description: t('profile.messages.languageChangedDesc'),
+      title: 'Language Updated',
+      description: 'Your language preference has been updated.',
     });
   };
 
@@ -43,22 +43,22 @@ export const ProfileSettings = ({ user }: ProfileSettingsProps) => {
     setSettings(prev => ({ ...prev, theme }));
     // Theme change logic would go here
     toast({
-      title: t('profile.messages.themeChanged'),
-      description: t('profile.messages.themeChangedDesc'),
+      title: 'Theme Updated',
+      description: 'Your theme preference has been updated.',
     });
   };
 
   const handleNotificationToggle = (enabled: boolean) => {
     setSettings(prev => ({ ...prev, notifications: enabled }));
     toast({
-      title: enabled ? t('profile.messages.notificationsEnabled') : t('profile.messages.notificationsDisabled'),
+      title: enabled ? 'Notifications Enabled' : 'Notifications Disabled',
     });
   };
 
   const handleDoNotDisturbToggle = (enabled: boolean) => {
     setSettings(prev => ({ ...prev, doNotDisturb: enabled }));
     toast({
-      title: enabled ? t('profile.messages.dndEnabled') : t('profile.messages.dndDisabled'),
+      title: enabled ? 'Do Not Disturb Enabled' : 'Do Not Disturb Disabled',
     });
   };
 
@@ -66,12 +66,12 @@ export const ProfileSettings = ({ user }: ProfileSettingsProps) => {
     try {
       await logout();
       toast({
-        title: t('profile.messages.loggedOut'),
+        title: 'Signed Out Successfully',
       });
     } catch (error) {
       toast({
-        title: t('common.error'),
-        description: t('profile.messages.logoutError'),
+        title: 'Error',
+        description: 'An error occurred while signing out.',
         variant: 'destructive',
       });
     }
@@ -84,12 +84,12 @@ export const ProfileSettings = ({ user }: ProfileSettingsProps) => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Globe className="h-5 w-5" />
-            {t('profile.sections.language')}
+            Language & Region
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
-            <Label>{t('profile.fields.interfaceLanguage')}</Label>
+            <Label>Interface Language</Label>
             <Select value={settings.language} onValueChange={handleLanguageChange}>
               <SelectTrigger className="w-full">
                 <SelectValue />
@@ -109,20 +109,20 @@ export const ProfileSettings = ({ user }: ProfileSettingsProps) => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Palette className="h-5 w-5" />
-            {t('profile.sections.appearance')}
+            Appearance
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
-            <Label>{t('profile.fields.theme')}</Label>
+            <Label>Theme</Label>
             <Select value={settings.theme} onValueChange={handleThemeChange}>
               <SelectTrigger className="w-full">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="light">{t('profile.theme.light')}</SelectItem>
-                <SelectItem value="dark">{t('profile.theme.dark')}</SelectItem>
-                <SelectItem value="auto">{t('profile.theme.auto')}</SelectItem>
+                <SelectItem value="light">Light</SelectItem>
+                <SelectItem value="dark">Dark</SelectItem>
+                <SelectItem value="auto">Auto</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -134,15 +134,15 @@ export const ProfileSettings = ({ user }: ProfileSettingsProps) => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Bell className="h-5 w-5" />
-            {t('profile.sections.notifications')}
+            Notifications
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
-              <Label>{t('profile.fields.pushNotifications')}</Label>
+              <Label>Push Notifications</Label>
               <p className="text-sm text-muted-foreground">
-                {t('profile.descriptions.pushNotifications')}
+                Receive notifications for messages and updates
               </p>
             </div>
             <Switch
@@ -153,9 +153,9 @@ export const ProfileSettings = ({ user }: ProfileSettingsProps) => {
           <Separator />
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
-              <Label>{t('profile.fields.doNotDisturb')}</Label>
+              <Label>Do Not Disturb</Label>
               <p className="text-sm text-muted-foreground">
-                {t('profile.descriptions.doNotDisturb')}
+                Temporarily pause all notifications
               </p>
             </div>
             <Switch
@@ -171,7 +171,7 @@ export const ProfileSettings = ({ user }: ProfileSettingsProps) => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Lock className="h-5 w-5" />
-            {t('profile.sections.security')}
+            Security
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -180,7 +180,7 @@ export const ProfileSettings = ({ user }: ProfileSettingsProps) => {
             onClick={() => setShowPasswordDialog(true)}
             className="w-full"
           >
-            {t('profile.actions.changePassword')}
+            Change Password
           </Button>
         </CardContent>
       </Card>
@@ -188,7 +188,7 @@ export const ProfileSettings = ({ user }: ProfileSettingsProps) => {
       {/* Account Actions */}
       <Card>
         <CardHeader>
-          <CardTitle>{t('profile.sections.accountActions')}</CardTitle>
+          <CardTitle>Account Actions</CardTitle>
         </CardHeader>
         <CardContent>
           <Button
@@ -197,7 +197,7 @@ export const ProfileSettings = ({ user }: ProfileSettingsProps) => {
             className="w-full"
           >
             <LogOut className="h-4 w-4 mr-2" />
-            {t('profile.actions.logout')}
+            Sign Out
           </Button>
         </CardContent>
       </Card>

@@ -11,8 +11,6 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from '@/lib/i18n';
 import { ProfileInformation } from '@/components/profile/ProfileInformation';
 import { ProfileSettings } from '@/components/profile/ProfileSettings';
-import { ProfileSecurity } from '@/components/profile/ProfileSecurity';
-import { ProfilePermissions } from '@/components/profile/ProfilePermissions';
 import { ProfilePictureUpload } from '@/components/profile/ProfilePictureUpload';
 
 export const Profile = () => {
@@ -28,7 +26,7 @@ export const Profile = () => {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-muted-foreground">{t('profile.loading')}</h1>
+          <h1 className="text-2xl font-bold text-muted-foreground">Loading...</h1>
         </div>
       </div>
     );
@@ -63,14 +61,7 @@ export const Profile = () => {
               <h1 className="text-xl font-semibold">
                 {currentUser.firstName} {currentUser.lastName}
               </h1>
-              <div className="flex items-center gap-2">
-                <Badge variant="outline" className="text-xs">
-                  {t(`access_levels.${currentUser.accessLevel}`)}
-                </Badge>
-                {currentUser.hasCustomPermissions && (
-                  <Badge variant="secondary" className="text-xs">+</Badge>
-                )}
-              </div>
+              <p className="text-sm text-muted-foreground">{currentUser.email}</p>
             </div>
           </div>
         </div>
@@ -79,22 +70,14 @@ export const Profile = () => {
       {/* Content */}
       <div className="container max-w-4xl mx-auto p-4">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-4 mb-6">
+          <TabsList className="grid w-full grid-cols-2 mb-6">
             <TabsTrigger value="information" className="flex items-center gap-2">
               <Users className="h-4 w-4" />
-              <span className="hidden sm:inline">{t('profile.tabs.information')}</span>
+              <span className="hidden sm:inline">Information</span>
             </TabsTrigger>
             <TabsTrigger value="settings" className="flex items-center gap-2">
               <Settings className="h-4 w-4" />
-              <span className="hidden sm:inline">{t('profile.tabs.settings')}</span>
-            </TabsTrigger>
-            <TabsTrigger value="security" className="flex items-center gap-2">
-              <Shield className="h-4 w-4" />
-              <span className="hidden sm:inline">{t('profile.tabs.security')}</span>
-            </TabsTrigger>
-            <TabsTrigger value="permissions" className="flex items-center gap-2">
-              <Settings className="h-4 w-4" />
-              <span className="hidden sm:inline">{t('profile.tabs.permissions')}</span>
+              <span className="hidden sm:inline">Settings</span>
             </TabsTrigger>
           </TabsList>
 
@@ -104,14 +87,6 @@ export const Profile = () => {
 
           <TabsContent value="settings">
             <ProfileSettings user={currentUser} />
-          </TabsContent>
-
-          <TabsContent value="security">
-            <ProfileSecurity user={currentUser} />
-          </TabsContent>
-
-          <TabsContent value="permissions">
-            <ProfilePermissions user={currentUser} />
           </TabsContent>
         </Tabs>
       </div>

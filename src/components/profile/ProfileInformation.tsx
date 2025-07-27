@@ -36,14 +36,14 @@ export const ProfileInformation = ({ user }: ProfileInformationProps) => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <User className="h-5 w-5" />
-            {t('profile.sections.basicInfo')}
+            Profile Information
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="text-sm font-medium text-muted-foreground">
-                {t('profile.fields.fullName')}
+                Full Name
               </label>
               <p className="text-lg font-medium">
                 {user.firstName} {user.lastName}
@@ -51,32 +51,11 @@ export const ProfileInformation = ({ user }: ProfileInformationProps) => {
             </div>
             <div>
               <label className="text-sm font-medium text-muted-foreground">
-                {t('profile.fields.restaurantRole')}
-              </label>
-              <p className="text-lg">
-                {user.restaurantRole ? t(`restaurant_roles.${user.restaurantRole}`) : '-'}
-              </p>
-            </div>
-            <div>
-              <label className="text-sm font-medium text-muted-foreground">
-                {t('profile.fields.accessLevel')}
-              </label>
-              <div className="flex items-center gap-2">
-                <Badge variant="outline">
-                  {t(`access_levels.${user.accessLevel}`)}
-                </Badge>
-                {user.hasCustomPermissions && (
-                  <Badge variant="secondary" className="text-xs">+</Badge>
-                )}
-              </div>
-            </div>
-            <div>
-              <label className="text-sm font-medium text-muted-foreground">
-                {t('profile.fields.location')}
+                Location
               </label>
               <div className="flex items-center gap-2">
                 <MapPin className="h-4 w-4 text-muted-foreground" />
-                <p className="text-lg">{t(`locations.${user.location}`)}</p>
+                <p className="text-lg">{user.location}</p>
               </div>
             </div>
           </div>
@@ -88,14 +67,14 @@ export const ProfileInformation = ({ user }: ProfileInformationProps) => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Shield className="h-5 w-5" />
-            {t('profile.sections.accountInfo')}
+            Account Information
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="text-sm font-medium text-muted-foreground">
-                {t('profile.fields.email')}
+                Email Address
               </label>
               <div className="flex items-center gap-2">
                 <Mail className="h-4 w-4 text-muted-foreground" />
@@ -105,24 +84,24 @@ export const ProfileInformation = ({ user }: ProfileInformationProps) => {
                   size="sm"
                   onClick={() => setShowEmailDialog(true)}
                 >
-                  {t('profile.actions.changeEmail')}
+                  Change Email
                 </Button>
               </div>
             </div>
             <div>
               <label className="text-sm font-medium text-muted-foreground">
-                {t('profile.fields.status')}
+                Account Status
               </label>
               <div className="flex items-center gap-2">
                 <div className={`w-2 h-2 rounded-full ${getStatusColor(user.status)}`} />
                 <Badge variant="outline">
-                  {t(`status.${user.status}`)}
+                  {user.status.charAt(0).toUpperCase() + user.status.slice(1)}
                 </Badge>
               </div>
             </div>
             <div>
               <label className="text-sm font-medium text-muted-foreground">
-                {t('profile.fields.createdAt')}
+                Member Since
               </label>
               <div className="flex items-center gap-2">
                 <Calendar className="h-4 w-4 text-muted-foreground" />
@@ -133,12 +112,12 @@ export const ProfileInformation = ({ user }: ProfileInformationProps) => {
             </div>
             <div>
               <label className="text-sm font-medium text-muted-foreground">
-                {t('profile.fields.lastLogin')}
+                Last Login
               </label>
               <div className="flex items-center gap-2">
                 <Calendar className="h-4 w-4 text-muted-foreground" />
                 <p className="text-lg">
-                  {user.lastLogin ? format(new Date(user.lastLogin), 'dd/MM/yyyy HH:mm') : '-'}
+                  {user.lastLogin ? format(new Date(user.lastLogin), 'dd/MM/yyyy HH:mm') : 'Never'}
                 </p>
               </div>
             </div>
@@ -147,24 +126,6 @@ export const ProfileInformation = ({ user }: ProfileInformationProps) => {
       </Card>
 
       {/* System Information */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Hash className="h-5 w-5" />
-            {t('profile.sections.systemInfo')}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div>
-            <label className="text-sm font-medium text-muted-foreground">
-              {t('profile.fields.userId')}
-            </label>
-            <p className="text-sm font-mono text-muted-foreground break-all">
-              {user.id}
-            </p>
-          </div>
-        </CardContent>
-      </Card>
 
       <EmailChangeDialog
         isOpen={showEmailDialog}
