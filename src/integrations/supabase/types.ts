@@ -26,6 +26,7 @@ export type Database = {
           id: string
           last_name: string
           location: string
+          locations: string[] | null
           metadata: Json | null
           original_invitation_id: string | null
           original_user_id: string | null
@@ -46,6 +47,7 @@ export type Database = {
           id?: string
           last_name: string
           location: string
+          locations?: string[] | null
           metadata?: Json | null
           original_invitation_id?: string | null
           original_user_id?: string | null
@@ -68,6 +70,7 @@ export type Database = {
           id?: string
           last_name?: string
           location?: string
+          locations?: string[] | null
           metadata?: Json | null
           original_invitation_id?: string | null
           original_user_id?: string | null
@@ -608,6 +611,33 @@ export type Database = {
         }
         Relationships: []
       }
+      locations: {
+        Row: {
+          code: string
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          updated_at: string | null
+        }
+        Insert: {
+          code: string
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          updated_at?: string | null
+        }
+        Update: {
+          code?: string
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       maintenance_records: {
         Row: {
           cost: number | null
@@ -954,6 +984,7 @@ export type Database = {
           last_login_at: string | null
           last_name: string
           location: string
+          locations: string[] | null
           phone: string | null
           position: string | null
           restaurant_role: Database["public"]["Enums"]["restaurant_role"] | null
@@ -974,6 +1005,7 @@ export type Database = {
           last_login_at?: string | null
           last_name: string
           location: string
+          locations?: string[] | null
           phone?: string | null
           position?: string | null
           restaurant_role?:
@@ -996,6 +1028,7 @@ export type Database = {
           last_login_at?: string | null
           last_name?: string
           location?: string
+          locations?: string[] | null
           phone?: string | null
           position?: string | null
           restaurant_role?:
@@ -1090,6 +1123,7 @@ export type Database = {
           invited_by: string | null
           last_name: string
           location: string
+          locations: string[] | null
           metadata: Json | null
           restaurant_role: Database["public"]["Enums"]["restaurant_role"] | null
           role: string
@@ -1107,6 +1141,7 @@ export type Database = {
           invited_by?: string | null
           last_name: string
           location: string
+          locations?: string[] | null
           metadata?: Json | null
           restaurant_role?:
             | Database["public"]["Enums"]["restaurant_role"]
@@ -1126,6 +1161,7 @@ export type Database = {
           invited_by?: string | null
           last_name?: string
           location?: string
+          locations?: string[] | null
           metadata?: Json | null
           restaurant_role?:
             | Database["public"]["Enums"]["restaurant_role"]
@@ -1282,6 +1318,13 @@ export type Database = {
           message: string
         }[]
       }
+      get_active_locations: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          code: string
+          name: string
+        }[]
+      }
       get_available_locations: {
         Args: { user_role?: string }
         Returns: {
@@ -1306,6 +1349,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: string
       }
+      get_current_user_locations: {
+        Args: Record<PropertyKey, never>
+        Returns: string[]
+      }
       get_current_user_role: {
         Args: Record<PropertyKey, never>
         Returns: string
@@ -1324,6 +1371,10 @@ export type Database = {
       }
       is_email_permanently_deleted: {
         Args: { check_email: string }
+        Returns: boolean
+      }
+      user_has_access_to_location: {
+        Args: { check_location: string; user_uuid?: string }
         Returns: boolean
       }
       validate_chat_system_health: {
