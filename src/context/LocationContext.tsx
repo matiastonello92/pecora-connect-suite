@@ -2,13 +2,14 @@ import React, { createContext, useContext, useState, useEffect, useMemo } from '
 import { LocationType } from '@/types/users';
 import { useAuth } from './AuthContext';
 
-type ActiveLocationType = 'menton' | 'lyon';
+type ActiveLocationType = 'menton' | 'lyon' | 'monaco' | 'nice' | 'cannes' | 'antibes' | 'all_locations';
 
 interface LocationContextType {
   activeLocation: ActiveLocationType;
   setActiveLocation: (location: ActiveLocationType) => void;
   canSwitchLocations: boolean;
   availableLocations: { value: ActiveLocationType; label: string }[];
+  isViewingAllLocations: boolean;
 }
 
 const LocationContext = createContext<LocationContextType | undefined>(undefined);
@@ -21,10 +22,23 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const canSwitchLocations = user?.location === 'all_locations';
 
   // Available locations for switching - memoized to prevent unnecessary re-renders
-  const availableLocations = useMemo(() => [
-    { value: 'menton' as ActiveLocationType, label: 'Menton' },
-    { value: 'lyon' as ActiveLocationType, label: 'Lyon' }
-  ], []);
+  const availableLocations = useMemo(() => {
+    const locations = [
+      { value: 'menton' as ActiveLocationType, label: 'Menton' },
+      { value: 'lyon' as ActiveLocationType, label: 'Lyon' },
+      { value: 'monaco' as ActiveLocationType, label: 'Monaco' },
+      { value: 'nice' as ActiveLocationType, label: 'Nice' },
+      { value: 'cannes' as ActiveLocationType, label: 'Cannes' },
+      { value: 'antibes' as ActiveLocationType, label: 'Antibes' }
+    ];
+    
+    // Add "All Locations" option for users who can switch locations
+    if (canSwitchLocations) {
+      locations.unshift({ value: 'all_locations' as ActiveLocationType, label: 'All Locations' });
+    }
+    
+    return locations;
+  }, [canSwitchLocations]);
 
   // Set default location based on user's location
   useEffect(() => {
@@ -51,11 +65,14 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   }, [canSwitchLocations, availableLocations]);
 
+  const isViewingAllLocations = activeLocation === 'all_locations';
+
   const value: LocationContextType = {
     activeLocation,
     setActiveLocation,
     canSwitchLocations,
-    availableLocations
+    availableLocations,
+    isViewingAllLocations
   };
 
   return (

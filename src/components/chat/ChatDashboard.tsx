@@ -11,6 +11,7 @@ import { useTranslation } from '@/lib/i18n';
 import { useAuth } from '@/context/AuthContext';
 import { useUnreadMessages } from '@/context/UnreadMessagesContext';
 import { useMessageReminders } from '@/hooks/useMessageReminders';
+import { useLocation } from '@/context/LocationContext';
 import { formatDistanceToNow } from 'date-fns';
 import { enUS, fr, it } from 'date-fns/locale';
 import {
@@ -34,6 +35,7 @@ import { ChatInterface } from './ChatInterface';
 import { ConnectionRequestManager } from './ConnectionRequestManager';
 import { GroupManagement } from './GroupManagement';
 import { ChatSettings } from './ChatSettings';
+import { LocationFilter } from './LocationFilter';
 import { NotificationBadge } from '@/components/ui/notification-badge';
 
 const locales = { en: enUS, fr, it };
@@ -51,6 +53,7 @@ export const ChatDashboard: React.FC = () => {
   const { user, language } = useAuth();
   const { unreadCountByChat, markChatAsRead } = useUnreadMessages();
   const { processReminders } = useMessageReminders();
+  const { isViewingAllLocations } = useLocation();
   const { t } = useTranslation(language);
   const [showCreateChat, setShowCreateChat] = useState(false);
   const [showConnections, setShowConnections] = useState(false);
@@ -257,6 +260,11 @@ export const ChatDashboard: React.FC = () => {
             />
           </div>
 
+          {/* Location Filter */}
+          <div className="mt-3">
+            <LocationFilter />
+          </div>
+
           {/* Quick Create Menu */}
           {showCreateChat && (
             <div className="mt-3 p-3 bg-background/80 rounded-lg border border-border animate-fade-in">
@@ -335,14 +343,19 @@ export const ChatDashboard: React.FC = () => {
                           <div className="flex items-start justify-between">
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center space-x-2">
-                                <h3 className={`text-sm truncate text-foreground ${
-                                  unreadCountByChat[chat.id] > 0 ? 'font-bold' : 'font-semibold'
-                                }`}>
-                                  {getChatName(chat)}
-                                </h3>
-                                {chat.type === 'announcements' && (
-                                  <Pin className="h-3 w-3 text-orange-500" />
-                                )}
+                                 <h3 className={`text-sm truncate text-foreground ${
+                                   unreadCountByChat[chat.id] > 0 ? 'font-bold' : 'font-semibold'
+                                 }`}>
+                                   {getChatName(chat)}
+                                 </h3>
+                                 {isViewingAllLocations && (
+                                   <Badge variant="outline" className="text-xs px-1 py-0 h-4 ml-1">
+                                     {chat.location?.charAt(0).toUpperCase() + chat.location?.slice(1)}
+                                   </Badge>
+                                 )}
+                                 {chat.type === 'announcements' && (
+                                   <Pin className="h-3 w-3 text-orange-500" />
+                                 )}
                               </div>
                               
                               <div className="flex items-center mt-1 space-x-1">

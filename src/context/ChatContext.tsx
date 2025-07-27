@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './AuthContext';
+import { useLocation } from './LocationContext';
 import { 
   Chat, 
   ChatMessage, 
@@ -67,6 +68,7 @@ export const useChatContext = () => {
 
 export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user, language } = useAuth();
+  const { activeLocation, isViewingAllLocations } = useLocation();
   const { t } = useTranslation(language);
   
   const [chats, setChats] = useState<Chat[]>([]);
@@ -77,7 +79,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(false);
   const [sendingMessage, setSendingMessage] = useState(false);
 
-  // Load chats and connection requests
+  // Load chats and connection requests when user or location changes
   useEffect(() => {
     if (!user) return;
     
@@ -140,7 +142,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       supabase.removeChannel(messagesChannel);
       supabase.removeChannel(requestsChannel);
     };
-  }, [user, activeChat]);
+  }, [user, activeChat, activeLocation]);
 
   // Load messages when active chat changes
   useEffect(() => {
@@ -539,8 +541,15 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  // Filtered chats based on search
+  // Filtered chats based on search and location
   const filteredChats = chats.filter(chat => {
+    // First apply location filter
+    if (!isViewingAllLocations) {
+      // If not viewing all locations, only show chats for the active location
+      if (chat.location !== activeLocation) return false;
+    }
+    
+    // Then apply search filter
     if (!searchTerm) return true;
     
     const searchLower = searchTerm.toLowerCase();
