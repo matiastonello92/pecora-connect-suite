@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
-import { useAuth } from '@/context/AuthContext';
+import { useSimpleAuth } from '@/context/SimpleAuthContext';
 import { useTranslation, Language } from '@/lib/i18n';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -20,7 +20,7 @@ export const LoginForm = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const { login, isLoading, setLanguage } = useAuth();
+  const { login, isLoading } = useSimpleAuth();
   const { t } = useTranslation(selectedLanguage);
   const { toast } = useToast();
 
@@ -57,7 +57,6 @@ export const LoginForm = () => {
       return;
     }
 
-    setLanguage(selectedLanguage);
     const result = await login(email, password);
     
     if (result.error) {

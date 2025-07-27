@@ -4,7 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider, useAuth } from "@/context/AuthContext";
+import { SimpleAuthProvider, useSimpleAuth } from "@/context/SimpleAuthContext";
 import { InventoryProvider } from '@/context/InventoryContext';
 import { KitchenInventoryProvider } from '@/context/KitchenInventoryContext';
 import { ChecklistProvider } from '@/context/ChecklistContext';
@@ -44,13 +44,9 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 
 const AppContent = () => {
-  console.log('📱 AppContent rendering...');
-  const { isAuthenticated, isLoading, user } = useAuth();
-  
-  console.log('🔍 Auth state:', { isAuthenticated, isLoading, user: user?.id });
+  const { isAuthenticated, isLoading, user } = useSimpleAuth();
 
   if (isLoading) {
-    console.log('⏳ Showing loading state...');
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -59,7 +55,6 @@ const AppContent = () => {
   }
 
   if (!isAuthenticated) {
-    console.log('🔐 User not authenticated, showing login...');
     return (
       <Routes>
         <Route path="/" element={<LoginForm />} />
@@ -71,7 +66,6 @@ const AppContent = () => {
     );
   }
 
-  console.log('✅ User authenticated, loading main app...');
   return (
     <LocationProvider>
       <InventoryProvider>
@@ -132,19 +126,17 @@ const AppContent = () => {
 };
 
 const App: React.FC = () => {
-  console.log('🔄 App component rendering...');
-  
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
-          <AuthProvider>
+          <SimpleAuthProvider>
             <TooltipProvider>
               <AppContent />
               <Toaster />
               <Sonner />
             </TooltipProvider>
-          </AuthProvider>
+          </SimpleAuthProvider>
         </BrowserRouter>
       </QueryClientProvider>
     </ErrorBoundary>
