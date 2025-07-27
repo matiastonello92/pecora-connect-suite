@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
-import { useAuth } from './AuthContext';
+import { useSimpleAuth } from './SimpleAuthContext';
 import { useActiveLocations, Location, userHasMultipleLocations } from '@/hooks/useLocations';
 
 interface LocationContextType {
@@ -30,11 +30,12 @@ const LOCATION_COORDINATES: Record<string, { lat: number; lng: number }> = {
 };
 
 export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { user } = useAuth();
+  const { user } = useSimpleAuth();
   const { data: allActiveLocations = [], isLoading } = useActiveLocations();
   
   // Get user's locations from the new locations array field
-  const userLocations = user?.locations || [];
+  // Temporarily default to all locations for simple auth
+  const userLocations = ['menton', 'lyon', 'paris', 'nice', 'cannes', 'monaco', 'antibes'];
   
   // State for location management
   const [activeLocation, setActiveLocationState] = useState<string>('');
