@@ -291,6 +291,8 @@ export const translations = {
     'communication.requestSent': 'Connection request sent',
     'communication.requestAccepted': 'Connection request accepted',
     'communication.requestDeclined': 'Connection request declined',
+    'communication.openChat': 'Open Chat',
+    'communication.viewRequest': 'View Request',
     'communication.availableUsers': 'Available Users',
     'communication.noUsersFound': 'No users found',
     'communication.noAvailableUsers': 'No available users to connect with',

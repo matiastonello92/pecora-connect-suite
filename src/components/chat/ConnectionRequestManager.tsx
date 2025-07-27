@@ -105,6 +105,20 @@ export const ConnectionRequestManager: React.FC<ConnectionRequestManagerProps> =
     loadAvailableUsers();
   }, [user, users, getConnectionStatus, canSendConnectionRequest]);
 
+  // Listen for custom event to open connection requests
+  useEffect(() => {
+    const handleOpenConnectionRequests = () => {
+      // The parent component (ChatDashboard) will handle this event
+      console.log('Connection requests should be opened');
+    };
+
+    window.addEventListener('openConnectionRequests', handleOpenConnectionRequests);
+    
+    return () => {
+      window.removeEventListener('openConnectionRequests', handleOpenConnectionRequests);
+    };
+  }, []);
+
   const incomingRequests = connectionRequests.filter(
     req => req.recipient_id === user?.id && req.status === 'pending'
   );

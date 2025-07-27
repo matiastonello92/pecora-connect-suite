@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -48,6 +48,35 @@ export const ChatDashboard: React.FC = () => {
   const { t } = useTranslation(language);
   const [showCreateChat, setShowCreateChat] = useState(false);
   const [showConnections, setShowConnections] = useState(false);
+
+  // Listen for navigation events from notifications
+  useEffect(() => {
+    const handleNavigateToChat = async (event: CustomEvent) => {
+      const { chatId } = event.detail;
+      
+      try {
+        // Find the chat in the current chats list
+        const chat = filteredChats.find(c => c.id === chatId);
+        if (chat) {
+          setActiveChat(chat);
+        }
+      } catch (error) {
+        console.error('Error navigating to chat:', error);
+      }
+    };
+
+    const handleOpenConnectionRequests = () => {
+      setShowConnections(true);
+    };
+
+    window.addEventListener('navigateToChat', handleNavigateToChat as EventListener);
+    window.addEventListener('openConnectionRequests', handleOpenConnectionRequests);
+    
+    return () => {
+      window.removeEventListener('navigateToChat', handleNavigateToChat as EventListener);
+      window.removeEventListener('openConnectionRequests', handleOpenConnectionRequests);
+    };
+  }, [filteredChats, setActiveChat]);
   const [showGroups, setShowGroups] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
