@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useChatContext } from '@/context/ChatContext';
-import { useAuth } from '@/context/AuthContext';
+import { useSimpleAuth } from '@/context/SimpleAuthContext';
 import { useUserManagement } from '@/context/UserManagementContext';
 import { useTranslation } from '@/lib/i18n';
 import { formatDistanceToNow } from 'date-fns';
@@ -30,7 +30,8 @@ interface ConnectionRequestManagerProps {
 }
 
 export const ConnectionRequestManager: React.FC<ConnectionRequestManagerProps> = ({ onClose }) => {
-  const { user, language } = useAuth();
+  const { user } = useSimpleAuth();
+  const language = 'en'; // Temporary hardcode
   const { users } = useUserManagement();
   const { 
     connectionRequests, 
@@ -58,8 +59,8 @@ export const ConnectionRequestManager: React.FC<ConnectionRequestManagerProps> =
     if (!currentUserProfile) return false;
     
     const privilegedRoles = ['general_manager', 'human_resources'];
-    return user.role === 'super_admin' || 
-           user.role === 'manager' ||
+    return user?.user_metadata?.role === 'super_admin' || 
+           user?.user_metadata?.role === 'manager' ||
            currentUserProfile.accessLevel === 'general_manager' ||
            privilegedRoles.includes(currentUserProfile.restaurantRole || '');
   };
@@ -78,7 +79,7 @@ export const ConnectionRequestManager: React.FC<ConnectionRequestManagerProps> =
 
         // Apply location filtering for non-privileged users
         if (!canAccessAllLocations()) {
-          const userLocations = user.locations || [user.location]; // Support both new and old format
+          const userLocations = user?.user_metadata?.locations || [user?.user_metadata?.location]; // Support both new and old format
           filteredUsers = filteredUsers.filter(u => {
             const targetUserLocations = u.locations || [u.location];
             return userLocations.some(loc => targetUserLocations.includes(loc));

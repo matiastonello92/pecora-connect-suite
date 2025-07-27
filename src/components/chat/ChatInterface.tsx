@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { useChatContext } from '@/context/ChatContext';
-import { useAuth } from '@/context/AuthContext';
+import { useSimpleAuth } from '@/context/SimpleAuthContext';
 import { MessageList } from './MessageList';
 import { MessageInput } from './MessageInput';
 import { useTranslation } from '@/lib/i18n';
@@ -34,7 +34,8 @@ interface ChatInterfaceProps {
 
 export const ChatInterface: React.FC<ChatInterfaceProps> = ({ onBack, onShowInfo }) => {
   const { activeChat, messages, sendMessage, sendingMessage, getConnectionStatus } = useChatContext();
-  const { user, language } = useAuth();
+  const { user } = useSimpleAuth();
+  const language = 'en'; // Temporary hardcode
   const { t } = useTranslation(language);
   const [typingUsers, setTypingUsers] = useState<string[]>([]);
   const [showChatInfo, setShowChatInfo] = useState(false);
@@ -143,7 +144,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ onBack, onShowInfo
   const canSendMessages = () => {
     // Announcements: only admins and managers can send
     if (activeChat.type === 'announcements') {
-      return user?.role && ['manager', 'super_admin'].includes(user.role);
+      return user?.user_metadata?.role && ['manager', 'super_admin'].includes(user.user_metadata.role);
     }
     
     // Private chats: check connection status

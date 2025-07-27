@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '@/context/AuthContext';
+import { useSimpleAuth } from '@/context/SimpleAuthContext';
 import { useLocation } from '@/context/LocationContext';
 import { useTranslation } from '@/lib/i18n';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -24,7 +24,8 @@ interface LocationComparisonData {
 }
 
 export const LocationAwareReports = () => {
-  const { user, language } = useAuth();
+  const { user } = useSimpleAuth();
+  const language = 'en'; // Temporary hardcode
   const { activeLocation, availableLocations, allActiveLocations } = useLocation();
   const { t } = useTranslation(language);
   
@@ -52,7 +53,7 @@ export const LocationAwareReports = () => {
     }
   }, [availableLocations]);
 
-  const isBackofficeUser = ['super_admin', 'manager', 'director'].includes(user?.role || '');
+  const isBackofficeUser = ['super_admin', 'manager', 'director'].includes(user?.user_metadata?.role || '');
   const currentLocationName = availableLocations.find(loc => loc.value === activeLocation)?.label || activeLocation;
 
   const generateLocationReport = async () => {
@@ -80,7 +81,7 @@ export const LocationAwareReports = () => {
       
       // Mock comparison data - row-by-row, NOT aggregated
       const mockData: LocationComparisonData[] = allActiveLocations
-        .filter(location => user?.locations?.includes(location.code))
+        .filter(location => user?.user_metadata?.locations?.includes(location.code))
         .map(location => ({
           location: location.name,
           sales: Math.floor(Math.random() * 5000) + 2000,

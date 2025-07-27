@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Shield, Save, RotateCcw } from 'lucide-react';
 import { UserProfile, AppModule, MODULE_LABELS, ModulePermissions } from '@/types/users';
 import { useTranslation } from '@/lib/i18n';
-import { useAuth } from '@/context/AuthContext';
+import { useSimpleAuth } from '@/context/SimpleAuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -17,13 +17,13 @@ interface ProfilePermissionsProps {
 
 export const ProfilePermissions = ({ user }: ProfilePermissionsProps) => {
   const { t } = useTranslation('en');
-  const { user: currentUser } = useAuth();
+  const { user: currentUser } = useSimpleAuth();
   const { toast } = useToast();
   const [permissions, setPermissions] = useState<Partial<Record<AppModule, ModulePermissions>>>({});
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  const isAdmin = currentUser && ['manager', 'super_admin'].includes(currentUser.role || '');
+  const isAdmin = currentUser && ['manager', 'super_admin'].includes(currentUser.user_metadata?.role || '');
   const canEdit = isAdmin && currentUser?.id !== user.id;
 
   const modules: AppModule[] = [

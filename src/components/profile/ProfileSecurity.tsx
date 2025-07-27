@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { AlertTriangle, Shield, UserX, RotateCcw, History, Download } from 'lucide-react';
 import { UserProfile, UserRole, AccessLevel, LocationType, RESTAURANT_ROLE_LABELS, ACCESS_LEVEL_LABELS } from '@/types/users';
 import { useTranslation } from '@/lib/i18n';
-import { useAuth } from '@/context/AuthContext';
+import { useSimpleAuth } from '@/context/SimpleAuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -16,12 +16,12 @@ interface ProfileSecurityProps {
 
 export const ProfileSecurity = ({ user }: ProfileSecurityProps) => {
   const { t } = useTranslation('en');
-  const { user: currentUser } = useAuth();
+  const { user: currentUser } = useSimpleAuth();
   const { toast } = useToast();
   const [isUpdating, setIsUpdating] = useState(false);
 
   // Check if current user is admin/super_admin
-  const isAdmin = currentUser && ['manager', 'super_admin'].includes(currentUser.role || '');
+  const isAdmin = currentUser && ['manager', 'super_admin'].includes(currentUser.user_metadata?.role || '');
   
   // Don't show admin controls if not admin or if viewing own profile
   if (!isAdmin || currentUser?.id === user.id) {

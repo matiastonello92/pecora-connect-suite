@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useChatContext } from '@/context/ChatContext';
-import { useAuth } from '@/context/AuthContext';
+import { useSimpleAuth } from '@/context/SimpleAuthContext';
 import { useTranslation } from '@/lib/i18n';
 import { sanitizeMessage, containsInappropriateContent, validateFileUpload } from '@/utils/security';
 import { useToast } from '@/hooks/use-toast';
@@ -34,7 +34,8 @@ export const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage }) => 
   const [isRecording, setIsRecording] = useState(false);
   const [uploadingFile, setUploadingFile] = useState<File | null>(null);
   const { uploadMedia } = useChatContext();
-  const { language, user } = useAuth();
+  const { user } = useSimpleAuth();
+  const language = 'en'; // Temporary hardcode
   const { t } = useTranslation(language);
   const { toast } = useToast();
   const textareaRef = useRef<HTMLTextAreaElement>(null);

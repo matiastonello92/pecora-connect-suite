@@ -6,7 +6,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { UserPlus, Loader2 } from 'lucide-react';
-import { useAuth, UserRole } from '@/context/AuthContext';
+import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { UserRole } from '@/types/users';
 import { InvitationData, AccessLevel, LocationType } from '@/types/users';
 
 export const InviteUserDialog = () => {
@@ -18,7 +19,18 @@ export const InviteUserDialog = () => {
   const [location, setLocation] = useState<LocationType>('menton');
   const [isLoading, setIsLoading] = useState(false);
   
-  const { createInvitation, hasPermission } = useAuth();
+  const { user } = useSimpleAuth();
+  
+  // Temporary permission check - replace with proper permission system
+  const hasPermission = (permission: string) => {
+    return user?.user_metadata?.role === 'manager' || user?.user_metadata?.role === 'super_admin';
+  };
+  
+  // Temporary invitation creation - replace with proper service
+  const createInvitation = async (data: InvitationData) => {
+    console.log('Creating invitation:', data);
+    return { error: null };
+  };
   const { toast } = useToast();
 
   // Only allow managers and super_admins to invite users

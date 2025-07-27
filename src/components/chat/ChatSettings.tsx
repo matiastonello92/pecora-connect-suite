@@ -21,7 +21,7 @@ import {
   Shield
 } from 'lucide-react';
 import { useChatContext } from '@/context/ChatContext';
-import { useAuth } from '@/context/AuthContext';
+import { useSimpleAuth } from '@/context/SimpleAuthContext';
 import { useTranslation } from '@/lib/i18n';
 import { useToast } from '@/hooks/use-toast';
 
@@ -31,7 +31,8 @@ interface ChatSettingsProps {
 
 export const ChatSettings: React.FC<ChatSettingsProps> = ({ children }) => {
   const { activeChat, muteChat } = useChatContext();
-  const { user, language } = useAuth();
+  const { user } = useSimpleAuth();
+  const language = 'en'; // Temporary hardcode
   const { t } = useTranslation(language);
   const { toast } = useToast();
   const [open, setOpen] = useState(false);

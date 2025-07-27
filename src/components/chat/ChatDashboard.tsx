@@ -9,7 +9,7 @@ import { Separator } from '@/components/ui/separator';
 import { supabase } from '@/integrations/supabase/client';
 import { useChatContext } from '@/context/ChatContext';
 import { useTranslation } from '@/lib/i18n';
-import { useAuth } from '@/context/AuthContext';
+import { useSimpleAuth } from '@/context/SimpleAuthContext';
 import { useUnreadMessages } from '@/context/UnreadMessagesContext';
 import { useMessageReminders } from '@/hooks/useMessageReminders';
 import { useLocation } from '@/context/LocationContext';
@@ -60,7 +60,8 @@ export const ChatDashboard: React.FC = () => {
     error,
     emergencyFixAuth
   } = useChatContext();
-  const { user, language } = useAuth();
+  const { user } = useSimpleAuth();
+  const language = 'en'; // Temporary hardcode
   const { unreadCountByChat, markChatAsRead } = useUnreadMessages();
   const { processReminders } = useMessageReminders();
   const { userLocations } = useLocation();
@@ -417,7 +418,7 @@ export const ChatDashboard: React.FC = () => {
                     <div className="space-y-1 text-muted-foreground">
                       <div><strong>User ID:</strong> {user?.id}</div>
                       <div><strong>User Email:</strong> {user?.email}</div>
-                      <div><strong>User Locations:</strong> {user?.locations?.join(', ') || user?.location || 'None'}</div>
+                      <div><strong>User Locations:</strong> {user?.user_metadata?.locations?.join(', ') || user?.user_metadata?.location || 'None'}</div>
                       <div><strong>Total Chats:</strong> {chats.length}</div>
                       <div><strong>Search Filtered:</strong> {filteredChats.length}</div>
                       <div><strong>Location Filtered:</strong> {locationFilteredChats.length}</div>
