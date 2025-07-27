@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useFinancial } from '@/context/FinancialContext';
+import { useLocation } from '@/context/LocationContext';
 import { useTranslation } from '@/lib/i18n';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -12,13 +13,15 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { CalendarIcon, Download, Filter, TrendingUp, AlertTriangle, BarChart3, PieChart, Search, Save, Star } from 'lucide-react';
+import { CalendarIcon, Download, Filter, TrendingUp, AlertTriangle, BarChart3, PieChart, Search, Save, Star, MapPin } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { ClosureStatus } from '@/types/financial';
+import { LocationAwareReportWrapper } from '../reports/LocationAwareReportWrapper';
 
 export const FinancialReports = () => {
   const { user, language, hasPermission } = useAuth();
+  const { activeLocation, availableLocations } = useLocation();
   const { t } = useTranslation(language);
   const {
     closures,
@@ -33,6 +36,16 @@ export const FinancialReports = () => {
     unlockClosure
   } = useFinancial();
 
+  // Check URL parameters for location preselection
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const locationParam = urlParams.get('location');
+    
+    if (locationParam && availableLocations.some(loc => loc.value === locationParam)) {
+      console.log(`Financial reports: URL location parameter detected: ${locationParam}`);
+    }
+  }, [availableLocations]);
+
   const [dateRange, setDateRange] = useState<{
     start: Date | undefined;
     end: Date | undefined;
@@ -43,7 +56,6 @@ export const FinancialReports = () => {
   
   const [filters, setFilters] = useState({
     submitter: '',
-    location: '',
     status: 'all' as ClosureStatus | 'all' | ''
   });
   
@@ -54,10 +66,12 @@ export const FinancialReports = () => {
   const [viewType, setViewType] = useState<'totals' | 'percentages'>('totals');
 
   const canManageStatus = ['director', 'super_admin'].includes(user?.role || '');
+  const currentLocationName = availableLocations.find(loc => loc.value === activeLocation)?.label || activeLocation;
 
   const handleGenerateReport = () => {
     const reportFilters = {
       dateRange: dateRange.start && dateRange.end ? dateRange : undefined,
+      location: activeLocation, // Always filter by active location
       ...filters
     };
     generateReport(reportFilters);
@@ -65,10 +79,10 @@ export const FinancialReports = () => {
   };
 
   const handleExport = (format: 'csv' | 'pdf') => {
-    const userLocations = user?.locations || [user?.location].filter(Boolean) || [];
+    // Filter by active location only - strict single location enforcement
     const filteredData = closures.filter(closure => {
-      // Apply user location access filter first
-      if (!userLocations.includes(closure.restaurantLocation)) {
+      // First apply active location filter
+      if (closure.restaurantLocation !== activeLocation) {
         return false;
       }
       
@@ -79,9 +93,6 @@ export const FinancialReports = () => {
         }
       }
       if (filters.submitter && closure.submittedBy !== filters.submitter) {
-        return false;
-      }
-      if (filters.location && closure.restaurantLocation !== filters.location) {
         return false;
       }
       if (filters.status && filters.status !== 'all' && closure.status !== filters.status) {
@@ -106,7 +117,6 @@ export const FinancialReports = () => {
       setDateRange(preset.filters.dateRange || { start: undefined, end: undefined });
       setFilters({
         submitter: preset.filters.submitter || '',
-        location: preset.filters.location || '',
         status: preset.filters.status || 'all'
       });
     }
@@ -131,17 +141,32 @@ export const FinancialReports = () => {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Filters */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Filter className="h-5 w-5" />
-            Filters & Report Generation
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <LocationAwareReportWrapper reportType="Financial Reports">
+      <div className="space-y-6">
+        {/* Header with Active Location */}
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h2 className="text-2xl font-bold">Financial Reports</h2>
+            <div className="flex items-center space-x-2 mt-2">
+              <MapPin className="h-4 w-4 text-muted-foreground" />
+              <span className="text-muted-foreground">Active Location:</span>
+              <Badge variant="secondary" className="font-medium">
+                {currentLocationName}
+              </Badge>
+            </div>
+          </div>
+        </div>
+
+        {/* Filters */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Filter className="h-5 w-5" />
+              Filters & Report Generation - {currentLocationName}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">{/* Removed location column */}
             {/* Date Range */}
             <div className="space-y-2">
               <Label>Date Range</Label>
@@ -205,24 +230,6 @@ export const FinancialReports = () => {
                 value={filters.submitter}
                 onChange={(e) => setFilters(prev => ({ ...prev, submitter: e.target.value }))}
               />
-            </div>
-
-            {/* Location Filter */}
-            <div>
-              <Label htmlFor="location">Location</Label>
-              <Select value={filters.location} onValueChange={(value) => setFilters(prev => ({ ...prev, location: value }))}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Filter by location..." />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="">All Locations</SelectItem>
-                  {(user?.locations || [user?.location].filter(Boolean)).map(location => (
-                    <SelectItem key={location} value={location}>
-                      {location.charAt(0).toUpperCase() + location.slice(1)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
             </div>
 
             {/* Status Filter */}
@@ -456,6 +463,7 @@ export const FinancialReports = () => {
           </div>
         </CardContent>
       </Card>
-    </div>
+      </div>
+    </LocationAwareReportWrapper>
   );
 };
