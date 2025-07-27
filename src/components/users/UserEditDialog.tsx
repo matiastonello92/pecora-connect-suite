@@ -163,11 +163,11 @@ export const UserEditDialog = ({ user, isOpen, onOpenChange, onUserUpdated }: Us
               <SelectTrigger>
                 <SelectValue placeholder="Select restaurant role (optional)" />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="">No specific role</SelectItem>
-                {Object.entries(RESTAURANT_ROLE_LABELS).map(([value, label]) => (
-                  <SelectItem key={value} value={value}>{label}</SelectItem>
-                ))}
+               <SelectContent>
+                 <SelectItem value="">No specific role</SelectItem>
+                 {Object.entries(RESTAURANT_ROLE_LABELS).map(([value, label]) => (
+                   <SelectItem key={value} value={value}>{label}</SelectItem>
+                 ))}
               </SelectContent>
             </Select>
           </div>

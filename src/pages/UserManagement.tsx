@@ -101,7 +101,7 @@ export const UserManagement = () => {
             <div className="flex items-center gap-2">
               <Archive className="h-6 w-6 sm:h-8 sm:w-8 text-gray-500 shrink-0" />
               <div className="min-w-0">
-                <div className="text-lg sm:text-2xl font-bold">{archivedUsers.length}</div>
+                <div className="text-lg sm:text-2xl font-bold">{archivedUsers.filter(user => user.previousStatus === 'active').length}</div>
                 <div className="text-xs sm:text-sm text-muted-foreground">Archived Users</div>
               </div>
             </div>
@@ -129,11 +129,14 @@ export const UserManagement = () => {
               />
             ))}
             
-            {/* Archived Users Section */}
-            <div className="mt-8">
-              <h3 className="text-lg font-semibold mb-4">Archived Users</h3>
-              <div className="grid gap-3 sm:gap-4">
-                {archivedUsers.map((user) => (
+            {/* Archived Users Section - Only show if users had completed registration */}
+            {archivedUsers.filter(user => user.previousStatus === 'active').length > 0 && (
+              <div className="mt-8">
+                <h3 className="text-lg font-semibold mb-4">Archived Users</h3>
+                <div className="grid gap-3 sm:gap-4">
+                  {archivedUsers
+                    .filter(user => user.previousStatus === 'active')
+                    .map((user) => (
                   <Card key={user.id} className="border-gray-200 bg-gray-50/50 dark:border-gray-800 dark:bg-gray-950/50">
                     <CardHeader className="pb-3 sm:pb-4">
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -187,9 +190,10 @@ export const UserManagement = () => {
                       </div>
                     </CardContent>
                   </Card>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </TabsContent>
 

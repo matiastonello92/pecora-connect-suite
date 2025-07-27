@@ -15,7 +15,7 @@ export const PermissionProvider = ({ children }: { children: ReactNode }) => {
   const { user } = useAuth();
   const { hasPermission: hasModulePermission } = usePermissions({
     userId: user?.id,
-    accessLevel: user?.accessLevel as AccessLevel
+    accessLevel: 'base' as AccessLevel
   });
 
   const getUserPermissions = (userId: string) => {

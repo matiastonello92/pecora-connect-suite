@@ -9,7 +9,8 @@ import { Loader2, Settings, Save } from 'lucide-react';
 import { 
   UserProfile, 
   AppModule, 
-  MODULE_LABELS, 
+  MODULE_LABELS,
+  ACCESS_LEVEL_LABELS,
   ModulePermissions,
   UserPermission 
 } from '@/types/users';
@@ -156,12 +157,12 @@ export const UserPermissionsDialog = ({ user, isOpen, onOpenChange, onPermission
           </div>
         ) : (
           <div className="space-y-6">
-            <div className="bg-muted/50 p-4 rounded-lg">
-              <h3 className="font-medium mb-2">Current Access Level: {user.accessLevel}</h3>
-              <p className="text-sm text-muted-foreground">
-                Custom permissions override the default access level. Only set permissions that differ from the default.
-              </p>
-            </div>
+             <div className="bg-muted/50 p-4 rounded-lg">
+               <h3 className="font-medium mb-2">Current Access Level: {ACCESS_LEVEL_LABELS[user.accessLevel]}</h3>
+               <p className="text-sm text-muted-foreground">
+                 Custom permissions override the default access level. Only set permissions that differ from the default.
+               </p>
+             </div>
 
             <div className="grid gap-6">
               {modules.map((module) => (
