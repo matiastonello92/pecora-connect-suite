@@ -31,6 +31,7 @@ type UserManagementAction =
   | { type: 'ADD_USER'; payload: UserProfile }
   | { type: 'UPDATE_USER'; payload: UserProfile }
   | { type: 'DELETE_USER'; payload: string }
+  | { type: 'REMOVE_USER'; payload: string }
   | { type: 'ADD_PENDING_INVITATION'; payload: PendingInvitation }
   | { type: 'UPDATE_PENDING_INVITATION'; payload: PendingInvitation }
   | { type: 'REMOVE_PENDING_INVITATION'; payload: string }
@@ -56,6 +57,11 @@ const userManagementReducer = (state: UserManagementState, action: UserManagemen
         )
       };
     case 'DELETE_USER':
+      return {
+        ...state,
+        users: state.users.filter(user => user.id !== action.payload)
+      };
+    case 'REMOVE_USER':
       return {
         ...state,
         users: state.users.filter(user => user.id !== action.payload)
@@ -324,9 +330,11 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
       const user = state.users.find(u => u.id === userId);
       if (!user) throw new Error('User not found');
 
-      // Only archive users who were active and had logged in
-      if (user.status === 'active' && user.lastLogin) {
-        // Archive the user first
+      // Immediately remove user from UI for better UX
+      dispatch({ type: 'REMOVE_USER', payload: userId });
+
+      // Archive the user - do this for all active users, not just those with lastLogin
+      if (user.status === 'active') {
         const { error: archiveError } = await supabase
           .from('archived_users')
           .insert({
@@ -344,25 +352,34 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
             metadata: { lastLogin: user.lastLogin?.toISOString() }
           });
 
-        if (archiveError) throw archiveError;
+        if (archiveError) {
+          // Rollback UI change if archive fails
+          dispatch({ type: 'ADD_USER', payload: user });
+          throw archiveError;
+        }
       }
 
-      // Delete from profiles table
+      // Delete from profiles table - use the correct primary key column
       const { error } = await supabase
         .from('profiles')
         .delete()
         .eq('id', userId);
 
-      if (error) throw error;
+      if (error) {
+        // Rollback UI change if deletion fails
+        dispatch({ type: 'ADD_USER', payload: user });
+        throw error;
+      }
 
       toast({
         title: "Success",
         description: "User deleted successfully",
       });
 
-      // The real-time subscription will automatically refresh the data
-      setTimeout(() => refreshData(), 100);
+      // Load archived users to show the newly archived user immediately
+      setTimeout(() => loadArchivedUsers(), 100);
     } catch (error: any) {
+      console.error('Delete user error:', error);
       toast({
         title: "Error",
         description: `Failed to delete user: ${error.message}`,
