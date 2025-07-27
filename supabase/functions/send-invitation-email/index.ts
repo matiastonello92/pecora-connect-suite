@@ -48,12 +48,17 @@ const handler = async (req: Request): Promise<Response> => {
     }: InvitationEmailRequest = await req.json();
 
     console.log("Sending invitation email to:", email);
+    console.log("Invitation token:", invitationToken);
+    console.log("Request headers origin:", req.headers.get('origin'));
+    console.log("Request headers referer:", req.headers.get('referer'));
 
     // Create invitation link - DIRECT to our app with token as query parameter
     // Get the origin from the request headers or use the Lovable app URL as fallback
     const origin = req.headers.get('origin') || req.headers.get('referer')?.split('/').slice(0, 3).join('/') || "https://cqlbidkagiknfplzbwse.lovable.app";
     // Direct link to our registration page with token - NOT through Supabase auth
     const invitationLink = `${origin}/auth/complete-signup?token=${invitationToken}&type=invite`;
+    
+    console.log("Generated invitation link:", invitationLink);
 
     // Generate unique identifiers to prevent email threading
     const timestamp = new Date().toISOString();

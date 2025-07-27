@@ -17,11 +17,16 @@ import { Maintenance } from './pages/Maintenance';
 import { Profile } from './pages/Profile';
 import NotFound from './pages/NotFound';
 import { AppLayout } from './components/layout/AppLayout';
+import { CompleteSignup } from './components/auth/CompleteSignup';
 
 export const router = createBrowserRouter([
   {
     path: '/',
     element: <Index />,
+  },
+  {
+    path: '/auth/complete-signup',
+    element: <CompleteSignup />,
   },
   {
     path: '/app',

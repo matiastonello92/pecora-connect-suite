@@ -301,6 +301,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const createInvitation = async (data: InvitationData): Promise<{ error?: string }> => {
     try {
+      console.log('Creating invitation for:', data.email);
+      
+      // Delete any existing pending invitation for this email first to allow re-inviting
+      await supabase
+        .from('user_invitations')
+        .delete()
+        .eq('email', data.email)
+        .eq('status', 'pending');
+
       const invitationData = {
         email: data.email,
         first_name: data.firstName,
@@ -314,6 +323,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         metadata: data.customPermissions ? JSON.stringify({ customPermissions: data.customPermissions }) : JSON.stringify({})
       };
 
+      console.log('Inserting invitation data:', invitationData);
+
       const { data: inviteResult, error } = await supabase
         .from('user_invitations')
         .insert(invitationData)
@@ -321,12 +332,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         .single();
 
       if (error) {
+        console.error('Failed to insert invitation:', error);
         return { error: error.message };
       }
 
-      // Send invitation email
+      console.log('Invitation created:', inviteResult);
+
+      // Send invitation email with proper error handling
       try {
-        await supabase.functions.invoke('send-invitation-email', {
+        const { data: emailResult, error: emailError } = await supabase.functions.invoke('send-invitation-email', {
           body: {
             email: data.email,
             firstName: data.firstName,
@@ -335,15 +349,36 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             location: data.location,
             invitationToken: inviteResult.invitation_token,
             invitedByName: `${state.user?.firstName} ${state.user?.lastName}`,
+            isResend: false
           }
         });
-      } catch (emailError) {
-        // Don't return error for email sending failure - invitation is still created
-        console.warn('Failed to send invitation email:', emailError);
+
+        if (emailError) {
+          console.error('Email sending failed:', emailError);
+          // Delete the invitation since email failed
+          await supabase
+            .from('user_invitations')
+            .delete()
+            .eq('id', inviteResult.id);
+          
+          return { error: `Failed to send invitation email. Please verify that managementpn.services domain is configured in Resend: ${emailError.message}` };
+        }
+
+        console.log('Invitation email sent successfully:', emailResult);
+      } catch (emailError: any) {
+        console.error('Email sending exception:', emailError);
+        // Delete the invitation since email failed
+        await supabase
+          .from('user_invitations')
+          .delete()
+          .eq('id', inviteResult.id);
+        
+        return { error: `Failed to send invitation email: ${emailError.message}` };
       }
 
       return {};
     } catch (error: any) {
+      console.error('Error creating invitation:', error);
       return { error: error.message || 'Failed to create invitation' };
     }
   };

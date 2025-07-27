@@ -76,13 +76,12 @@ export const CompleteSignup = () => {
 
         console.log('Valid invitation found:', invitationData);
         
-        // Check if user already exists with this email
-        const { data: existingUser } = await supabase
-          .from('profiles')
-          .select('user_id')
-          .eq('first_name', invitationData.first_name)
-          .eq('last_name', invitationData.last_name)
-          .single();
+      // Check if user already exists with this email (proper email check)
+      const { data: existingUser } = await supabase
+        .from('profiles')
+        .select('user_id, email')
+        .eq('email', invitationData.email)
+        .single();
 
         if (existingUser) {
           setInvitationError('A user with this information already exists. Please contact your administrator.');
@@ -185,7 +184,10 @@ export const CompleteSignup = () => {
           user_id: signUpData.user.id,
           first_name: firstName,
           last_name: lastName,
+          email: email, // CRITICAL: Save the email
           role,
+          restaurant_role: invitationData.restaurant_role,
+          access_level: invitationData.access_level,
           location,
           department: location, // Use location as department for now
           position: 'Staff', // Default position
