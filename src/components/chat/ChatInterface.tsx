@@ -33,16 +33,27 @@ interface ChatInterfaceProps {
 }
 
 export const ChatInterface: React.FC<ChatInterfaceProps> = ({ onBack, onShowInfo }) => {
-  const { activeChat, messages, sendMessage, sendingMessage } = useChatContext();
+  const { activeChat, messages, sendMessage, sendingMessage, getConnectionStatus } = useChatContext();
   const { user, language } = useAuth();
   const { t } = useTranslation(language);
   const [typingUsers, setTypingUsers] = useState<string[]>([]);
   const [showChatInfo, setShowChatInfo] = useState(false);
+  const [connectionStatus, setConnectionStatus] = useState<string>('none');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  // Check connection status for private chats
+  useEffect(() => {
+    if (activeChat?.type === 'private' && user) {
+      const otherParticipant = activeChat.participants?.find(p => p.user_id !== user.id);
+      if (otherParticipant) {
+        getConnectionStatus(otherParticipant.user_id).then(setConnectionStatus);
+      }
+    }
+  }, [activeChat, user, getConnectionStatus]);
 
   if (!activeChat) {
     return (
@@ -137,7 +148,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ onBack, onShowInfo
     
     // Private chats: check connection status
     if (activeChat.type === 'private') {
-      return hasAcceptedConnection();
+      return connectionStatus === 'accepted';
     }
     
     // All other chats: check if user is not muted
@@ -146,20 +157,22 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ onBack, onShowInfo
 
   const hasAcceptedConnection = () => {
     if (!user || !activeChat.participants || activeChat.type !== 'private') return true;
-    
-    // For private chats, we need to check if there's an accepted connection
-    // This will be verified by the backend when sending messages
-    return true; // Backend will handle the actual validation
+    return connectionStatus === 'accepted';
   };
 
-  const getConnectionStatus = () => {
-    if (activeChat.type !== 'private' || !activeChat.participants || !user) return null;
+  const getConnectionStatusMessage = () => {
+    if (activeChat.type !== 'private') return null;
     
-    const otherParticipant = activeChat.participants.find(p => p.user_id !== user.id);
-    if (!otherParticipant) return null;
-    
-    // This should be enhanced to check actual connection status from context
-    return 'pending'; // This would come from connection request data
+    switch (connectionStatus) {
+      case 'pending':
+        return t('communication.waitingForConnection');
+      case 'declined':
+        return t('communication.connectionDeclined');
+      case 'none':
+        return t('communication.noConnectionRequest');
+      default:
+        return null;
+    }
   };
 
   return (
@@ -309,11 +322,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ onBack, onShowInfo
           <div className="p-4 text-center text-muted-foreground">
             {activeChat.type === 'announcements' 
               ? t('communication.onlyAdminsCanSend')
-              : activeChat.type === 'private' && getConnectionStatus() === 'pending'
-              ? t('communication.waitingForConnection')
-              : activeChat.type === 'private' && getConnectionStatus() === 'declined'
-              ? t('communication.connectionDeclined')
-              : t('communication.chatMuted')
+              : getConnectionStatusMessage() || t('communication.chatMuted')
             }
           </div>
         )}

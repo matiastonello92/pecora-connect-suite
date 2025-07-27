@@ -39,6 +39,8 @@ interface ChatContextType {
   connectionRequests: ConnectionRequest[];
   sendConnectionRequest: (userId: string, message?: string) => Promise<void>;
   respondToConnectionRequest: (requestId: string, accept: boolean) => Promise<void>;
+  getConnectionStatus: (userId: string) => Promise<string>;
+  canSendConnectionRequest: (recipientId: string) => Promise<boolean>;
   
   // Search and filters
   searchTerm: string;
@@ -394,6 +396,17 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!user) return;
     
     try {
+      // Check if user can send a connection request
+      const { data: canSend } = await supabase.rpc('can_send_connection_request', {
+        requester_user_id: user.id,
+        recipient_user_id: userId
+      });
+      
+      if (!canSend) {
+        toast.error(t('communication.cannotSendRequest'));
+        return;
+      }
+      
       const { error } = await supabase
         .from('connection_requests')
         .insert({
@@ -408,7 +421,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       toast.success(t('communication.requestSent'));
     } catch (error: any) {
       console.error('Error sending connection request:', error);
-      toast.error(t('communication.errorSendingMessage'));
+      toast.error(error.message || t('communication.errorSendingMessage'));
     }
   };
 
@@ -429,6 +442,40 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } catch (error: any) {
       console.error('Error responding to connection request:', error);
       toast.error(t('communication.errorSendingMessage'));
+    }
+  };
+
+  const getConnectionStatus = async (userId: string): Promise<string> => {
+    if (!user) return 'none';
+    
+    try {
+      const { data, error } = await supabase.rpc('get_connection_status', {
+        user1_id: user.id,
+        user2_id: userId
+      });
+      
+      if (error) throw error;
+      return data || 'none';
+    } catch (error) {
+      console.error('Error getting connection status:', error);
+      return 'none';
+    }
+  };
+
+  const canSendConnectionRequest = async (recipientId: string): Promise<boolean> => {
+    if (!user) return false;
+    
+    try {
+      const { data, error } = await supabase.rpc('can_send_connection_request', {
+        requester_user_id: user.id,
+        recipient_user_id: recipientId
+      });
+      
+      if (error) throw error;
+      return data || false;
+    } catch (error) {
+      console.error('Error checking if can send connection request:', error);
+      return false;
     }
   };
 
@@ -536,6 +583,8 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       connectionRequests,
       sendConnectionRequest,
       respondToConnectionRequest,
+      getConnectionStatus,
+      canSendConnectionRequest,
       searchTerm,
       setSearchTerm,
       filteredChats,

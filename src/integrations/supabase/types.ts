@@ -1147,6 +1147,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: boolean
       }
+      can_send_connection_request: {
+        Args: { requester_user_id: string; recipient_user_id: string }
+        Returns: boolean
+      }
       cleanup_expired_invitations: {
         Args: Record<PropertyKey, never>
         Returns: undefined
@@ -1180,6 +1184,10 @@ export type Database = {
         Returns: {
           location: string
         }[]
+      }
+      get_connection_status: {
+        Args: { user1_id: string; user2_id: string }
+        Returns: string
       }
       get_current_user_role: {
         Args: Record<PropertyKey, never>

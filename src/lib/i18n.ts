@@ -232,7 +232,11 @@ export const translations = {
       errorCreatingGroup: 'Error creating group',
       errorSendingMessage: 'Error sending message',
       errorUploadingFile: 'Error uploading file',
-      unknownSender: 'Unknown'
+      unknownSender: 'Unknown',
+      waitingForConnection: 'Waiting for the user to accept your chat request',
+      connectionDeclined: 'Connection request was declined',
+      noConnectionRequest: 'Send a connection request to start chatting',
+      cannotSendRequest: 'Cannot send connection request. You may have a pending request or need to wait after a previous decline.'
     },
     
     // Legacy communication keys for backward compatibility
