@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { AlertTriangle, Shield, UserX, RotateCcw, History, Download } from 'lucide-react';
 import { UserProfile, UserRole, AccessLevel, LocationType, RESTAURANT_ROLE_LABELS, ACCESS_LEVEL_LABELS } from '@/types/users';
-import { useTranslation } from '@/lib/i18n';
+
 import { useSimpleAuth } from '@/context/SimpleAuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';

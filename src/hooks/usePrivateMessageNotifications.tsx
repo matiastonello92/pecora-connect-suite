@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useSimpleAuth } from '@/context/SimpleAuthContext';
 import { useChatContext } from '@/context/ChatContext';
-import { useTranslation } from '@/lib/i18n';
+
 import { toast } from '@/hooks/use-toast';
 
 interface NotificationData {

@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Shield, Save, RotateCcw } from 'lucide-react';
 import { UserProfile, AppModule, MODULE_LABELS, ModulePermissions } from '@/types/users';
-import { useTranslation } from '@/lib/i18n';
+
 import { useSimpleAuth } from '@/context/SimpleAuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';

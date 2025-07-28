@@ -12,7 +12,7 @@ import {
   ChatMessageType
 } from '@/types/communication';
 import { toast } from "sonner";
-import { useTranslation } from '@/lib/i18n';
+
 
 interface ChatContextType {
   // Chats

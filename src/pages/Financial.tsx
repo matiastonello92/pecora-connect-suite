@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSimpleAuth } from '@/context/SimpleAuthContext';
-import { useTranslation } from '@/lib/i18n';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AlertTriangle, Calculator, TrendingUp } from 'lucide-react';

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSimpleAuth } from '@/context/SimpleAuthContext';
-import { useTranslation } from '@/lib/i18n';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';

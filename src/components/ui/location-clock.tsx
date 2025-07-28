@@ -3,7 +3,7 @@ import { Clock, MapPin } from 'lucide-react';
 import { useSimpleAuth } from '@/context/SimpleAuthContext';
 import { useLocation } from '@/context/LocationContext';
 import { formatDateForLocation, getCurrentTimeForLocation, DATE_FORMATS, getDateLocale } from '@/lib/timezone';
-import { useTranslation } from '@/lib/i18n';
+
 
 interface LocationClockProps {
   className?: string;

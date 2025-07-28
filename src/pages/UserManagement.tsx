@@ -7,7 +7,7 @@ import { DeleteInvitationDialog } from '@/components/ui/delete-invitation-dialog
 import { ReactivateUserDialog } from '@/components/ui/reactivate-user-dialog';
 import { EnhancedInviteUserDialog } from '@/components/auth/EnhancedInviteUserDialog';
 import { EnhancedUserCard } from '@/components/users/EnhancedUserCard';
-import { useTranslation } from '@/lib/i18n';
+
 import { useUserDeletionValidation } from '@/hooks/useUserDeletionValidation';
 import { UserListPagination } from '@/components/management/UserListPagination';
 import { UserValidationPanel } from '@/components/management/UserValidationPanel';

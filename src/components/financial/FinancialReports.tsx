@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSimpleAuth } from '@/context/SimpleAuthContext';
 import { useFinancial } from '@/context/FinancialContext';
 import { useLocation } from '@/context/LocationContext';
-import { useTranslation } from '@/lib/i18n';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';

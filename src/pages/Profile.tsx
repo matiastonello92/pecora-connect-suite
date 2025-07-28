@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Camera, Settings, Shield, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useTranslation } from '@/lib/i18n';
+
 import { ProfileInformation } from '@/components/profile/ProfileInformation';
 import { ProfileSettings } from '@/components/profile/ProfileSettings';
 import { ProfilePictureUpload } from '@/components/profile/ProfilePictureUpload';

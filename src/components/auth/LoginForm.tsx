@@ -128,7 +128,7 @@ export const LoginForm = () => {
               Signing in...
             </>
           ) : (
-            Sign In
+            "Sign In"
           )}
         </Button>
       </GenericForm>

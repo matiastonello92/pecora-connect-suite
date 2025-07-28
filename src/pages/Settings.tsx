@@ -15,7 +15,6 @@ export const Settings = () => {
   const language = 'en'; // Temporarily hardcode language
   const setLanguage = (lang: any) => {}; // Temporarily stub
   const updateUser = (user: any) => {}; // Temporarily stub
-  const { t } = useTranslation(language);
 
   const handleLanguageChange = (newLanguage: Language) => {
     setLanguage(newLanguage);
