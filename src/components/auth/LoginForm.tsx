@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { useSimpleAuth } from '@/context/SimpleAuthContext';
-import { useTranslation, Language } from '@/lib/i18n';
+
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -14,13 +14,11 @@ import { GenericForm } from '@/components/forms/GenericForm';
 export const LoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [selectedLanguage, setSelectedLanguage] = useState<Language>('en');
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const location = useLocation();
   const { login, isLoading } = useSimpleAuth();
-  const { t } = useTranslation(selectedLanguage);
   const { toast } = useToast();
 
   // Check for registration success
@@ -66,14 +64,14 @@ export const LoginForm = () => {
       });
     } else {
       toast({
-        title: t('welcome'),
-        description: t('welcomeMessage'),
+        title: "Welcome back!",
+        description: "Successfully signed in to your account.",
       });
     }
   };
 
   return (
-    <AuthLayout title={t('welcome')} subtitle={t('welcomeMessage')}>
+    <AuthLayout title="Welcome back" subtitle="Sign in to your account">
       {showSuccessMessage && (
         <Alert className="border-success/20 bg-success/10">
           <CheckCircle className="h-4 w-4 text-success" />
@@ -83,27 +81,14 @@ export const LoginForm = () => {
         </Alert>
       )}
 
-      <FormField
-        label={t('language')}
-        type="select"
-        value={selectedLanguage}
-        onChange={(value) => setSelectedLanguage(value as Language)}
-        selectOptions={[
-          { value: 'en', label: 'English' },
-          { value: 'fr', label: 'Français' },
-          { value: 'it', label: 'Italiano' }
-        ]}
-        disabled={isLoading}
-      />
-
       <GenericForm 
         onSubmit={handleSubmit}
-        submitLabel={isLoading ? `${t('login')}...` : t('login')}
+        submitLabel={isLoading ? "Signing in..." : "Sign In"}
         isLoading={isLoading}
         showActions={false}
       >
         <FormField
-          label={t('email')}
+          label="Email"
           type="email"
           value={email}
           onChange={setEmail}
@@ -113,7 +98,7 @@ export const LoginForm = () => {
         />
 
         <FormField
-          label={t('password')}
+          label="Password"
           type="password"
           value={password}
           onChange={setPassword}
@@ -140,10 +125,10 @@ export const LoginForm = () => {
           {isLoading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              {t('login')}...
+              Signing in...
             </>
           ) : (
-            t('login')
+            Sign In
           )}
         </Button>
       </GenericForm>
@@ -151,7 +136,7 @@ export const LoginForm = () => {
       <div className="text-center">
         <Link to="/auth/forgot-password">
           <Button variant="link" className="text-sm text-muted-foreground font-inter">
-            {t('forgotPassword')}
+            Forgot your password?
           </Button>
         </Link>
       </div>

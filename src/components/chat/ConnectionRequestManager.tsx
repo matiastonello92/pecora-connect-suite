@@ -9,7 +9,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { useChatContext } from '@/context/ChatContext';
 import { useSimpleAuth } from '@/context/SimpleAuthContext';
 import { useUserManagement } from '@/context/UserManagementContext';
-import { useTranslation } from '@/lib/i18n';
+
 import { formatDistanceToNow } from 'date-fns';
 import { enUS, fr, it } from 'date-fns/locale';
 import {
@@ -40,7 +40,7 @@ export const ConnectionRequestManager: React.FC<ConnectionRequestManagerProps> =
     canSendConnectionRequest,
     getConnectionStatus
   } = useChatContext();
-  const { t } = useTranslation(language);
+  
   const [searchTerm, setSearchTerm] = useState('');
   const [showUserList, setShowUserList] = useState(false);
   const [selectedUser, setSelectedUser] = useState<any>(null);

@@ -8,7 +8,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { supabase } from '@/integrations/supabase/client';
 import { useChatContext } from '@/context/ChatContext';
-import { useTranslation } from '@/lib/i18n';
+
 import { useSimpleAuth } from '@/context/SimpleAuthContext';
 import { useUnreadMessages } from '@/context/UnreadMessagesContext';
 import { useMessageReminders } from '@/hooks/useMessageReminders';
@@ -65,7 +65,7 @@ export const ChatDashboard: React.FC = () => {
   const { unreadCountByChat, markChatAsRead } = useUnreadMessages();
   const { processReminders } = useMessageReminders();
   const { userLocations } = useLocation();
-  const { t } = useTranslation(language);
+  
   const [showCreateChat, setShowCreateChat] = useState(false);
   const [showConnections, setShowConnections] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState<string | 'all_locations'>('all_locations');

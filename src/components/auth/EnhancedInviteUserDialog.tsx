@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
-import { useTranslation } from '@/lib/i18n';
+
 import { Loader2, UserPlus, ChevronDown, ChevronRight, Settings, AlertCircle } from 'lucide-react';
 import { MultiLocationSelect } from '@/components/ui/location-select';
 import { 
@@ -54,7 +54,7 @@ export const EnhancedInviteUserDialog = () => {
   };
   const { users, pendingInvitations, refreshData } = useUserManagement();
   const { toast } = useToast();
-  const { t } = useTranslation(language);
+  
 
   // Only allow managers and super_admins to invite users
   if (!hasPermission('manager')) {

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useSimpleAuth } from '@/context/SimpleAuthContext';
-import { useTranslation, Language } from '@/lib/i18n';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -17,8 +17,6 @@ export const ResetPassword = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const language = 'en'; // Temporarily hardcode language
-  const { t } = useTranslation(language);
   const { toast } = useToast();
 
   useEffect(() => {

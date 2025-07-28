@@ -1,6 +1,6 @@
 import { useSimpleAuth } from '@/context/SimpleAuthContext';
 import { useUnreadMessages } from '@/context/UnreadMessagesContext';
-import { useTranslation } from '@/lib/i18n';
+
 import { NavLink, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -163,13 +163,58 @@ const navigationItems = [
   },
 ];
 
+// Simple title mapping for hardcoded English
+const getTitle = (key: string): string => {
+  const titles: Record<string, string> = {
+    dashboard: 'Dashboard',
+    overview: 'Overview',
+    reports: 'Reports',
+    recentActivity: 'Recent Activity',
+    inventories: 'Inventories',
+    kitchenInventory: 'Kitchen Inventory',
+    pizzeriaInventory: 'Pizzeria Inventory',
+    salaBarInventory: 'Sala Bar Inventory',
+    equipmentInventory: 'Equipment Inventory',
+    suppliers: 'Suppliers',
+    sentOrders: 'Sent Orders',
+    createNewOrder: 'Create New Order',
+    orderHistory: 'Order History',
+    chat: 'Communication',
+    checklists: 'Checklists',
+    miseEnPlace: 'Mise en Place',
+    serviceChecklists: 'Service Checklists',
+    completedChecklists: 'Completed Checklists',
+    tasks: 'Tasks',
+    dailyTasks: 'Daily Tasks',
+    assignedTasks: 'Assigned Tasks',
+    completedTasks: 'Completed Tasks',
+    finance: 'Finance',
+    cashRegisterClosure: 'Cash Register Closure',
+    financialReports: 'Financial Reports',
+    cashHistory: 'Cash History',
+    users: 'Users',
+    userManagement: 'User Management',
+    invitations: 'Invitations',
+    rolesPermissions: 'Roles & Permissions',
+    maintenance: 'Maintenance',
+    techniciansList: 'Technicians List',
+    scheduledInterventions: 'Scheduled Interventions',
+    faultReports: 'Fault Reports',
+    settings: 'Settings',
+    language: 'Language',
+    activeLocation: 'Active Location',
+    notificationSettings: 'Notification Settings',
+    userPreferences: 'User Preferences',
+    navigation: 'Navigation',
+  };
+  return titles[key] || key;
+};
+
 export const AppSidebar = () => {
   const { profile, logout } = useSimpleAuth();
-  const language = 'en'; // Temporarily hardcode language
   const hasPermission = () => true; // Temporarily allow all permissions
   const hasAccess = () => true; // Temporarily allow all access
   const { totalUnreadCount, markChatAsRead } = useUnreadMessages();
-  const { t } = useTranslation(language);
   const { state, setOpen } = useSidebar();
   const location = useLocation();
   const isMobile = useIsMobile();
@@ -268,7 +313,7 @@ export const AppSidebar = () => {
         {/* Main Navigation */}
         <SidebarGroup>
           <SidebarGroupLabel className="px-4 py-2 text-xs font-semibold text-muted-foreground tracking-wider">
-            {!isCollapsed && t('navigation')}
+            {!isCollapsed && "Navigation"}
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -281,7 +326,7 @@ export const AppSidebar = () => {
                         <NavLink
                           to={item.url}
                           className={getNavClassName}
-                          title={isCollapsed ? t(item.title) : undefined}
+                          title={isCollapsed ? getTitle(item.title) : undefined}
                           onClick={() => {
                             // Mark chat as read when clicking on chat link
                             if (item.title === 'chat' && totalUnreadCount > 0) {
@@ -292,7 +337,7 @@ export const AppSidebar = () => {
                           <item.icon className="h-5 w-5 flex-shrink-0" />
                           {!isCollapsed && (
                             <span className="ml-3 font-inter">
-                              {t(item.title)}
+                              {getTitle(item.title)}
                             </span>
                           )}
                         </NavLink>
@@ -312,13 +357,13 @@ export const AppSidebar = () => {
                       <SidebarMenuButton
                         onClick={() => toggleGroup(item.title)}
                         className={getParentNavClassName(item)}
-                        title={isCollapsed ? t(item.title) : undefined}
+                        title={isCollapsed ? getTitle(item.title) : undefined}
                       >
                         <item.icon className="h-5 w-5 flex-shrink-0" />
                         {!isCollapsed && (
                           <>
                             <span className="ml-3 font-inter flex-1">
-                              {t(item.title)}
+                              {getTitle(item.title)}
                             </span>
                             {openGroups[item.title] ? (
                               <ChevronDown className="h-4 w-4" />
@@ -345,7 +390,7 @@ export const AppSidebar = () => {
                                 >
                                   <subItem.icon className="h-4 w-4 flex-shrink-0" />
                                   <span className="ml-2 font-inter text-sm">
-                                    {t(subItem.title)}
+                                    {getTitle(subItem.title)}
                                   </span>
                                 </NavLink>
                               </SidebarMenuSubButton>
@@ -385,7 +430,7 @@ export const AppSidebar = () => {
                 <SidebarMenuButton asChild className="flex-1">
                   <NavLink to="/settings" className={getNavClassName}>
                     <Settings className="h-4 w-4" />
-                    <span className="ml-2 text-xs">{t('settings')}</span>
+                    <span className="ml-2 text-xs">Settings</span>
                   </NavLink>
                 </SidebarMenuButton>
                 
@@ -394,7 +439,7 @@ export const AppSidebar = () => {
                   className="flex-1 text-destructive hover:text-destructive hover:bg-destructive/10 focus:bg-destructive/10 active:bg-destructive/10 transition-colors"
                 >
                   <LogOut className="h-4 w-4" />
-                  <span className="ml-2 text-xs">{t('logout')}</span>
+                  <span className="ml-2 text-xs">Sign Out</span>
                 </SidebarMenuButton>
               </div>
             </div>
@@ -403,14 +448,14 @@ export const AppSidebar = () => {
           {isCollapsed && (
             <div className="p-2 space-y-1">
               <SidebarMenuButton asChild>
-                <NavLink to="/settings" title={t('settings')}>
+                <NavLink to="/settings" title="Settings">
                   <Settings className="h-4 w-4" />
                 </NavLink>
               </SidebarMenuButton>
               
               <SidebarMenuButton 
                 onClick={logout}
-                title={t('logout')}
+                title="Sign Out"
                 className="text-destructive hover:text-destructive hover:bg-destructive/10 focus:bg-destructive/10 active:bg-destructive/10 transition-colors"
               >
                 <LogOut className="h-4 w-4" />

@@ -3,7 +3,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useSimpleAuth } from '@/context/SimpleAuthContext';
-import { useTranslation } from '@/lib/i18n';
+
 import { formatDistanceToNow, format, isToday, isYesterday } from 'date-fns';
 import { enUS, fr, it } from 'date-fns/locale';
 import {
@@ -26,7 +26,7 @@ interface MessageListProps {
 export const MessageList: React.FC<MessageListProps> = ({ messages }) => {
   const { profile } = useSimpleAuth();
   const language = 'en'; // Temporary hardcode
-  const { t } = useTranslation(language);
+  
   
   const getDateLocale = () => {
     const locales = { en: enUS, fr, it };

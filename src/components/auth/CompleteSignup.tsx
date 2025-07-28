@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useSimpleAuth } from '@/context/SimpleAuthContext';
-import { useTranslation, Language } from '@/lib/i18n';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -25,15 +25,12 @@ export const CompleteSignup = () => {
   const [lastName, setLastName] = useState('');
   const [role, setRole] = useState('');
   const [location, setLocation] = useState('');
-  const [selectedLanguage, setSelectedLanguage] = useState<Language>('en');
   const [isLoading, setIsLoading] = useState(false);
   const [isValidInvitation, setIsValidInvitation] = useState(false);
   const [isCheckingInvitation, setIsCheckingInvitation] = useState(true);
   const [invitationData, setInvitationData] = useState<any>(null);
   const [invitationError, setInvitationError] = useState<string>('');
   const [tokenFromUrl, setTokenFromUrl] = useState<string>('');
-  const setLanguage = (lang: any) => {}; // Temporarily stub
-  const { t } = useTranslation(selectedLanguage);
   const { toast } = useToast();
 
   // Check invitation validity on component mount
@@ -149,7 +146,6 @@ export const CompleteSignup = () => {
     }
 
     setIsLoading(true);
-    setLanguage(selectedLanguage);
 
     try {
       // Final token validation before user creation
@@ -367,21 +363,6 @@ export const CompleteSignup = () => {
         </CardHeader>
         
         <CardContent className="space-y-6">
-          <div className="space-y-2">
-            <Label htmlFor="language" className="font-inter">
-              {t('language')}
-            </Label>
-            <Select value={selectedLanguage} onValueChange={(value: Language) => setSelectedLanguage(value)}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="en">English</SelectItem>
-                <SelectItem value="fr">Français</SelectItem>
-                <SelectItem value="it">Italiano</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">

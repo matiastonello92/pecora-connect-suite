@@ -8,7 +8,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useChatContext } from '@/context/ChatContext';
 import { useSimpleAuth } from '@/context/SimpleAuthContext';
-import { useTranslation } from '@/lib/i18n';
+
 import {
   Users,
   Settings,
@@ -29,7 +29,7 @@ export const GroupManagement: React.FC<GroupManagementProps> = ({ onClose }) => 
   const { activeChat, createChat, updateChat, addParticipant, removeParticipant, updateParticipantRole } = useChatContext();
   const { profile } = useSimpleAuth();
   const language = 'en'; // Temporary hardcode
-  const { t } = useTranslation(language);
+  
   const [showCreateGroup, setShowCreateGroup] = useState(false);
   const [groupName, setGroupName] = useState('');
   const [groupDescription, setGroupDescription] = useState('');

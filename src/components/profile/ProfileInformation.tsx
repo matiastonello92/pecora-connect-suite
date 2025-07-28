@@ -3,7 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Mail, Calendar, MapPin, Shield, User, Hash, Edit2 } from 'lucide-react';
 import { UserProfile } from '@/types/users';
-import { useTranslation } from '@/lib/i18n';
+
 import { format } from 'date-fns';
 import { useState } from 'react';
 import { EmailChangeDialog } from './EmailChangeDialog';
@@ -14,7 +14,7 @@ interface ProfileInformationProps {
 }
 
 export const ProfileInformation = ({ user }: ProfileInformationProps) => {
-  const { t } = useTranslation('en');
+  
   const [showEmailDialog, setShowEmailDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
 

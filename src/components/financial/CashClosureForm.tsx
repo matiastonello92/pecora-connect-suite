@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSimpleAuth } from '@/context/SimpleAuthContext';
 import { useFinancial } from '@/context/FinancialContext';
-import { useTranslation } from '@/lib/i18n';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -17,7 +17,7 @@ import { useToast } from '@/hooks/use-toast';
 export const CashClosureForm = () => {
   const { profile } = useSimpleAuth();
   const language = 'en'; // Temporarily hardcode language
-  const { t } = useTranslation(language);
+  
   const { toast } = useToast();
   const {
     currentClosure,

@@ -8,7 +8,7 @@ import { useChatContext } from '@/context/ChatContext';
 import { useSimpleAuth } from '@/context/SimpleAuthContext';
 import { MessageList } from './MessageList';
 import { MessageInput } from './MessageInput';
-import { useTranslation } from '@/lib/i18n';
+
 import {
   Phone,
   Video,
@@ -36,7 +36,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ onBack, onShowInfo
   const { activeChat, messages, sendMessage, sendingMessage, getConnectionStatus } = useChatContext();
   const { profile } = useSimpleAuth();
   const language = 'en'; // Temporary hardcode
-  const { t } = useTranslation(language);
+  
   const [typingUsers, setTypingUsers] = useState<string[]>([]);
   const [showChatInfo, setShowChatInfo] = useState(false);
   const [connectionStatus, setConnectionStatus] = useState<string>('none');

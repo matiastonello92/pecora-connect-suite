@@ -1,5 +1,5 @@
 import { useSimpleAuth } from '@/context/SimpleAuthContext';
-import { useTranslation, Language, languages } from '@/lib/i18n';
+
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { SidebarTrigger } from '@/components/ui/sidebar';
@@ -21,10 +21,7 @@ import { NotificationCenter, useNotificationCount } from '@/components/notificat
 
 export const AppHeader = () => {
   const { profile, logout } = useSimpleAuth();
-  const language = 'en'; // Temporarily hardcode language
-  const setLanguage = () => {}; // Temporarily disabled
   const navigate = useNavigate();
-  const { t } = useTranslation(language);
   const unreadCount = useNotificationCount();
   const { activeLocation, availableLocations } = useLocation();
   
@@ -61,7 +58,7 @@ export const AppHeader = () => {
         
         <div className="hidden lg:block min-w-0">
           <p className="text-sm text-muted-foreground font-inter truncate">
-            {t('welcome')}, {profile?.first_name || profile?.email?.split('@')[0] || 'User'}
+            Welcome, {profile?.first_name || profile?.email?.split('@')[0] || 'User'}
           </p>
         </div>
       </div>
@@ -92,30 +89,6 @@ export const AppHeader = () => {
           </PopoverContent>
         </Popover>
 
-        {/* Language Selector */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" className="gap-1 sm:gap-2 px-2 sm:px-3">
-              <Globe className="h-4 w-4 shrink-0" />
-              <span className="hidden sm:inline text-sm">
-                {languages[language]}
-              </span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>{t('language')}</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            {(Object.keys(languages) as Language[]).map((lang) => (
-              <DropdownMenuItem
-                key={lang}
-                onClick={() => {}} // setLanguage disabled for now
-                className={language === lang ? 'bg-accent' : ''}
-              >
-                {languages[lang]}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
 
         {/* User Menu */}
         <DropdownMenu>
@@ -149,16 +122,16 @@ export const AppHeader = () => {
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => navigate('/profile')}>
               <User className="mr-2 h-4 w-4" />
-              {t('profile')}
+              Profile
             </DropdownMenuItem>
             <DropdownMenuItem>
               <Settings className="mr-2 h-4 w-4" />
-              {t('settings')}
+              Settings
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={logout} className="text-destructive">
               <LogOut className="mr-2 h-4 w-4" />
-              {t('logout')}
+              Sign Out
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

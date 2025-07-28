@@ -1,5 +1,5 @@
 import { useSimpleAuth } from '@/context/SimpleAuthContext';
-import { useTranslation } from '@/lib/i18n';
+
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { UnreadMessagesProvider } from '@/context/UnreadMessagesContext';
 import { AppSidebar } from './AppSidebar';
@@ -12,8 +12,6 @@ interface AppLayoutProps {
 }
 
 export const AppLayout = ({ children }: AppLayoutProps) => {
-  const language = 'en'; // Temporarily hardcode language
-  const { t } = useTranslation(language);
   const { isLocationBlocked, suggestedLocation } = useLocation();
 
   // Show location blocker if no valid location is set or if there's a suggested location

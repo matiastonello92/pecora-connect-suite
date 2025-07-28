@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Globe, Palette, Lock, Bell, MoonIcon, LogOut } from 'lucide-react';
 import { UserProfile } from '@/types/users';
-import { useTranslation, Language } from '@/lib/i18n';
+
 import { useSimpleAuth } from '@/context/SimpleAuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { PasswordChangeDialog } from './PasswordChangeDialog';
@@ -17,22 +17,18 @@ interface ProfileSettingsProps {
 }
 
 export const ProfileSettings = ({ user }: ProfileSettingsProps) => {
-  const [currentLanguage, setCurrentLanguage] = useState<Language>('en');
-  const { t } = useTranslation(currentLanguage);
   const { logout } = useSimpleAuth();
   const { toast } = useToast();
   const [showPasswordDialog, setShowPasswordDialog] = useState(false);
   const [settings, setSettings] = useState({
-    language: currentLanguage,
+    language: 'en',
     theme: 'auto',
     notifications: true,
     doNotDisturb: false,
   });
 
   const handleLanguageChange = (newLanguage: string) => {
-    const lang = newLanguage as Language;
-    setCurrentLanguage(lang);
-    setSettings(prev => ({ ...prev, language: lang }));
+    setSettings(prev => ({ ...prev, language: newLanguage }));
     toast({
       title: 'Language Updated',
       description: 'Your language preference has been updated.',
