@@ -72,12 +72,12 @@ export const UserManagement = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl sm:text-3xl font-bold">{t('userManagement')}</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold">User Management</h1>
             {hasIssues && (
               <AlertTriangle className="h-5 w-5 text-destructive" />
             )}
           </div>
-          <p className="text-sm sm:text-base text-muted-foreground">{t('userManagementDescription')}</p>
+          <p className="text-sm sm:text-base text-muted-foreground">Manage users, roles, and permissions</p>
           {hasIssues && (
             <div className="mt-2 text-sm text-destructive">
               {errors.length > 0 && `${errors.length} critical issues detected`}
@@ -107,7 +107,7 @@ export const UserManagement = () => {
               <Users className="h-6 w-6 sm:h-8 sm:w-8 text-blue-500 shrink-0" />
               <div className="min-w-0">
                 <div className="text-lg sm:text-2xl font-bold">{users.length}</div>
-                <div className="text-xs sm:text-sm text-muted-foreground">{t('activeUsers')}</div>
+                <div className="text-xs sm:text-sm text-muted-foreground">Active Users</div>
               </div>
             </div>
           </CardContent>
@@ -118,7 +118,7 @@ export const UserManagement = () => {
               <Mail className="h-6 w-6 sm:h-8 sm:w-8 text-orange-500 shrink-0" />
               <div className="min-w-0">
                 <div className="text-lg sm:text-2xl font-bold">{pendingInvitations.length}</div>
-                <div className="text-xs sm:text-sm text-muted-foreground">{t('pendingInvites')}</div>
+                <div className="text-xs sm:text-sm text-muted-foreground">Pending Invites</div>
               </div>
             </div>
           </CardContent>
@@ -129,7 +129,7 @@ export const UserManagement = () => {
               <Archive className="h-6 w-6 sm:h-8 sm:w-8 text-gray-500 shrink-0" />
               <div className="min-w-0">
                 <div className="text-lg sm:text-2xl font-bold">{archivedUsers.filter(user => user.previousStatus === 'active').length}</div>
-                <div className="text-xs sm:text-sm text-muted-foreground">{t('archivedUsers')}</div>
+                <div className="text-xs sm:text-sm text-muted-foreground">Archived Users</div>
               </div>
             </div>
           </CardContent>
@@ -138,9 +138,9 @@ export const UserManagement = () => {
 
       <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-4 sm:space-y-6">
         <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="users" className="text-sm">{t('users')}</TabsTrigger>
-          <TabsTrigger value="invitations" className="text-sm">{t('invitations')}</TabsTrigger>
-          <TabsTrigger value="roles" className="text-sm">{t('rolesPermissions')}</TabsTrigger>
+          <TabsTrigger value="users" className="text-sm">Users</TabsTrigger>
+          <TabsTrigger value="invitations" className="text-sm">Invitations</TabsTrigger>
+          <TabsTrigger value="roles" className="text-sm">Roles & Permissions</TabsTrigger>
         </TabsList>
 
         <TabsContent value="users" className="space-y-4">

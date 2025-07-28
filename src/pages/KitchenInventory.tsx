@@ -128,8 +128,8 @@ export const KitchenInventory = () => {
     
     if (!hasData) {
       toast({
-        title: t('validation-error'),
-        description: t('daily-inventory-validation-message'),
+        title: "Validation Error",
+        description: "Please validate all required fields",
         variant: "destructive",
       });
       return;
@@ -147,8 +147,8 @@ export const KitchenInventory = () => {
     localStorage.setItem(`dailyInventory-${new Date().toISOString().split('T')[0]}`, JSON.stringify(dailyRecord));
     
     toast({
-      title: t('daily-inventory-saved'),
-      description: t('daily-inventory-saved-message'),
+      title: "Daily Inventory Saved",
+      description: "Daily inventory has been saved successfully",
     });
     
     setDailyInventoryData({});
@@ -159,7 +159,7 @@ export const KitchenInventory = () => {
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
           <ChefHat className="h-12 w-12 mx-auto mb-4 animate-pulse" />
-          <p>{t('loading')}</p>
+          <p>Loading...</p>
         </div>
       </div>
     );
@@ -172,10 +172,10 @@ export const KitchenInventory = () => {
         <div>
           <h1 className="text-3xl font-bold flex items-center gap-2 text-foreground">
             <ChefHat className="h-8 w-8 text-primary" />
-            {t('kitchen-inventory-title')}
+            Kitchen Inventory
           </h1>
           <p className="text-muted-foreground mt-1">
-            {t('kitchen-inventory-description')}
+            Manage kitchen inventory and supplies
           </p>
         </div>
       </div>
@@ -185,7 +185,7 @@ export const KitchenInventory = () => {
         <Alert variant="destructive">
           <AlertTriangle className="h-4 w-4" />
           <AlertDescription>
-            {t('access-denied-kitchen')}
+            Access denied. Only kitchen staff can access this section.
           </AlertDescription>
         </Alert>
       )}
@@ -195,11 +195,11 @@ export const KitchenInventory = () => {
           <TabsList className="grid grid-cols-2 w-full max-w-md">
             <TabsTrigger value="monthly" className="flex items-center gap-2">
               <Calendar className="h-4 w-4" />
-              {t('monthly-inventory')}
+              Monthly Inventory
             </TabsTrigger>
             <TabsTrigger value="daily" className="flex items-center gap-2">
               <Clock className="h-4 w-4" />
-              {t('daily-inventory')}
+              Daily Inventory
             </TabsTrigger>
           </TabsList>
 
@@ -209,7 +209,7 @@ export const KitchenInventory = () => {
               <Alert>
                 <Calendar className="h-4 w-4" />
                 <AlertDescription>
-                  {t('inventory-period-message')}
+                  Monthly inventory is currently closed. Please check back during the inventory period.
                 </AlertDescription>
               </Alert>
             )}
@@ -219,11 +219,11 @@ export const KitchenInventory = () => {
                 <CardContent className="flex items-center justify-center py-12">
                   <div className="text-center">
                     <ChefHat className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
-                    <h3 className="text-xl font-semibold mb-2">{t('start-inventory-title')}</h3>
-                    <p className="text-muted-foreground mb-6">{t('start-inventory-description')}</p>
+                    <h3 className="text-xl font-semibold mb-2">Start New Inventory</h3>
+                    <p className="text-muted-foreground mb-6">Begin a new monthly inventory session</p>
                     <Button onClick={createNewInventory} size="lg">
                       <Plus className="h-5 w-5 mr-2" />
-                      {t('start-new-inventory')}
+                      Start New Inventory
                     </Button>
                   </div>
                 </CardContent>
@@ -237,7 +237,7 @@ export const KitchenInventory = () => {
               <Alert>
                 <Clock className="h-4 w-4" />
                 <AlertDescription>
-                  {t('daily-inventory-description')}
+                  Quick daily inventory check for immediate needs
                 </AlertDescription>
               </Alert>
 
@@ -251,11 +251,11 @@ export const KitchenInventory = () => {
                     >
                       <CardTitle className="flex items-center justify-between">
                         <span className="text-xl text-primary">
-                          {t(`category.${category}`)}
+                          {category.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
                         </span>
                         <div className="flex items-center gap-2">
                           <Badge variant="outline" className="text-sm">
-                            {categoryProducts.length} {t('items')}
+                            {categoryProducts.length} items
                           </Badge>
                           {expandedCategories[category] ? (
                             <Minus className="h-5 w-5" />
@@ -278,7 +278,7 @@ export const KitchenInventory = () => {
                                   {/* Product Info */}
                                   <div>
                                     <div className="flex items-center gap-2 mb-2">
-                                      <h4 className="font-semibold text-lg">{t(product.nameKey)}</h4>
+                                      <h4 className="font-semibold text-lg">{product.nameKey}</h4>
                                       <Button
                                         variant="ghost"
                                         size="sm"
@@ -297,7 +297,7 @@ export const KitchenInventory = () => {
                                           checked={dailyData.missing}
                                           onCheckedChange={(checked) => toggleMissingProduct(product.id, checked)}
                                         />
-                                        {t('missing-product')}
+                                        Missing Product
                                       </label>
                                     </div>
                                   </div>
@@ -305,7 +305,7 @@ export const KitchenInventory = () => {
                                   {/* Quantity Controls */}
                                   <div>
                                     <label className="text-sm font-medium text-muted-foreground mb-2 block">
-                                      {t('current-stock')} ({product.unit})
+                                      Current Stock ({product.unit})
                                     </label>
                                     <div className="flex items-center gap-2">
                                       <Button
@@ -338,12 +338,12 @@ export const KitchenInventory = () => {
                                   <div className="flex flex-col gap-2">
                                     {dailyData.missing && (
                                       <Badge variant="destructive" className="w-fit">
-                                        {t('missing')}
+                                        Missing
                                       </Badge>
                                     )}
                                     {dailyData.quantity > 0 && !dailyData.missing && (
                                       <Badge variant="secondary" className="w-fit">
-                                        {t('available')}
+                                        Available
                                       </Badge>
                                     )}
                                   </div>
@@ -362,7 +362,7 @@ export const KitchenInventory = () => {
               <div className="sticky bottom-4 bg-background/80 backdrop-blur-sm p-4 rounded-lg border">
                 <div className="flex items-center justify-between">
                   <div className="text-sm text-muted-foreground">
-                    {Object.values(dailyInventoryData).filter(item => item.quantity > 0 || item.missing).length} {t('products-recorded')}
+                    {Object.values(dailyInventoryData).filter(item => item.quantity > 0 || item.missing).length} products recorded
                   </div>
                   <Button 
                     onClick={handleSubmitDailyInventory}
@@ -370,7 +370,7 @@ export const KitchenInventory = () => {
                     className="min-w-32"
                   >
                     <Save className="h-5 w-5 mr-2" />
-                    {t('submit-daily-inventory')}
+                    Submit Daily Inventory
                   </Button>
                 </div>
               </div>

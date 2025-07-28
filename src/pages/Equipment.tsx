@@ -27,7 +27,7 @@ export const Equipment = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">{t('equipment')}</h1>
+          <h1 className="text-3xl font-bold">Equipment</h1>
           <p className="text-muted-foreground">Equipment and maintenance management</p>
         </div>
         <Button>

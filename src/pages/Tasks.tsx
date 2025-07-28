@@ -96,7 +96,7 @@ export const Tasks = () => {
         <div>
           <h1 className="text-3xl font-bold flex items-center gap-2">
             <ListTodo className="h-8 w-8" />
-            {t('tasks')}
+            Tasks
           </h1>
           <p className="text-muted-foreground">
             Manage and track tasks for your department

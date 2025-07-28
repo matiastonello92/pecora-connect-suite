@@ -108,7 +108,7 @@ export const Suppliers = () => {
         <div>
           <h1 className="text-3xl font-bold flex items-center gap-2">
             <Truck className="h-8 w-8" />
-            {t('suppliers')}
+            Suppliers
           </h1>
           <p className="text-muted-foreground">
             Manage suppliers and orders for your location
@@ -136,19 +136,19 @@ export const Suppliers = () => {
         <TabsList className="grid grid-cols-4 w-full max-w-2xl">
           <TabsTrigger value="orders" className="flex items-center gap-2">
             <ShoppingCart className="h-4 w-4" />
-            {t('orderManagement')}
+            Order Management
           </TabsTrigger>
           <TabsTrigger value="list" className="flex items-center gap-2">
             <FileText className="h-4 w-4" />
-            {t('supplierList')}
+            Supplier List
           </TabsTrigger>
           <TabsTrigger value="status" className="flex items-center gap-2">
             <TrendingUp className="h-4 w-4" />
-            {t('orderStatus')}
+            Order Status
           </TabsTrigger>
           <TabsTrigger value="archived" className="flex items-center gap-2">
             <Package className="h-4 w-4" />
-            {t('archivedOrders')}
+            Archived Orders
           </TabsTrigger>
         </TabsList>
 
