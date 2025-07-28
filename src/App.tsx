@@ -84,31 +84,31 @@ const AppContent = () => {
                               <NotificationHandler />
                               <AppLayout>
                               <Routes>
-                                <Route path="/" element={<Dashboard />} />
-                                <Route path="/dashboard" element={<Dashboard />} />
-                                <Route path="/inventory" element={<Inventory />} />
-                                <Route path="/inventory/kitchen" element={<KitchenInventory />} />
-                                <Route path="/checklists" element={<Checklists />} />
-                                <Route path="/communication" element={<Communication />} />
-                                <Route path="/cash-register" element={<CashRegister />} />
-                                <Route path="/financial" element={<Financial />} />
-                                <Route path="/reports" element={<Reports />} />
-                                <Route path="/equipment" element={<Equipment />} />
-                                <Route path="/users" element={<UserManagement />} />
-                                <Route path="/users/invitations" element={<UserManagement />} />
-                                <Route path="/users/roles" element={<UserManagement />} />
-                                <Route path="/profile" element={<Profile />} />
-                                <Route path="/settings" element={<Settings />} />
-                                <Route path="/suppliers/orders" element={<Suppliers />} />
-                                <Route path="/suppliers/list" element={<Suppliers />} />
-                                <Route path="/suppliers/status" element={<Suppliers />} />
-                                <Route path="/suppliers/archived" element={<Suppliers />} />
-                                <Route path="/tasks/assigned" element={<Tasks />} />
-                                <Route path="/tasks/create" element={<Tasks />} />
-                                <Route path="/tasks/history" element={<Tasks />} />
-                                <Route path="/maintenance/report" element={<Maintenance />} />
-                                <Route path="/maintenance/history" element={<Maintenance />} />
-                                <Route path="/maintenance/scheduled" element={<Maintenance />} />
+                                <Route path="/app" element={<Dashboard />} />
+                                <Route path="/app/dashboard" element={<Dashboard />} />
+                                <Route path="/app/inventory" element={<Inventory />} />
+                                <Route path="/app/inventory/kitchen" element={<KitchenInventory />} />
+                                <Route path="/app/checklists" element={<Checklists />} />
+                                <Route path="/app/communication" element={<Communication />} />
+                                <Route path="/app/cash-register" element={<CashRegister />} />
+                                <Route path="/app/financial" element={<Financial />} />
+                                <Route path="/app/reports" element={<Reports />} />
+                                <Route path="/app/equipment" element={<Equipment />} />
+                                <Route path="/app/users" element={<UserManagement />} />
+                                <Route path="/app/users/invitations" element={<UserManagement />} />
+                                <Route path="/app/users/roles" element={<UserManagement />} />
+                                <Route path="/app/profile" element={<Profile />} />
+                                <Route path="/app/settings" element={<Settings />} />
+                                <Route path="/app/suppliers/orders" element={<Suppliers />} />
+                                <Route path="/app/suppliers/list" element={<Suppliers />} />
+                                <Route path="/app/suppliers/status" element={<Suppliers />} />
+                                <Route path="/app/suppliers/archived" element={<Suppliers />} />
+                                <Route path="/app/tasks/assigned" element={<Tasks />} />
+                                <Route path="/app/tasks/create" element={<Tasks />} />
+                                <Route path="/app/tasks/history" element={<Tasks />} />
+                                <Route path="/app/maintenance/report" element={<Maintenance />} />
+                                <Route path="/app/maintenance/history" element={<Maintenance />} />
+                                <Route path="/app/maintenance/scheduled" element={<Maintenance />} />
                                 <Route path="*" element={<NotFound />} />
                               </Routes>
                               </AppLayout>

@@ -14,7 +14,7 @@ const Index = () => {
 
   // Redirect to dashboard if authenticated, otherwise show login
   if (isAuthenticated) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/app/dashboard" replace />;
   }
 
   return <Navigate to="/login" replace />;
