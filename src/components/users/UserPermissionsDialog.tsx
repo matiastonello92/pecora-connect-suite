@@ -115,7 +115,7 @@ export const UserPermissionsDialog = ({ user, isOpen, onOpenChange, onPermission
       const { error: updateError } = await supabase
         .from('profiles')
         .update({ has_custom_permissions: permissionsToInsert.length > 0 })
-        .eq('id', user.id);
+        .eq('user_id', user.id);
 
       if (updateError) throw updateError;
 

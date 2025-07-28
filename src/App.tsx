@@ -5,21 +5,13 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { SimpleAuthProvider, useSimpleAuth } from "@/context/SimpleAuthContext";
-import { InventoryProvider } from '@/context/InventoryContext';
-import { KitchenInventoryProvider } from '@/context/KitchenInventoryContext';
-import { ChecklistProvider } from '@/context/ChecklistContext';
-import { CommunicationProvider } from '@/context/CommunicationContext';
-import { ChatProvider } from '@/context/ChatContext';
-import { UnreadMessagesProvider } from '@/context/UnreadMessagesContext';
+import { AppDataProvider } from '@/context/AppDataProvider';
+import { BusinessProvider } from '@/context/BusinessProvider';
+import { CommunicationProvider } from '@/context/CommunicationProvider';
+import { FinancialProvider } from '@/context/FinancialProvider';
+import { UserManagementProvider } from '@/context/UserManagementContext';
 import { NotificationHandler } from '@/components/notifications/NotificationHandler';
 import { ErrorBoundary } from '@/components/common/ErrorBoundary';
-import { CashRegisterProvider } from '@/context/CashRegisterContext';
-import { ReportsProvider } from '@/context/ReportsContext';
-import { EquipmentProvider } from '@/context/EquipmentContext';
-import { UserManagementProvider } from '@/context/UserManagementContext';
-import { FinancialProvider } from '@/context/FinancialContext';
-import { LocationProvider } from '@/context/LocationContext';
-import { PermissionProvider } from '@/context/PermissionContext';
 import { LoginForm } from "@/components/auth/LoginForm";
 import { CompleteSignup } from "@/components/auth/CompleteSignup";
 import { ForgotPassword } from "@/components/auth/ForgotPassword";
@@ -74,64 +66,48 @@ const AppContent = () => {
   console.log('✅ AppContent: User authenticated, showing app...');
 
   return (
-    <LocationProvider>
-      <PermissionProvider>
-        <InventoryProvider>
-          <KitchenInventoryProvider>
-            <ChecklistProvider>
-              <CommunicationProvider>
-                <ChatProvider>
-                  <UnreadMessagesProvider>
-                    <CashRegisterProvider>
-                      <ReportsProvider>
-                        <EquipmentProvider>
-                          <UserManagementProvider>
-                            <FinancialProvider>
-                              <NotificationHandler />
-                              <AppLayout>
-              <Routes>
-                <Route path="/" element={<Navigate to="/app/dashboard" replace />} />
-                <Route path="/app" element={<Dashboard />} />
-                <Route path="/app/dashboard" element={<Dashboard />} />
-                <Route path="/app/inventory" element={<Inventory />} />
-                <Route path="/app/inventory/kitchen" element={<KitchenInventory />} />
-                <Route path="/app/checklists" element={<Checklists />} />
-                <Route path="/app/communication" element={<Communication />} />
-                <Route path="/app/cash-register" element={<CashRegister />} />
-                <Route path="/app/financial" element={<Financial />} />
-                <Route path="/app/reports" element={<Reports />} />
-                <Route path="/app/equipment" element={<Equipment />} />
-                <Route path="/app/users" element={<UserManagement />} />
-                <Route path="/app/users/invitations" element={<UserManagement />} />
-                <Route path="/app/users/roles" element={<UserManagement />} />
-                <Route path="/app/profile" element={<Profile />} />
-                <Route path="/app/settings" element={<Settings />} />
-                <Route path="/app/suppliers/orders" element={<Suppliers />} />
-                <Route path="/app/suppliers/list" element={<Suppliers />} />
-                <Route path="/app/suppliers/status" element={<Suppliers />} />
-                <Route path="/app/suppliers/archived" element={<Suppliers />} />
-                <Route path="/app/tasks/assigned" element={<Tasks />} />
-                <Route path="/app/tasks/create" element={<Tasks />} />
-                <Route path="/app/tasks/history" element={<Tasks />} />
-                <Route path="/app/maintenance/report" element={<Maintenance />} />
-                <Route path="/app/maintenance/history" element={<Maintenance />} />
-                <Route path="/app/maintenance/scheduled" element={<Maintenance />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-                              </AppLayout>
-                            </FinancialProvider>
-                          </UserManagementProvider>
-                        </EquipmentProvider>
-                      </ReportsProvider>
-                    </CashRegisterProvider>
-                  </UnreadMessagesProvider>
-                </ChatProvider>
-              </CommunicationProvider>
-            </ChecklistProvider>
-          </KitchenInventoryProvider>
-        </InventoryProvider>
-      </PermissionProvider>
-    </LocationProvider>
+    <AppDataProvider>
+      <BusinessProvider>
+        <CommunicationProvider>
+          <FinancialProvider>
+            <UserManagementProvider>
+              <NotificationHandler />
+              <AppLayout>
+                <Routes>
+                  <Route path="/" element={<Navigate to="/app/dashboard" replace />} />
+                  <Route path="/app" element={<Dashboard />} />
+                  <Route path="/app/dashboard" element={<Dashboard />} />
+                  <Route path="/app/inventory" element={<Inventory />} />
+                  <Route path="/app/inventory/kitchen" element={<KitchenInventory />} />
+                  <Route path="/app/checklists" element={<Checklists />} />
+                  <Route path="/app/communication" element={<Communication />} />
+                  <Route path="/app/cash-register" element={<CashRegister />} />
+                  <Route path="/app/financial" element={<Financial />} />
+                  <Route path="/app/reports" element={<Reports />} />
+                  <Route path="/app/equipment" element={<Equipment />} />
+                  <Route path="/app/users" element={<UserManagement />} />
+                  <Route path="/app/users/invitations" element={<UserManagement />} />
+                  <Route path="/app/users/roles" element={<UserManagement />} />
+                  <Route path="/app/profile" element={<Profile />} />
+                  <Route path="/app/settings" element={<Settings />} />
+                  <Route path="/app/suppliers/orders" element={<Suppliers />} />
+                  <Route path="/app/suppliers/list" element={<Suppliers />} />
+                  <Route path="/app/suppliers/status" element={<Suppliers />} />
+                  <Route path="/app/suppliers/archived" element={<Suppliers />} />
+                  <Route path="/app/tasks/assigned" element={<Tasks />} />
+                  <Route path="/app/tasks/create" element={<Tasks />} />
+                  <Route path="/app/tasks/history" element={<Tasks />} />
+                  <Route path="/app/maintenance/report" element={<Maintenance />} />
+                  <Route path="/app/maintenance/history" element={<Maintenance />} />
+                  <Route path="/app/maintenance/scheduled" element={<Maintenance />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </AppLayout>
+            </UserManagementProvider>
+          </FinancialProvider>
+        </CommunicationProvider>
+      </BusinessProvider>
+    </AppDataProvider>
   );
 };
 

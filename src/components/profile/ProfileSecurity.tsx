@@ -65,7 +65,7 @@ export const ProfileSecurity = ({ user }: ProfileSecurityProps) => {
       const { error } = await supabase
         .from('profiles')
         .update(updateData)
-        .eq('id', user.id);
+        .eq('user_id', user.id);
 
       if (error) throw error;
 
@@ -116,7 +116,7 @@ export const ProfileSecurity = ({ user }: ProfileSecurityProps) => {
         const { error: deleteError } = await supabase
           .from('profiles')
           .delete()
-          .eq('id', user.id);
+          .eq('user_id', user.id);
 
         if (deleteError) throw deleteError;
       } else {
@@ -124,7 +124,7 @@ export const ProfileSecurity = ({ user }: ProfileSecurityProps) => {
         const { error } = await supabase
           .from('profiles')
           .update({ status, updated_at: new Date().toISOString() })
-          .eq('id', user.id);
+          .eq('user_id', user.id);
 
         if (error) throw error;
       }
