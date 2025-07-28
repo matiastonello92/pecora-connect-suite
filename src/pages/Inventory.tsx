@@ -289,54 +289,6 @@ export const Inventory = () => {
             itemsPerPage={20}
             onItemSelect={(item) => console.log('Selected item:', item)}
           />
-              const stockStatus = getStockStatus(item);
-              return (
-                <Card key={item.id}>
-                  <CardHeader className="pb-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <div className={`w-2 h-2 rounded-full ${getStockColor(stockStatus)}`} />
-                        <CardTitle className="text-base">{item.name}</CardTitle>
-                        <Badge variant="outline">{item.category}</Badge>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-lg font-bold">
-                          {item.currentStock} {item.unit}
-                        </div>
-                        <div className="text-sm text-muted-foreground">
-                          {formatPrice(item.unitCost)} per {item.unit}
-                        </div>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      <div>
-                        <div className="text-sm font-medium">Location</div>
-                        <div className="text-sm text-muted-foreground">{item.location}</div>
-                      </div>
-                      <div>
-                        <div className="text-sm font-medium">Supplier</div>
-                        <div className="text-sm text-muted-foreground">{item.supplier}</div>
-                      </div>
-                      <div>
-                        <div className="text-sm font-medium">Stock Range</div>
-                        <div className="text-sm text-muted-foreground">
-                          {item.minStock} - {item.maxStock} {item.unit}
-                        </div>
-                      </div>
-                      <div>
-                        <div className="text-sm font-medium">Expiry</div>
-                        <div className="text-sm text-muted-foreground">
-                          {item.expiryDate ? formatDate(item.expiryDate) : 'N/A'}
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
         </TabsContent>
 
         <TabsContent value="sessions" className="space-y-4">

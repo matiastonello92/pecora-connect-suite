@@ -151,72 +151,71 @@ export const UserManagement = () => {
             actions={<UserValidationPanel />}
           />
             
-            {/* Archived Users Section - Only show if users had completed registration */}
-            {archivedUsers.filter(user => user.previousStatus === 'active').length > 0 && (
-              <div className="mt-8">
-                <h3 className="text-lg font-semibold mb-4">Archived Users</h3>
-                <div className="grid gap-3 sm:gap-4">
-                  {archivedUsers
-                    .filter(user => user.previousStatus === 'active')
-                    .map((user) => (
-                  <Card key={user.id} className="border-gray-200 bg-gray-50/50 dark:border-gray-800 dark:bg-gray-950/50">
-                    <CardHeader className="pb-3 sm:pb-4">
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                        <div className="flex items-center gap-3 min-w-0">
-                          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-100 dark:bg-gray-900 rounded-full flex items-center justify-center shrink-0">
-                            <Archive className="h-4 w-4 sm:h-5 sm:w-5 text-gray-600 dark:text-gray-400" />
-                          </div>
-                          <div className="min-w-0 flex-1">
-                            <CardTitle className="text-sm sm:text-base truncate">
-                              {user.firstName} {user.lastName}
-                            </CardTitle>
-                            <p className="text-xs sm:text-sm text-muted-foreground truncate">Archived User</p>
-                          </div>
+          {/* Archived Users Section - Only show if users had completed registration */}
+          {archivedUsers.filter(user => user.previousStatus === 'active').length > 0 && (
+            <div className="mt-8">
+              <h3 className="text-lg font-semibold mb-4">Archived Users</h3>
+              <div className="grid gap-3 sm:gap-4">
+                {archivedUsers
+                  .filter(user => user.previousStatus === 'active')
+                  .map((user) => (
+                <Card key={user.id} className="border-gray-200 bg-gray-50/50 dark:border-gray-800 dark:bg-gray-950/50">
+                  <CardHeader className="pb-3 sm:pb-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-100 dark:bg-gray-900 rounded-full flex items-center justify-center shrink-0">
+                          <Archive className="h-4 w-4 sm:h-5 sm:w-5 text-gray-600 dark:text-gray-400" />
                         </div>
-                        <div className="flex items-center gap-2 shrink-0">
-                          <div className={`w-2 h-2 rounded-full ${getRoleColor(user.role)}`} />
-                          <Badge variant="outline" className="text-xs">{user.role}</Badge>
-                          <Badge variant="secondary" className="text-xs bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200">
-                            {user.previousStatus}
-                          </Badge>
-                          {hasPermission('manager') && user.canReactivate && (
-                            <ReactivateUserDialog user={user} onReactivate={reactivateUser} />
-                          )}
+                        <div className="min-w-0 flex-1">
+                          <CardTitle className="text-sm sm:text-base truncate">
+                            {user.firstName} {user.lastName}
+                          </CardTitle>
+                          <p className="text-xs sm:text-sm text-muted-foreground truncate">Archived User</p>
                         </div>
                       </div>
-                    </CardHeader>
-                    <CardContent className="pt-0">
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-                        <div className="min-w-0">
-                          <div className="text-xs sm:text-sm font-medium">Email</div>
-                          <div className="text-xs sm:text-sm text-muted-foreground truncate">{user.email}</div>
-                        </div>
-                        <div className="min-w-0">
-                          <div className="text-xs sm:text-sm font-medium">Location</div>
-                          <div className="text-xs sm:text-sm text-muted-foreground">{(user.locations || [user.location]).join(', ')}</div>
-                        </div>
-                        <div className="min-w-0">
-                          <div className="text-xs sm:text-sm font-medium">Last Login</div>
-                          <div className="text-xs sm:text-sm text-muted-foreground">
-                            {user.metadata && typeof user.metadata === 'object' && (user.metadata as any)?.lastLogin 
-                              ? new Date((user.metadata as any).lastLogin).toLocaleDateString() 
-                              : 'Never'}
-                          </div>
-                        </div>
-                        <div className="min-w-0">
-                          <div className="text-xs sm:text-sm font-medium">Archived</div>
-                          <div className="text-xs sm:text-sm text-muted-foreground">
-                            {user.archivedAt.toLocaleDateString()}
-                          </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <div className={`w-2 h-2 rounded-full ${getRoleColor(user.role)}`} />
+                        <Badge variant="outline" className="text-xs">{user.role}</Badge>
+                        <Badge variant="secondary" className="text-xs bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200">
+                          {user.previousStatus}
+                        </Badge>
+                        {hasPermission('manager') && user.canReactivate && (
+                          <ReactivateUserDialog user={user} onReactivate={reactivateUser} />
+                        )}
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                      <div className="min-w-0">
+                        <div className="text-xs sm:text-sm font-medium">Email</div>
+                        <div className="text-xs sm:text-sm text-muted-foreground truncate">{user.email}</div>
+                      </div>
+                      <div className="min-w-0">
+                        <div className="text-xs sm:text-sm font-medium">Location</div>
+                        <div className="text-xs sm:text-sm text-muted-foreground">{(user.locations || [user.location]).join(', ')}</div>
+                      </div>
+                      <div className="min-w-0">
+                        <div className="text-xs sm:text-sm font-medium">Last Login</div>
+                        <div className="text-xs sm:text-sm text-muted-foreground">
+                          {user.metadata && typeof user.metadata === 'object' && (user.metadata as any)?.lastLogin 
+                            ? new Date((user.metadata as any).lastLogin).toLocaleDateString() 
+                            : 'Never'}
                         </div>
                       </div>
-                    </CardContent>
-                  </Card>
-                  ))}
-                </div>
+                      <div className="min-w-0">
+                        <div className="text-xs sm:text-sm font-medium">Archived</div>
+                        <div className="text-xs sm:text-sm text-muted-foreground">
+                          {user.archivedAt.toLocaleDateString()}
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+                ))}
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </TabsContent>
 
         <TabsContent value="invitations" className="space-y-4">
