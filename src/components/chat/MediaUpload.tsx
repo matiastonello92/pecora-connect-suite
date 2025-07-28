@@ -103,7 +103,7 @@ export const MediaUpload: React.FC<MediaUploadProps> = ({ file, onCancel, onSend
           <div className="mb-4">
             <input
               type="text"
-              placeholder={t('communication.addCaption')}
+              placeholder="Add a caption..."
               value={caption}
               onChange={(e) => setCaption(e.target.value)}
               className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
@@ -116,7 +116,7 @@ export const MediaUpload: React.FC<MediaUploadProps> = ({ file, onCancel, onSend
           <div className="mb-4">
             <Progress value={uploadProgress} className="w-full" />
             <p className="text-sm text-muted-foreground mt-1">
-              {t('communication.uploading')} {uploadProgress}%
+              Uploading {uploadProgress}%
             </p>
           </div>
         )}
@@ -124,11 +124,11 @@ export const MediaUpload: React.FC<MediaUploadProps> = ({ file, onCancel, onSend
         {/* Actions */}
         <div className="flex justify-end space-x-2">
           <Button variant="outline" onClick={onCancel}>
-            {t('common.cancel')}
+            Cancel
           </Button>
           <Button onClick={handleSend} disabled={!isValidFile}>
             <Upload className="h-4 w-4 mr-2" />
-            {t('communication.send')}
+            Send
           </Button>
         </div>
       </CardContent>

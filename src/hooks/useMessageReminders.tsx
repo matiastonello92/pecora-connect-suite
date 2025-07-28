@@ -17,7 +17,7 @@ export const useMessageReminders = () => {
   const { user } = useSimpleAuth();
   const language = 'en'; // Temporarily hardcode language
   const { showMobileNotification, isMobile } = useMobileNotifications();
-  const { t } = useTranslation(language);
+  
 
   const processReminders = async () => {
     if (!user) return;
@@ -111,7 +111,7 @@ export const useMessageReminders = () => {
       const senderName = `${sender.first_name} ${sender.last_name}`;
       const messagePreview = message.content?.substring(0, 30) || 'New message';
       
-      const title = t('communication.unreadReminder', { name: senderName });
+      const title = `Unread message from ${senderName}`;
       const body = `${messagePreview}${message.content?.length > 30 ? '...' : ''}`;
 
       // Show browser notification

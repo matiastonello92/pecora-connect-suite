@@ -12,7 +12,7 @@ interface ProfilePictureUploadProps {
 }
 
 export const ProfilePictureUpload = ({ user }: ProfilePictureUploadProps) => {
-  const { t } = useTranslation('en');
+  
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);

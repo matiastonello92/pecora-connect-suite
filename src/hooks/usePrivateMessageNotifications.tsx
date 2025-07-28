@@ -30,7 +30,7 @@ export const usePrivateMessageNotifications = () => {
   const { user } = useSimpleAuth();
   const language = 'en'; // Temporarily hardcode language
   const { setActiveChat, activeChat } = useChatContext();
-  const { t } = useTranslation(language);
+  
 
   useEffect(() => {
     if (!user) return;

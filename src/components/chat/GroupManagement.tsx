@@ -86,7 +86,7 @@ export const GroupManagement: React.FC<GroupManagementProps> = ({ onClose }) => 
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <Users className="h-5 w-5" />
-            <span>{t('communication.createGroup')}</span>
+            <span>Create Group</span>
           </CardTitle>
         </CardHeader>
         
@@ -99,12 +99,12 @@ export const GroupManagement: React.FC<GroupManagementProps> = ({ onClose }) => 
               </div>
               <div className="flex-1 space-y-2">
                 <Input
-                  placeholder={t('communication.groupName')}
+                  placeholder="Group name..."
                   value={groupName}
                   onChange={(e) => setGroupName(e.target.value)}
                 />
                 <Input
-                  placeholder={t('communication.groupDescription')}
+                  placeholder="Group description (optional)..."
                   value={groupDescription}
                   onChange={(e) => setGroupDescription(e.target.value)}
                 />
@@ -114,7 +114,7 @@ export const GroupManagement: React.FC<GroupManagementProps> = ({ onClose }) => 
 
           {/* User Selection */}
           <div>
-            <h3 className="font-medium mb-3">{t('communication.addParticipants')}</h3>
+            <h3 className="font-medium mb-3">Add Participants</h3>
             <ScrollArea className="h-64 border rounded-lg">
               <div className="p-3 space-y-2">
                 {availableUsers.map((user) => (
@@ -143,10 +143,10 @@ export const GroupManagement: React.FC<GroupManagementProps> = ({ onClose }) => 
           {/* Actions */}
           <div className="flex justify-end space-x-2">
             <Button variant="outline" onClick={() => setShowCreateGroup(false)}>
-              {t('common.cancel')}
+              Cancel
             </Button>
             <Button onClick={handleCreateGroup} disabled={!groupName.trim()}>
-              {t('communication.createGroup')}
+              Create Group
             </Button>
           </div>
         </CardContent>
@@ -158,13 +158,13 @@ export const GroupManagement: React.FC<GroupManagementProps> = ({ onClose }) => 
     return (
       <Card className="w-full max-w-2xl mx-auto">
         <CardHeader>
-          <CardTitle>{t('communication.groupManagement')}</CardTitle>
+          <CardTitle>Group Management</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-center py-8">
             <Button onClick={() => setShowCreateGroup(true)}>
               <Users className="h-4 w-4 mr-2" />
-              {t('communication.createGroup')}
+              Create Group
             </Button>
           </div>
         </CardContent>
@@ -178,7 +178,7 @@ export const GroupManagement: React.FC<GroupManagementProps> = ({ onClose }) => 
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center space-x-2">
             <Users className="h-5 w-5" />
-            <span>{activeChat.name || t('communication.groupInfo')}</span>
+            <span>{activeChat.name || 'Group Info'}</span>
           </CardTitle>
           <Button variant="ghost" size="sm" onClick={() => setEditingGroupInfo(!editingGroupInfo)}>
             <Edit className="h-4 w-4" />
@@ -200,24 +200,22 @@ export const GroupManagement: React.FC<GroupManagementProps> = ({ onClose }) => 
               <Input
                 value={activeChat.name || ''}
                 onChange={(e) => {/* Update group name */}}
-                placeholder={t('communication.groupName')}
+                placeholder="Group name..."
               />
               <Input
                 value={activeChat.description || ''}
                 onChange={(e) => {/* Update group description */}}
-                placeholder={t('communication.groupDescription')}
+                placeholder="Group description..."
               />
             </div>
           ) : (
             <div className="flex-1">
               <h3 className="text-lg font-medium">{activeChat.name}</h3>
               <p className="text-sm text-muted-foreground">
-                {activeChat.description || t('communication.noDescription')}
+                {activeChat.description || 'No description'}
               </p>
               <p className="text-xs text-muted-foreground mt-1">
-                {t('communication.participantsCount', { 
-                  count: activeChat.participants?.length || 0 
-                })}
+                {`${activeChat.participants?.length || 0} participants`}
               </p>
             </div>
           )}
@@ -226,10 +224,10 @@ export const GroupManagement: React.FC<GroupManagementProps> = ({ onClose }) => 
         {/* Participants */}
         <div>
           <div className="flex items-center justify-between mb-3">
-            <h3 className="font-medium">{t('communication.participants')}</h3>
+            <h3 className="font-medium">Participants</h3>
             <Button size="sm" variant="outline">
               <UserPlus className="h-4 w-4 mr-1" />
-              {t('communication.addMember')}
+              Add Member
             </Button>
           </div>
           
@@ -260,7 +258,7 @@ export const GroupManagement: React.FC<GroupManagementProps> = ({ onClose }) => 
                         {participant.role === 'admin' && (
                           <Badge variant="secondary" className="text-xs">
                             <Crown className="h-3 w-3 mr-1" />
-                            {t('communication.admin')}
+                            Admin
                           </Badge>
                         )}
                       </div>
@@ -295,12 +293,12 @@ export const GroupManagement: React.FC<GroupManagementProps> = ({ onClose }) => 
         <div className="border-t pt-4 space-y-2">
           <Button variant="outline" className="w-full justify-start text-red-600 hover:text-red-700">
             <LogOut className="h-4 w-4 mr-2" />
-            {t('communication.leaveGroup')}
+            Leave Group
           </Button>
           
           <Button variant="outline" className="w-full justify-start text-red-600 hover:text-red-700">
             <Trash2 className="h-4 w-4 mr-2" />
-            {t('communication.deleteGroup')}
+            Delete Group
           </Button>
         </div>
       </CardContent>

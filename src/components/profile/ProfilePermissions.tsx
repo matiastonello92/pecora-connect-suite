@@ -16,7 +16,7 @@ interface ProfilePermissionsProps {
 }
 
 export const ProfilePermissions = ({ user }: ProfilePermissionsProps) => {
-  const { t } = useTranslation('en');
+  
   const { profile: currentProfile } = useSimpleAuth();
   const { toast } = useToast();
   const [permissions, setPermissions] = useState<Partial<Record<AppModule, ModulePermissions>>>({});

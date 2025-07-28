@@ -80,7 +80,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const { profile } = useSimpleAuth();
   const { userLocations } = useLocation();
   const language = 'en'; // Temporarily hardcode language
-  const { t } = useTranslation(language);
+  
   
   const [chats, setChats] = useState<Chat[]>([]);
   const [activeChat, setActiveChat] = useState<Chat | null>(null);

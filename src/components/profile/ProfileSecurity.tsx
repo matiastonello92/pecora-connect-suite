@@ -15,7 +15,7 @@ interface ProfileSecurityProps {
 }
 
 export const ProfileSecurity = ({ user }: ProfileSecurityProps) => {
-  const { t } = useTranslation('en');
+  
   const { profile: currentProfile } = useSimpleAuth();
   const { toast } = useToast();
   const [isUpdating, setIsUpdating] = useState(false);

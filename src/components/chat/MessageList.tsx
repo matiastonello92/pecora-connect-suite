@@ -38,7 +38,7 @@ export const MessageList: React.FC<MessageListProps> = ({ messages }) => {
     if (isToday(messageDate)) {
       return format(messageDate, 'HH:mm');
     } else if (isYesterday(messageDate)) {
-      return t('common.yesterday');
+      return 'Yesterday';
     } else {
       return format(messageDate, 'dd/MM/yyyy');
     }
@@ -192,7 +192,7 @@ export const MessageList: React.FC<MessageListProps> = ({ messages }) => {
                   {isOwn && (
                     <div className="flex items-center">
                       {message.is_edited && (
-                        <span className="text-xs mr-1">{t('communication.edited')}</span>
+                        <span className="text-xs mr-1">edited</span>
                       )}
                       <CheckCheck className="h-3 w-3" />
                     </div>
@@ -221,8 +221,8 @@ export const MessageList: React.FC<MessageListProps> = ({ messages }) => {
     return (
       <div className="flex-1 flex items-center justify-center">
         <div className="text-center text-muted-foreground">
-          <p className="text-sm">{t('communication.noMessages')}</p>
-          <p className="text-xs mt-1">{t('communication.startConversation')}</p>
+          <p className="text-sm">No messages yet</p>
+          <p className="text-xs mt-1">Start the conversation</p>
         </div>
       </div>
     );

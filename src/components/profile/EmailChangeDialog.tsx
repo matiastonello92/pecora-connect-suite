@@ -16,7 +16,7 @@ interface EmailChangeDialogProps {
 }
 
 export const EmailChangeDialog = ({ isOpen, onOpenChange, currentEmail }: EmailChangeDialogProps) => {
-  const { t } = useTranslation('en');
+  
   const { toast } = useToast();
   const [newEmail, setNewEmail] = useState('');
   const [confirmEmail, setConfirmEmail] = useState('');

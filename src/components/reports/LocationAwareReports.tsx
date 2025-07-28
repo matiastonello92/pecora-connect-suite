@@ -27,7 +27,7 @@ export const LocationAwareReports = () => {
   const { profile } = useSimpleAuth();
   const language = 'en'; // Temporary hardcode
   const { activeLocation, availableLocations, allActiveLocations } = useLocation();
-  const { t } = useTranslation(language);
+  
   
   const [dateRange, setDateRange] = useState<{
     start: Date | undefined;

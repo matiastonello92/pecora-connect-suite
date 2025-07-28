@@ -19,7 +19,7 @@ export const LocationClock: React.FC<LocationClockProps> = ({
   const { profile } = useSimpleAuth();
   const { activeLocation, canSwitchLocations } = useLocation();
   const language = 'en'; // Temporarily hardcode language
-  const { t } = useTranslation(language);
+  
   const [currentTime, setCurrentTime] = useState<Date>(new Date());
 
   // Determine effective location for timezone
@@ -43,7 +43,7 @@ export const LocationClock: React.FC<LocationClockProps> = ({
   
   const getLocationDisplayName = () => {
     if (!effectiveLocation || effectiveLocation === 'all_locations') {
-      return t('common.allLocations');
+      return 'All Locations';
     }
     
     const locationNames = {

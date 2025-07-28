@@ -14,7 +14,7 @@ interface PasswordChangeDialogProps {
 }
 
 export const PasswordChangeDialog = ({ isOpen, onOpenChange }: PasswordChangeDialogProps) => {
-  const { t } = useTranslation('en');
+  
   const { toast } = useToast();
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');

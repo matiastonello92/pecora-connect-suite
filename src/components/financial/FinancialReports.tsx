@@ -24,7 +24,7 @@ export const FinancialReports = () => {
   const language = 'en'; // Temporarily hardcode language
   const hasPermission = (permission: string) => true; // Temporarily allow all permissions
   const { activeLocation, availableLocations } = useLocation();
-  const { t } = useTranslation(language);
+  
   const {
     closures,
     reports,

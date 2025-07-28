@@ -15,7 +15,7 @@ import { PaymentMethod, OrderStatus } from '@/types/cashRegister';
 export const CashRegister = () => {
   const { user } = useSimpleAuth();
   const language = 'en'; // Temporarily hardcode language
-  const { t } = useTranslation(language);
+  
   const {
     menuItems,
     orders,
@@ -83,7 +83,7 @@ export const CashRegister = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">{t('cashRegister')}</h1>
+          <h1 className="text-3xl font-bold">Cash Register</h1>
           <p className="text-muted-foreground">
             Point of Sale System
           </p>

@@ -174,7 +174,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage }) => 
               <div>
                 <p className="text-sm font-medium">{uploadingFile.name}</p>
                 <p className="text-xs text-muted-foreground">
-                  {t('communication.uploading')}...
+                  Uploading...
                 </p>
               </div>
             </div>
@@ -206,7 +206,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage }) => 
               onClick={() => imageInputRef.current?.click()}
             >
               <Image className="h-5 w-5 mr-2 text-purple-500" />
-              <span className="text-sm">{t('communication.photo')}</span>
+              <span className="text-sm">Photo</span>
             </Button>
             
             <Button
@@ -216,7 +216,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage }) => 
               onClick={() => fileInputRef.current?.click()}
             >
               <FileText className="h-5 w-5 mr-2 text-blue-500" />
-              <span className="text-sm">{t('communication.document')}</span>
+              <span className="text-sm">Document</span>
             </Button>
             
             <Button
@@ -225,7 +225,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage }) => 
               className="justify-start h-auto p-3"
             >
               <Camera className="h-5 w-5 mr-2 text-green-500" />
-              <span className="text-sm">{t('communication.camera')}</span>
+              <span className="text-sm">Camera</span>
             </Button>
             
             <Button
@@ -234,7 +234,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage }) => 
               className="justify-start h-auto p-3"
             >
               <Mic className="h-5 w-5 mr-2 text-red-500" />
-              <span className="text-sm">{t('communication.audio')}</span>
+              <span className="text-sm">Audio</span>
             </Button>
           </div>
         </div>
@@ -259,7 +259,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage }) => 
             value={message}
             onChange={handleTextareaChange}
             onKeyPress={handleKeyPress}
-            placeholder={t('communication.typeMessage')}
+            placeholder="Type a message..."
             className="min-h-[40px] max-h-[120px] resize-none pr-10 rounded-full border-2"
             rows={1}
           />
