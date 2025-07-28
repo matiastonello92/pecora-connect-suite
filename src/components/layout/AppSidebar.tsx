@@ -3,6 +3,7 @@ import { useUnreadMessages } from '@/context/UnreadMessagesContext';
 import { useTranslation } from '@/lib/i18n';
 import { NavLink, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { useIsMobile } from '@/hooks/use-mobile';
 import {
   Sidebar,
   SidebarContent,
@@ -169,8 +170,9 @@ export const AppSidebar = () => {
   const hasAccess = () => true; // Temporarily allow all access
   const { totalUnreadCount, markChatAsRead } = useUnreadMessages();
   const { t } = useTranslation(language);
-  const { state } = useSidebar();
+  const { state, setOpen } = useSidebar();
   const location = useLocation();
+  const isMobile = useIsMobile();
   
   const isCollapsed = state === 'collapsed';
 
@@ -195,6 +197,17 @@ export const AppSidebar = () => {
   useEffect(() => {
     setOpenGroups(initializeOpenGroups());
   }, [location.pathname]);
+
+  // Auto-close sidebar on navigation for mobile devices
+  useEffect(() => {
+    if (isMobile && location.pathname) {
+      // Small delay to allow navigation animation to complete
+      const timer = setTimeout(() => {
+        setOpen(false);
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [location.pathname, isMobile, setOpen]);
 
   const getNavClassName = ({ isActive }: { isActive: boolean }) =>
     isActive
