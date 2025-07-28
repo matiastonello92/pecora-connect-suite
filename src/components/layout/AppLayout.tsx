@@ -15,6 +15,16 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
   const language = 'en'; // Temporarily hardcode language
   const { t } = useTranslation(language);
   const { isLocationBlocked, suggestedLocation } = useLocation();
+  const { isLoading } = useSimpleAuth();
+
+  // Show loading spinner while authentication is in progress
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   // Show location blocker if no valid location is set or if there's a suggested location
   if (isLocationBlocked || suggestedLocation) {

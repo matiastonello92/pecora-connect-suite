@@ -30,7 +30,7 @@ const LOCATION_COORDINATES: Record<string, { lat: number; lng: number }> = {
 };
 
 export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { profile } = useSimpleAuth();
+  const { profile, isLoading: authLoading } = useSimpleAuth();
   const { data: allActiveLocations = [], isLoading } = useActiveLocations();
   
   // Get user's locations from their profile
@@ -127,7 +127,8 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   // Initialize active location with smart fallback
   useEffect(() => {
-    if (userLocations.length === 0) return;
+    // Wait for profile to load before initializing location
+    if (authLoading || !profile || userLocations.length === 0) return;
 
     // If single location, auto-select it
     if (userLocations.length === 1) {
@@ -153,7 +154,7 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       setActiveLocationState(userLocations[0]);
       localStorage.setItem('activeLocation', userLocations[0]);
     }
-  }, [userLocations, hasRequestedPermission]);
+  }, [userLocations, hasRequestedPermission, authLoading, profile]);
 
   const setActiveLocation = (location: string) => {
     if (userLocations.includes(location)) {
@@ -167,7 +168,8 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   };
 
   // Check if location is blocked (no valid active location)
-  const isLocationBlocked = !activeLocation || !userLocations.includes(activeLocation);
+  // Don't block while authentication is still loading
+  const isLocationBlocked = !authLoading && (!activeLocation || !userLocations.includes(activeLocation));
 
   const value: LocationContextType = {
     activeLocation,
