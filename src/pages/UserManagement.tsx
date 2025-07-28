@@ -9,6 +9,8 @@ import { EnhancedInviteUserDialog } from '@/components/auth/EnhancedInviteUserDi
 import { EnhancedUserCard } from '@/components/users/EnhancedUserCard';
 import { useTranslation } from '@/lib/i18n';
 import { useUserDeletionValidation } from '@/hooks/useUserDeletionValidation';
+import { UserListPagination } from '@/components/management/UserListPagination';
+import { UserValidationPanel } from '@/components/management/UserValidationPanel';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -142,17 +144,12 @@ export const UserManagement = () => {
         </TabsList>
 
         <TabsContent value="users" className="space-y-4">
-          <div className="grid gap-3 sm:gap-4">
-            {/* Active Users */}
-            {users.map((user) => (
-              <EnhancedUserCard
-                key={user.id}
-                user={user}
-                onDelete={deleteUser}
-                onUpdate={() => window.location.reload()}
-                hasPermission={hasPermission}
-              />
-            ))}
+          <UserListPagination
+            users={users}
+            usersPerPage={10}
+            showActions={true}
+            actions={<UserValidationPanel />}
+          />
             
             {/* Archived Users Section - Only show if users had completed registration */}
             {archivedUsers.filter(user => user.previousStatus === 'active').length > 0 && (
@@ -316,7 +313,7 @@ export const UserManagement = () => {
             {/* Active Users with Permission Management */}
             {users.map((user) => (
               <EnhancedUserCard
-                key={user.id}
+                key={user.user_id}
                 user={user}
                 onDelete={deleteUser}
                 onUpdate={() => window.location.reload()}

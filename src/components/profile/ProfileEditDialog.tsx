@@ -59,7 +59,7 @@ export const ProfileEditDialog = ({ user, isOpen, onOpenChange }: ProfileEditDia
           location: locations[0], // Keep single location for backward compatibility
           updated_at: new Date().toISOString()
         })
-        .eq('user_id', user.id);
+        .eq('user_id', user.user_id);
 
       if (error) throw error;
 

@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Package, AlertTriangle, TrendingDown, Plus, Search, Filter, Clock } from 'lucide-react';
+import { InventoryPagination } from '@/components/inventory/InventoryPagination';
 
 export const Inventory = () => {
   const { user } = useSimpleAuth();
@@ -283,32 +284,11 @@ export const Inventory = () => {
         </TabsContent>
 
         <TabsContent value="items" className="space-y-4">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 flex-1">
-              <Search className="h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search items..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="max-w-sm"
-              />
-            </div>
-            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-              <SelectTrigger className="w-48">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {categories.map(category => (
-                  <SelectItem key={category} value={category}>
-                    {category === 'all' ? 'All Categories' : category}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="grid gap-4">
-            {filteredItems.map((item) => {
+          <InventoryPagination
+            items={items}
+            itemsPerPage={20}
+            onItemSelect={(item) => console.log('Selected item:', item)}
+          />
               const stockStatus = getStockStatus(item);
               return (
                 <Card key={item.id}>

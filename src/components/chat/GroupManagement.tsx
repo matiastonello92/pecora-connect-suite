@@ -38,10 +38,10 @@ export const GroupManagement: React.FC<GroupManagementProps> = ({ onClose }) => 
 
   // Mock users for demonstration - in real app, fetch from API
   const availableUsers = [
-    { id: '1', name: 'John Doe', position: 'Manager', department: 'Kitchen' },
-    { id: '2', name: 'Jane Smith', position: 'Server', department: 'Service' },
-    { id: '3', name: 'Mike Johnson', position: 'Chef', department: 'Kitchen' },
-    { id: '4', name: 'Sarah Wilson', position: 'Host', department: 'Service' },
+    { user_id: '1', name: 'John Doe', position: 'Manager', department: 'Kitchen' },
+    { user_id: '2', name: 'Jane Smith', position: 'Server', department: 'Service' },
+    { user_id: '3', name: 'Mike Johnson', position: 'Chef', department: 'Kitchen' },
+    { user_id: '4', name: 'Sarah Wilson', position: 'Host', department: 'Service' },
   ];
 
   const handleCreateGroup = async () => {
@@ -118,10 +118,10 @@ export const GroupManagement: React.FC<GroupManagementProps> = ({ onClose }) => 
             <ScrollArea className="h-64 border rounded-lg">
               <div className="p-3 space-y-2">
                 {availableUsers.map((user) => (
-                  <div key={user.id} className="flex items-center space-x-3 p-2 rounded-lg hover:bg-muted focus:bg-muted active:bg-muted transition-colors">
+                  <div key={user.user_id} className="flex items-center space-x-3 p-2 rounded-lg hover:bg-muted focus:bg-muted active:bg-muted transition-colors">
                     <Checkbox
-                      checked={selectedUsers.includes(user.id)}
-                      onCheckedChange={(checked) => handleUserSelection(user.id, checked as boolean)}
+                      checked={selectedUsers.includes(user.user_id)}
+                      onCheckedChange={(checked) => handleUserSelection(user.user_id, checked as boolean)}
                     />
                     <Avatar className="h-8 w-8">
                       <AvatarFallback className="text-xs">

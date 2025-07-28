@@ -36,7 +36,7 @@ interface Message {
 const MESSAGES_PER_PAGE = 50;
 
 export const MessageListWithPagination = () => {
-  // const { currentChat, messages: allMessages, fetchMessages, deleteMessage } = useChat(); // TODO: Fix context
+  // TODO: Implement useChatContext once ChatContext exports are fixed
   const currentChat = null;
   const allMessages: Message[] = [];
   const deleteMessage = async (id: string) => {};

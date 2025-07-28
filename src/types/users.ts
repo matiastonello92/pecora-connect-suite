@@ -72,7 +72,7 @@ export interface UserPermission {
 }
 
 export interface UserProfile {
-  id: string;
+  user_id: string;
   email: string;
   firstName: string;
   lastName: string;

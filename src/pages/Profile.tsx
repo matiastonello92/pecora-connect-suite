@@ -20,7 +20,7 @@ export const Profile = () => {
   const { t } = useTranslation('en');
   const [activeTab, setActiveTab] = useState('information');
 
-  const currentUser = users.find(u => u.id === profile?.user_id);
+  const currentUser = users.find(u => u.user_id === profile?.user_id);
 
   if (!currentUser) {
     return (

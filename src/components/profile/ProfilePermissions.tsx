@@ -24,7 +24,7 @@ export const ProfilePermissions = ({ user }: ProfilePermissionsProps) => {
   const [saving, setSaving] = useState(false);
 
   const isAdmin = currentProfile && ['manager', 'super_admin'].includes(currentProfile.role || '');
-  const canEdit = isAdmin && currentProfile?.user_id !== user.id;
+  const canEdit = isAdmin && currentProfile?.user_id !== user.user_id;
 
   const modules: AppModule[] = [
     'chat', 'inventory_sala', 'inventory_kitchen', 'checklists', 
@@ -34,17 +34,17 @@ export const ProfilePermissions = ({ user }: ProfilePermissionsProps) => {
 
   useEffect(() => {
     loadUserPermissions();
-  }, [user.id]);
+  }, [user.user_id]);
 
   const loadUserPermissions = async () => {
-    if (!user.id) return;
+    if (!user.user_id) return;
     
     setLoading(true);
     try {
       const { data, error } = await supabase
         .from('user_permissions')
         .select('*')
-        .eq('user_id', user.id);
+        .eq('user_id', user.user_id);
 
       if (error) throw error;
 
@@ -81,7 +81,7 @@ export const ProfilePermissions = ({ user }: ProfilePermissionsProps) => {
   };
 
   const savePermissions = async () => {
-    if (!user.id) return;
+    if (!user.user_id) return;
     
     setSaving(true);
     try {
@@ -89,7 +89,7 @@ export const ProfilePermissions = ({ user }: ProfilePermissionsProps) => {
       const { error: deleteError } = await supabase
         .from('user_permissions')
         .delete()
-        .eq('user_id', user.id);
+        .eq('user_id', user.user_id);
 
       if (deleteError) throw deleteError;
 
@@ -97,7 +97,7 @@ export const ProfilePermissions = ({ user }: ProfilePermissionsProps) => {
       const permissionsToInsert = Object.entries(permissions)
         .filter(([_, perms]) => perms && Object.values(perms).some(Boolean))
         .map(([module, perms]) => ({
-          user_id: user.id,
+          user_id: user.user_id,
           module: module as AppModule,
           ...perms
         }));
@@ -114,7 +114,7 @@ export const ProfilePermissions = ({ user }: ProfilePermissionsProps) => {
       const { error: updateError } = await supabase
         .from('profiles')
         .update({ has_custom_permissions: permissionsToInsert.length > 0 })
-        .eq('user_id', user.id);
+        .eq('user_id', user.user_id);
 
       if (updateError) throw updateError;
 
@@ -249,7 +249,7 @@ export const ProfilePermissions = ({ user }: ProfilePermissionsProps) => {
           {!canEdit && (
             <div className="mt-6 p-4 bg-muted rounded-lg">
               <p className="text-sm text-muted-foreground text-center">
-                {currentProfile?.user_id === user.id 
+                {currentProfile?.user_id === user.user_id 
                   ? t('profile.messages.cannotEditOwnPermissions')
                   : t('profile.messages.noPermissionToEdit')
                 }

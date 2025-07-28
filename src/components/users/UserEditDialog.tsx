@@ -81,7 +81,7 @@ export const UserEditDialog = ({ user, isOpen, onOpenChange, onUserUpdated }: Us
           position,
           updated_at: new Date().toISOString()
         })
-        .eq('id', user.id);
+        .eq('user_id', user.user_id);
 
       if (error) throw error;
 

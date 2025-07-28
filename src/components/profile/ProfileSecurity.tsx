@@ -24,7 +24,7 @@ export const ProfileSecurity = ({ user }: ProfileSecurityProps) => {
   const isAdmin = currentProfile && ['manager', 'super_admin'].includes(currentProfile.role || '');
   
   // Don't show admin controls if not admin or if viewing own profile
-  if (!isAdmin || currentProfile?.user_id === user.id) {
+  if (!isAdmin || currentProfile?.user_id === user.user_id) {
     return (
       <Card>
         <CardHeader>
@@ -46,7 +46,7 @@ export const ProfileSecurity = ({ user }: ProfileSecurityProps) => {
   }
 
   const handleRoleChange = async (field: string, value: string) => {
-    if (!user.id) return;
+    if (!user.user_id) return;
     
     setIsUpdating(true);
     try {
@@ -65,7 +65,7 @@ export const ProfileSecurity = ({ user }: ProfileSecurityProps) => {
       const { error } = await supabase
         .from('profiles')
         .update(updateData)
-        .eq('user_id', user.id);
+        .eq('user_id', user.user_id);
 
       if (error) throw error;
 
@@ -85,7 +85,7 @@ export const ProfileSecurity = ({ user }: ProfileSecurityProps) => {
   };
 
   const handleUserAction = async (action: 'suspend' | 'reactivate' | 'delete') => {
-    if (!user.id) return;
+    if (!user.user_id) return;
     
     setIsUpdating(true);
     try {
@@ -94,7 +94,7 @@ export const ProfileSecurity = ({ user }: ProfileSecurityProps) => {
         const { error } = await supabase
           .from('archived_users')
           .insert({
-            original_user_id: user.id,
+            original_user_id: user.user_id,
             first_name: user.firstName,
             last_name: user.lastName,
             email: user.email,
@@ -116,7 +116,7 @@ export const ProfileSecurity = ({ user }: ProfileSecurityProps) => {
         const { error: deleteError } = await supabase
           .from('profiles')
           .delete()
-          .eq('user_id', user.id);
+          .eq('user_id', user.user_id);
 
         if (deleteError) throw deleteError;
       } else {
@@ -124,7 +124,7 @@ export const ProfileSecurity = ({ user }: ProfileSecurityProps) => {
         const { error } = await supabase
           .from('profiles')
           .update({ status, updated_at: new Date().toISOString() })
-          .eq('user_id', user.id);
+          .eq('user_id', user.user_id);
 
         if (error) throw error;
       }

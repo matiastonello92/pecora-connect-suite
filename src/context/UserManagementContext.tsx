@@ -56,18 +56,18 @@ const userManagementReducer = (state: UserManagementState, action: UserManagemen
       return {
         ...state,
         users: state.users.map(user => 
-          user.id === action.payload.id ? action.payload : user
+          user.user_id === action.payload.user_id ? action.payload : user
         )
       };
     case 'DELETE_USER':
       return {
         ...state,
-        users: state.users.filter(user => user.id !== action.payload)
+        users: state.users.filter(user => user.user_id !== action.payload)
       };
     case 'REMOVE_USER':
       return {
         ...state,
-        users: state.users.filter(user => user.id !== action.payload)
+        users: state.users.filter(user => user.user_id !== action.payload)
       };
     case 'ADD_PENDING_INVITATION':
       return { ...state, pendingInvitations: [...state.pendingInvitations, action.payload] };
@@ -91,7 +91,7 @@ const userManagementReducer = (state: UserManagementState, action: UserManagemen
 };
 
 interface UserManagementContextType extends UserManagementState {
-  addUser: (user: Omit<UserProfile, 'id' | 'createdAt' | 'updatedAt'>) => void;
+  addUser: (user: Omit<UserProfile, 'user_id' | 'createdAt' | 'updatedAt'>) => void;
   updateUser: (user: UserProfile) => void;
   deleteUser: (user: UserProfile) => Promise<void>;
   deletePendingInvitation: (invitationId: string) => Promise<void>;
@@ -133,7 +133,7 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
       const currentUserEmail = currentUser.user?.email || '';
       
       const userProfiles: UserProfile[] = profiles?.map(profile => ({
-        id: profile.user_id || '',
+        user_id: profile.user_id || '',
         firstName: profile.first_name || '',
         lastName: profile.last_name || '',
         email: profile.user_id === currentUser.user?.id ? currentUserEmail : profile.email || `${profile.first_name?.toLowerCase()}.${profile.last_name?.toLowerCase()}@managementpn.services`,
@@ -326,10 +326,10 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
     };
   }, []);
 
-  const addUser = (userData: Omit<UserProfile, 'id' | 'createdAt' | 'updatedAt'>) => {
+  const addUser = (userData: Omit<UserProfile, 'user_id' | 'createdAt' | 'updatedAt'>) => {
     const newUser: UserProfile = {
       ...userData,
-      id: Date.now().toString(),
+      user_id: Date.now().toString(),
       createdAt: new Date(),
       updatedAt: new Date()
     };
@@ -343,10 +343,10 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
 
   const deleteUser = async (user: UserProfile) => {
     try {
-      console.log('Starting deletion process for user:', user.email, user.id);
+      console.log('Starting deletion process for user:', user.email, user.user_id);
       
       // Immediately remove user from UI for better UX
-      dispatch({ type: 'REMOVE_USER', payload: user.id });
+      dispatch({ type: 'REMOVE_USER', payload: user.user_id });
 
       // Get current user for audit trail
       const currentUser = (await supabase.auth.getUser()).data.user;
@@ -356,7 +356,7 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
       const { error: archiveError } = await supabase
         .from('archived_users')
         .insert({
-          original_user_id: user.id,
+          original_user_id: user.user_id,
           first_name: user.firstName,
           last_name: user.lastName,
           email: user.email || `${user.firstName}.${user.lastName}@deleted.local`,
@@ -389,7 +389,7 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
       const { error: deleteError } = await supabase
         .from('profiles')
         .delete()
-        .eq('user_id', user.id);
+        .eq('user_id', user.user_id);
 
       if (deleteError) {
         console.error('Profile deletion error:', deleteError);
@@ -413,7 +413,7 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
 
       // Delete from auth.users if possible (this might fail if user doesn't exist in auth)
       try {
-        const { error: authDeleteError } = await supabase.auth.admin.deleteUser(user.id);
+        const { error: authDeleteError } = await supabase.auth.admin.deleteUser(user.user_id);
         if (authDeleteError) {
           console.warn('Failed to delete from auth (user may not exist in auth):', authDeleteError);
           // Don't fail the whole operation for this

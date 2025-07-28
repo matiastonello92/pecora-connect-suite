@@ -68,7 +68,7 @@ export const ConnectionRequestManager: React.FC<ConnectionRequestManagerProps> =
       setLoadingUsers(true);
       try {
         let filteredUsers = users.filter(u => 
-          u.id !== profile.user_id && // Exclude current user
+          u.user_id !== profile.user_id && // Exclude current user
           u.status === 'active' // Only active users
         );
 
@@ -84,8 +84,8 @@ export const ConnectionRequestManager: React.FC<ConnectionRequestManagerProps> =
         // Check connection status for each user
         const usersWithStatus = await Promise.all(
           filteredUsers.map(async (targetUser) => {
-            const status = await getConnectionStatus(targetUser.id);
-            const canSend = await canSendConnectionRequest(targetUser.id);
+            const status = await getConnectionStatus(targetUser.user_id);
+            const canSend = await canSendConnectionRequest(targetUser.user_id);
             return {
               ...targetUser,
               connectionStatus: status,
@@ -153,7 +153,7 @@ export const ConnectionRequestManager: React.FC<ConnectionRequestManagerProps> =
   const handleSendRequest = async () => {
     if (!selectedUser) return;
     
-    await sendConnectionRequest(selectedUser.id, requestMessage.trim() || undefined);
+    await sendConnectionRequest(selectedUser.user_id, requestMessage.trim() || undefined);
     
     setSelectedUser(null);
     setRequestMessage('');
@@ -162,8 +162,8 @@ export const ConnectionRequestManager: React.FC<ConnectionRequestManagerProps> =
     // Refresh available users to update connection status
     const usersWithStatus = await Promise.all(
       availableUsers.map(async (targetUser) => {
-        const status = await getConnectionStatus(targetUser.id);
-        const canSend = await canSendConnectionRequest(targetUser.id);
+        const status = await getConnectionStatus(targetUser.user_id);
+        const canSend = await canSendConnectionRequest(targetUser.user_id);
         return {
           ...targetUser,
           connectionStatus: status,
@@ -265,7 +265,7 @@ export const ConnectionRequestManager: React.FC<ConnectionRequestManagerProps> =
               ) : (
                 <div className="space-y-3">
                   {filteredAvailableUsers.map((targetUser) => (
-                    <Card key={targetUser.id} className="hover:bg-accent/50 transition-colors">
+                    <Card key={targetUser.user_id} className="hover:bg-accent/50 transition-colors">
                       <CardContent className="p-4">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-3">
