@@ -3,14 +3,13 @@ import { Link, useNavigate, useLocation, useSearchParams } from 'react-router-do
 import { useSimpleAuth } from '@/context/SimpleAuthContext';
 import { useTranslation, Language } from '@/lib/i18n';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Logo } from '@/components/ui/logo';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, CheckCircle } from 'lucide-react';
+import { AuthLayout } from '@/components/ui/layouts/AuthLayout';
+import { FormField } from '@/components/forms/FormField';
+import { GenericForm } from '@/components/forms/GenericForm';
 
 export const LoginForm = () => {
   const [email, setEmail] = useState('');
@@ -74,112 +73,88 @@ export const LoginForm = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-secondary/20 via-background to-accent/10 p-3 sm:p-4 lg:p-8">
-      <Card className="w-full max-w-sm sm:max-w-md shadow-elegant">
-        <CardHeader className="text-center pb-6 sm:pb-8">
-          <div className="flex justify-center mb-4 sm:mb-6">
-            <Logo size="lg" className="h-12 w-12 sm:h-16 sm:w-16" />
-          </div>
-          <CardTitle className="text-xl sm:text-2xl font-playfair text-primary">
-            {t('welcome')}
-          </CardTitle>
-          <p className="text-sm sm:text-base text-muted-foreground font-inter">
-            {t('welcomeMessage')}
-          </p>
-        </CardHeader>
-        
-        <CardContent className="space-y-4 sm:space-y-6">
-          {showSuccessMessage && (
-            <Alert className="border-success/20 bg-success/10">
-              <CheckCircle className="h-4 w-4 text-success" />
-              <AlertDescription className="text-success-foreground">
-                Registration completed successfully! You can now log in with your credentials.
-              </AlertDescription>
-            </Alert>
+    <AuthLayout title={t('welcome')} subtitle={t('welcomeMessage')}>
+      {showSuccessMessage && (
+        <Alert className="border-success/20 bg-success/10">
+          <CheckCircle className="h-4 w-4 text-success" />
+          <AlertDescription className="text-success-foreground">
+            Registration completed successfully! You can now log in with your credentials.
+          </AlertDescription>
+        </Alert>
+      )}
+
+      <FormField
+        label={t('language')}
+        type="select"
+        value={selectedLanguage}
+        onChange={(value) => setSelectedLanguage(value as Language)}
+        selectOptions={[
+          { value: 'en', label: 'English' },
+          { value: 'fr', label: 'Français' },
+          { value: 'it', label: 'Italiano' }
+        ]}
+        disabled={isLoading}
+      />
+
+      <GenericForm 
+        onSubmit={handleSubmit}
+        submitLabel={isLoading ? `${t('login')}...` : t('login')}
+        isLoading={isLoading}
+        showActions={false}
+      >
+        <FormField
+          label={t('email')}
+          type="email"
+          value={email}
+          onChange={setEmail}
+          placeholder="mario@pecoranegra.com"
+          disabled={isLoading}
+          required
+        />
+
+        <FormField
+          label={t('password')}
+          type="password"
+          value={password}
+          onChange={setPassword}
+          disabled={isLoading}
+          required
+        />
+
+        <div className="text-xs text-muted-foreground space-y-1">
+          <p>Password must contain:</p>
+          <ul className="list-disc list-inside space-y-0.5">
+            <li>At least 8 characters</li>
+            <li>One uppercase letter</li>
+            <li>One lowercase letter</li>
+            <li>One number</li>
+            <li>One special character</li>
+          </ul>
+        </div>
+
+        <Button
+          type="submit"
+          className="w-full h-11 sm:h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-inter font-medium text-base"
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              {t('login')}...
+            </>
+          ) : (
+            t('login')
           )}
-          <div className="space-y-2">
-            <Label htmlFor="language" className="font-inter">
-              {t('language')}
-            </Label>
-            <Select value={selectedLanguage} onValueChange={(value: Language) => setSelectedLanguage(value)}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="en">English</SelectItem>
-                <SelectItem value="fr">Français</SelectItem>
-                <SelectItem value="it">Italiano</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+        </Button>
+      </GenericForm>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email" className="font-inter">
-                {t('email')}
-              </Label>
-              <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="mario@pecoranegra.com"
-                disabled={isLoading}
-                className="font-inter h-11 sm:h-12 text-base"
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="password" className="font-inter">
-                {t('password')}
-              </Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                disabled={isLoading}
-                className="font-inter h-11 sm:h-12 text-base"
-                required
-              />
-              <div className="text-xs text-muted-foreground space-y-1">
-                <p>Password must contain:</p>
-                <ul className="list-disc list-inside space-y-0.5">
-                  <li>At least 8 characters</li>
-                  <li>One uppercase letter</li>
-                  <li>One lowercase letter</li>
-                  <li>One number</li>
-                  <li>One special character</li>
-                </ul>
-              </div>
-            </div>
-
-            <Button
-              type="submit"
-              className="w-full h-11 sm:h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-inter font-medium text-base"
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  {t('login')}...
-                </>
-              ) : (
-                t('login')
-              )}
-            </Button>
-          </form>
-
-          <div className="text-center">
-            <Link to="/auth/forgot-password">
-              <Button variant="link" className="text-sm text-muted-foreground font-inter">
-                {t('forgotPassword')}
-              </Button>
-            </Link>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+      <div className="text-center">
+        <Link to="/auth/forgot-password">
+          <Button variant="link" className="text-sm text-muted-foreground font-inter">
+            {t('forgotPassword')}
+          </Button>
+        </Link>
+      </div>
+    </AuthLayout>
   );
 };
