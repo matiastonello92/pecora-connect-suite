@@ -41,15 +41,21 @@ export const SimpleAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     isAuthenticated: false,
   });
 
-  const fetchProfile = async (userId: string) => {
+  const fetchProfile = async (userId: string): Promise<UserProfile | null> => {
+    const timeoutPromise = new Promise<null>((_, reject) => {
+      setTimeout(() => reject(new Error('Profile fetch timeout')), 10000);
+    });
+
     try {
       console.log('🔄 Fetching profile for user ID:', userId);
       
-      const { data, error } = await supabase
+      const fetchPromise = supabase
         .from('profiles')
         .select('*')
         .eq('user_id', userId)
-        .maybeSingle(); // Use maybeSingle instead of single to avoid errors when no profile exists
+        .maybeSingle();
+
+      const { data, error } = await Promise.race([fetchPromise, timeoutPromise]);
       
       if (error) {
         console.error('❌ Error fetching profile:', error);
@@ -114,7 +120,8 @@ export const SimpleAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
           }
         }
         
-        const isAuthenticated = !!session?.user && !!profile;
+        // User is authenticated if they have a session, profile is optional
+        const isAuthenticated = !!session?.user;
         console.log('✅ Authentication complete:', { 
           hasSession: !!session?.user, 
           hasProfile: !!profile, 
@@ -166,7 +173,8 @@ export const SimpleAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
             }
           }
           
-          const isAuthenticated = !!session?.user && !!profile;
+          // User is authenticated if they have a session, profile is optional
+          const isAuthenticated = !!session?.user;
           console.log('✅ Auth state update complete:', { 
             event, 
             hasSession: !!session?.user, 
