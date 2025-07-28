@@ -17,14 +17,14 @@ interface ProfilePermissionsProps {
 
 export const ProfilePermissions = ({ user }: ProfilePermissionsProps) => {
   const { t } = useTranslation('en');
-  const { user: currentUser } = useSimpleAuth();
+  const { profile: currentProfile } = useSimpleAuth();
   const { toast } = useToast();
   const [permissions, setPermissions] = useState<Partial<Record<AppModule, ModulePermissions>>>({});
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  const isAdmin = currentUser && ['manager', 'super_admin'].includes(currentUser.user_metadata?.role || '');
-  const canEdit = isAdmin && currentUser?.id !== user.id;
+  const isAdmin = currentProfile && ['manager', 'super_admin'].includes(currentProfile.role || '');
+  const canEdit = isAdmin && currentProfile?.user_id !== user.id;
 
   const modules: AppModule[] = [
     'chat', 'inventory_sala', 'inventory_kitchen', 'checklists', 
@@ -249,7 +249,7 @@ export const ProfilePermissions = ({ user }: ProfilePermissionsProps) => {
           {!canEdit && (
             <div className="mt-6 p-4 bg-muted rounded-lg">
               <p className="text-sm text-muted-foreground text-center">
-                {currentUser?.id === user.id 
+                {currentProfile?.user_id === user.id 
                   ? t('profile.messages.cannotEditOwnPermissions')
                   : t('profile.messages.noPermissionToEdit')
                 }

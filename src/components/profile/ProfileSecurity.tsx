@@ -16,15 +16,15 @@ interface ProfileSecurityProps {
 
 export const ProfileSecurity = ({ user }: ProfileSecurityProps) => {
   const { t } = useTranslation('en');
-  const { user: currentUser } = useSimpleAuth();
+  const { profile: currentProfile } = useSimpleAuth();
   const { toast } = useToast();
   const [isUpdating, setIsUpdating] = useState(false);
 
   // Check if current user is admin/super_admin
-  const isAdmin = currentUser && ['manager', 'super_admin'].includes(currentUser.user_metadata?.role || '');
+  const isAdmin = currentProfile && ['manager', 'super_admin'].includes(currentProfile.role || '');
   
   // Don't show admin controls if not admin or if viewing own profile
-  if (!isAdmin || currentUser?.id === user.id) {
+  if (!isAdmin || currentProfile?.user_id === user.id) {
     return (
       <Card>
         <CardHeader>
@@ -107,7 +107,7 @@ export const ProfileSecurity = ({ user }: ProfileSecurityProps) => {
             position: user.position,
             previous_status: user.status,
             reason: 'admin_deletion',
-            archived_by: currentUser?.id,
+            archived_by: currentProfile?.user_id,
           });
 
         if (error) throw error;

@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { SimpleAuthProvider, useSimpleAuth } from "@/context/SimpleAuthContext";
 import { InventoryProvider } from '@/context/InventoryContext';
 import { KitchenInventoryProvider } from '@/context/KitchenInventoryContext';
@@ -89,34 +89,35 @@ const AppContent = () => {
                             <FinancialProvider>
                               <NotificationHandler />
                               <AppLayout>
-                              <Routes>
-                                <Route path="/app" element={<Dashboard />} />
-                                <Route path="/app/dashboard" element={<Dashboard />} />
-                                <Route path="/app/inventory" element={<Inventory />} />
-                                <Route path="/app/inventory/kitchen" element={<KitchenInventory />} />
-                                <Route path="/app/checklists" element={<Checklists />} />
-                                <Route path="/app/communication" element={<Communication />} />
-                                <Route path="/app/cash-register" element={<CashRegister />} />
-                                <Route path="/app/financial" element={<Financial />} />
-                                <Route path="/app/reports" element={<Reports />} />
-                                <Route path="/app/equipment" element={<Equipment />} />
-                                <Route path="/app/users" element={<UserManagement />} />
-                                <Route path="/app/users/invitations" element={<UserManagement />} />
-                                <Route path="/app/users/roles" element={<UserManagement />} />
-                                <Route path="/app/profile" element={<Profile />} />
-                                <Route path="/app/settings" element={<Settings />} />
-                                <Route path="/app/suppliers/orders" element={<Suppliers />} />
-                                <Route path="/app/suppliers/list" element={<Suppliers />} />
-                                <Route path="/app/suppliers/status" element={<Suppliers />} />
-                                <Route path="/app/suppliers/archived" element={<Suppliers />} />
-                                <Route path="/app/tasks/assigned" element={<Tasks />} />
-                                <Route path="/app/tasks/create" element={<Tasks />} />
-                                <Route path="/app/tasks/history" element={<Tasks />} />
-                                <Route path="/app/maintenance/report" element={<Maintenance />} />
-                                <Route path="/app/maintenance/history" element={<Maintenance />} />
-                                <Route path="/app/maintenance/scheduled" element={<Maintenance />} />
-                                <Route path="*" element={<NotFound />} />
-                              </Routes>
+              <Routes>
+                <Route path="/" element={<Navigate to="/app/dashboard" replace />} />
+                <Route path="/app" element={<Dashboard />} />
+                <Route path="/app/dashboard" element={<Dashboard />} />
+                <Route path="/app/inventory" element={<Inventory />} />
+                <Route path="/app/inventory/kitchen" element={<KitchenInventory />} />
+                <Route path="/app/checklists" element={<Checklists />} />
+                <Route path="/app/communication" element={<Communication />} />
+                <Route path="/app/cash-register" element={<CashRegister />} />
+                <Route path="/app/financial" element={<Financial />} />
+                <Route path="/app/reports" element={<Reports />} />
+                <Route path="/app/equipment" element={<Equipment />} />
+                <Route path="/app/users" element={<UserManagement />} />
+                <Route path="/app/users/invitations" element={<UserManagement />} />
+                <Route path="/app/users/roles" element={<UserManagement />} />
+                <Route path="/app/profile" element={<Profile />} />
+                <Route path="/app/settings" element={<Settings />} />
+                <Route path="/app/suppliers/orders" element={<Suppliers />} />
+                <Route path="/app/suppliers/list" element={<Suppliers />} />
+                <Route path="/app/suppliers/status" element={<Suppliers />} />
+                <Route path="/app/suppliers/archived" element={<Suppliers />} />
+                <Route path="/app/tasks/assigned" element={<Tasks />} />
+                <Route path="/app/tasks/create" element={<Tasks />} />
+                <Route path="/app/tasks/history" element={<Tasks />} />
+                <Route path="/app/maintenance/report" element={<Maintenance />} />
+                <Route path="/app/maintenance/history" element={<Maintenance />} />
+                <Route path="/app/maintenance/scheduled" element={<Maintenance />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
                               </AppLayout>
                             </FinancialProvider>
                           </UserManagementProvider>
