@@ -20,15 +20,15 @@ export const useUnreadMessages = () => {
 };
 
 export const UnreadMessagesProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { user } = useSimpleAuth();
+  const { profile } = useSimpleAuth();
   const [totalUnreadCount, setTotalUnreadCount] = useState(0);
   const [unreadCountByChat, setUnreadCountByChat] = useState<Record<string, number>>({});
 
   const getUnreadCounts = async () => {
-    if (!user) return;
+    if (!profile) return;
 
     try {
-      console.log('Fetching unread counts for user:', user.id);
+      console.log('Fetching unread counts for user:', profile.user_id);
 
       // Get all chats the user participates in or should have access to
       const { data: userParticipants, error: participantsError } = await supabase
@@ -42,7 +42,7 @@ export const UnreadMessagesProvider: React.FC<{ children: React.ReactNode }> = (
             location
           )
         `)
-        .eq('user_id', user.id);
+        .eq('user_id', profile.user_id);
 
       if (participantsError) {
         console.error('Error fetching user participants:', participantsError);
@@ -65,7 +65,7 @@ export const UnreadMessagesProvider: React.FC<{ children: React.ReactNode }> = (
             .from('chat_messages')
             .select('*', { count: 'exact', head: true })
             .eq('chat_id', chat.id)
-            .neq('sender_id', user.id) // Don't count own messages
+            .neq('sender_id', profile.user_id) // Don't count own messages
             .eq('is_deleted', false)
             .gt('created_at', lastReadAt);
 
@@ -101,7 +101,7 @@ export const UnreadMessagesProvider: React.FC<{ children: React.ReactNode }> = (
   };
 
   const markChatAsRead = async (chatId: string) => {
-    if (!user) return;
+    if (!profile) return;
 
     try {
       console.log('Marking chat as read:', chatId);
@@ -111,7 +111,7 @@ export const UnreadMessagesProvider: React.FC<{ children: React.ReactNode }> = (
         .from('chat_participants')
         .upsert({
           chat_id: chatId,
-          user_id: user.id,
+          user_id: profile.user_id,
           last_read_at: new Date().toISOString()
         }, {
           onConflict: 'chat_id,user_id'
@@ -147,7 +147,7 @@ export const UnreadMessagesProvider: React.FC<{ children: React.ReactNode }> = (
 
   // Initialize and set up real-time subscriptions
   useEffect(() => {
-    if (!user) return;
+    if (!profile) return;
 
     // Load initial counts
     getUnreadCounts();
@@ -187,7 +187,7 @@ export const UnreadMessagesProvider: React.FC<{ children: React.ReactNode }> = (
         const newMessage = payload.new as any;
         
         // Only count if it's not from the current user
-        if (newMessage.sender_id !== user.id) {
+        if (newMessage.sender_id !== profile.user_id) {
           // Refresh counts to get accurate data
           setTimeout(() => getUnreadCounts(), 500);
         }
@@ -201,7 +201,7 @@ export const UnreadMessagesProvider: React.FC<{ children: React.ReactNode }> = (
         const participant = payload.new as any;
         
         // If this is the current user's participant record being updated
-        if (participant.user_id === user.id) {
+        if (participant.user_id === profile.user_id) {
           setTimeout(() => getUnreadCounts(), 500);
         }
       })
@@ -211,11 +211,11 @@ export const UnreadMessagesProvider: React.FC<{ children: React.ReactNode }> = (
       supabase.removeChannel(messagesChannel);
       window.removeEventListener('refreshUnreadCounts', handleRefreshRequest);
     };
-  }, [user]);
+  }, [profile]);
 
   // Refresh counts when user location changes
   useEffect(() => {
-    if (user) {
+    if (profile) {
       getUnreadCounts();
     }
   }, []); // Remove location dependency for now

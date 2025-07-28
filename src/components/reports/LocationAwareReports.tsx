@@ -24,7 +24,7 @@ interface LocationComparisonData {
 }
 
 export const LocationAwareReports = () => {
-  const { user } = useSimpleAuth();
+  const { profile } = useSimpleAuth();
   const language = 'en'; // Temporary hardcode
   const { activeLocation, availableLocations, allActiveLocations } = useLocation();
   const { t } = useTranslation(language);
@@ -53,7 +53,7 @@ export const LocationAwareReports = () => {
     }
   }, [availableLocations]);
 
-  const isBackofficeUser = ['super_admin', 'manager', 'director'].includes(user?.user_metadata?.role || '');
+  const isBackofficeUser = ['super_admin', 'manager', 'director'].includes(profile?.role || '');
   const currentLocationName = availableLocations.find(loc => loc.value === activeLocation)?.label || activeLocation;
 
   const generateLocationReport = async () => {
@@ -81,7 +81,7 @@ export const LocationAwareReports = () => {
       
       // Mock comparison data - row-by-row, NOT aggregated
       const mockData: LocationComparisonData[] = allActiveLocations
-        .filter(location => user?.user_metadata?.locations?.includes(location.code))
+        .filter(location => profile?.locations?.includes(location.code))
         .map(location => ({
           location: location.name,
           sales: Math.floor(Math.random() * 5000) + 2000,

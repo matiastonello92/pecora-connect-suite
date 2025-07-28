@@ -60,7 +60,7 @@ export const ChatDashboard: React.FC = () => {
     error,
     emergencyFixAuth
   } = useChatContext();
-  const { user } = useSimpleAuth();
+  const { profile } = useSimpleAuth();
   const language = 'en'; // Temporary hardcode
   const { unreadCountByChat, markChatAsRead } = useUnreadMessages();
   const { processReminders } = useMessageReminders();
@@ -101,7 +101,7 @@ export const ChatDashboard: React.FC = () => {
 
   // Process reminders periodically
   useEffect(() => {
-    if (!user) return;
+    if (!profile) return;
 
     // Process reminders immediately
     processReminders();
@@ -110,7 +110,7 @@ export const ChatDashboard: React.FC = () => {
     const interval = setInterval(processReminders, 5 * 60 * 1000);
 
     return () => clearInterval(interval);
-  }, [user, processReminders]);
+  }, [profile, processReminders]);
 
   // Auto-mark chat as read when opened
   useEffect(() => {
@@ -161,7 +161,7 @@ export const ChatDashboard: React.FC = () => {
     
     if (chat.type === 'private' && chat.participants) {
       const otherParticipant = chat.participants.find((p: any) => 
-        p.user_id !== user?.id && p.user?.first_name
+        p.user_id !== profile?.user_id && p.user?.first_name
       );
       if (otherParticipant?.user) {
         return `${otherParticipant.user.first_name} ${otherParticipant.user.last_name}`;
@@ -188,7 +188,7 @@ export const ChatDashboard: React.FC = () => {
   };
 
   const isMessageFromCurrentUser = (chat: any) => {
-    return chat.last_message?.sender_id === user?.id;
+    return chat.last_message?.sender_id === profile?.user_id;
   };
 
   const getMessageStatus = (chat: any) => {
@@ -416,9 +416,9 @@ export const ChatDashboard: React.FC = () => {
                       <span className="font-medium text-orange-900">Debug Information</span>
                     </div>
                     <div className="space-y-1 text-muted-foreground">
-                      <div><strong>User ID:</strong> {user?.id}</div>
-                      <div><strong>User Email:</strong> {user?.email}</div>
-                      <div><strong>User Locations:</strong> {user?.user_metadata?.locations?.join(', ') || user?.user_metadata?.location || 'None'}</div>
+                      <div><strong>User ID:</strong> {profile?.user_id}</div>
+                      <div><strong>User Email:</strong> {profile?.email}</div>
+                      <div><strong>User Locations:</strong> {profile?.locations?.join(', ') || 'None'}</div>
                       <div><strong>Total Chats:</strong> {chats.length}</div>
                       <div><strong>Search Filtered:</strong> {filteredChats.length}</div>
                       <div><strong>Location Filtered:</strong> {locationFilteredChats.length}</div>

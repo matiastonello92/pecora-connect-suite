@@ -24,7 +24,7 @@ interface MessageListProps {
 }
 
 export const MessageList: React.FC<MessageListProps> = ({ messages }) => {
-  const { user } = useSimpleAuth();
+  const { profile } = useSimpleAuth();
   const language = 'en'; // Temporary hardcode
   const { t } = useTranslation(language);
   
@@ -119,7 +119,7 @@ export const MessageList: React.FC<MessageListProps> = ({ messages }) => {
   };
 
   const renderMessage = (message: ChatMessage, index: number) => {
-    const isOwn = message.sender_id === user?.id;
+    const isOwn = message.sender_id === profile?.user_id;
     const previousMessage = index > 0 ? messages[index - 1] : undefined;
     const showDate = shouldShowDateDivider(message, previousMessage);
     const groupWithPrevious = shouldGroupWithPrevious(message, previousMessage);

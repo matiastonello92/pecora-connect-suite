@@ -31,7 +31,7 @@ interface ChatSettingsProps {
 
 export const ChatSettings: React.FC<ChatSettingsProps> = ({ children }) => {
   const { activeChat, muteChat } = useChatContext();
-  const { user } = useSimpleAuth();
+  const { profile } = useSimpleAuth();
   const language = 'en'; // Temporary hardcode
   const { t } = useTranslation(language);
   const { toast } = useToast();
@@ -41,13 +41,13 @@ export const ChatSettings: React.FC<ChatSettingsProps> = ({ children }) => {
   if (!activeChat) return null;
 
   const getCurrentUserParticipant = () => {
-    return activeChat.participants?.find(p => p.user_id === user?.id);
+    return activeChat.participants?.find(p => p.user_id === profile?.user_id);
   };
 
   const currentParticipant = getCurrentUserParticipant();
   const isMuted = currentParticipant?.is_muted || false;
   const isAdmin = currentParticipant?.role === 'admin';
-  const isCreator = activeChat.created_by === user?.id;
+  const isCreator = activeChat.created_by === profile?.user_id;
 
   const handleMuteToggle = async () => {
     try {
@@ -216,11 +216,11 @@ export const ChatSettings: React.FC<ChatSettingsProps> = ({ children }) => {
                       <div className="flex-1">
                         <p className="text-sm font-medium">
                           {getParticipantName(participant)}
-                          {participant.user_id === user?.id && (
-                            <span className="text-xs text-muted-foreground ml-1">
-                              ({t('communication.you')})
-                            </span>
-                          )}
+                           {participant.user_id === profile?.user_id && (
+                             <span className="text-xs text-muted-foreground ml-1">
+                               ({t('communication.you')})
+                             </span>
+                           )}
                         </p>
                       </div>
                       <div className="flex items-center space-x-1">

@@ -5,7 +5,7 @@ import { reminderService } from '@/services/reminderService';
 import { useSimpleAuth } from '@/context/SimpleAuthContext';
 
 export const NotificationHandler: React.FC = () => {
-  const { user } = useSimpleAuth();
+  const { profile } = useSimpleAuth();
   
   // Use the new private message notification hook
   usePrivateMessageNotifications();
@@ -15,7 +15,7 @@ export const NotificationHandler: React.FC = () => {
 
   // Start reminder service when user is authenticated
   useEffect(() => {
-    if (user) {
+    if (profile) {
       reminderService.start();
     } else {
       reminderService.stop();
@@ -24,7 +24,7 @@ export const NotificationHandler: React.FC = () => {
     return () => {
       reminderService.stop();
     };
-  }, [user]);
+  }, [profile]);
 
   return null; // This component doesn't render anything
 };

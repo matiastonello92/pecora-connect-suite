@@ -18,7 +18,7 @@ import { AuthDebugPanel } from '@/components/debug/AuthDebugPanel';
   } from 'lucide-react';
 
 export default function Dashboard() {
-  const { user } = useSimpleAuth();
+  const { profile } = useSimpleAuth();
   const language = 'en'; // Temporarily hardcode language
   const hasPermission = () => true; // Temporarily allow all permissions  
   const hasAccess = () => true; // Temporarily allow all access
@@ -85,7 +85,7 @@ export default function Dashboard() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="min-w-0 flex-1">
             <h1 className="text-2xl sm:text-3xl font-playfair font-bold text-primary mb-2">
-              {t('welcome')}, {user?.email?.split('@')[0] || 'User'}!
+              {t('welcome')}, {profile?.email?.split('@')[0] || 'User'}!
             </h1>
             <p className="text-sm sm:text-base text-muted-foreground font-inter">
               {new Intl.DateTimeFormat('en-US', {

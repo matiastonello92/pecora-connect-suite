@@ -34,7 +34,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage }) => 
   const [isRecording, setIsRecording] = useState(false);
   const [uploadingFile, setUploadingFile] = useState<File | null>(null);
   const { uploadMedia } = useChatContext();
-  const { user } = useSimpleAuth();
+  const { profile } = useSimpleAuth();
   const language = 'en'; // Temporary hardcode
   const { t } = useTranslation(language);
   const { toast } = useToast();
@@ -120,8 +120,8 @@ export const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage }) => 
       const mediaUrl = await uploadMedia(file, 'temp-chat-id'); // Will be replaced with actual chat ID
       if (mediaUrl) {
         // Log file upload for audit
-        if (user) {
-          await auditLogger.logFileUpload(user.id, file.name, file.size, file.type);
+        if (profile) {
+          await auditLogger.logFileUpload(profile.user_id, file.name, file.size, file.type);
         }
         onSendMessage(file.name, type, mediaUrl);
       }

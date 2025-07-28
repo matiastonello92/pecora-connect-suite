@@ -20,7 +20,7 @@ import { ClosureStatus } from '@/types/financial';
 import { LocationAwareReportWrapper } from '../reports/LocationAwareReportWrapper';
 
 export const FinancialReports = () => {
-  const { user } = useSimpleAuth();
+  const { profile } = useSimpleAuth();
   const language = 'en'; // Temporarily hardcode language
   const hasPermission = (permission: string) => true; // Temporarily allow all permissions
   const { activeLocation, availableLocations } = useLocation();
@@ -67,7 +67,7 @@ export const FinancialReports = () => {
   const [chartType, setChartType] = useState<'bar' | 'pie' | 'line'>('bar');
   const [viewType, setViewType] = useState<'totals' | 'percentages'>('totals');
 
-  const canManageStatus = ['director', 'super_admin'].includes(user?.role || '');
+  const canManageStatus = ['director', 'super_admin'].includes(profile?.role || '');
   const currentLocationName = availableLocations.find(loc => loc.value === activeLocation)?.label || activeLocation;
 
   const handleGenerateReport = () => {

@@ -15,7 +15,7 @@ import { SatisfactionRating } from '@/types/financial';
 import { useToast } from '@/hooks/use-toast';
 
 export const CashClosureForm = () => {
-  const { user } = useSimpleAuth();
+  const { profile } = useSimpleAuth();
   const language = 'en'; // Temporarily hardcode language
   const { t } = useTranslation(language);
   const { toast } = useToast();

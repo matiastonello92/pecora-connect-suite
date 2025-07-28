@@ -43,20 +43,35 @@ export const SimpleAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
   const fetchProfile = async (userId: string) => {
     try {
+      console.log('🔄 Fetching profile for user ID:', userId);
+      
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('user_id', userId)
-        .single();
+        .maybeSingle(); // Use maybeSingle instead of single to avoid errors when no profile exists
       
       if (error) {
-        console.error('Error fetching profile:', error);
+        console.error('❌ Error fetching profile:', error);
+        return null;
+      }
+
+      if (!data) {
+        console.warn('⚠️ No profile found for user:', userId);
         return null;
       }
       
+      console.log('✅ Profile fetched successfully:', {
+        user_id: data.user_id,
+        email: data.email,
+        locations: data.locations,
+        role: data.role,
+        status: data.status
+      });
+      
       return data;
     } catch (error) {
-      console.error('Error fetching profile:', error);
+      console.error('❌ Exception during profile fetch:', error);
       return null;
     }
   };
@@ -66,22 +81,46 @@ export const SimpleAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       try {
         console.log('🔐 Initializing authentication...');
         
+        // Set loading state immediately
+        setState(prevState => ({
+          ...prevState,
+          isLoading: true
+        }));
+        
         // Get initial session
-        const { data: { session } } = await supabase.auth.getSession();
-        console.log('📱 Session found:', !!session?.user, session?.user?.id);
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        
+        if (sessionError) {
+          console.error('❌ Error getting session:', sessionError);
+          setState({
+            user: null,
+            session: null,
+            profile: null,
+            isLoading: false,
+            isAuthenticated: false,
+          });
+          return;
+        }
+        
+        console.log('📱 Session found:', !!session?.user, 'User ID:', session?.user?.id);
         
         let profile = null;
         if (session?.user) {
           console.log('👤 Fetching profile for user:', session.user.id);
           profile = await fetchProfile(session.user.id);
-          console.log('👤 Profile fetched:', !!profile, profile?.email, profile?.locations);
+          
+          if (!profile) {
+            console.error('❌ Profile not found for authenticated user:', session.user.id);
+          }
         }
         
         const isAuthenticated = !!session?.user && !!profile;
         console.log('✅ Authentication complete:', { 
           hasSession: !!session?.user, 
           hasProfile: !!profile, 
-          isAuthenticated 
+          isAuthenticated,
+          profileEmail: profile?.email,
+          profileLocations: profile?.locations
         });
         
         setState({
@@ -109,13 +148,22 @@ export const SimpleAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         try {
-          console.log('🔄 Auth state changed:', event, !!session?.user);
+          console.log('🔄 Auth state changed:', event, 'User ID:', session?.user?.id);
+          
+          // Set loading state immediately
+          setState(prevState => ({
+            ...prevState,
+            isLoading: true
+          }));
           
           let profile = null;
           if (session?.user) {
             console.log('👤 Fetching profile after auth change for:', session.user.id);
             profile = await fetchProfile(session.user.id);
-            console.log('👤 Profile after auth change:', !!profile, profile?.email, profile?.locations);
+            
+            if (!profile) {
+              console.error('❌ Failed to fetch profile for authenticated user:', session.user.id);
+            }
           }
           
           const isAuthenticated = !!session?.user && !!profile;
@@ -123,7 +171,9 @@ export const SimpleAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
             event, 
             hasSession: !!session?.user, 
             hasProfile: !!profile, 
-            isAuthenticated 
+            isAuthenticated,
+            profileEmail: profile?.email,
+            profileLocations: profile?.locations
           });
           
           setState({

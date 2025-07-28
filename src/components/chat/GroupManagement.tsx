@@ -27,7 +27,7 @@ interface GroupManagementProps {
 
 export const GroupManagement: React.FC<GroupManagementProps> = ({ onClose }) => {
   const { activeChat, createChat, updateChat, addParticipant, removeParticipant, updateParticipantRole } = useChatContext();
-  const { user } = useSimpleAuth();
+  const { profile } = useSimpleAuth();
   const language = 'en'; // Temporary hardcode
   const { t } = useTranslation(language);
   const [showCreateGroup, setShowCreateGroup] = useState(false);

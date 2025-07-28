@@ -33,8 +33,10 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const { profile, isLoading: authLoading } = useSimpleAuth();
   const { data: allActiveLocations = [], isLoading } = useActiveLocations();
   
-  // Get user's locations from their profile
-  const userLocations = profile?.locations || ['menton'];
+  // Get user's locations from their profile with safe fallback
+  const userLocations = profile?.locations && profile.locations.length > 0 
+    ? profile.locations 
+    : ['menton']; // Default fallback
   
   // State for location management
   const [activeLocation, setActiveLocationState] = useState<string>('');
