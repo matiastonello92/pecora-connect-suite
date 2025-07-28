@@ -27,8 +27,8 @@ export const EmailChangeDialog = ({ isOpen, onOpenChange, currentEmail }: EmailC
     
     if (!newEmail || !confirmEmail) {
       toast({
-        title: t('common.error'),
-        description: t('profile.messages.fillAllFields'),
+        title: "Error",
+        description: "Please fill in all fields",
         variant: 'destructive',
       });
       return;
@@ -36,8 +36,8 @@ export const EmailChangeDialog = ({ isOpen, onOpenChange, currentEmail }: EmailC
 
     if (newEmail !== confirmEmail) {
       toast({
-        title: t('common.error'),
-        description: t('profile.messages.emailsDontMatch'),
+        title: "Error",
+        description: "Emails don't match",
         variant: 'destructive',
       });
       return;
@@ -45,8 +45,8 @@ export const EmailChangeDialog = ({ isOpen, onOpenChange, currentEmail }: EmailC
 
     if (newEmail === currentEmail) {
       toast({
-        title: t('common.error'),
-        description: t('profile.messages.sameEmailError'),
+        title: "Error",
+        description: "New email cannot be the same as current email",
         variant: 'destructive',
       });
       return;
@@ -61,8 +61,8 @@ export const EmailChangeDialog = ({ isOpen, onOpenChange, currentEmail }: EmailC
       if (error) throw error;
 
       toast({
-        title: t('common.success'),
-        description: t('profile.messages.emailChangeInitiated'),
+        title: "Success",
+        description: "Email change initiated. Please check your email for verification",
       });
 
       onOpenChange(false);
@@ -70,7 +70,7 @@ export const EmailChangeDialog = ({ isOpen, onOpenChange, currentEmail }: EmailC
       setConfirmEmail('');
     } catch (error: any) {
       toast({
-        title: t('common.error'),
+        title: "Error",
         description: error.message,
         variant: 'destructive',
       });
@@ -91,7 +91,7 @@ export const EmailChangeDialog = ({ isOpen, onOpenChange, currentEmail }: EmailC
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Mail className="h-5 w-5" />
-            {t('profile.actions.changeEmail')}
+            Change Email
           </DialogTitle>
         </DialogHeader>
 
@@ -99,36 +99,36 @@ export const EmailChangeDialog = ({ isOpen, onOpenChange, currentEmail }: EmailC
           <Alert>
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription>
-              {t('profile.warnings.emailChangeWarning')}
+              You will need to verify your new email address before it becomes active
             </AlertDescription>
           </Alert>
 
           <div className="space-y-2">
-            <Label>{t('profile.fields.currentEmail')}</Label>
+            <Label>Current Email</Label>
             <Input value={currentEmail} disabled className="bg-muted" />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="newEmail">{t('profile.fields.newEmail')}</Label>
+            <Label htmlFor="newEmail">New Email</Label>
             <Input
               id="newEmail"
               type="email"
               value={newEmail}
               onChange={(e) => setNewEmail(e.target.value)}
-              placeholder={t('profile.placeholders.enterNewEmail')}
+              placeholder="Enter new email address"
               disabled={isSubmitting}
               required
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="confirmEmail">{t('profile.fields.confirmNewEmail')}</Label>
+            <Label htmlFor="confirmEmail">Confirm New Email</Label>
             <Input
               id="confirmEmail"
               type="email"
               value={confirmEmail}
               onChange={(e) => setConfirmEmail(e.target.value)}
-              placeholder={t('profile.placeholders.confirmNewEmail')}
+              placeholder="Confirm new email address"
               disabled={isSubmitting}
               required
             />
@@ -141,7 +141,7 @@ export const EmailChangeDialog = ({ isOpen, onOpenChange, currentEmail }: EmailC
               onClick={handleCancel}
               disabled={isSubmitting}
             >
-              {t('common.cancel')}
+              Cancel
             </Button>
             <Button
               type="submit"
@@ -152,7 +152,7 @@ export const EmailChangeDialog = ({ isOpen, onOpenChange, currentEmail }: EmailC
               ) : (
                 <Mail className="h-4 w-4 mr-2" />
               )}
-              {isSubmitting ? t('profile.actions.processing') : t('profile.actions.sendVerification')}
+              {isSubmitting ? "Processing..." : "Send Verification"}
             </Button>
           </DialogFooter>
         </form>

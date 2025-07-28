@@ -17,7 +17,7 @@ export const Profile = () => {
   const { profile } = useSimpleAuth();
   const { users } = useUserManagement();
   const navigate = useNavigate();
-  const { t } = useTranslation('en');
+  
   const [activeTab, setActiveTab] = useState('information');
 
   const currentUser = users.find(u => u.user_id === profile?.user_id);

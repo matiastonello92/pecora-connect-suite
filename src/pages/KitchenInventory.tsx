@@ -27,7 +27,7 @@ export const KitchenInventory = () => {
   const { user } = useSimpleAuth();
   const language = 'en'; // Temporarily hardcode language
   const hasPermission = (permission: string) => true; // Temporarily allow all permissions
-  const { t } = useTranslation(language);
+  
   const { toast } = useToast();
   const {
     currentInventory,

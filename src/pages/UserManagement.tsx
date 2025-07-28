@@ -21,7 +21,7 @@ export const UserManagement = () => {
   const { user } = useSimpleAuth();
   const language = 'en'; // Temporarily hardcode language
   const hasPermission = (permission: string) => true; // Temporarily allow all permissions
-  const { t } = useTranslation(language);
+  
   const location = useLocation();
   const navigate = useNavigate();
   const { users, pendingInvitations, archivedUsers, resendInvitation, deleteUser, deletePendingInvitation, reactivateUser } = useUserManagement();

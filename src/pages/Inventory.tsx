@@ -15,7 +15,7 @@ import { InventoryPagination } from '@/components/inventory/InventoryPagination'
 export const Inventory = () => {
   const { user } = useSimpleAuth();
   const language = 'en'; // Temporarily hardcode language
-  const { t } = useTranslation(language);
+  
   const {
     items,
     sessions,

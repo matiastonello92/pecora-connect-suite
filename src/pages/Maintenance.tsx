@@ -14,7 +14,7 @@ import { Wrench, AlertTriangle, FileText, Settings, Plus, Upload } from 'lucide-
 export const Maintenance = () => {
   const { user } = useSimpleAuth();
   const language = 'en'; // Temporarily hardcode language
-  const { t } = useTranslation(language);
+  
   const [showReportDialog, setShowReportDialog] = useState(false);
 
   // Mock data for demonstration

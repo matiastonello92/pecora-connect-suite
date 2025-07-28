@@ -15,7 +15,7 @@ export const Tasks = () => {
   const { user } = useSimpleAuth();
   const language = 'en'; // Temporarily hardcode language
   const hasPermission = (permission: string) => true; // Temporarily allow all permissions
-  const { t } = useTranslation(language);
+  
   const [showCreateDialog, setShowCreateDialog] = useState(false);
 
   // Mock data for demonstration

@@ -61,7 +61,7 @@ export const ProfilePermissions = ({ user }: ProfilePermissionsProps) => {
       setPermissions(permissionsMap);
     } catch (error: any) {
       toast({
-        title: t('common.error'),
+        title: "Error",
         description: error.message,
         variant: 'destructive',
       });
@@ -119,12 +119,12 @@ export const ProfilePermissions = ({ user }: ProfilePermissionsProps) => {
       if (updateError) throw updateError;
 
       toast({
-        title: t('common.success'),
-        description: t('profile.messages.permissionsUpdated'),
+        title: "Success",
+        description: "User permissions updated successfully",
       });
     } catch (error: any) {
       toast({
-        title: t('common.error'),
+        title: "Error",
         description: error.message,
         variant: 'destructive',
       });
@@ -136,7 +136,7 @@ export const ProfilePermissions = ({ user }: ProfilePermissionsProps) => {
   const resetToDefaults = () => {
     setPermissions({});
     toast({
-      title: t('profile.messages.permissionsReset'),
+      title: "Permissions reset to defaults",
     });
   };
 
@@ -146,7 +146,7 @@ export const ProfilePermissions = ({ user }: ProfilePermissionsProps) => {
         <CardContent className="flex items-center justify-center py-8">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-muted-foreground">{t('profile.messages.loadingPermissions')}</p>
+            <p className="text-muted-foreground">Loading permissions...</p>
           </div>
         </CardContent>
       </Card>
@@ -160,22 +160,22 @@ export const ProfilePermissions = ({ user }: ProfilePermissionsProps) => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Shield className="h-5 w-5" />
-            {t('profile.sections.currentAccess')}
+            Current Access
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-2">
             <Badge variant="outline" className="text-base">
-              {t(`access_levels.${user.accessLevel}`)}
+              {user.accessLevel || "Basic"}
             </Badge>
             {user.hasCustomPermissions && (
               <Badge variant="secondary">
-                {t('profile.badges.customPermissions')}
+                Custom Permissions
               </Badge>
             )}
           </div>
           <p className="text-sm text-muted-foreground mt-2">
-            {t('profile.descriptions.customPermissions')}
+            Module-specific permissions override default access levels
           </p>
         </CardContent>
       </Card>
@@ -183,7 +183,7 @@ export const ProfilePermissions = ({ user }: ProfilePermissionsProps) => {
       {/* Module Permissions */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>{t('profile.sections.modulePermissions')}</CardTitle>
+          <CardTitle>Module Permissions</CardTitle>
           {canEdit && (
             <div className="flex gap-2">
               <Button
@@ -193,7 +193,7 @@ export const ProfilePermissions = ({ user }: ProfilePermissionsProps) => {
                 disabled={saving}
               >
                 <RotateCcw className="h-4 w-4 mr-2" />
-                {t('profile.actions.resetToDefaults')}
+                Reset to Defaults
               </Button>
               <Button
                 onClick={savePermissions}
@@ -205,7 +205,7 @@ export const ProfilePermissions = ({ user }: ProfilePermissionsProps) => {
                 ) : (
                   <Save className="h-4 w-4 mr-2" />
                 )}
-                {t('profile.actions.savePermissions')}
+                Save Permissions
               </Button>
             </div>
           )}
@@ -218,7 +218,7 @@ export const ProfilePermissions = ({ user }: ProfilePermissionsProps) => {
                   <h4 className="font-medium">{MODULE_LABELS[module]}</h4>
                   {permissions[module] && Object.values(permissions[module]!).some(Boolean) && (
                     <Badge variant="outline" className="text-xs">
-                      {t('profile.badges.modified')}
+                      Modified
                     </Badge>
                   )}
                 </div>
@@ -237,7 +237,7 @@ export const ProfilePermissions = ({ user }: ProfilePermissionsProps) => {
                         htmlFor={`${module}-${permission}`} 
                         className="text-sm font-normal capitalize cursor-pointer"
                       >
-                        {t(`profile.permissions.${permission.replace('can_', '')}`)}
+                        {permission.replace('can_', '').charAt(0).toUpperCase() + permission.replace('can_', '').slice(1)}
                       </Label>
                     </div>
                   ))}
@@ -250,8 +250,8 @@ export const ProfilePermissions = ({ user }: ProfilePermissionsProps) => {
             <div className="mt-6 p-4 bg-muted rounded-lg">
               <p className="text-sm text-muted-foreground text-center">
                 {currentProfile?.user_id === user.user_id 
-                  ? t('profile.messages.cannotEditOwnPermissions')
-                  : t('profile.messages.noPermissionToEdit')
+                  ? "You cannot edit your own permissions"
+                  : "You don't have permission to edit user permissions"
                 }
               </p>
             </div>

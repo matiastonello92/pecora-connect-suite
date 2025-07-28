@@ -30,14 +30,14 @@ export const ProfileSecurity = ({ user }: ProfileSecurityProps) => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Shield className="h-5 w-5" />
-            {t('profile.sections.security')}
+            Security Settings
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-center py-8">
             <Shield className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
             <p className="text-muted-foreground">
-              {t('profile.messages.noSecurityAccess')}
+              Access restricted. Only administrators can manage security settings.
             </p>
           </div>
         </CardContent>
@@ -70,12 +70,12 @@ export const ProfileSecurity = ({ user }: ProfileSecurityProps) => {
       if (error) throw error;
 
       toast({
-        title: t('common.success'),
-        description: t('profile.messages.roleUpdated'),
+        title: "Success",
+        description: "User role updated successfully",
       });
     } catch (error: any) {
       toast({
-        title: t('common.error'),
+        title: "Error",
         description: error.message,
         variant: 'destructive',
       });
@@ -130,12 +130,12 @@ export const ProfileSecurity = ({ user }: ProfileSecurityProps) => {
       }
 
       toast({
-        title: t('common.success'),
-        description: t(`profile.messages.${action}Success`),
+        title: "Success",
+        description: `User ${action}d successfully`,
       });
     } catch (error: any) {
       toast({
-        title: t('common.error'),
+        title: "Error",
         description: error.message,
         variant: 'destructive',
       });
@@ -150,12 +150,12 @@ export const ProfileSecurity = ({ user }: ProfileSecurityProps) => {
       if (error) throw error;
 
       toast({
-        title: t('common.success'),
-        description: t('profile.messages.passwordResetSent'),
+        title: "Success",
+        description: "Password reset email sent to user",
       });
     } catch (error: any) {
       toast({
-        title: t('common.error'),
+        title: "Error",
         description: error.message,
         variant: 'destructive',
       });
@@ -168,12 +168,12 @@ export const ProfileSecurity = ({ user }: ProfileSecurityProps) => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-yellow-800 dark:text-yellow-200">
             <AlertTriangle className="h-5 w-5" />
-            {t('profile.warnings.adminOnly')}
+            Administrator Actions
           </CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-yellow-700 dark:text-yellow-300">
-            {t('profile.warnings.adminOnlyDesc')}
+            These actions require administrator privileges and will affect user access and security.
           </p>
         </CardContent>
       </Card>
@@ -181,12 +181,12 @@ export const ProfileSecurity = ({ user }: ProfileSecurityProps) => {
       {/* Role Management */}
       <Card>
         <CardHeader>
-          <CardTitle>{t('profile.sections.roleManagement')}</CardTitle>
+          <CardTitle>Role Management</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium">{t('profile.fields.systemRole')}</label>
+              <label className="text-sm font-medium">System Role</label>
               <Select
                 value={user.role}
                 onValueChange={(value) => handleRoleChange('role', value)}
@@ -204,7 +204,7 @@ export const ProfileSecurity = ({ user }: ProfileSecurityProps) => {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium">{t('profile.fields.restaurantRole')}</label>
+              <label className="text-sm font-medium">Restaurant Role</label>
               <Select
                 value={user.restaurantRole || 'none'}
                 onValueChange={(value) => handleRoleChange('restaurant_role', value)}
@@ -223,7 +223,7 @@ export const ProfileSecurity = ({ user }: ProfileSecurityProps) => {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium">{t('profile.fields.accessLevel')}</label>
+              <label className="text-sm font-medium">Access Level</label>
               <Select
                 value={user.accessLevel}
                 onValueChange={(value) => handleRoleChange('access_level', value)}
@@ -241,7 +241,7 @@ export const ProfileSecurity = ({ user }: ProfileSecurityProps) => {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium">{t('profile.fields.location')}</label>
+              <label className="text-sm font-medium">Location</label>
               <div className="text-sm text-muted-foreground">
                 Current locations: {(user.locations || [user.location]).join(', ')}
               </div>
@@ -256,7 +256,7 @@ export const ProfileSecurity = ({ user }: ProfileSecurityProps) => {
       {/* Account Actions */}
       <Card>
         <CardHeader>
-          <CardTitle>{t('profile.sections.accountActions')}</CardTitle>
+          <CardTitle>Account Actions</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -266,7 +266,7 @@ export const ProfileSecurity = ({ user }: ProfileSecurityProps) => {
               disabled={isUpdating}
             >
               <RotateCcw className="h-4 w-4 mr-2" />
-              {t('profile.actions.resetPassword')}
+              Reset Password
             </Button>
 
             {user.status === 'active' ? (
@@ -276,8 +276,8 @@ export const ProfileSecurity = ({ user }: ProfileSecurityProps) => {
                 disabled={isUpdating}
                 className="border-yellow-300 text-yellow-700 hover:bg-yellow-50"
               >
-                <UserX className="h-4 w-4 mr-2" />
-                {t('profile.actions.suspend')}
+                  <UserX className="h-4 w-4 mr-2" />
+                  Suspend User
               </Button>
             ) : (
               <Button
@@ -286,8 +286,8 @@ export const ProfileSecurity = ({ user }: ProfileSecurityProps) => {
                 disabled={isUpdating}
                 className="border-green-300 text-green-700 hover:bg-green-50"
               >
-                <RotateCcw className="h-4 w-4 mr-2" />
-                {t('profile.actions.reactivate')}
+                  <RotateCcw className="h-4 w-4 mr-2" />
+                  Reactivate User
               </Button>
             )}
           </div>
@@ -300,7 +300,7 @@ export const ProfileSecurity = ({ user }: ProfileSecurityProps) => {
               className="w-full"
             >
               <UserX className="h-4 w-4 mr-2" />
-              {t('profile.actions.deleteUser')}
+              Delete User
             </Button>
           </div>
         </CardContent>
@@ -311,14 +311,14 @@ export const ProfileSecurity = ({ user }: ProfileSecurityProps) => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <History className="h-5 w-5" />
-            {t('profile.sections.activityLog')}
+            Activity Log
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-center py-4">
             <History className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
             <p className="text-sm text-muted-foreground">
-              {t('profile.messages.activityLogPlaceholder')}
+              Activity log will be displayed here when implemented
             </p>
           </div>
         </CardContent>
@@ -329,16 +329,16 @@ export const ProfileSecurity = ({ user }: ProfileSecurityProps) => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Download className="h-5 w-5" />
-            {t('profile.sections.export')}
+            Export Profile
           </CardTitle>
         </CardHeader>
         <CardContent>
           <Button variant="outline" className="w-full" disabled>
             <Download className="h-4 w-4 mr-2" />
-            {t('profile.actions.exportPDF')}
+            Export User Data
           </Button>
           <p className="text-sm text-muted-foreground mt-2">
-            {t('profile.messages.exportPlaceholder')}
+            Export functionality will be available soon
           </p>
         </CardContent>
       </Card>

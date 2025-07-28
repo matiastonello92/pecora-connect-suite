@@ -16,7 +16,7 @@ import { CheckSquare, Clock, Play, Plus, CheckCircle, AlertCircle } from 'lucide
 export const Checklists = () => {
   const { user } = useSimpleAuth();
   const language = 'en'; // Temporarily hardcode language
-  const { t } = useTranslation(language);
+  
   const {
     templates,
     sessions,

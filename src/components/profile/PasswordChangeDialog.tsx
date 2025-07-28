@@ -26,8 +26,8 @@ export const PasswordChangeDialog = ({ isOpen, onOpenChange }: PasswordChangeDia
     
     if (!currentPassword || !newPassword || !confirmPassword) {
       toast({
-        title: t('common.error'),
-        description: t('profile.messages.fillAllFields'),
+        title: "Error",
+        description: "Please fill in all fields",
         variant: 'destructive',
       });
       return;
@@ -35,8 +35,8 @@ export const PasswordChangeDialog = ({ isOpen, onOpenChange }: PasswordChangeDia
 
     if (newPassword !== confirmPassword) {
       toast({
-        title: t('common.error'),
-        description: t('profile.messages.passwordsDontMatch'),
+        title: "Error",
+        description: "Passwords don't match",
         variant: 'destructive',
       });
       return;
@@ -44,8 +44,8 @@ export const PasswordChangeDialog = ({ isOpen, onOpenChange }: PasswordChangeDia
 
     if (newPassword.length < 6) {
       toast({
-        title: t('common.error'),
-        description: t('profile.messages.passwordTooShort'),
+        title: "Error",
+        description: "Password must be at least 6 characters long",
         variant: 'destructive',
       });
       return;
@@ -60,8 +60,8 @@ export const PasswordChangeDialog = ({ isOpen, onOpenChange }: PasswordChangeDia
       if (error) throw error;
 
       toast({
-        title: t('common.success'),
-        description: t('profile.messages.passwordChanged'),
+        title: "Success",
+        description: "Password updated successfully",
       });
 
       onOpenChange(false);
@@ -70,7 +70,7 @@ export const PasswordChangeDialog = ({ isOpen, onOpenChange }: PasswordChangeDia
       setConfirmPassword('');
     } catch (error: any) {
       toast({
-        title: t('common.error'),
+        title: "Error",
         description: error.message,
         variant: 'destructive',
       });
@@ -92,45 +92,45 @@ export const PasswordChangeDialog = ({ isOpen, onOpenChange }: PasswordChangeDia
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Lock className="h-5 w-5" />
-            {t('profile.actions.changePassword')}
+            Change Password
           </DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="currentPassword">{t('profile.fields.currentPassword')}</Label>
+            <Label htmlFor="currentPassword">Current Password</Label>
             <Input
               id="currentPassword"
               type="password"
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
-              placeholder={t('profile.placeholders.enterCurrentPassword')}
+              placeholder="Enter current password"
               disabled={isSubmitting}
               required
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="newPassword">{t('profile.fields.newPassword')}</Label>
+            <Label htmlFor="newPassword">New Password</Label>
             <Input
               id="newPassword"
               type="password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              placeholder={t('profile.placeholders.enterNewPassword')}
+              placeholder="Enter new password"
               disabled={isSubmitting}
               required
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="confirmPassword">{t('profile.fields.confirmNewPassword')}</Label>
+            <Label htmlFor="confirmPassword">Confirm New Password</Label>
             <Input
               id="confirmPassword"
               type="password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder={t('profile.placeholders.confirmNewPassword')}
+              placeholder="Confirm new password"
               disabled={isSubmitting}
               required
             />
@@ -143,7 +143,7 @@ export const PasswordChangeDialog = ({ isOpen, onOpenChange }: PasswordChangeDia
               onClick={handleCancel}
               disabled={isSubmitting}
             >
-              {t('common.cancel')}
+              Cancel
             </Button>
             <Button
               type="submit"
@@ -154,7 +154,7 @@ export const PasswordChangeDialog = ({ isOpen, onOpenChange }: PasswordChangeDia
               ) : (
                 <Lock className="h-4 w-4 mr-2" />
               )}
-              {isSubmitting ? t('profile.actions.processing') : t('profile.actions.updatePassword')}
+              {isSubmitting ? "Processing..." : "Update Password"}
             </Button>
           </DialogFooter>
         </form>

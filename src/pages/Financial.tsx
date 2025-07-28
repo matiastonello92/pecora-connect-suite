@@ -11,7 +11,7 @@ export const Financial = () => {
   const { user } = useSimpleAuth();
   const language = 'en'; // Temporarily hardcode language
   const hasPermission = (permission: string) => true; // Temporarily allow all permissions
-  const { t } = useTranslation(language);
+  
 
   // Check if user has access to financial section
   const hasFinancialAccess = ['manager', 'director', 'finance', 'super_admin'].includes(user?.role || '');
@@ -41,7 +41,7 @@ export const Financial = () => {
         <div>
           <h1 className="text-3xl font-bold flex items-center gap-2">
             <Calculator className="h-8 w-8" />
-            {t('financial') || 'Financial Management'}
+            Financial Management
           </h1>
           <p className="text-muted-foreground">
             Daily cash closure and financial reporting

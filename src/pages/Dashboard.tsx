@@ -22,7 +22,7 @@ export default function Dashboard() {
   const language = 'en'; // Temporarily hardcode language
   const hasPermission = () => true; // Temporarily allow all permissions  
   const hasAccess = () => true; // Temporarily allow all access
-  const { t } = useTranslation(language);
+  
 
   // Check if user has access to financial section  
   const hasFinancialAccess = true; // Allow all for now

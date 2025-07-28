@@ -27,8 +27,8 @@ export const ProfilePictureUpload = ({ user }: ProfilePictureUploadProps) => {
     // Validate file type
     if (!file.type.startsWith('image/')) {
       toast({
-        title: t('common.error'),
-        description: t('profile.messages.invalidFileType'),
+        title: "Error",
+        description: "Please select a valid image file",
         variant: 'destructive',
       });
       return;
@@ -37,8 +37,8 @@ export const ProfilePictureUpload = ({ user }: ProfilePictureUploadProps) => {
     // Validate file size (2MB max)
     if (file.size > 2 * 1024 * 1024) {
       toast({
-        title: t('common.error'),
-        description: t('profile.messages.fileTooLarge'),
+        title: "Error",
+        description: "File size must be less than 2MB",
         variant: 'destructive',
       });
       return;
@@ -92,8 +92,8 @@ export const ProfilePictureUpload = ({ user }: ProfilePictureUploadProps) => {
       if (updateError) throw updateError;
 
       toast({
-        title: t('common.success'),
-        description: t('profile.messages.avatarUpdated'),
+        title: "Success",
+        description: "Profile picture updated successfully",
       });
 
       setIsDialogOpen(false);
@@ -101,7 +101,7 @@ export const ProfilePictureUpload = ({ user }: ProfilePictureUploadProps) => {
       setSelectedFile(null);
     } catch (error: any) {
       toast({
-        title: t('common.error'),
+        title: "Error",
         description: error.message,
         variant: 'destructive',
       });
@@ -143,7 +143,7 @@ export const ProfilePictureUpload = ({ user }: ProfilePictureUploadProps) => {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Upload className="h-5 w-5" />
-              {t('profile.actions.uploadAvatar')}
+              Upload Profile Picture
             </DialogTitle>
           </DialogHeader>
 
@@ -161,9 +161,9 @@ export const ProfilePictureUpload = ({ user }: ProfilePictureUploadProps) => {
             )}
 
             <div className="text-center text-sm text-muted-foreground">
-              <p>{t('profile.messages.avatarPreview')}</p>
+              <p>Preview your new profile picture</p>
               <p className="text-xs mt-1">
-                {t('profile.messages.avatarRequirements')}
+                Max file size: 2MB. Supported formats: JPG, PNG, GIF
               </p>
             </div>
           </div>
@@ -175,7 +175,7 @@ export const ProfilePictureUpload = ({ user }: ProfilePictureUploadProps) => {
               disabled={uploading}
             >
               <X className="h-4 w-4 mr-2" />
-              {t('common.cancel')}
+              Cancel
             </Button>
             <Button
               onClick={handleUpload}
@@ -186,7 +186,7 @@ export const ProfilePictureUpload = ({ user }: ProfilePictureUploadProps) => {
               ) : (
                 <Upload className="h-4 w-4 mr-2" />
               )}
-              {uploading ? t('profile.actions.uploading') : t('profile.actions.upload')}
+              {uploading ? "Uploading..." : "Upload"}
             </Button>
           </DialogFooter>
         </DialogContent>

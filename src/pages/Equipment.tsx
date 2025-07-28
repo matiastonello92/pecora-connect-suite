@@ -10,7 +10,7 @@ import { Wrench, AlertTriangle, Calendar, CheckCircle, Plus } from 'lucide-react
 
 export const Equipment = () => {
   const language = 'en'; // Temporarily hardcode language
-  const { t } = useTranslation(language);
+  
   const { equipment, getOverdueMaintenance, getUpcomingMaintenance } = useEquipment();
 
   const getStatusColor = (status: string) => {
