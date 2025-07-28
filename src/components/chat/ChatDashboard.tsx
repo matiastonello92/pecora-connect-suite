@@ -168,17 +168,17 @@ export const ChatDashboard: React.FC = () => {
       }
     }
     
-    return t(`communication.chatTypes.${chat.type}`);
+    return `${chat.type.charAt(0).toUpperCase() + chat.type.slice(1)} Chat`;
   };
 
   const getLastMessagePreview = (chat: any) => {
-    if (!chat.last_message) return t('communication.noMessages');
+    if (!chat.last_message) return "No messages";
     
     const message = chat.last_message;
     if (message.message_type === 'text') {
       return message.content || '';
     } else {
-      return t(`communication.messageTypes.${message.message_type}`);
+      return `${message.message_type} message`;
     }
   };
 
@@ -253,7 +253,7 @@ export const ChatDashboard: React.FC = () => {
         <div className="p-4 bg-primary/5 border-b border-border">
           <div className="flex items-center justify-between mb-4">
             <h1 className="text-xl font-semibold text-foreground">
-              {t('communication.dashboard.title')}
+              Communication
             </h1>
             <div className="flex items-center space-x-2">
               <Button
@@ -288,7 +288,7 @@ export const ChatDashboard: React.FC = () => {
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder={t('communication.searchChats')}
+              placeholder="Search chats..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10 bg-background/50 border-border focus:bg-background"
@@ -314,7 +314,7 @@ export const ChatDashboard: React.FC = () => {
                   onClick={() => handleCreateChat('group')}
                 >
                   <Users className="h-4 w-4 mr-2" />
-                  {t('communication.createGroupChat')}
+                  Create Group Chat
                 </Button>
                 <Button
                   variant="ghost"
@@ -323,7 +323,7 @@ export const ChatDashboard: React.FC = () => {
                   onClick={() => setShowConnections(true)}
                 >
                   <MessageSquare className="h-4 w-4 mr-2" />
-                  {t('communication.newPrivateChat')}
+                  New Private Chat
                 </Button>
               </div>
             </div>
@@ -336,7 +336,7 @@ export const ChatDashboard: React.FC = () => {
             {loading ? (
               <div className="flex items-center justify-center py-8">
                 <div className="animate-pulse text-muted-foreground">
-                  {t('common.loading')}
+                  Loading...
                 </div>
               </div>
             ) : sortedChats.length === 0 ? (
@@ -346,7 +346,7 @@ export const ChatDashboard: React.FC = () => {
                 </div>
                 <div>
                   <p className="text-sm mb-2">
-                    {searchTerm ? t('communication.noChatsFound') : 'No chats found for your location'}
+                    {searchTerm ? 'No chats found' : 'No chats found for your location'}
                   </p>
                   {!searchTerm && (
                     <p className="text-xs text-orange-600">

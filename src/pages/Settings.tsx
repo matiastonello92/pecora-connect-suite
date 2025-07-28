@@ -1,6 +1,5 @@
 import React from 'react';
 import { useSimpleAuth } from '@/context/SimpleAuthContext';
-import { useTranslation } from '@/lib/i18n';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,7 +7,6 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { User, Globe, Shield, Palette, Bell } from 'lucide-react';
-import { languages, Language } from '@/lib/i18n';
 
 export const Settings = () => {
   const { user } = useSimpleAuth();
@@ -16,7 +14,7 @@ export const Settings = () => {
   const setLanguage = (lang: any) => {}; // Temporarily stub
   const updateUser = (user: any) => {}; // Temporarily stub
 
-  const handleLanguageChange = (newLanguage: Language) => {
+  const handleLanguageChange = (newLanguage: string) => {
     setLanguage(newLanguage);
   };
 
@@ -39,7 +37,7 @@ export const Settings = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-foreground">{t('settings')}</h1>
+        <h1 className="text-3xl font-bold text-foreground">Settings</h1>
         <p className="text-muted-foreground">
           Manage your account settings and preferences
         </p>
@@ -51,13 +49,13 @@ export const Settings = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <User className="h-5 w-5" />
-              {t('profile')}
+              Profile
             </CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleProfileUpdate} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="firstName">{t('firstName')}</Label>
+                <Label htmlFor="firstName">First Name</Label>
                 <Input
                   id="firstName"
                   name="firstName"
@@ -67,7 +65,7 @@ export const Settings = () => {
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="lastName">{t('lastName')}</Label>
+                <Label htmlFor="lastName">Last Name</Label>
                 <Input
                   id="lastName"
                   name="lastName"
@@ -77,7 +75,7 @@ export const Settings = () => {
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="email">{t('email')}</Label>
+                <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
                   name="email"
@@ -93,7 +91,7 @@ export const Settings = () => {
               </div>
               
               <Button type="submit" className="w-full">
-                {t('save')} {t('profile')}
+                Save Profile
               </Button>
             </form>
           </CardContent>
@@ -104,7 +102,7 @@ export const Settings = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Globe className="h-5 w-5" />
-              {t('language')}
+              Language
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -116,9 +114,9 @@ export const Settings = () => {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {Object.entries(languages).map(([code, name]) => (
+                    {[['en', 'English'], ['fr', 'Français'], ['it', 'Italiano']].map(([code, name]) => (
                       <SelectItem key={code} value={code}>
-                        {name}
+                        {name as string}
                       </SelectItem>
                     ))}
                   </SelectContent>

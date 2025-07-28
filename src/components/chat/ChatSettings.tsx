@@ -53,15 +53,15 @@ export const ChatSettings: React.FC<ChatSettingsProps> = ({ children }) => {
     try {
       await muteChat(activeChat.id, !isMuted);
       toast({
-        title: isMuted ? t('communication.chatUnmuted') : t('communication.chatMuted'),
+        title: isMuted ? 'Chat Unmuted' : 'Chat Muted',
         description: isMuted 
-          ? t('communication.chatUnmutedDesc') 
-          : t('communication.chatMutedDesc')
+          ? 'You will now receive notifications from this chat' 
+          : 'You will no longer receive notifications from this chat'
       });
     } catch (error) {
       toast({
-        title: t('common.error'),
-        description: t('communication.muteError'),
+        title: 'Error',
+        description: 'Failed to update chat settings',
         variant: 'destructive'
       });
     }
@@ -70,8 +70,8 @@ export const ChatSettings: React.FC<ChatSettingsProps> = ({ children }) => {
   const handleLeaveChat = () => {
     // TODO: Implement leave chat functionality
     toast({
-      title: t('communication.leaveChat'),
-      description: t('communication.leaveChatConfirm'),
+      title: 'Leave Chat',
+      description: 'Are you sure you want to leave this chat?',
       variant: 'destructive'
     });
   };
@@ -79,15 +79,15 @@ export const ChatSettings: React.FC<ChatSettingsProps> = ({ children }) => {
   const getChatTypeDisplay = () => {
     switch (activeChat.type) {
       case 'private':
-        return { label: t('communication.chatTypes.private'), icon: '💬' };
+        return { label: 'Private Chat', icon: '💬' };
       case 'group':
-        return { label: t('communication.chatTypes.group'), icon: '👥' };
+        return { label: 'Group Chat', icon: '👥' };
       case 'global':
-        return { label: t('communication.chatTypes.global'), icon: '🌍' };
+        return { label: 'Global Chat', icon: '🌍' };
       case 'announcements':
-        return { label: t('communication.chatTypes.announcements'), icon: '📢' };
+        return { label: 'Announcements', icon: '📢' };
       default:
-        return { label: t('communication.chatTypes.unknown'), icon: '❓' };
+        return { label: 'Unknown', icon: '❓' };
     }
   };
 
@@ -95,7 +95,7 @@ export const ChatSettings: React.FC<ChatSettingsProps> = ({ children }) => {
     if (participant.user) {
       return `${participant.user.first_name} ${participant.user.last_name}`;
     }
-    return t('communication.unknownUser');
+    return 'Unknown User';
   };
 
   const chatTypeDisplay = getChatTypeDisplay();
@@ -113,7 +113,7 @@ export const ChatSettings: React.FC<ChatSettingsProps> = ({ children }) => {
         <DialogHeader>
           <DialogTitle className="flex items-center space-x-2">
             <Settings className="h-5 w-5" />
-            <span>{t('communication.chatSettings')}</span>
+            <span>Chat Settings</span>
           </DialogTitle>
         </DialogHeader>
 
@@ -123,24 +123,24 @@ export const ChatSettings: React.FC<ChatSettingsProps> = ({ children }) => {
             <div className="space-y-4">
               <div className="flex items-center space-x-2">
                 <Info className="h-4 w-4 text-muted-foreground" />
-                <h3 className="font-medium">{t('communication.chatInfo')}</h3>
+                <h3 className="font-medium">Chat Information</h3>
               </div>
               
               <div className="bg-muted/50 rounded-lg p-3 space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">{t('communication.chatName')}</span>
+                  <span className="text-sm text-muted-foreground">Chat Name</span>
                   <span className="text-sm font-medium">
                     {activeChat.name || getChatTypeDisplay().label}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">{t('communication.chatType')}</span>
+                  <span className="text-sm text-muted-foreground">Chat Type</span>
                   <Badge variant="secondary" className="text-xs">
                     {chatTypeDisplay.icon} {chatTypeDisplay.label}
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">{t('communication.participants')}</span>
+                  <span className="text-sm text-muted-foreground">Participants</span>
                   <span className="text-sm font-medium">
                     {activeChat.participants?.length || 0}
                   </span>
@@ -152,7 +152,7 @@ export const ChatSettings: React.FC<ChatSettingsProps> = ({ children }) => {
             <div className="space-y-4">
               <div className="flex items-center space-x-2">
                 <Bell className="h-4 w-4 text-muted-foreground" />
-                <h3 className="font-medium">{t('communication.notifications')}</h3>
+                <h3 className="font-medium">Notifications</h3>
               </div>
               
               <div className="space-y-3">
@@ -161,12 +161,12 @@ export const ChatSettings: React.FC<ChatSettingsProps> = ({ children }) => {
                     {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
                     <div>
                       <Label className="text-sm font-medium">
-                        {isMuted ? t('communication.unmute') : t('communication.mute')}
+                        {isMuted ? 'Unmute Chat' : 'Mute Chat'}
                       </Label>
                       <p className="text-xs text-muted-foreground">
                         {isMuted 
-                          ? t('communication.chatCurrentlyMuted') 
-                          : t('communication.chatNotMuted')
+                          ? 'This chat is currently muted' 
+                          : 'You will receive notifications from this chat'
                         }
                       </p>
                     </div>
@@ -182,10 +182,10 @@ export const ChatSettings: React.FC<ChatSettingsProps> = ({ children }) => {
                     {isNotificationsEnabled ? <Bell className="h-4 w-4" /> : <BellOff className="h-4 w-4" />}
                     <div>
                       <Label className="text-sm font-medium">
-                        {t('communication.pushNotifications')}
+                        Push Notifications
                       </Label>
                       <p className="text-xs text-muted-foreground">
-                        {t('communication.pushNotificationsDesc')}
+                        Receive push notifications for new messages
                       </p>
                     </div>
                   </div>
@@ -202,7 +202,7 @@ export const ChatSettings: React.FC<ChatSettingsProps> = ({ children }) => {
               <div className="space-y-4">
                 <div className="flex items-center space-x-2">
                   <Users className="h-4 w-4 text-muted-foreground" />
-                  <h3 className="font-medium">{t('communication.participants')}</h3>
+                  <h3 className="font-medium">Participants</h3>
                 </div>
                 
                 <div className="space-y-2">
@@ -218,7 +218,7 @@ export const ChatSettings: React.FC<ChatSettingsProps> = ({ children }) => {
                           {getParticipantName(participant)}
                            {participant.user_id === profile?.user_id && (
                              <span className="text-xs text-muted-foreground ml-1">
-                               ({t('communication.you')})
+                               (You)
                              </span>
                            )}
                         </p>
@@ -227,7 +227,7 @@ export const ChatSettings: React.FC<ChatSettingsProps> = ({ children }) => {
                         {participant.role === 'admin' && (
                           <Badge variant="secondary" className="text-xs">
                             <Shield className="h-3 w-3 mr-1" />
-                            {t('communication.admin')}
+                            Admin
                           </Badge>
                         )}
                       </div>
@@ -249,8 +249,8 @@ export const ChatSettings: React.FC<ChatSettingsProps> = ({ children }) => {
                 >
                   <LogOut className="h-4 w-4 mr-2" />
                   {activeChat.type === 'private' 
-                    ? t('communication.deleteConversation') 
-                    : t('communication.leaveGroup')
+                    ? 'Delete Conversation' 
+                    : 'Leave Group'
                   }
                 </Button>
               )}
@@ -261,7 +261,7 @@ export const ChatSettings: React.FC<ChatSettingsProps> = ({ children }) => {
                   className="w-full justify-start"
                 >
                   <Archive className="h-4 w-4 mr-2" />
-                  {t('communication.archiveChat')}
+                  Archive Chat
                 </Button>
               )}
             </div>

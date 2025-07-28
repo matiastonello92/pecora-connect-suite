@@ -282,7 +282,7 @@ export const EnhancedInviteUserDialog = () => {
                     <SelectItem value="none">No specific role</SelectItem>
                     {Object.entries(RESTAURANT_ROLE_LABELS).map(([value, label]) => (
                       <SelectItem key={value} value={value}>
-                        {t(`roles.${value}`) || label}
+                        {label}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -298,7 +298,7 @@ export const EnhancedInviteUserDialog = () => {
                   <SelectContent>
                     {Object.entries(ACCESS_LEVEL_LABELS).map(([value, label]) => (
                       <SelectItem key={value} value={value}>
-                        {t(`accessLevels.${value}`) || label}
+                        {label}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -335,7 +335,7 @@ export const EnhancedInviteUserDialog = () => {
                   {modules.map((module) => (
                     <div key={module} className="border rounded-lg p-4">
                       <h4 className="font-medium mb-3">
-                        {t(`modules.${module}`) || MODULE_LABELS[module]}
+                        {MODULE_LABELS[module]}
                       </h4>
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                         {(['can_read', 'can_write', 'can_validate', 'can_delete'] as const).map((permission) => (
@@ -352,7 +352,7 @@ export const EnhancedInviteUserDialog = () => {
                               htmlFor={`${module}-${permission}`} 
                               className="text-sm font-normal"
                             >
-                              {t(`permissions.${permission.replace('can_', '')}`) || permission.replace('can_', '').replace('_', ' ')}
+                              {permission.replace('can_', '').replace('_', ' ')}
                             </Label>
                           </div>
                         ))}

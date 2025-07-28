@@ -200,12 +200,12 @@ export const ConnectionRequestManager: React.FC<ConnectionRequestManagerProps> =
               <ArrowLeft className="h-4 w-4" />
             </Button>
             <UserPlus className="h-5 w-5" />
-            <span>{t('communication.connections')}</span>
+            <span>Connections</span>
           </CardTitle>
           
           <Button onClick={() => setShowUserList(true)}>
             <UserPlus className="h-4 w-4 mr-2" />
-            {t('communication.sendRequest')}
+            Send Request
           </Button>
         </div>
 
@@ -213,7 +213,7 @@ export const ConnectionRequestManager: React.FC<ConnectionRequestManagerProps> =
         <div className="relative">
           <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder={t('communication.searchConnections')}
+            placeholder="Search connections..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-9"
@@ -225,10 +225,10 @@ export const ConnectionRequestManager: React.FC<ConnectionRequestManagerProps> =
         <Tabs defaultValue="available" className="w-full">
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="available">
-              {t('communication.availableUsers')}
+              Available Users
             </TabsTrigger>
             <TabsTrigger value="incoming" className="flex items-center space-x-2">
-              <span>{t('communication.incoming')}</span>
+              <span>Incoming</span>
               {incomingRequests.length > 0 && (
                 <Badge variant="default" className="ml-1">
                   {incomingRequests.length}
@@ -236,10 +236,10 @@ export const ConnectionRequestManager: React.FC<ConnectionRequestManagerProps> =
               )}
             </TabsTrigger>
             <TabsTrigger value="outgoing">
-              {t('communication.outgoing')}
+              Outgoing
             </TabsTrigger>
             <TabsTrigger value="accepted">
-              {t('communication.connections')}
+              Connections
             </TabsTrigger>
           </TabsList>
 
@@ -249,16 +249,16 @@ export const ConnectionRequestManager: React.FC<ConnectionRequestManagerProps> =
               {loadingUsers ? (
                 <div className="flex items-center justify-center py-8">
                   <div className="animate-pulse text-muted-foreground">
-                    {t('common.loading')}
+                    Loading...
                   </div>
                 </div>
               ) : filteredAvailableUsers.length === 0 ? (
                 <div className="text-center py-8 text-muted-foreground">
                   <UserPlus className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                  <p>{searchTerm ? t('communication.noUsersFound') : t('communication.noAvailableUsers')}</p>
+                  <p>{searchTerm ? 'No users found' : 'No available users'}</p>
                   {!canAccessAllLocations() && (
                     <p className="text-xs mt-2">
-                      {t('communication.locationRestrictedMessage')}
+                      Only users from your location are shown
                     </p>
                   )}
                 </div>
@@ -299,7 +299,7 @@ export const ConnectionRequestManager: React.FC<ConnectionRequestManagerProps> =
                             disabled={!targetUser.canSendRequest}
                           >
                             <UserPlus className="h-4 w-4 mr-1" />
-                            {t('communication.connect')}
+                            Connect
                           </Button>
                         </div>
                       </CardContent>
@@ -316,7 +316,7 @@ export const ConnectionRequestManager: React.FC<ConnectionRequestManagerProps> =
               {incomingRequests.length === 0 ? (
                 <div className="text-center py-8 text-muted-foreground">
                   <UserPlus className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                  <p>{t('communication.noIncomingRequests')}</p>
+                  <p>No incoming requests</p>
                 </div>
               ) : (
                 <div className="space-y-3">
@@ -355,7 +355,7 @@ export const ConnectionRequestManager: React.FC<ConnectionRequestManagerProps> =
                               onClick={() => handleAccept(request.id)}
                             >
                               <Check className="h-4 w-4 mr-1" />
-                              {t('communication.accept')}
+                              Accept
                             </Button>
                             <Button
                               variant="outline"
@@ -363,7 +363,7 @@ export const ConnectionRequestManager: React.FC<ConnectionRequestManagerProps> =
                               onClick={() => handleDecline(request.id)}
                             >
                               <X className="h-4 w-4 mr-1" />
-                              {t('communication.decline')}
+                              Decline
                             </Button>
                           </div>
                         </div>
@@ -381,7 +381,7 @@ export const ConnectionRequestManager: React.FC<ConnectionRequestManagerProps> =
               {outgoingRequests.length === 0 ? (
                 <div className="text-center py-8 text-muted-foreground">
                   <Clock className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                  <p>{t('communication.noOutgoingRequests')}</p>
+                  <p>No outgoing requests</p>
                 </div>
               ) : (
                 <div className="space-y-3">
@@ -411,7 +411,7 @@ export const ConnectionRequestManager: React.FC<ConnectionRequestManagerProps> =
                           
                           <Badge variant="outline">
                             <Clock className="h-3 w-3 mr-1" />
-                            {t('communication.pending')}
+                            Pending
                           </Badge>
                         </div>
                       </CardContent>
@@ -428,7 +428,7 @@ export const ConnectionRequestManager: React.FC<ConnectionRequestManagerProps> =
               {acceptedRequests.length === 0 ? (
                 <div className="text-center py-8 text-muted-foreground">
                   <MessageCircle className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                  <p>{t('communication.noConnections')}</p>
+                  <p>No connections</p>
                 </div>
               ) : (
                 <div className="space-y-3">
@@ -452,7 +452,7 @@ export const ConnectionRequestManager: React.FC<ConnectionRequestManagerProps> =
                           
                           <Button variant="outline" size="sm">
                             <MessageCircle className="h-4 w-4 mr-1" />
-                            {t('communication.message')}
+                            Start Chat
                           </Button>
                         </div>
                       </CardContent>
@@ -469,7 +469,7 @@ export const ConnectionRequestManager: React.FC<ConnectionRequestManagerProps> =
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
             <Card className="w-full max-w-md mx-4">
               <CardHeader>
-                <CardTitle>{t('communication.sendConnectionRequest')}</CardTitle>
+                <CardTitle>Send Connection Request</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center space-x-3 p-3 bg-muted rounded-lg">
@@ -494,7 +494,7 @@ export const ConnectionRequestManager: React.FC<ConnectionRequestManagerProps> =
                   </div>
                 </div>
                 <textarea
-                  placeholder={t('communication.optionalMessage')}
+                  placeholder="Add a message (optional)..."
                   value={requestMessage}
                   onChange={(e) => setRequestMessage(e.target.value)}
                   className="w-full p-2 border rounded-lg resize-none h-24"
@@ -505,10 +505,10 @@ export const ConnectionRequestManager: React.FC<ConnectionRequestManagerProps> =
                     setSelectedUser(null);
                     setRequestMessage('');
                   }}>
-                    {t('common.cancel')}
+                    Cancel
                   </Button>
                   <Button onClick={handleSendRequest}>
-                    {t('communication.send')}
+                    Send Request
                   </Button>
                 </div>
               </CardContent>

@@ -64,10 +64,10 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ onBack, onShowInfo
             <Users className="w-16 h-16 text-primary/60" />
           </div>
           <h3 className="text-2xl font-semibold mb-3 text-foreground">
-            {t('communication.selectChat')}
+            Select a Chat
           </h3>
           <p className="text-muted-foreground leading-relaxed">
-            {t('communication.selectChatDescription')}
+            Choose a conversation from the sidebar to start messaging
           </p>
         </div>
       </div>
@@ -86,7 +86,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ onBack, onShowInfo
       }
     }
     
-    return t(`communication.chatTypes.${activeChat.type}`);
+    return `${activeChat.type.charAt(0).toUpperCase() + activeChat.type.slice(1)} Chat`;
   };
 
   const getChatSubtitle = () => {
@@ -97,19 +97,19 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ onBack, onShowInfo
       if (otherParticipant?.user) {
         return otherParticipant.user.position;
       }
-      return t('communication.online');
+      return 'Online';
     }
     
     if (activeChat.type === 'group' && activeChat.participants) {
-      return t('communication.participantsCount', { count: activeChat.participants.length });
+      return `${activeChat.participants.length} participants`;
     }
     
     if (activeChat.type === 'global') {
-      return t('communication.globalChatSubtitle');
+      return 'Global communication for all users';
     }
     
     if (activeChat.type === 'announcements') {
-      return t('communication.announcementChatSubtitle');
+      return 'Important announcements from management';
     }
     
     return activeChat.description || '';
@@ -166,11 +166,11 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ onBack, onShowInfo
     
     switch (connectionStatus) {
       case 'pending':
-        return t('communication.waitingForConnection');
+        return 'Waiting for connection approval';
       case 'declined':
-        return t('communication.connectionDeclined');
+        return 'Connection request declined';
       case 'none':
-        return t('communication.noConnectionRequest');
+        return 'No connection request sent';
       default:
         return null;
     }
@@ -231,7 +231,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ onBack, onShowInfo
               </p>
               {typingUsers.length > 0 && (
                 <Badge variant="secondary" className="text-xs h-5 animate-pulse">
-                  {t('communication.typing')}
+                  typing...
                 </Badge>
               )}
             </div>
@@ -300,7 +300,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ onBack, onShowInfo
             {sendingMessage && (
               <div className="flex justify-end mt-4">
                 <div className="bg-primary/10 text-primary px-3 py-2 rounded-2xl text-sm animate-pulse">
-                  {t('communication.sending')}...
+                  Sending...
                 </div>
               </div>
             )}
@@ -322,8 +322,8 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ onBack, onShowInfo
         ) : (
           <div className="p-4 text-center text-muted-foreground">
             {activeChat.type === 'announcements' 
-              ? t('communication.onlyAdminsCanSend')
-              : getConnectionStatusMessage() || t('communication.chatMuted')
+              ? 'Only administrators can send announcements'
+              : getConnectionStatusMessage() || 'You are muted in this chat'
             }
           </div>
         )}
@@ -334,7 +334,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ onBack, onShowInfo
         <div className="absolute right-0 top-0 bottom-0 w-80 bg-card border-l border-border shadow-lg animate-slide-in-right">
           <div className="p-4 border-b border-border">
             <div className="flex items-center justify-between">
-              <h3 className="font-semibold">{t('communication.chatInfo')}</h3>
+              <h3 className="font-semibold">Chat Info</h3>
               <Button 
                 variant="ghost" 
                 size="sm" 
