@@ -1386,6 +1386,10 @@ export type Database = {
         Args: { user_uuid?: string }
         Returns: Database["public"]["Enums"]["access_level"]
       }
+      get_user_chat_ids: {
+        Args: { user_uuid?: string }
+        Returns: string[]
+      }
       get_user_locations_for_rls: {
         Args: { user_uuid: string }
         Returns: string[]
@@ -1419,6 +1423,10 @@ export type Database = {
           chat_id: string
           message: string
         }[]
+      }
+      user_can_access_chat: {
+        Args: { chat_uuid: string; user_uuid?: string }
+        Returns: boolean
       }
       user_has_access_to_location: {
         Args: { check_location: string; user_uuid?: string }
