@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { AuthDebugPanel } from '@/components/debug/AuthDebugPanel';
   import {
     Package,
     CheckSquare,
@@ -240,6 +241,9 @@ export default function Dashboard() {
           </div>
         </CardContent>
       </Card>
+      
+      {/* Debug Panel - Only in development */}
+      <AuthDebugPanel />
     </div>
   );
 }

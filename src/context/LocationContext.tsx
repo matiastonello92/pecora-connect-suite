@@ -127,11 +127,22 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   // Initialize active location with smart fallback
   useEffect(() => {
+    console.log('🌍 LocationContext: Initializing location...', {
+      authLoading,
+      hasProfile: !!profile,
+      userLocations,
+      currentActiveLocation: activeLocation
+    });
+    
     // Wait for profile to load before initializing location
-    if (authLoading || !profile || userLocations.length === 0) return;
+    if (authLoading || !profile || userLocations.length === 0) {
+      console.log('🌍 LocationContext: Waiting for auth/profile...');
+      return;
+    }
 
     // If single location, auto-select it
     if (userLocations.length === 1) {
+      console.log('🌍 LocationContext: Single location detected, setting:', userLocations[0]);
       setActiveLocationState(userLocations[0]);
       localStorage.setItem('activeLocation', userLocations[0]);
       return;
@@ -140,17 +151,20 @@ export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     // For multiple locations, try to restore from localStorage
     const saved = localStorage.getItem('activeLocation');
     if (saved && userLocations.includes(saved)) {
+      console.log('🌍 LocationContext: Restored from localStorage:', saved);
       setActiveLocationState(saved);
       return;
     }
 
     // Try geolocation if available
     if (navigator.geolocation && !hasRequestedPermission) {
+      console.log('🌍 LocationContext: Requesting geolocation permission...');
       requestLocationPermission();
     }
 
     // Fallback to first location
     if (!activeLocation) {
+      console.log('🌍 LocationContext: Fallback to first location:', userLocations[0]);
       setActiveLocationState(userLocations[0]);
       localStorage.setItem('activeLocation', userLocations[0]);
     }

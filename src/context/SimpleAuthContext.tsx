@@ -63,21 +63,44 @@ export const SimpleAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
   useEffect(() => {
     const initializeAuth = async () => {
-      // Get initial session
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      let profile = null;
-      if (session?.user) {
-        profile = await fetchProfile(session.user.id);
+      try {
+        console.log('🔐 Initializing authentication...');
+        
+        // Get initial session
+        const { data: { session } } = await supabase.auth.getSession();
+        console.log('📱 Session found:', !!session?.user, session?.user?.id);
+        
+        let profile = null;
+        if (session?.user) {
+          console.log('👤 Fetching profile for user:', session.user.id);
+          profile = await fetchProfile(session.user.id);
+          console.log('👤 Profile fetched:', !!profile, profile?.email, profile?.locations);
+        }
+        
+        const isAuthenticated = !!session?.user && !!profile;
+        console.log('✅ Authentication complete:', { 
+          hasSession: !!session?.user, 
+          hasProfile: !!profile, 
+          isAuthenticated 
+        });
+        
+        setState({
+          user: session?.user ?? null,
+          session,
+          profile,
+          isLoading: false,
+          isAuthenticated,
+        });
+      } catch (error) {
+        console.error('❌ Error during auth initialization:', error);
+        setState({
+          user: null,
+          session: null,
+          profile: null,
+          isLoading: false,
+          isAuthenticated: false,
+        });
       }
-      
-      setState({
-        user: session?.user ?? null,
-        session,
-        profile,
-        isLoading: false,
-        isAuthenticated: !!session?.user,
-      });
     };
 
     initializeAuth();
@@ -85,18 +108,41 @@ export const SimpleAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        let profile = null;
-        if (session?.user) {
-          profile = await fetchProfile(session.user.id);
+        try {
+          console.log('🔄 Auth state changed:', event, !!session?.user);
+          
+          let profile = null;
+          if (session?.user) {
+            console.log('👤 Fetching profile after auth change for:', session.user.id);
+            profile = await fetchProfile(session.user.id);
+            console.log('👤 Profile after auth change:', !!profile, profile?.email, profile?.locations);
+          }
+          
+          const isAuthenticated = !!session?.user && !!profile;
+          console.log('✅ Auth state update complete:', { 
+            event, 
+            hasSession: !!session?.user, 
+            hasProfile: !!profile, 
+            isAuthenticated 
+          });
+          
+          setState({
+            user: session?.user ?? null,
+            session,
+            profile,
+            isLoading: false,
+            isAuthenticated,
+          });
+        } catch (error) {
+          console.error('❌ Error during auth state change:', error);
+          setState({
+            user: null,
+            session: null,
+            profile: null,
+            isLoading: false,
+            isAuthenticated: false,
+          });
         }
-        
-        setState({
-          user: session?.user ?? null,
-          session,
-          profile,
-          isLoading: false,
-          isAuthenticated: !!session?.user,
-        });
       }
     );
 

@@ -45,9 +45,12 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 
 const AppContent = () => {
-  const { isAuthenticated, isLoading, user } = useSimpleAuth();
+  const { isAuthenticated, isLoading, user, profile } = useSimpleAuth();
+
+  console.log('🚀 AppContent render:', { isLoading, isAuthenticated, hasUser: !!user, hasProfile: !!profile });
 
   if (isLoading) {
+    console.log('⏳ AppContent: Showing loading spinner...');
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -56,6 +59,7 @@ const AppContent = () => {
   }
 
   if (!isAuthenticated) {
+    console.log('🔒 AppContent: User not authenticated, showing login...');
     return (
       <Routes>
         <Route path="/" element={<LoginForm />} />
@@ -66,6 +70,8 @@ const AppContent = () => {
       </Routes>
     );
   }
+
+  console.log('✅ AppContent: User authenticated, showing app...');
 
   return (
     <LocationProvider>
