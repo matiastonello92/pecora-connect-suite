@@ -201,7 +201,7 @@ export function SecurityTestSuite({ onTestStateChange }: SecurityTestSuiteProps)
         t.id === testId 
           ? { 
               ...t, 
-              status: finalStatus as const,
+              status: finalStatus,
               duration,
               details,
               error: success ? undefined : 'Security vulnerability detected'

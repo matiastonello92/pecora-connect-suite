@@ -147,17 +147,17 @@ export function PerformanceMonitor() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-center">
-              {responseTimeStats?.min ? Math.round(responseTimeStats.min) : 0}ms
+              {responseTimeStats?.avg?.toFixed(0) || 0}ms
             </div>
             <div className="text-xs text-center text-muted-foreground">
               {responseTimeStats && (
                 <span className="flex items-center justify-center gap-1">
-                  {responseTimeStats.min < 200 ? (
+                  {responseTimeStats.avg < 200 ? (
                     <TrendingDown className="h-3 w-3 text-green-500" />
                   ) : (
                     <TrendingUp className="h-3 w-3 text-red-500" />
                   )}
-                  Active monitoring
+                  {responseTimeStats.count} samples
                 </span>
               )}
             </div>
@@ -175,10 +175,10 @@ export function PerformanceMonitor() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-center">
-              {memoryStats?.min ? Math.round(memoryStats.min) : 0}%
+              {memoryStats?.avg?.toFixed(0) || 0}%
             </div>
             <Progress 
-              value={memoryStats?.min || 0} 
+              value={memoryStats?.avg || 0} 
               className="h-2 mt-2"
             />
           </CardContent>
@@ -195,10 +195,10 @@ export function PerformanceMonitor() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-center">
-              {cpuStats?.min ? Math.round(cpuStats.min) : 0}%
+              {cpuStats?.avg?.toFixed(0) || 0}%
             </div>
             <Progress 
-              value={cpuStats?.min || 0} 
+              value={cpuStats?.avg || 0} 
               className="h-2 mt-2"
             />
           </CardContent>
@@ -223,7 +223,9 @@ export function PerformanceMonitor() {
                 <div key={index} className="flex items-center justify-between p-3 border border-red-200 rounded-lg bg-red-50">
                   <div>
                     <div className="font-medium text-red-800">{alert.metric}</div>
-                    <div className="text-sm text-red-600">{alert.description || 'Performance threshold exceeded'}</div>
+                    <div className="text-sm text-red-600">
+                      {alert.metric} exceeded threshold: {alert.value.toFixed(2)} &gt; {alert.threshold}
+                    </div>
                   </div>
                   <Badge className="bg-red-100 text-red-800 border-red-200">
                     {alert.severity}
