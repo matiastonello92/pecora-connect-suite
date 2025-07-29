@@ -13,6 +13,7 @@ import { PerformanceMonitor } from '@/components/testing/PerformanceMonitor';
 import { TestThreeFunctions } from '@/components/testing/TestThreeFunctions';
 import { AlertConfigurationPanel } from '@/components/testing/AlertConfigurationPanel';
 import { FunctionDetectionSystem } from '@/components/testing/FunctionDetectionSystem';
+import { TestingSimulator } from '@/components/testing/TestingSimulator';
 import { usePermissions } from '@/hooks/usePermissions';
 
 export default function TestDashboard() {
@@ -118,13 +119,17 @@ export default function TestDashboard() {
           <TestThreeFunctions />
         </TabsContent>
 
-        <TabsContent value="detection">
-          <FunctionDetectionSystem />
-        </TabsContent>
-
-        <TabsContent value="alerts">
-          <AlertConfigurationPanel />
-        </TabsContent>
+          <TabsContent value="detection">
+            <FunctionDetectionSystem />
+          </TabsContent>
+          
+          <TabsContent value="simulator">
+            <TestingSimulator />
+          </TabsContent>
+          
+          <TabsContent value="alerts">
+            <AlertConfigurationPanel />
+          </TabsContent>
 
         <TabsContent value="security">
           <SecurityTestSuite onTestStateChange={(running) => setActiveTests(prev => running ? prev + 1 : prev - 1)} />

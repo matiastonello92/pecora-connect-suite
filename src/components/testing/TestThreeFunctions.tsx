@@ -19,6 +19,7 @@ import {
   BarChart3
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { AlertService } from '@/services/alertService';
 
 interface TestFunction {
   id: string;
@@ -146,29 +147,47 @@ export function TestThreeFunctions() {
           
           // Genera risultati realistici basati sulla funzione
           const generateMetrics = (functionId: string) => {
-            const baseSuccessRate = functionId === 'auth-test' ? 0.95 : 
-                                   functionId === 'chat-test' ? 0.88 : 0.92;
-            const baseResponseTime = functionId === 'auth-test' ? 120 : 
-                                    functionId === 'chat-test' ? 200 : 180;
+            // Enhanced failure scenarios based on function type and interference
+            let baseSuccessRate = 0.85; // Default success rate
+            let baseResponseTime = 150; // Default response time
             
-            const totalRequests = testFunction.maxUsers * testFunction.duration * (Math.random() * 0.5 + 1.5);
-            const successRate = baseSuccessRate + (Math.random() * 0.1 - 0.05);
-            const successfulRequests = Math.floor(totalRequests * successRate);
+            // Function-specific characteristics
+            if (functionId === 'auth-test') {
+              baseSuccessRate = 0.82; // Auth more prone to failures
+              baseResponseTime = 180;
+            } else if (functionId === 'chat-test') {
+              baseSuccessRate = 0.75; // Chat system under stress
+              baseResponseTime = 250;
+            } else if (functionId === 'inventory-test') {
+              baseSuccessRate = 0.88; // Inventory more stable
+              baseResponseTime = 160;
+            }
+            
+            // Interference penalty when multiple tests are running
+            if (runningTests.size > 1) {
+              baseSuccessRate *= 0.85; // Reduce success rate by 15%
+              baseResponseTime *= 1.4; // Increase response time by 40%
+            }
+            
+            const totalRequests = testFunction.maxUsers * testFunction.duration * (Math.random() * 0.3 + 0.8);
+            const actualSuccessRate = Math.max(0.1, baseSuccessRate + (Math.random() * 0.2 - 0.1));
+            const successfulRequests = Math.floor(totalRequests * actualSuccessRate);
             const failedRequests = totalRequests - successfulRequests;
+            const errorRate = ((failedRequests / totalRequests) * 100);
             
             return {
               totalRequests: Math.floor(totalRequests),
               successfulRequests,
               failedRequests,
-              averageResponseTime: Math.floor(baseResponseTime + (Math.random() * 100 - 50)),
-              maxResponseTime: Math.floor(baseResponseTime * 3 + Math.random() * 1000),
+              averageResponseTime: Math.floor(baseResponseTime + (Math.random() * 150 - 75)),
+              maxResponseTime: Math.floor(baseResponseTime * 2.5 + Math.random() * 800),
               requestsPerSecond: Math.floor(totalRequests / testFunction.duration),
-              errorRate: ((failedRequests / totalRequests) * 100)
+              errorRate: errorRate
             };
           };
 
           const finalMetrics = generateMetrics(functionId);
-          const isSuccess = finalMetrics.errorRate < 10;
+          const isSuccess = finalMetrics.errorRate < 15; // More lenient threshold
           
           const finalResult: TestResult = {
             ...testResult,
@@ -184,6 +203,33 @@ export function TestThreeFunctions() {
             newSet.delete(functionId);
             return newSet;
           });
+
+          // Generate stress test failure alert if test failed
+          if (!isSuccess) {
+            // Use setTimeout to make it async
+            setTimeout(async () => {
+              try {
+                await AlertService.alertStressTestFailure(
+                  testFunction.name,
+                  testFunction.endpoint,
+                  {
+                    test_duration: testFunction.duration,
+                    max_users: testFunction.maxUsers,
+                    total_requests: finalMetrics.totalRequests,
+                    failed_requests: finalMetrics.failedRequests,
+                    response_time_avg: finalMetrics.averageResponseTime,
+                    throughput: finalMetrics.requestsPerSecond,
+                    failure_reason: finalMetrics.errorRate > 25 ? 'critical_system_failure' : 'performance_degradation',
+                    concurrent_tests: runningTests.size + 1,
+                    interference_detected: runningTests.size > 0,
+                    recommended_action: finalMetrics.errorRate > 25 ? 'immediate_investigation' : 'monitor_and_optimize'
+                  }
+                );
+              } catch (error) {
+                console.error('Error creating stress test failure alert:', error);
+              }
+            }, 100);
+          }
           
           toast({
             title: `Test completato: ${testFunction.name}`,

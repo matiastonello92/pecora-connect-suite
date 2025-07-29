@@ -200,22 +200,89 @@ export function AlertConfigurationPanel() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('User not authenticated');
 
-      const alertInfo = ALERT_TYPES[alertType as keyof typeof ALERT_TYPES];
-      
+      // Create detailed test alerts based on type
+      let testTitle = '';
+      let testMessage = '';
+      let testMetadata = {};
+      let testSeverity = 'medium';
+
+      switch (alertType) {
+        case 'new_function_detected':
+          testTitle = 'TEST: Nuova Funzione Rilevata - validatePaymentMethod';
+          testMessage = 'È stata rilevata una nuova funzione "validatePaymentMethod" in src/payments/validation.ts che richiede test di performance approfonditi.';
+          testMetadata = {
+            test: true,
+            function_name: 'validatePaymentMethod',
+            file_path: 'src/payments/validation.ts',
+            complexity: 'high',
+            detection_method: 'AST_ANALYSIS',
+            dependencies: ['stripe', 'validator', 'crypto'],
+            estimated_risk: 'high',
+            recommended_tests: ['unit', 'integration', 'load']
+          };
+          break;
+        case 'stress_test_failure':
+          testTitle = 'TEST: Fallimento Test di Stress - Sistema Autenticazione';
+          testMessage = 'Il test di stress del sistema autenticazione ha fallito con un tasso di errore del 28.3% sotto carico di 500 utenti concorrenti. Sono stati rilevati timeout del database e problemi di connessione.';
+          testSeverity = 'high';
+          testMetadata = {
+            test: true,
+            test_function: 'Sistema Autenticazione',
+            endpoint: '/rest/v1/rpc/validate_user_locations_batch',
+            error_rate: 28.3,
+            max_users: 500,
+            total_requests: 15847,
+            failed_requests: 4485,
+            avg_response_time: 3240,
+            failure_reasons: ['database_timeout', 'connection_pool_exhausted', 'memory_leak'],
+            concurrent_tests: 2,
+            interference_detected: true,
+            recommended_actions: ['scale_database', 'optimize_queries', 'increase_connection_pool']
+          };
+          break;
+        case 'performance_bottleneck':
+          testTitle = 'TEST: Bottleneck Critico - processInventoryUpdate';
+          testMessage = 'La funzione processInventoryUpdate presenta un bottleneck critico con tempo di risposta medio di 1.24s, superando la soglia di 200ms del 520%. Impatto su 15,000+ transazioni giornaliere.';
+          testSeverity = 'critical';
+          testMetadata = {
+            test: true,
+            function_name: 'processInventoryUpdate',
+            file_path: 'src/inventory/operations.ts',
+            response_time_ms: 1240,
+            threshold_ms: 200,
+            threshold_exceeded_by: '520%',
+            daily_executions: 15400,
+            performance_impact: 'critical',
+            suspected_causes: ['n+1_queries', 'missing_indexes', 'inefficient_joins'],
+            recommended_actions: ['add_database_indexes', 'implement_query_batching', 'cache_frequent_operations'],
+            business_impact: 'high'
+          };
+          break;
+        default:
+          testTitle = `TEST: ${ALERT_TYPES[alertType as keyof typeof ALERT_TYPES]?.label || alertType}`;
+          testMessage = 'Alert di test completo per verificare la funzionalità del sistema di notifiche e la ricezione email.';
+          testMetadata = {
+            test: true,
+            alert_type: alertType,
+            timestamp: new Date().toISOString(),
+            test_scenario: 'comprehensive_system_verification'
+          };
+      }
+
       const { error } = await supabase.rpc('create_alert', {
         p_alert_type: alertType,
-        p_title: `Test Alert - ${alertInfo.label}`,
-        p_message: 'Questo è un alert di test per verificare il funzionamento del sistema di notifiche',
-        p_severity: 'medium',
-        p_metadata: { test: true, timestamp: new Date().toISOString() },
+        p_title: testTitle,
+        p_message: testMessage,
+        p_severity: testSeverity,
+        p_metadata: testMetadata,
         p_user_id: user.id
       });
 
       if (error) throw error;
 
       toast({
-        title: "Alert di test inviato",
-        description: "Controlla la dashboard e la tua email per verificare la ricezione"
+        title: "Alert di test dettagliato inviato",
+        description: `Alert di tipo "${ALERT_TYPES[alertType as keyof typeof ALERT_TYPES]?.label}" creato con scenario realistico. Controlla dashboard ed email.`
       });
 
       await loadAlerts();
