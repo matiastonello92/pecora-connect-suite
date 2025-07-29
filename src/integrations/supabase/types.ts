@@ -135,6 +135,65 @@ export type Database = {
         }
         Relationships: []
       }
+      chat_message_archives: {
+        Row: {
+          archive_reason: string | null
+          archived_at: string | null
+          chat_id: string
+          content: string | null
+          id: string
+          media_size: number | null
+          media_type: string | null
+          media_url: string | null
+          message_type: Database["public"]["Enums"]["message_type"] | null
+          metadata: Json | null
+          original_created_at: string
+          original_message_id: string
+          reply_to_id: string | null
+          sender_id: string
+        }
+        Insert: {
+          archive_reason?: string | null
+          archived_at?: string | null
+          chat_id: string
+          content?: string | null
+          id?: string
+          media_size?: number | null
+          media_type?: string | null
+          media_url?: string | null
+          message_type?: Database["public"]["Enums"]["message_type"] | null
+          metadata?: Json | null
+          original_created_at: string
+          original_message_id: string
+          reply_to_id?: string | null
+          sender_id: string
+        }
+        Update: {
+          archive_reason?: string | null
+          archived_at?: string | null
+          chat_id?: string
+          content?: string | null
+          id?: string
+          media_size?: number | null
+          media_type?: string | null
+          media_url?: string | null
+          message_type?: Database["public"]["Enums"]["message_type"] | null
+          metadata?: Json | null
+          original_created_at?: string
+          original_message_id?: string
+          reply_to_id?: string | null
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_message_archives_chat_id_fkey"
+            columns: ["chat_id"]
+            isOneToOne: false
+            referencedRelation: "chats"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       chat_messages: {
         Row: {
           chat_id: string
@@ -326,10 +385,13 @@ export type Database = {
           description: string | null
           id: string
           is_archived: boolean | null
+          is_federated: boolean | null
           last_message_at: string | null
           location: string
+          location_group_id: string | null
           metadata: Json | null
           name: string | null
+          participant_count: number | null
           type: Database["public"]["Enums"]["chat_type"]
           updated_at: string | null
         }
@@ -339,10 +401,13 @@ export type Database = {
           description?: string | null
           id?: string
           is_archived?: boolean | null
+          is_federated?: boolean | null
           last_message_at?: string | null
           location: string
+          location_group_id?: string | null
           metadata?: Json | null
           name?: string | null
+          participant_count?: number | null
           type: Database["public"]["Enums"]["chat_type"]
           updated_at?: string | null
         }
@@ -352,14 +417,25 @@ export type Database = {
           description?: string | null
           id?: string
           is_archived?: boolean | null
+          is_federated?: boolean | null
           last_message_at?: string | null
           location?: string
+          location_group_id?: string | null
           metadata?: Json | null
           name?: string | null
+          participant_count?: number | null
           type?: Database["public"]["Enums"]["chat_type"]
           updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "chats_location_group_id_fkey"
+            columns: ["location_group_id"]
+            isOneToOne: false
+            referencedRelation: "location_chat_groups"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       checklist_items: {
         Row: {
@@ -604,6 +680,63 @@ export type Database = {
           location?: string
           name?: string
           unit?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      location_chat_groups: {
+        Row: {
+          archive_after_days: number | null
+          auto_join_enabled: boolean | null
+          chat_type: Database["public"]["Enums"]["federated_chat_type"]
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          hierarchy_level: number
+          id: string
+          is_active: boolean | null
+          location_pattern: string[]
+          max_participants: number | null
+          metadata: Json | null
+          name: string
+          priority: number | null
+          required_roles: string[] | null
+          updated_at: string | null
+        }
+        Insert: {
+          archive_after_days?: number | null
+          auto_join_enabled?: boolean | null
+          chat_type: Database["public"]["Enums"]["federated_chat_type"]
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          hierarchy_level?: number
+          id?: string
+          is_active?: boolean | null
+          location_pattern: string[]
+          max_participants?: number | null
+          metadata?: Json | null
+          name: string
+          priority?: number | null
+          required_roles?: string[] | null
+          updated_at?: string | null
+        }
+        Update: {
+          archive_after_days?: number | null
+          auto_join_enabled?: boolean | null
+          chat_type?: Database["public"]["Enums"]["federated_chat_type"]
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          hierarchy_level?: number
+          id?: string
+          is_active?: boolean | null
+          location_pattern?: string[]
+          max_participants?: number | null
+          metadata?: Json | null
+          name?: string
+          priority?: number | null
+          required_roles?: string[] | null
           updated_at?: string | null
         }
         Relationships: []
@@ -1261,6 +1394,19 @@ export type Database = {
       }
     }
     Functions: {
+      archive_old_messages: {
+        Args: { chat_id_param: string; days_old?: number }
+        Returns: number
+      }
+      auto_join_federated_chats: {
+        Args: { target_user_id: string }
+        Returns: {
+          action: string
+          group_name: string
+          chat_id: string
+          message: string
+        }[]
+      }
       backfill_user_chat_memberships: {
         Args: Record<PropertyKey, never>
         Returns: {
@@ -1388,6 +1534,27 @@ export type Database = {
         Args: { user_role?: string }
         Returns: {
           location: string
+        }[]
+      }
+      get_chat_messages_paginated: {
+        Args: {
+          chat_id_param: string
+          page_size?: number
+          before_timestamp?: string
+          include_archived?: boolean
+        }
+        Returns: {
+          message_id: string
+          content: string
+          sender_id: string
+          sender_name: string
+          message_type: Database["public"]["Enums"]["message_type"]
+          media_url: string
+          media_type: string
+          created_at: string
+          is_edited: boolean
+          is_archived: boolean
+          reply_to_id: string
         }[]
       }
       get_chats_with_unread_counts: {
@@ -1560,6 +1727,10 @@ export type Database = {
         Args: { target_user_id: string; location_code: string }
         Returns: boolean
       }
+      user_matches_location_group: {
+        Args: { target_user_id: string; group_location_patterns: string[] }
+        Returns: boolean
+      }
       validate_chat_system_health: {
         Args: Record<PropertyKey, never>
         Returns: {
@@ -1631,6 +1802,13 @@ export type Database = {
         | "user_management"
       chat_type: "private" | "group" | "global" | "announcements"
       connection_status: "pending" | "accepted" | "declined" | "blocked"
+      federated_chat_type:
+        | "regional"
+        | "city_wide"
+        | "district"
+        | "department"
+        | "role_based"
+        | "emergency"
       message_type: "text" | "image" | "voice" | "document" | "system"
       notification_priority: "normal" | "urgent" | "forced"
       restaurant_role:
@@ -1805,6 +1983,14 @@ export const Constants = {
       ],
       chat_type: ["private", "group", "global", "announcements"],
       connection_status: ["pending", "accepted", "declined", "blocked"],
+      federated_chat_type: [
+        "regional",
+        "city_wide",
+        "district",
+        "department",
+        "role_based",
+        "emergency",
+      ],
       message_type: ["text", "image", "voice", "document", "system"],
       notification_priority: ["normal", "urgent", "forced"],
       restaurant_role: [
