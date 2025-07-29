@@ -1363,6 +1363,38 @@ export type Database = {
         }
         Relationships: []
       }
+      user_locations: {
+        Row: {
+          assigned_at: string | null
+          id: string
+          location_id: string
+          role: string | null
+          user_id: string
+        }
+        Insert: {
+          assigned_at?: string | null
+          id?: string
+          location_id: string
+          role?: string | null
+          user_id: string
+        }
+        Update: {
+          assigned_at?: string | null
+          id?: string
+          location_id?: string
+          role?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_locations_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_permissions: {
         Row: {
           can_delete: boolean
