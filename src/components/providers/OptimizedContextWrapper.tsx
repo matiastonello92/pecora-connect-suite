@@ -18,9 +18,14 @@ MemoizedCommunicationProvider.displayName = 'MemoizedCommunicationProvider';
 export const OptimizedContextWrapper = memo<{ children: React.ReactNode }>(
   ({ children }) => {
     // Monitor performance for this wrapper
-    usePerformanceMonitoring({
-      componentName: 'OptimizedContextWrapper',
-      logThreshold: 50, // Log if rendering takes more than 50ms
+    const { recordMetric } = usePerformanceMonitoring();
+    
+    React.useEffect(() => {
+      const startTime = performance.now();
+      return () => {
+        const endTime = performance.now();
+        recordMetric('component_render_time', endTime - startTime, 'OptimizedContextWrapper');
+      };
     });
 
     return (
