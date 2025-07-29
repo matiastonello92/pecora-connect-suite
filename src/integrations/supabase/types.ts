@@ -95,6 +95,33 @@ export type Database = {
         }
         Relationships: []
       }
+      app_analysis_history: {
+        Row: {
+          created_at: string
+          data: Json
+          id: string
+          summary: Json
+          timestamp: string
+          version: string
+        }
+        Insert: {
+          created_at?: string
+          data: Json
+          id?: string
+          summary?: Json
+          timestamp?: string
+          version: string
+        }
+        Update: {
+          created_at?: string
+          data?: Json
+          id?: string
+          summary?: Json
+          timestamp?: string
+          version?: string
+        }
+        Relationships: []
+      }
       archived_users: {
         Row: {
           access_level: Database["public"]["Enums"]["access_level"] | null

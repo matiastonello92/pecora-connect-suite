@@ -14,6 +14,7 @@ import { TestThreeFunctions } from '@/components/testing/TestThreeFunctions';
 import { AlertConfigurationPanel } from '@/components/testing/AlertConfigurationPanel';
 import { FunctionDetectionSystem } from '@/components/testing/FunctionDetectionSystem';
 import { TestingSimulator } from '@/components/testing/TestingSimulator';
+import { AppAnalysisDashboard } from '@/components/testing/AppAnalysisDashboard';
 import { usePermissions } from '@/hooks/usePermissions';
 
 export default function TestDashboard() {
@@ -60,10 +61,14 @@ export default function TestDashboard() {
       }
     >
       <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-8">
+        <TabsList className="grid w-full grid-cols-9">
           <TabsTrigger value="overview" className="flex items-center gap-2">
             <Monitor className="h-4 w-4" />
             Overview
+          </TabsTrigger>
+          <TabsTrigger value="analysis" className="flex items-center gap-2">
+            <Database className="h-4 w-4" />
+            Analisi App
           </TabsTrigger>
           <TabsTrigger value="pages" className="flex items-center gap-2">
             <Activity className="h-4 w-4" />
@@ -89,6 +94,10 @@ export default function TestDashboard() {
             <Activity className="h-4 w-4" />
             Alert
           </TabsTrigger>
+          <TabsTrigger value="simulator" className="flex items-center gap-2">
+            <Beaker className="h-4 w-4" />
+            Simulatore
+          </TabsTrigger>
           <TabsTrigger value="security" className="flex items-center gap-2">
             <Shield className="h-4 w-4" />
             Security
@@ -102,7 +111,11 @@ export default function TestDashboard() {
         <TabsContent value="overview">
           <SystemOverview onActiveTestsChange={setActiveTests} />
         </TabsContent>
-
+        
+        <TabsContent value="analysis">
+          <AppAnalysisDashboard />
+        </TabsContent>
+        
         <TabsContent value="pages">
           <PageTestRunner onTestStateChange={(running) => setActiveTests(prev => running ? prev + 1 : prev - 1)} />
         </TabsContent>

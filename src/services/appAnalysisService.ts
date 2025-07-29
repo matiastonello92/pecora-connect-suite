@@ -507,7 +507,7 @@ export class AppAnalysisService {
       },
       {
         name: 'Tailwind CSS',
-        type: 'Styling',
+        type: 'External API',
         configuration: {
           version: '^3.4.0',
           features: ['Utility classes', 'Dark mode', 'Responsive design']
@@ -762,15 +762,15 @@ ${data.dependencies.map(dep => `
   }
 
   /**
-   * Salva l'analisi nel database per tracking storico
+   * Salva l'analisi localmente per tracking (versione semplificata)
    */
-  static async saveAnalysis(data: AppAnalysisData): Promise<void> {
-    const { error } = await supabase
-      .from('app_analysis_history')
-      .insert({
+  static async saveAnalysisLocally(data: AppAnalysisData): Promise<void> {
+    try {
+      // Salva nel localStorage come backup
+      const analysisHistory = JSON.parse(localStorage.getItem('app_analysis_history') || '[]');
+      analysisHistory.push({
         timestamp: data.timestamp,
         version: data.version,
-        data: data,
         summary: {
           pages_count: data.pages.length,
           components_count: data.components.length,
@@ -778,9 +778,18 @@ ${data.dependencies.map(dep => `
           integrations_count: data.integrations.length
         }
       });
-
-    if (error) {
-      console.error('Failed to save analysis:', error);
+      
+      // Mantieni solo gli ultimi 10 record
+      if (analysisHistory.length > 10) {
+        analysisHistory.splice(0, analysisHistory.length - 10);
+      }
+      
+      localStorage.setItem('app_analysis_history', JSON.stringify(analysisHistory));
+      localStorage.setItem('app_analysis_latest', JSON.stringify(data));
+      
+      console.log('Analysis saved locally successfully');
+    } catch (error) {
+      console.error('Failed to save analysis locally:', error);
       throw error;
     }
   }
