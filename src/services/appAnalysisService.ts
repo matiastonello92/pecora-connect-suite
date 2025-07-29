@@ -181,6 +181,9 @@ export class AppAnalysisService {
   static async generateAnalysis(): Promise<AppAnalysisData> {
     const timestamp = new Date().toISOString();
     
+    // Simula una leggera attesa per mostrare il loading
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
     return {
       timestamp,
       version: '2.1.0',
