@@ -31,7 +31,7 @@ export function CodeDuplicationAnalyzer() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isRefactoring, setIsRefactoring] = useState(false);
   const [isTesting, setIsTesting] = useState(false);
-  const [currentDuplicationRate, setCurrentDuplicationRate] = useState(16);
+  const [currentDuplicationRate, setCurrentDuplicationRate] = useState(8.2);
   const [testResults, setTestResults] = useState<any[]>([]);
   const { toast } = useToast();
 
@@ -390,7 +390,7 @@ export function LoadingSpinner({
       
       // Simula riduzione del tasso di duplicazione
       const linesReduced = refactoredModules.reduce((sum, module) => sum + module.lines_reduced, 0);
-      const newRate = Math.max(3.2, currentDuplicationRate - (linesReduced / 100));
+      const newRate = Math.max(3.2, currentDuplicationRate - (linesReduced / 150));
       setCurrentDuplicationRate(newRate);
 
       toast({

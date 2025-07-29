@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, CheckCircle, XCircle, Clock, Database, TrendingUp } from 'lucide-react';
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 
 interface IndexTestResult {
   table: string;
@@ -384,7 +385,7 @@ export function ForeignKeyIndexTest() {
       case 'error':
         return <XCircle className="h-4 w-4 text-red-500" />;
       case 'pending':
-        return <Loader2 className="h-4 w-4 animate-spin text-blue-500" />;
+        return <LoadingSpinner size="sm" />;
       default:
         return <Clock className="h-4 w-4 text-gray-400" />;
     }
@@ -413,7 +414,7 @@ export function ForeignKeyIndexTest() {
             variant="outline"
             className="flex items-center gap-2"
           >
-            {isVerifying ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle className="h-4 w-4" />}
+            {isVerifying ? <LoadingSpinner size="sm" /> : <CheckCircle className="h-4 w-4" />}
             {isVerifying ? 'Verifica in corso...' : 'Verifica Indici'}
           </Button>
 
@@ -423,7 +424,7 @@ export function ForeignKeyIndexTest() {
             variant="outline"
             className="flex items-center gap-2"
           >
-            {isVerifying ? <Loader2 className="h-4 w-4 animate-spin" /> : <Database className="h-4 w-4" />}
+            {isVerifying ? <LoadingSpinner size="sm" /> : <Database className="h-4 w-4" />}
             {isVerifying ? 'Analisi in corso...' : 'Analizza EXPLAIN'}
           </Button>
 
@@ -432,7 +433,7 @@ export function ForeignKeyIndexTest() {
             disabled={isRunning}
             className="flex items-center gap-2"
           >
-            {isRunning ? <Loader2 className="h-4 w-4 animate-spin" /> : <TrendingUp className="h-4 w-4" />}
+            {isRunning ? <LoadingSpinner size="sm" /> : <TrendingUp className="h-4 w-4" />}
             {isRunning ? 'Test in corso...' : 'Testa Performance'}
           </Button>
           

@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Trash2, AlertTriangle, Database, CheckCircle, Activity, TrendingUp, TrendingDown } from 'lucide-react';
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 
 interface UnusedIndex {
   schemaname: string;
@@ -262,7 +263,7 @@ export function UnusedIndexAnalyzer() {
             disabled={isAnalyzing}
             className="flex items-center gap-2"
           >
-            {isAnalyzing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Database className="h-4 w-4" />}
+            {isAnalyzing ? <LoadingSpinner size="sm" /> : <Database className="h-4 w-4" />}
             {isAnalyzing ? 'Analisi in corso...' : 'Analizza Indici'}
           </Button>
           
@@ -272,7 +273,7 @@ export function UnusedIndexAnalyzer() {
             variant="outline"
             className="flex items-center gap-2"
           >
-            {isVerifying ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle className="h-4 w-4" />}
+            {isVerifying ? <LoadingSpinner size="sm" /> : <CheckCircle className="h-4 w-4" />}
             {isVerifying ? 'Verifica in corso...' : 'Verifica Rimozione'}
           </Button>
 
@@ -282,7 +283,7 @@ export function UnusedIndexAnalyzer() {
             variant="outline"
             className="flex items-center gap-2"
           >
-            {isTesting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Activity className="h-4 w-4" />}
+            {isTesting ? <LoadingSpinner size="sm" /> : <Activity className="h-4 w-4" />}
             {isTesting ? 'Test in corso...' : 'Test Performance'}
           </Button>
           

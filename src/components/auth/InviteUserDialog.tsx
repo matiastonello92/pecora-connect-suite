@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { UserPlus, Loader2 } from 'lucide-react';
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { useSimpleAuth } from '@/context/SimpleAuthContext';
 import { UserRole } from '@/types/users';
 import { InvitationData, AccessLevel, LocationType } from '@/types/users';
@@ -200,7 +201,7 @@ export const InviteUserDialog = () => {
             >
               {isLoading ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <LoadingSpinner size="sm" />
                   Sending...
                 </>
               ) : (

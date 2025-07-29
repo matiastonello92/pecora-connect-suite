@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Logo } from '@/components/ui/logo';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, AlertTriangle, RefreshCw } from 'lucide-react';
+import { LoadingSpinner, FullPageLoader } from '@/components/ui/LoadingSpinner';
 import { supabase } from '@/integrations/supabase/client';
 import { validatePassword } from '@/utils/security';
 import { auditLogger, auditActions } from '@/utils/auditLog';
@@ -269,16 +270,7 @@ export const CompleteSignup = () => {
 
   // Show loading state while checking invitation
   if (isCheckingInvitation) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-secondary/20 via-background to-accent/10 p-4">
-        <Card className="w-full max-w-md shadow-elegant">
-          <CardContent className="p-6 text-center">
-            <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
-            <p>Verifying invitation...</p>
-          </CardContent>
-        </Card>
-      </div>
-    );
+    return <FullPageLoader text="Verifying invitation..." />;
   }
 
   // Show error state for invalid invitations
@@ -335,16 +327,7 @@ export const CompleteSignup = () => {
   }
 
   if (!isValidInvitation) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-secondary/20 via-background to-accent/10 p-4">
-        <Card className="w-full max-w-md shadow-elegant">
-          <CardContent className="p-6 text-center">
-            <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
-            <p>Processing...</p>
-          </CardContent>
-        </Card>
-      </div>
-    );
+    return <FullPageLoader text="Processing..." />;
   }
 
   return (
@@ -483,10 +466,7 @@ export const CompleteSignup = () => {
               disabled={isLoading}
             >
               {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Creating Account...
-                </>
+                <LoadingSpinner size="sm" text="Creating Account..." />
               ) : (
                 'Complete Registration'
               )}
