@@ -612,28 +612,48 @@ export type Database = {
         Row: {
           code: string
           created_at: string | null
+          depth: number | null
+          hierarchy: Json | null
           id: string
           is_active: boolean | null
           name: string
+          parent_location_id: string | null
+          path: string[] | null
           updated_at: string | null
         }
         Insert: {
           code: string
           created_at?: string | null
+          depth?: number | null
+          hierarchy?: Json | null
           id?: string
           is_active?: boolean | null
           name: string
+          parent_location_id?: string | null
+          path?: string[] | null
           updated_at?: string | null
         }
         Update: {
           code?: string
           created_at?: string | null
+          depth?: number | null
+          hierarchy?: Json | null
           id?: string
           is_active?: boolean | null
           name?: string
+          parent_location_id?: string | null
+          path?: string[] | null
           updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "locations_parent_location_id_fkey"
+            columns: ["parent_location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       maintenance_records: {
         Row: {
@@ -1215,7 +1235,30 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      location_hierarchy_view: {
+        Row: {
+          ancestor_codes: string[] | null
+          ancestors: string[] | null
+          children_codes: string[] | null
+          children_count: number | null
+          children_names: string[] | null
+          city: string | null
+          code: string | null
+          country: string | null
+          depth: number | null
+          district: string | null
+          full_path: string | null
+          hierarchy: Json | null
+          id: string | null
+          level: number | null
+          name: string | null
+          parent_location_id: string | null
+          path: string[] | null
+          region: string | null
+          root_location_id: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       backfill_user_chat_memberships: {
@@ -1388,6 +1431,35 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: string
       }
+      get_location_ancestors: {
+        Args: { location_id: string }
+        Returns: {
+          id: string
+          code: string
+          name: string
+          depth: number
+        }[]
+      }
+      get_location_descendants: {
+        Args: { location_id: string }
+        Returns: {
+          id: string
+          code: string
+          name: string
+          depth: number
+          full_path: string
+        }[]
+      }
+      get_locations_by_level: {
+        Args: { level_name?: string }
+        Returns: {
+          id: string
+          code: string
+          name: string
+          hierarchy: Json
+          full_path: string
+        }[]
+      }
       get_user_access_level: {
         Args: { user_uuid?: string }
         Returns: Database["public"]["Enums"]["access_level"]
@@ -1418,6 +1490,10 @@ export type Database = {
       is_email_permanently_deleted: {
         Args: { check_email: string }
         Returns: boolean
+      }
+      refresh_location_hierarchy_view: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
       }
       sync_all_users_to_location_chats: {
         Args: Record<PropertyKey, never>
