@@ -19,6 +19,7 @@ import { RLSPerformanceTest } from '@/components/testing/RLSPerformanceTest';
 import { PolicyValidationTest } from '@/components/testing/PolicyValidationTest';
 import { ForeignKeyIndexTest } from '@/components/testing/ForeignKeyIndexTest';
 import { UnusedIndexAnalyzer } from '@/components/testing/UnusedIndexAnalyzer';
+import { CodeDuplicationAnalyzer } from '@/components/testing/CodeDuplicationAnalyzer';
 import { usePermissions } from '@/hooks/usePermissions';
 import { useSimpleAuth } from '@/context/SimpleAuthContext';
 
@@ -72,7 +73,7 @@ export default function TestDashboard() {
       }
     >
       <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-12">
+        <TabsList className="grid w-full grid-cols-6 lg:grid-cols-12">
           <TabsTrigger value="overview" className="flex items-center gap-2">
             <Monitor className="h-4 w-4" />
             Overview
@@ -80,6 +81,10 @@ export default function TestDashboard() {
           <TabsTrigger value="analysis" className="flex items-center gap-2">
             <Database className="h-4 w-4" />
             Analisi App
+          </TabsTrigger>
+          <TabsTrigger value="duplication" className="flex items-center gap-2">
+            <Database className="h-4 w-4" />
+            Duplicazione
           </TabsTrigger>
           <TabsTrigger value="rls-performance" className="flex items-center gap-2">
             <Shield className="h-4 w-4" />
@@ -113,25 +118,9 @@ export default function TestDashboard() {
             <Activity className="h-4 w-4" />
             Concorrenti
           </TabsTrigger>
-          <TabsTrigger value="detection" className="flex items-center gap-2">
-            <Activity className="h-4 w-4" />
-            Rilevamento
-          </TabsTrigger>
-          <TabsTrigger value="alerts" className="flex items-center gap-2">
-            <Activity className="h-4 w-4" />
-            Alert
-          </TabsTrigger>
-          <TabsTrigger value="simulator" className="flex items-center gap-2">
-            <Beaker className="h-4 w-4" />
-            Simulatore
-          </TabsTrigger>
           <TabsTrigger value="security" className="flex items-center gap-2">
             <Shield className="h-4 w-4" />
             Security
-          </TabsTrigger>
-          <TabsTrigger value="performance" className="flex items-center gap-2">
-            <Beaker className="h-4 w-4" />
-            Performance
           </TabsTrigger>
         </TabsList>
 
@@ -157,6 +146,10 @@ export default function TestDashboard() {
         
         <TabsContent value="unused-indexes">
           <UnusedIndexAnalyzer />
+        </TabsContent>
+        
+        <TabsContent value="duplication">
+          <CodeDuplicationAnalyzer />
         </TabsContent>
         <TabsContent value="pages">
           <PageTestRunner onTestStateChange={(running) => setActiveTests(prev => running ? prev + 1 : prev - 1)} />
