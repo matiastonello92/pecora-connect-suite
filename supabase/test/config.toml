@@ -1,0 +1,92 @@
+# Test Environment Supabase Configuration
+# This configuration is for the test/staging environment
+
+project_id = "TEST_PROJECT_ID"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "storage", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+shadow_port = 54320
+major_version = 15
+
+[studio]
+enabled = true
+port = 54323
+
+[inbucket]
+enabled = true
+port = 54324
+smtp_port = 54325
+pop3_port = 54326
+
+[storage]
+enabled = true
+file_size_limit = "50MiB"
+buckets = [
+  { name = "test-avatars", public = true },
+  { name = "test-documents", public = false },
+]
+
+[auth]
+enabled = true
+site_url = "https://test.managementpn.services"
+additional_redirect_urls = [
+  "https://test.managementpn.services/auth/callback",
+  "http://localhost:8081/auth/callback"
+]
+jwt_expiry = 3600
+refresh_token_rotation_enabled = true
+security_update_password_require_reauthentication = true
+
+[auth.email]
+enable_signup = true
+double_confirm_changes = false
+enable_confirmations = false  # Disabled for faster testing
+
+[auth.external.google]
+enabled = false  # Disabled in test environment
+
+[auth.external.github]
+enabled = false  # Disabled in test environment
+
+[realtime]
+enabled = true
+ip_version = "IPv4"
+
+[functions.send-invitation-email]
+verify_jwt = false
+
+[functions.process-message-reminders]
+verify_jwt = true
+
+# Test-specific function
+[functions.test-data-seeder]
+verify_jwt = false
+
+# Test-specific analytics function
+[functions.test-analytics]
+verify_jwt = true
+
+[analytics]
+enabled = false  # Disabled in test environment
+
+[storage.buckets.test-avatars]
+public = true
+file_size_limit = "10MiB"
+allowed_mime_types = ["image/jpeg", "image/png", "image/webp"]
+
+[storage.buckets.test-documents]
+public = false
+file_size_limit = "50MiB"
+allowed_mime_types = [
+  "application/pdf",
+  "application/msword",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "text/plain"
+]
