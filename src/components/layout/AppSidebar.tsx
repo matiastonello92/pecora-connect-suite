@@ -416,8 +416,8 @@ export const AppSidebar = () => {
               <div className="flex items-center gap-3 mb-3">
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-foreground truncate">
-                    {profile.first_name && profile.last_name 
-                      ? `${profile.first_name} ${profile.last_name}`
+                    {profile.firstName && profile.lastName 
+                      ? `${profile.firstName} ${profile.lastName}`
                       : profile.email?.split('@')[0] || 'User'}
                   </p>
                   <p className="text-xs text-muted-foreground truncate capitalize">

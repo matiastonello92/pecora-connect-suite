@@ -15,7 +15,7 @@ export const PermissionProvider = ({ children }: { children: ReactNode }) => {
   const { profile } = useSimpleAuth();
   const { hasPermission: hasModulePermission } = usePermissions({
     userId: profile?.user_id,
-    accessLevel: profile?.access_level as AccessLevel || 'base'
+    accessLevel: profile?.accessLevel as AccessLevel || 'base'
   });
 
   const getUserPermissions = (userId: string) => {

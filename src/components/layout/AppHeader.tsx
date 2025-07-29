@@ -58,7 +58,7 @@ export const AppHeader = () => {
         
         <div className="hidden lg:block min-w-0">
           <p className="text-sm text-muted-foreground font-inter truncate">
-            Welcome, {profile?.first_name || profile?.email?.split('@')[0] || 'User'}
+            Welcome, {profile?.firstName || profile?.email?.split('@')[0] || 'User'}
           </p>
         </div>
       </div>
@@ -107,8 +107,8 @@ export const AppHeader = () => {
             <DropdownMenuLabel className="font-normal">
               <div className="flex flex-col space-y-1">
                 <p className="text-sm font-medium leading-none truncate">
-                  {profile?.first_name && profile?.last_name 
-                    ? `${profile.first_name} ${profile.last_name}`
+                  {profile?.firstName && profile?.lastName 
+                    ? `${profile.firstName} ${profile.lastName}`
                     : profile?.email?.split('@')[0] || 'User'}
                 </p>
                 <p className="text-xs leading-none text-muted-foreground truncate">

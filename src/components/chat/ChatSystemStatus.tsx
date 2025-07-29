@@ -152,9 +152,9 @@ export const ChatSystemStatus: React.FC = () => {
         {profile && (
           <div className="mb-4 p-3 bg-muted rounded-lg">
             <div className="text-sm">
-              <div><strong>User:</strong> {profile.first_name} {profile.last_name} ({profile.email})</div>
+              <div><strong>User:</strong> {profile.firstName} {profile.lastName} ({profile.email})</div>
               <div><strong>Locations:</strong> {(profile.locations || []).join(', ') || 'None'}</div>
-              <div><strong>Role:</strong> {profile.role} | <strong>Access Level:</strong> {profile.access_level}</div>
+              <div><strong>Role:</strong> {profile.role} | <strong>Access Level:</strong> {profile.accessLevel}</div>
             </div>
           </div>
         )}
