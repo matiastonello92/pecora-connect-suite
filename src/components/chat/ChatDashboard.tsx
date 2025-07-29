@@ -14,7 +14,7 @@ import { useUnreadMessages } from '@/context/UnreadMessagesContext';
 import { useMessageReminders } from '@/hooks/useMessageReminders';
 import { useLocation } from '@/context/LocationContext';
 import { formatDistanceToNow } from 'date-fns';
-import { enUS, fr, it } from 'date-fns/locale';
+import { enUS } from 'date-fns/locale';
 import {
   MessageSquare,
   Users,
@@ -43,7 +43,6 @@ import { LocationFilter } from './LocationFilter';
 import { ChatSystemStatus } from './ChatSystemStatus';
 import { NotificationBadge } from '@/components/ui/notification-badge';
 
-const locales = { en: enUS, fr, it };
 
 export const ChatDashboard: React.FC = () => {
   const {

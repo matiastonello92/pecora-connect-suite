@@ -11,7 +11,7 @@ import { useSimpleAuth } from '@/context/SimpleAuthContext';
 import { useUserManagement } from '@/context/UserManagementContext';
 
 import { formatDistanceToNow } from 'date-fns';
-import { enUS, fr, it } from 'date-fns/locale';
+import { enUS } from 'date-fns/locale';
 import {
   Search,
   UserPlus,
@@ -23,7 +23,6 @@ import {
   MapPin
 } from 'lucide-react';
 
-const locales = { en: enUS, fr, it };
 
 interface ConnectionRequestManagerProps {
   onClose: () => void;

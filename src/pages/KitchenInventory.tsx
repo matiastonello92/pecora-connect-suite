@@ -278,7 +278,7 @@ export const KitchenInventory = () => {
                                   {/* Product Info */}
                                   <div>
                                     <div className="flex items-center gap-2 mb-2">
-                                      <h4 className="font-semibold text-lg">{product.nameKey}</h4>
+                                      <h4 className="font-semibold text-lg">{product.name}</h4>
                                       <Button
                                         variant="ghost"
                                         size="sm"

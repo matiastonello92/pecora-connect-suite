@@ -148,7 +148,7 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
         status: profile.status as UserStatus,
         employmentType: 'full-time' as EmploymentType,
         startDate: new Date(profile.created_at || ''),
-        language: 'en' as 'en' | 'fr' | 'it',
+        
         permissions: [], // Default empty permissions
         createdAt: new Date(profile.created_at || ''),
         updatedAt: new Date(profile.updated_at || ''),

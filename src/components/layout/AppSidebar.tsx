@@ -201,7 +201,7 @@ const getTitle = (key: string): string => {
     scheduledInterventions: 'Scheduled Interventions',
     faultReports: 'Fault Reports',
     settings: 'Settings',
-    language: 'Language',
+    
     activeLocation: 'Active Location',
     notificationSettings: 'Notification Settings',
     userPreferences: 'User Preferences',

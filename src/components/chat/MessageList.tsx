@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { useSimpleAuth } from '@/context/SimpleAuthContext';
 
 import { formatDistanceToNow, format, isToday, isYesterday } from 'date-fns';
-import { enUS, fr, it } from 'date-fns/locale';
+import { enUS } from 'date-fns/locale';
 import {
   Download,
   FileText,
@@ -17,7 +17,6 @@ import {
 } from 'lucide-react';
 import { ChatMessage } from '@/types/communication';
 
-const locales = { en: enUS, fr, it };
 
 interface MessageListProps {
   messages: ChatMessage[];

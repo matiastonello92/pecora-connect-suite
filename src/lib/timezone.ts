@@ -1,6 +1,6 @@
 import { format } from 'date-fns';
 import { formatInTimeZone, toZonedTime, fromZonedTime } from 'date-fns-tz';
-import { enUS, fr, it, Locale } from 'date-fns/locale';
+import { enUS, Locale } from 'date-fns/locale';
 
 // Location to timezone mapping
 export const LOCATION_TIMEZONES = {

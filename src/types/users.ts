@@ -90,7 +90,7 @@ export interface UserProfile {
   locations: string[]; // New multiple locations field
   startDate: Date;
   endDate?: Date;
-  language: 'en' | 'fr' | 'it';
+  
   permissions: string[];
   customPermissions?: UserPermission[];
   lastLogin?: Date;
