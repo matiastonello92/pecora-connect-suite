@@ -17,6 +17,7 @@ import { TestingSimulator } from '@/components/testing/TestingSimulator';
 import { AppAnalysisDashboard } from '@/components/testing/AppAnalysisDashboard';
 import { RLSPerformanceTest } from '@/components/testing/RLSPerformanceTest';
 import { PolicyValidationTest } from '@/components/testing/PolicyValidationTest';
+import { ForeignKeyIndexTest } from '@/components/testing/ForeignKeyIndexTest';
 import { usePermissions } from '@/hooks/usePermissions';
 import { useSimpleAuth } from '@/context/SimpleAuthContext';
 
@@ -70,7 +71,7 @@ export default function TestDashboard() {
       }
     >
       <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-11">
+        <TabsList className="grid w-full grid-cols-12">
           <TabsTrigger value="overview" className="flex items-center gap-2">
             <Monitor className="h-4 w-4" />
             Overview
@@ -86,6 +87,10 @@ export default function TestDashboard() {
           <TabsTrigger value="policy-validation" className="flex items-center gap-2">
             <Shield className="h-4 w-4" />
             Policy Validation
+          </TabsTrigger>
+          <TabsTrigger value="index-performance" className="flex items-center gap-2">
+            <Database className="h-4 w-4" />
+            Index Performance
           </TabsTrigger>
           <TabsTrigger value="pages" className="flex items-center gap-2">
             <Activity className="h-4 w-4" />
@@ -139,6 +144,10 @@ export default function TestDashboard() {
         
         <TabsContent value="policy-validation">
           <PolicyValidationTest />
+        </TabsContent>
+        
+        <TabsContent value="index-performance">
+          <ForeignKeyIndexTest />
         </TabsContent>
         
         <TabsContent value="pages">
