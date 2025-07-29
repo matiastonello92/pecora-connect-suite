@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { K6ResultsViewer } from './K6ResultsViewer';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -210,6 +211,9 @@ export function StressTestController({ onTestStateChange }: StressTestController
 
   return (
     <div className="space-y-6">
+      {/* K6 Results Viewer */}
+      <K6ResultsViewer />
+      
       {/* Test Configuration */}
       <Card>
         <CardHeader>
