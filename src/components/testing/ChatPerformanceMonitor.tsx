@@ -176,47 +176,56 @@ export const ChatPerformanceMonitor: React.FC = () => {
   }));
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold">Chat Performance Monitor</h2>
-          <p className="text-muted-foreground">
+    <div className="test-content-wrapper space-y-6">
+      <Card className="test-card">
+        <CardHeader>
+          <CardTitle className="text-xl flex items-center gap-3">
+            <Activity className="h-6 w-6 text-primary" />
+            Chat Performance Monitor
+          </CardTitle>
+          <CardDescription>
             Monitoraggio real-time delle prestazioni del sistema di chat
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <Button
-            onClick={isMonitoring ? stopMonitoring : startMonitoring}
-            variant={isMonitoring ? "destructive" : "default"}
-          >
-            <Activity className="h-4 w-4 mr-2" />
-            {isMonitoring ? 'Stop Monitor' : 'Start Monitor'}
-          </Button>
-          <Button
-            onClick={runStressTest}
-            disabled={isStressTesting}
-            variant="outline"
-          >
-            <Zap className="h-4 w-4 mr-2" />
-            {isStressTesting ? 'Testing...' : 'Stress Test'}
-          </Button>
-        </div>
-      </div>
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Button
+              onClick={isMonitoring ? stopMonitoring : startMonitoring}
+              variant={isMonitoring ? "destructive" : "default"}
+              className="flex items-center gap-2 w-full sm:w-auto"
+              size="lg"
+            >
+              <Activity className="h-4 w-4" />
+              {isMonitoring ? 'Stop Monitor' : 'Start Monitor'}
+            </Button>
+            <Button
+              onClick={runStressTest}
+              disabled={isStressTesting}
+              variant="outline"
+              className="flex items-center gap-2 w-full sm:w-auto"
+              size="lg"
+            >
+              <Zap className="h-4 w-4" />
+              {isStressTesting ? 'Testing...' : 'Stress Test'}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
       <Tabs defaultValue="realtime" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="realtime">Real-time Metrics</TabsTrigger>
-          <TabsTrigger value="charts">Performance Charts</TabsTrigger>
-          <TabsTrigger value="stress">Stress Test Results</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="realtime" className="test-tab-trigger">Real-time Metrics</TabsTrigger>
+          <TabsTrigger value="charts" className="test-tab-trigger">Performance Charts</TabsTrigger>
+          <TabsTrigger value="stress" className="test-tab-trigger">Stress Test Results</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="realtime" className="space-y-4">
+        <TabsContent value="realtime" className="space-y-6 mt-6">
           {currentMetrics && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              <Card>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+              <Card className="test-card">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Message Load Time</CardTitle>
-                  <Clock className="h-4 w-4 text-muted-foreground" />
+                  <Clock className="h-4 w-4 text-primary" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{currentMetrics.messageLoadTime}ms</div>
@@ -227,10 +236,10 @@ export const ChatPerformanceMonitor: React.FC = () => {
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="test-card">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Memory Usage</CardTitle>
-                  <Database className="h-4 w-4 text-muted-foreground" />
+                  <Database className="h-4 w-4 text-primary" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{currentMetrics.memoryUsage}MB</div>
@@ -238,10 +247,10 @@ export const ChatPerformanceMonitor: React.FC = () => {
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="test-card">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Connection Latency</CardTitle>
-                  <Wifi className="h-4 w-4 text-muted-foreground" />
+                  <Wifi className="h-4 w-4 text-primary" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{currentMetrics.connectionLatency}ms</div>
@@ -252,10 +261,10 @@ export const ChatPerformanceMonitor: React.FC = () => {
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="test-card">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Virtual Scroll Efficiency</CardTitle>
-                  <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                  <TrendingUp className="h-4 w-4 text-primary" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{currentMetrics.virtualScrollEfficiency}%</div>
@@ -263,10 +272,10 @@ export const ChatPerformanceMonitor: React.FC = () => {
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="test-card">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Cache Hit Rate</CardTitle>
-                  <Zap className="h-4 w-4 text-muted-foreground" />
+                  <Zap className="h-4 w-4 text-primary" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{currentMetrics.cacheHitRate}%</div>
@@ -277,11 +286,11 @@ export const ChatPerformanceMonitor: React.FC = () => {
           )}
         </TabsContent>
 
-        <TabsContent value="charts" className="space-y-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <Card>
+        <TabsContent value="charts" className="space-y-6 mt-6">
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+            <Card className="test-card">
               <CardHeader>
-                <CardTitle>Load Time & Latency</CardTitle>
+                <CardTitle className="text-lg">Load Time & Latency</CardTitle>
                 <CardDescription>Message load time and connection latency over time</CardDescription>
               </CardHeader>
               <CardContent>
@@ -298,9 +307,9 @@ export const ChatPerformanceMonitor: React.FC = () => {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="test-card">
               <CardHeader>
-                <CardTitle>Memory & Efficiency</CardTitle>
+                <CardTitle className="text-lg">Memory & Efficiency</CardTitle>
                 <CardDescription>Memory usage and virtual scroll efficiency</CardDescription>
               </CardHeader>
               <CardContent>
@@ -319,12 +328,12 @@ export const ChatPerformanceMonitor: React.FC = () => {
           </div>
         </TabsContent>
 
-        <TabsContent value="stress" className="space-y-4">
+        <TabsContent value="stress" className="space-y-6 mt-6">
           {stressTestResults.length > 0 && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              <Card>
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+              <Card className="test-card">
                 <CardHeader>
-                  <CardTitle>Load Time vs Message Count</CardTitle>
+                  <CardTitle className="text-lg">Load Time vs Message Count</CardTitle>
                   <CardDescription>Performance degradation with increasing message volume</CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -340,9 +349,9 @@ export const ChatPerformanceMonitor: React.FC = () => {
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="test-card">
                 <CardHeader>
-                  <CardTitle>Performance Metrics</CardTitle>
+                  <CardTitle className="text-lg">Performance Metrics</CardTitle>
                   <CardDescription>Comprehensive stress test results</CardDescription>
                 </CardHeader>
                 <CardContent>

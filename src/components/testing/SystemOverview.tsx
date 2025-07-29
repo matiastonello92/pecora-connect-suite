@@ -12,7 +12,8 @@ import {
   Globe, 
   Shield,
   RefreshCw,
-  Play
+  Play,
+  Activity
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -136,108 +137,129 @@ export function SystemOverview({ onActiveTestsChange }: SystemOverviewProps) {
   const successRate = (stats.passedTests / stats.totalTests) * 100;
 
   return (
-    <div className="space-y-6">
+    <div className="test-content-wrapper space-y-6">
       {/* Quick Actions */}
-      <div className="flex gap-4">
-        <Button 
-          onClick={runHealthCheck} 
-          disabled={isRunningHealthCheck}
-          className="flex items-center gap-2"
-        >
-          {isRunningHealthCheck ? (
-            <RefreshCw className="h-4 w-4 animate-spin" />
-          ) : (
-            <RefreshCw className="h-4 w-4" />
-          )}
-          Health Check
-        </Button>
-        <Button 
-          onClick={runQuickTest} 
-          disabled={isRunningQuickTest}
-          variant="outline"
-          className="flex items-center gap-2"
-        >
-          {isRunningQuickTest ? (
-            <RefreshCw className="h-4 w-4 animate-spin" />
-          ) : (
-            <Play className="h-4 w-4" />
-          )}
-          Quick Test
-        </Button>
-      </div>
+      <Card className="test-card">
+        <CardHeader>
+          <CardTitle className="text-lg">System Actions</CardTitle>
+          <CardDescription>Run comprehensive health checks and quick tests</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Button 
+              onClick={runHealthCheck} 
+              disabled={isRunningHealthCheck}
+              className="flex items-center gap-2 w-full sm:w-auto"
+              size="lg"
+            >
+              {isRunningHealthCheck ? (
+                <RefreshCw className="h-4 w-4 animate-spin" />
+              ) : (
+                <RefreshCw className="h-4 w-4" />
+              )}
+              Health Check
+            </Button>
+            <Button 
+              onClick={runQuickTest} 
+              disabled={isRunningQuickTest}
+              variant="outline"
+              className="flex items-center gap-2 w-full sm:w-auto"
+              size="lg"
+            >
+              {isRunningQuickTest ? (
+                <RefreshCw className="h-4 w-4 animate-spin" />
+              ) : (
+                <Play className="h-4 w-4" />
+              )}
+              Quick Test
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* System Health */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center justify-between text-sm">
-              <span className="flex items-center gap-2">
-                <Database className="h-4 w-4" />
-                Database
-              </span>
-              {getHealthIcon(health.database)}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {getHealthBadge(health.database)}
-          </CardContent>
-        </Card>
+      <div>
+        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+          <Database className="h-5 w-5 text-primary" />
+          System Health Status
+        </h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <Card className="test-card">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center justify-between text-sm font-medium">
+                <span className="flex items-center gap-2">
+                  <Database className="h-4 w-4 text-primary" />
+                  Database
+                </span>
+                {getHealthIcon(health.database)}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-0">
+              {getHealthBadge(health.database)}
+            </CardContent>
+          </Card>
 
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center justify-between text-sm">
-              <span className="flex items-center gap-2">
-                <Shield className="h-4 w-4" />
-                Authentication
-              </span>
-              {getHealthIcon(health.auth)}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {getHealthBadge(health.auth)}
-          </CardContent>
-        </Card>
+          <Card className="test-card">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center justify-between text-sm font-medium">
+                <span className="flex items-center gap-2">
+                  <Shield className="h-4 w-4 text-primary" />
+                  Authentication
+                </span>
+                {getHealthIcon(health.auth)}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-0">
+              {getHealthBadge(health.auth)}
+            </CardContent>
+          </Card>
 
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center justify-between text-sm">
-              <span className="flex items-center gap-2">
-                <Globe className="h-4 w-4" />
-                Storage
-              </span>
-              {getHealthIcon(health.storage)}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {getHealthBadge(health.storage)}
-          </CardContent>
-        </Card>
+          <Card className="test-card">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center justify-between text-sm font-medium">
+                <span className="flex items-center gap-2">
+                  <Globe className="h-4 w-4 text-primary" />
+                  Storage
+                </span>
+                {getHealthIcon(health.storage)}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-0">
+              {getHealthBadge(health.storage)}
+            </CardContent>
+          </Card>
 
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center justify-between text-sm">
-              <span className="flex items-center gap-2">
-                <RefreshCw className="h-4 w-4" />
-                Functions
-              </span>
-              {getHealthIcon(health.functions)}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {getHealthBadge(health.functions)}
-          </CardContent>
-        </Card>
+          <Card className="test-card">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center justify-between text-sm font-medium">
+                <span className="flex items-center gap-2">
+                  <RefreshCw className="h-4 w-4 text-primary" />
+                  Functions
+                </span>
+                {getHealthIcon(health.functions)}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-0">
+              {getHealthBadge(health.functions)}
+            </CardContent>
+          </Card>
+        </div>
       </div>
 
       {/* Test Statistics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Test Results</CardTitle>
-            <CardDescription>
-              Last run: {stats.lastRun?.toLocaleString() || 'Never'}
-            </CardDescription>
-          </CardHeader>
+      <div>
+        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+          <Activity className="h-5 w-5 text-primary" />
+          Test Statistics & Environment
+        </h3>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <Card className="test-card">
+            <CardHeader>
+              <CardTitle className="text-lg">Test Results</CardTitle>
+              <CardDescription>
+                Last run: {stats.lastRun?.toLocaleString() || 'Never'}
+              </CardDescription>
+            </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex justify-between items-center">
               <span className="text-sm">Success Rate</span>
@@ -262,13 +284,13 @@ export function SystemOverview({ onActiveTestsChange }: SystemOverviewProps) {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Environment Status</CardTitle>
-            <CardDescription>
-              Test environment configuration and isolation
-            </CardDescription>
-          </CardHeader>
+          <Card className="test-card">
+            <CardHeader>
+              <CardTitle className="text-lg">Environment Status</CardTitle>
+              <CardDescription>
+                Test environment configuration and isolation
+              </CardDescription>
+            </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-sm">Environment</span>
@@ -293,7 +315,8 @@ export function SystemOverview({ onActiveTestsChange }: SystemOverviewProps) {
               </Badge>
             </div>
           </CardContent>
-        </Card>
+          </Card>
+        </div>
       </div>
     </div>
   );

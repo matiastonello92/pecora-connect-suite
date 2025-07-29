@@ -119,10 +119,35 @@ All colors MUST be HSL. Based on La Pecoranegra branding.
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-border transition-colors duration-200;
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-body;
+  }
+}
+
+/* Scrollbar utilities */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Test Dashboard specific improvements */
+@layer components {
+  .test-tab-trigger {
+    @apply min-w-fit px-4 py-2 text-sm font-medium whitespace-nowrap;
+  }
+  
+  .test-card {
+    @apply border border-border bg-card text-card-foreground shadow-sm;
+  }
+  
+  .test-content-wrapper {
+    @apply max-w-full overflow-hidden;
   }
 }

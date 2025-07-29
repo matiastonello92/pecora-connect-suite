@@ -74,128 +74,185 @@ export default function TestDashboard() {
         </div>
       }
     >
+      {/* Tab Categories */}
+      <div className="space-y-4">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <Card className="border-primary/20">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Monitor className="h-5 w-5 text-primary" />
+                System Overview
+              </CardTitle>
+              <CardDescription>Health checks and system status</CardDescription>
+            </CardHeader>
+          </Card>
+          
+          <Card className="border-secondary/20">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Database className="h-5 w-5 text-secondary" />
+                Database Analysis
+              </CardTitle>
+              <CardDescription>Performance, RLS, and optimization</CardDescription>
+            </CardHeader>
+          </Card>
+          
+          <Card className="border-accent/20">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Zap className="h-5 w-5 text-accent" />
+                Performance Tests
+              </CardTitle>
+              <CardDescription>Load testing and stress analysis</CardDescription>
+            </CardHeader>
+          </Card>
+        </div>
+      </div>
+
       <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-6 lg:grid-cols-12">
-          <TabsTrigger value="overview" className="flex items-center gap-2">
-            <Monitor className="h-4 w-4" />
-            Overview
-          </TabsTrigger>
-          <TabsTrigger value="analysis" className="flex items-center gap-2">
-            <Database className="h-4 w-4" />
-            Analisi App
-          </TabsTrigger>
-          <TabsTrigger value="duplication" className="flex items-center gap-2">
-            <Database className="h-4 w-4" />
-            Duplicazione
-          </TabsTrigger>
-          <TabsTrigger value="rls-performance" className="flex items-center gap-2">
-            <Shield className="h-4 w-4" />
-            RLS Performance
-          </TabsTrigger>
-          <TabsTrigger value="policy-validation" className="flex items-center gap-2">
-            <Shield className="h-4 w-4" />
-            Policy Validation
-          </TabsTrigger>
-          <TabsTrigger value="index-performance" className="flex items-center gap-2">
-            <Database className="h-4 w-4" />
-            Index Performance
-          </TabsTrigger>
-          <TabsTrigger value="unused-indexes" className="flex items-center gap-2">
-            <Database className="h-4 w-4" />
-            Indici Inutilizzati
-          </TabsTrigger>
-          <TabsTrigger value="pages" className="flex items-center gap-2">
-            <Activity className="h-4 w-4" />
-            Pages
-          </TabsTrigger>
-          <TabsTrigger value="api" className="flex items-center gap-2">
-            <Database className="h-4 w-4" />
-            API
-          </TabsTrigger>
-          <TabsTrigger value="stress" className="flex items-center gap-2">
-            <Zap className="h-4 w-4" />
-            Stress
-          </TabsTrigger>
-          <TabsTrigger value="chat-stress" className="flex items-center gap-2">
-            <Zap className="h-4 w-4" />
-            Chat Stress
-          </TabsTrigger>
-          <TabsTrigger value="concurrent" className="flex items-center gap-2">
-            <Activity className="h-4 w-4" />
-            Concorrenti
-          </TabsTrigger>
-          <TabsTrigger value="security" className="flex items-center gap-2">
-            <Shield className="h-4 w-4" />
-            Security
-          </TabsTrigger>
-        </TabsList>
+        <div className="border-b">
+          <TabsList className="h-auto p-1 bg-transparent justify-start overflow-x-auto scrollbar-hide">
+            <div className="flex flex-wrap gap-1 min-w-max">
+              {/* System & Overview */}
+              <TabsTrigger value="overview" className="flex items-center gap-2 shrink-0">
+                <Monitor className="h-4 w-4" />
+                <span className="hidden sm:inline">Overview</span>
+              </TabsTrigger>
+              
+              {/* Database Tests */}
+              <TabsTrigger value="analysis" className="flex items-center gap-2 shrink-0">
+                <Database className="h-4 w-4" />
+                <span className="hidden sm:inline">Analysis</span>
+              </TabsTrigger>
+              <TabsTrigger value="duplication" className="flex items-center gap-2 shrink-0">
+                <Database className="h-4 w-4" />
+                <span className="hidden sm:inline">Duplication</span>
+              </TabsTrigger>
+              <TabsTrigger value="rls-performance" className="flex items-center gap-2 shrink-0">
+                <Shield className="h-4 w-4" />
+                <span className="hidden sm:inline">RLS Perf</span>
+              </TabsTrigger>
+              <TabsTrigger value="policy-validation" className="flex items-center gap-2 shrink-0">
+                <Shield className="h-4 w-4" />
+                <span className="hidden sm:inline">Policies</span>
+              </TabsTrigger>
+              <TabsTrigger value="index-performance" className="flex items-center gap-2 shrink-0">
+                <Database className="h-4 w-4" />
+                <span className="hidden sm:inline">Indexes</span>
+              </TabsTrigger>
+              <TabsTrigger value="unused-indexes" className="flex items-center gap-2 shrink-0">
+                <Database className="h-4 w-4" />
+                <span className="hidden sm:inline">Unused</span>
+              </TabsTrigger>
+              
+              {/* Performance Tests */}
+              <TabsTrigger value="pages" className="flex items-center gap-2 shrink-0">
+                <Activity className="h-4 w-4" />
+                <span className="hidden sm:inline">Pages</span>
+              </TabsTrigger>
+              <TabsTrigger value="api" className="flex items-center gap-2 shrink-0">
+                <Database className="h-4 w-4" />
+                <span className="hidden sm:inline">API</span>
+              </TabsTrigger>
+              <TabsTrigger value="stress" className="flex items-center gap-2 shrink-0">
+                <Zap className="h-4 w-4" />
+                <span className="hidden sm:inline">Stress</span>
+              </TabsTrigger>
+              <TabsTrigger value="chat-stress" className="flex items-center gap-2 shrink-0">
+                <Zap className="h-4 w-4" />
+                <span className="hidden sm:inline">Chat</span>
+              </TabsTrigger>
+              <TabsTrigger value="concurrent" className="flex items-center gap-2 shrink-0">
+                <Activity className="h-4 w-4" />
+                <span className="hidden sm:inline">Concurrent</span>
+              </TabsTrigger>
+              <TabsTrigger value="security" className="flex items-center gap-2 shrink-0">
+                <Shield className="h-4 w-4" />
+                <span className="hidden sm:inline">Security</span>
+              </TabsTrigger>
+            </div>
+          </TabsList>
+        </div>
 
-        <TabsContent value="overview">
-          <SystemOverview onActiveTestsChange={setActiveTests} />
-        </TabsContent>
-        
-        <TabsContent value="analysis">
-          <AppAnalysisDashboard />
-        </TabsContent>
-        
-        <TabsContent value="rls-performance">
-          <RLSPerformanceTest />
-        </TabsContent>
-        
-        <TabsContent value="policy-validation">
-          <PolicyValidationTest />
-        </TabsContent>
-        
-        <TabsContent value="index-performance">
-          <ForeignKeyIndexTest />
-        </TabsContent>
-        
-        <TabsContent value="unused-indexes">
-          <UnusedIndexAnalyzer />
-        </TabsContent>
-        
-        <TabsContent value="duplication">
-          <CodeDuplicationAnalyzer />
-        </TabsContent>
-        
-        <TabsContent value="chat-stress">
-          <ChatStressTestSuite />
-        </TabsContent>
-        <TabsContent value="pages">
-          <PageTestRunner onTestStateChange={(running) => setActiveTests(prev => running ? prev + 1 : prev - 1)} />
-        </TabsContent>
-
-        <TabsContent value="api">
-          <APITestRunner onTestStateChange={(running) => setActiveTests(prev => running ? prev + 1 : prev - 1)} />
-        </TabsContent>
-
-        <TabsContent value="stress">
-          <StressTestController onTestStateChange={(running) => setActiveTests(prev => running ? prev + 1 : prev - 1)} />
-        </TabsContent>
-
-        <TabsContent value="concurrent">
-          <TestThreeFunctions />
-        </TabsContent>
-
-          <TabsContent value="detection">
-            <FunctionDetectionSystem />
+        <div className="min-h-[60vh] w-full">
+          <TabsContent value="overview" className="mt-6">
+            <div className="space-y-6">
+              <SystemOverview onActiveTestsChange={setActiveTests} />
+            </div>
           </TabsContent>
           
-          <TabsContent value="simulator">
-            <TestingSimulator />
+          <TabsContent value="analysis" className="mt-6">
+            <div className="space-y-6">
+              <AppAnalysisDashboard />
+            </div>
           </TabsContent>
           
-          <TabsContent value="alerts">
-            <AlertConfigurationPanel />
+          <TabsContent value="rls-performance" className="mt-6">
+            <div className="space-y-6">
+              <RLSPerformanceTest />
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="policy-validation" className="mt-6">
+            <div className="space-y-6">
+              <PolicyValidationTest />
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="index-performance" className="mt-6">
+            <div className="space-y-6">
+              <ForeignKeyIndexTest />
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="unused-indexes" className="mt-6">
+            <div className="space-y-6">
+              <UnusedIndexAnalyzer />
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="duplication" className="mt-6">
+            <div className="space-y-6">
+              <CodeDuplicationAnalyzer />
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="chat-stress" className="mt-6">
+            <div className="space-y-6">
+              <ChatStressTestSuite />
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="pages" className="mt-6">
+            <div className="space-y-6">
+              <PageTestRunner onTestStateChange={(running) => setActiveTests(prev => running ? prev + 1 : prev - 1)} />
+            </div>
           </TabsContent>
 
-        <TabsContent value="security">
-          <SecurityTestSuite onTestStateChange={(running) => setActiveTests(prev => running ? prev + 1 : prev - 1)} />
-        </TabsContent>
+          <TabsContent value="api" className="mt-6">
+            <div className="space-y-6">
+              <APITestRunner onTestStateChange={(running) => setActiveTests(prev => running ? prev + 1 : prev - 1)} />
+            </div>
+          </TabsContent>
 
-        <TabsContent value="performance">
-          <PerformanceMonitor />
-        </TabsContent>
+          <TabsContent value="stress" className="mt-6">
+            <div className="space-y-6">
+              <StressTestController onTestStateChange={(running) => setActiveTests(prev => running ? prev + 1 : prev - 1)} />
+            </div>
+          </TabsContent>
+
+          <TabsContent value="concurrent" className="mt-6">
+            <div className="space-y-6">
+              <TestThreeFunctions />
+            </div>
+          </TabsContent>
+
+          <TabsContent value="security" className="mt-6">
+            <div className="space-y-6">
+              <SecurityTestSuite onTestStateChange={(running) => setActiveTests(prev => running ? prev + 1 : prev - 1)} />
+            </div>
+          </TabsContent>
+        </div>
       </Tabs>
     </PageLayout>
   );
