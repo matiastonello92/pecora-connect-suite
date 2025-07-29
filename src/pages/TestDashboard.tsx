@@ -21,6 +21,7 @@ import { ForeignKeyIndexTest } from '@/components/testing/ForeignKeyIndexTest';
 import { UnusedIndexAnalyzer } from '@/components/testing/UnusedIndexAnalyzer';
 import { CodeDuplicationAnalyzer } from '@/components/testing/CodeDuplicationAnalyzer';
 import { ChatPerformanceMonitor } from '@/components/testing/ChatPerformanceMonitor';
+import { ChatStressTestSuite } from '@/components/testing/ChatStressTestSuite';
 import { usePermissions } from '@/hooks/usePermissions';
 import { useSimpleAuth } from '@/context/SimpleAuthContext';
 
@@ -115,6 +116,10 @@ export default function TestDashboard() {
             <Zap className="h-4 w-4" />
             Stress
           </TabsTrigger>
+          <TabsTrigger value="chat-stress" className="flex items-center gap-2">
+            <Zap className="h-4 w-4" />
+            Chat Stress
+          </TabsTrigger>
           <TabsTrigger value="concurrent" className="flex items-center gap-2">
             <Activity className="h-4 w-4" />
             Concorrenti
@@ -152,8 +157,9 @@ export default function TestDashboard() {
         <TabsContent value="duplication">
           <CodeDuplicationAnalyzer />
         </TabsContent>
-        <TabsContent value="chat-performance">
-          <ChatPerformanceMonitor />
+        
+        <TabsContent value="chat-stress">
+          <ChatStressTestSuite />
         </TabsContent>
         <TabsContent value="pages">
           <PageTestRunner onTestStateChange={(running) => setActiveTests(prev => running ? prev + 1 : prev - 1)} />
