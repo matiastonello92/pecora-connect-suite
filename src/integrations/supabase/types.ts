@@ -1797,6 +1797,10 @@ export type Database = {
           reply_to_id: string
         }[]
       }
+      get_chat_unread_count_optimized: {
+        Args: { p_chat_id: string; p_user_id: string }
+        Returns: number
+      }
       get_chats_with_unread_counts: {
         Args: { user_id: string; user_locations: string[] }
         Returns: {
@@ -1879,6 +1883,28 @@ export type Database = {
           name: string
           hierarchy: Json
           full_path: string
+        }[]
+      }
+      get_paginated_messages: {
+        Args: {
+          p_chat_id: string
+          p_cursor?: string
+          p_limit?: number
+          p_direction?: string
+        }
+        Returns: {
+          id: string
+          chat_id: string
+          sender_id: string
+          content: string
+          message_type: string
+          media_url: string
+          created_at: string
+          is_edited: boolean
+          is_deleted: boolean
+          sender_info: Json
+          read_receipts: Json
+          total_count: number
         }[]
       }
       get_user_access_level: {

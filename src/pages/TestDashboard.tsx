@@ -20,6 +20,7 @@ import { PolicyValidationTest } from '@/components/testing/PolicyValidationTest'
 import { ForeignKeyIndexTest } from '@/components/testing/ForeignKeyIndexTest';
 import { UnusedIndexAnalyzer } from '@/components/testing/UnusedIndexAnalyzer';
 import { CodeDuplicationAnalyzer } from '@/components/testing/CodeDuplicationAnalyzer';
+import { ChatPerformanceMonitor } from '@/components/testing/ChatPerformanceMonitor';
 import { usePermissions } from '@/hooks/usePermissions';
 import { useSimpleAuth } from '@/context/SimpleAuthContext';
 
@@ -150,6 +151,9 @@ export default function TestDashboard() {
         
         <TabsContent value="duplication">
           <CodeDuplicationAnalyzer />
+        </TabsContent>
+        <TabsContent value="chat-performance">
+          <ChatPerformanceMonitor />
         </TabsContent>
         <TabsContent value="pages">
           <PageTestRunner onTestStateChange={(running) => setActiveTests(prev => running ? prev + 1 : prev - 1)} />
