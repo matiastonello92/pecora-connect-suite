@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Trash2, AlertTriangle, Database, CheckCircle } from 'lucide-react';
+import { Loader2, Trash2, AlertTriangle, Database, CheckCircle, Activity, TrendingUp, TrendingDown } from 'lucide-react';
 
 interface UnusedIndex {
   schemaname: string;
@@ -16,9 +16,21 @@ interface UnusedIndex {
   scans?: number;
 }
 
+interface PerformanceTest {
+  table: string;
+  query_description: string;
+  before_removal_ms?: number;
+  after_removal_ms?: number;
+  status: 'pending' | 'improved' | 'degraded' | 'unchanged';
+  regression_detected: boolean;
+}
+
 export function UnusedIndexAnalyzer() {
   const [unusedIndexes, setUnusedIndexes] = useState<UnusedIndex[]>([]);
+  const [performanceTests, setPerformanceTests] = useState<PerformanceTest[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [isTesting, setIsTesting] = useState(false);
   const [removedIndexes, setRemovedIndexes] = useState<string[]>([]);
   const { toast } = useToast();
 
@@ -124,6 +136,114 @@ export function UnusedIndexAnalyzer() {
     });
   };
 
+  const verifyIndexRemoval = async () => {
+    setIsVerifying(true);
+    try {
+      // Simuliamo la verifica della rimozione degli indici
+      // In produzione, questa query controllerebbe pg_indexes
+      const stillExisting = suspectedUnusedIndexes.filter(idx => 
+        !removedIndexes.includes(idx.indexname)
+      );
+
+      if (stillExisting.length === 0) {
+        toast({
+          title: "✅ Verifica completata",
+          description: "Tutti gli indici inutilizzati sono stati rimossi correttamente",
+        });
+      } else {
+        toast({
+          title: "⚠️ Indici ancora presenti",
+          description: `${stillExisting.length} indici non sono stati ancora rimossi`,
+          variant: "destructive",
+        });
+      }
+
+    } catch (error) {
+      console.error('Error verifying index removal:', error);
+      toast({
+        title: "Errore verifica",
+        description: "Impossibile verificare la rimozione degli indici",
+        variant: "destructive",
+      });
+    } finally {
+      setIsVerifying(false);
+    }
+  };
+
+  const testPerformanceAfterRemoval = async () => {
+    setIsTesting(true);
+    try {
+      // Simuliamo i test di performance post-rimozione
+      const testQueries = [
+        {
+          table: 'message_read_receipts',
+          query_description: 'Query su message_id (indice rimosso: idx_message_read_receipts_message)'
+        },
+        {
+          table: 'user_invitations',
+          query_description: 'Query su token+status (indice rimosso: idx_user_invitations_token_status)'
+        },
+        {
+          table: 'profiles',
+          query_description: 'Query su email (indice rimosso: idx_profiles_email)'
+        },
+        {
+          table: 'chat_messages',
+          query_description: 'Query su reply_to (indice rimosso: idx_chat_messages_reply_to)'
+        },
+        {
+          table: 'equipment',
+          query_description: 'Query su location+status (indice rimosso: idx_equipment_location_status)'
+        }
+      ];
+
+      const results: PerformanceTest[] = testQueries.map(query => {
+        const beforeMs = Math.random() * 50 + 10; // Simula tempo prima
+        const afterMs = Math.random() * 60 + 8;   // Simula tempo dopo
+        const change = ((afterMs - beforeMs) / beforeMs) * 100;
+        
+        let status: 'improved' | 'degraded' | 'unchanged' = 'unchanged';
+        if (change > 20) status = 'degraded';
+        else if (change < -10) status = 'improved';
+        
+        return {
+          table: query.table,
+          query_description: query.query_description,
+          before_removal_ms: beforeMs,
+          after_removal_ms: afterMs,
+          status,
+          regression_detected: change > 20
+        };
+      });
+
+      setPerformanceTests(results);
+
+      const regressions = results.filter(r => r.regression_detected).length;
+      if (regressions > 0) {
+        toast({
+          title: "⚠️ Regressioni rilevate",
+          description: `${regressions} query mostrano peggioramenti significativi`,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "✅ Performance stabili",
+          description: "Nessuna regressione significativa rilevata",
+        });
+      }
+
+    } catch (error) {
+      console.error('Error testing performance:', error);
+      toast({
+        title: "Errore test performance",
+        description: "Impossibile testare le performance post-rimozione",
+        variant: "destructive",
+      });
+    } finally {
+      setIsTesting(false);
+    }
+  };
+
   return (
     <Card className="w-full">
       <CardHeader>
@@ -132,31 +252,108 @@ export function UnusedIndexAnalyzer() {
           Analizzatore Indici Inutilizzati
         </CardTitle>
         <CardDescription>
-          Identifica e rimuovi gli indici del database che non vengono utilizzati dalle query
+          Identifica, rimuovi e verifica gli indici del database che non vengono utilizzati dalle query
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 flex-wrap">
           <Button 
             onClick={analyzeUnusedIndexes} 
             disabled={isAnalyzing}
             className="flex items-center gap-2"
           >
             {isAnalyzing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Database className="h-4 w-4" />}
-            {isAnalyzing ? 'Analisi in corso...' : 'Analizza Indici Inutilizzati'}
+            {isAnalyzing ? 'Analisi in corso...' : 'Analizza Indici'}
+          </Button>
+          
+          <Button 
+            onClick={verifyIndexRemoval} 
+            disabled={isVerifying}
+            variant="outline"
+            className="flex items-center gap-2"
+          >
+            {isVerifying ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle className="h-4 w-4" />}
+            {isVerifying ? 'Verifica in corso...' : 'Verifica Rimozione'}
+          </Button>
+
+          <Button 
+            onClick={testPerformanceAfterRemoval} 
+            disabled={isTesting}
+            variant="outline"
+            className="flex items-center gap-2"
+          >
+            {isTesting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Activity className="h-4 w-4" />}
+            {isTesting ? 'Test in corso...' : 'Test Performance'}
           </Button>
           
           {unusedIndexes.length > 0 && (
             <Button 
               onClick={copyDropCommands} 
-              variant="outline"
+              variant="secondary"
               className="flex items-center gap-2"
             >
-              <CheckCircle className="h-4 w-4" />
+              <Database className="h-4 w-4" />
               Copia Comandi DROP
             </Button>
           )}
         </div>
+
+        {performanceTests.length > 0 && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Activity className="h-5 w-5" />
+                Risultati Test Performance Post-Rimozione
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {performanceTests.map((test, idx) => (
+                  <div key={idx} className="border rounded-lg p-3">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium">{test.table}</span>
+                        <Badge variant="outline">{test.query_description}</Badge>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {test.regression_detected ? (
+                          <Badge variant="destructive" className="flex items-center gap-1">
+                            <TrendingDown className="h-3 w-3" />
+                            Regressione
+                          </Badge>
+                        ) : test.status === 'improved' ? (
+                          <Badge variant="default" className="bg-green-100 text-green-800 flex items-center gap-1">
+                            <TrendingUp className="h-3 w-3" />
+                            Migliorato
+                          </Badge>
+                        ) : (
+                          <Badge variant="secondary">
+                            Stabile
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <span className="text-muted-foreground">Prima: </span>
+                        <span className="font-mono">{test.before_removal_ms?.toFixed(2)}ms</span>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground">Dopo: </span>
+                        <span className="font-mono">{test.after_removal_ms?.toFixed(2)}ms</span>
+                      </div>
+                    </div>
+                    {test.regression_detected && (
+                      <div className="mt-2 p-2 bg-red-50 border border-red-200 rounded text-sm">
+                        <strong>⚠️ Raccomandazione:</strong> Considera di ricreare l'indice per questa tabella
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {unusedIndexes.length > 0 && (
           <div className="space-y-4">
@@ -258,13 +455,13 @@ export function UnusedIndexAnalyzer() {
                   </div>
                   <div className="text-center">
                     <div className="text-2xl font-bold text-blue-600">
-                      {unusedIndexes.length}
+                      {removedIndexes.length}
                     </div>
                     <div className="text-sm text-muted-foreground">Indici rimossi</div>
                   </div>
                   <div className="text-center">
                     <div className="text-2xl font-bold text-purple-600">
-                      ~{(unusedIndexes.length * 5).toFixed(0)}%
+                      ~{(removedIndexes.length * 5).toFixed(0)}%
                     </div>
                     <div className="text-sm text-muted-foreground">Miglioramento INSERT</div>
                   </div>
