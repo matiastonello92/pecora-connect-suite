@@ -741,6 +741,39 @@ export type Database = {
         }
         Relationships: []
       }
+      location_dashboard_configs: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          layout: Json
+          location_id: string
+          theme: Json
+          updated_at: string
+          widgets: Json
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          layout?: Json
+          location_id: string
+          theme?: Json
+          updated_at?: string
+          widgets?: Json
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          layout?: Json
+          location_id?: string
+          theme?: Json
+          updated_at?: string
+          widgets?: Json
+        }
+        Relationships: []
+      }
       locations: {
         Row: {
           code: string
