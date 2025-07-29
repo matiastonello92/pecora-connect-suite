@@ -16,17 +16,23 @@ import { FunctionDetectionSystem } from '@/components/testing/FunctionDetectionS
 import { TestingSimulator } from '@/components/testing/TestingSimulator';
 import { AppAnalysisDashboard } from '@/components/testing/AppAnalysisDashboard';
 import { usePermissions } from '@/hooks/usePermissions';
+import { useSimpleAuth } from '@/context/SimpleAuthContext';
 
 export default function TestDashboard() {
   console.log('🧪 TestDashboard component loaded successfully');
-  const { hasPermission } = usePermissions();
+  const { profile } = useSimpleAuth();
+  const { hasPermission } = usePermissions({
+    userId: profile?.user_id,
+    accessLevel: profile?.accessLevel
+  });
   const [activeTests, setActiveTests] = useState(0);
   
-  // Only allow admins and managers to access the test dashboard
-  const isManager = hasPermission('user_management', 'can_validate');
-  const isSuperAdmin = hasPermission('financial', 'can_delete');
+  // Allow super_admin role OR general_manager access level to access test dashboard
+  const isSuperAdmin = profile?.role === 'super_admin';
+  const isGeneralManager = profile?.accessLevel === 'general_manager';
+  const hasManagerPermission = hasPermission('user_management', 'can_validate');
   
-  if (!isManager && !isSuperAdmin) {
+  if (!isSuperAdmin && !isGeneralManager && !hasManagerPermission) {
     return (
       <PageLayout 
         title="Access Denied" 
