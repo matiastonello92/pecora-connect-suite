@@ -1440,6 +1440,20 @@ export type Database = {
           depth: number
         }[]
       }
+      get_location_aware_data: {
+        Args: {
+          target_user_id: string
+          table_name: string
+          location_codes?: string[]
+          date_filter?: string
+          status_filter?: string
+        }
+        Returns: {
+          location_code: string
+          data_count: number
+          latest_created_at: string
+        }[]
+      }
       get_location_descendants: {
         Args: { location_id: string }
         Returns: {
@@ -1467,6 +1481,27 @@ export type Database = {
       get_user_chat_ids: {
         Args: { user_uuid?: string }
         Returns: string[]
+      }
+      get_user_chats_bulk: {
+        Args: { target_user_id: string }
+        Returns: {
+          chat_id: string
+          chat_type: Database["public"]["Enums"]["chat_type"]
+          chat_name: string
+          location_code: string
+          unread_count: number
+          last_message_at: string
+          user_role: string
+        }[]
+      }
+      get_user_location_data: {
+        Args: { target_user_id: string; location_codes?: string[] }
+        Returns: {
+          location_code: string
+          has_access: boolean
+          role: string
+          permissions: Json
+        }[]
       }
       get_user_locations: {
         Args: { user_uuid?: string }
@@ -1521,6 +1556,10 @@ export type Database = {
         Args: { check_location: string; user_uuid?: string }
         Returns: boolean
       }
+      user_has_location_access_optimized: {
+        Args: { target_user_id: string; location_code: string }
+        Returns: boolean
+      }
       validate_chat_system_health: {
         Args: Record<PropertyKey, never>
         Returns: {
@@ -1555,6 +1594,14 @@ export type Database = {
           status: string
           details: string
           count: number
+        }[]
+      }
+      validate_user_locations_batch: {
+        Args: { target_user_id: string; location_codes: string[] }
+        Returns: {
+          location_code: string
+          has_access: boolean
+          location_exists: boolean
         }[]
       }
     }
