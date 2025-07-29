@@ -1,0 +1,70 @@
+{
+  "scenarios": {
+    "location_hierarchy_test": {
+      "executor": "ramping-vus",
+      "startVUs": 100,
+      "stages": [
+        { "duration": "1m", "target": 1000 },
+        { "duration": "2m", "target": 5000 },
+        { "duration": "10m", "target": 5000 },
+        { "duration": "1m", "target": 0 }
+      ],
+      "exec": "testLocationHierarchy"
+    },
+    "location_switching_test": {
+      "executor": "ramping-vus", 
+      "startVUs": 200,
+      "stages": [
+        { "duration": "1m", "target": 2000 },
+        { "duration": "2m", "target": 10000 },
+        { "duration": "10m", "target": 10000 },
+        { "duration": "1m", "target": 0 }
+      ],
+      "exec": "testLocationSwitching"
+    },
+    "dashboard_load_test": {
+      "executor": "ramping-vus",
+      "startVUs": 300,
+      "stages": [
+        { "duration": "1m", "target": 3000 },
+        { "duration": "2m", "target": 15000 },
+        { "duration": "10m", "target": 15000 },
+        { "duration": "1m", "target": 0 }
+      ],
+      "exec": "testDashboardLoad"
+    },
+    "chat_connection_test": {
+      "executor": "ramping-vus",
+      "startVUs": 400,
+      "stages": [
+        { "duration": "1m", "target": 4000 },
+        { "duration": "2m", "target": 20000 },
+        { "duration": "10m", "target": 20000 },
+        { "duration": "1m", "target": 0 }
+      ],
+      "exec": "testChatConnections"
+    },
+    "mixed_user_scenarios": {
+      "executor": "ramping-vus",
+      "startVUs": 1000,
+      "stages": [
+        { "duration": "1m", "target": 10000 },
+        { "duration": "2m", "target": 50000 },
+        { "duration": "10m", "target": 50000 },
+        { "duration": "1m", "target": 0 }
+      ],
+      "exec": "mixedUserScenarios"
+    }
+  },
+  "thresholds": {
+    "http_req_duration": ["p(95)<200", "p(99)<500"],
+    "http_req_failed": ["rate<0.001"],
+    "location_fetch_duration": ["p(95)<200"],
+    "location_switch_duration": ["p(95)<100"],
+    "dashboard_load_duration": ["p(95)<300"],
+    "chat_latency": ["p(95)<150"],
+    "chat_connection_success": ["rate>0.999"],
+    "location_switch_success": ["rate>0.999"],
+    "dashboard_load_success": ["rate>0.999"]
+  }
+}

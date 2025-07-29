@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  k6:
+    image: grafana/k6:latest
+    ports:
+      - "6565:6565"
+    environment:
+      - API_BASE_URL=${API_BASE_URL:-https://cqlbidkagiknfplzbwse.supabase.co}
+      - WS_URL=${WS_URL:-wss://cqlbidkagiknfplzbwse.supabase.co}
+      - SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
+      - AUTH_TOKEN=${AUTH_TOKEN}
+    volumes:
+      - ./k6-load-test.js:/scripts/k6-load-test.js
+      - ./k6-test-config.json:/scripts/k6-test-config.json
+      - ./k6-results:/results
+    command: >
+      run 
+      --vus 1000 
+      --duration 15m 
+      --out json=/results/test-results.json
+      --out csv=/results/test-results.csv
+      /scripts/k6-load-test.js
+    networks:
+      - k6-network
+
+  # InfluxDB for metrics storage (optional)
+  influxdb:
+    image: influxdb:2.0
+    ports:
+      - "8086:8086"
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=k6
+      - DOCKER_INFLUXDB_INIT_PASSWORD=k6password
+      - DOCKER_INFLUXDB_INIT_ORG=k6-org
+      - DOCKER_INFLUXDB_INIT_BUCKET=k6-bucket
+    volumes:
+      - influxdb-data:/var/lib/influxdb2
+    networks:
+      - k6-network
+
+  # Grafana for visualization (optional)
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - ./grafana/datasources:/etc/grafana/provisioning/datasources
+    networks:
+      - k6-network
+    depends_on:
+      - influxdb
+
+volumes:
+  influxdb-data:
+  grafana-data:
+
+networks:
+  k6-network:
+    driver: bridge
