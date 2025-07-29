@@ -122,9 +122,12 @@ export const VirtualizedLocationList: React.FC<VirtualizedLocationListProps> = (
   className = ""
 }) => {
   const { allLocations } = useLocationMeta();
-  const { locationStats = {} } = useLocationData();
+  const { activeLocationData } = useLocationData();
   const [searchQuery, setSearchQuery] = useState("");
   const [filterDepth, setFilterDepth] = useState<number | null>(null);
+
+  // Mock location stats for now - can be replaced with real data from context
+  const locationStats = useMemo(() => ({}), []);
 
   // Process and filter locations
   const filteredItems = useMemo(() => {
