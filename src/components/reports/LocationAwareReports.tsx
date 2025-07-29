@@ -25,7 +25,7 @@ interface LocationComparisonData {
 
 export const LocationAwareReports = () => {
   const { profile } = useSimpleAuth();
-  const language = 'en'; // Temporary hardcode
+  
   const { activeLocation, availableLocations, allActiveLocations } = useLocation();
   
   
@@ -104,7 +104,7 @@ export const LocationAwareReports = () => {
   };
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat(language, {
+    return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'EUR'
     }).format(amount);

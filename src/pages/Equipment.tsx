@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Wrench, AlertTriangle, Calendar, CheckCircle, Plus } from 'lucide-react';
 
 export const Equipment = () => {
-  const language = 'en'; // Temporarily hardcode language
+  
   
   const { equipment, getOverdueMaintenance, getUpcomingMaintenance } = useEquipment();
 

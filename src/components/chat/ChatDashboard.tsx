@@ -61,7 +61,7 @@ export const ChatDashboard: React.FC = () => {
     emergencyFixAuth
   } = useChatContext();
   const { profile } = useSimpleAuth();
-  const language = 'en'; // Temporary hardcode
+  
   const { unreadCountByChat, markChatAsRead } = useUnreadMessages();
   const { processReminders } = useMessageReminders();
   const { userLocations } = useLocation();

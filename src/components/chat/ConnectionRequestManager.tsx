@@ -31,7 +31,7 @@ interface ConnectionRequestManagerProps {
 
 export const ConnectionRequestManager: React.FC<ConnectionRequestManagerProps> = ({ onClose }) => {
   const { profile } = useSimpleAuth();
-  const language = 'en'; // Temporary hardcode
+  
   const { users } = useUserManagement();
   const { 
     connectionRequests, 
@@ -48,7 +48,7 @@ export const ConnectionRequestManager: React.FC<ConnectionRequestManagerProps> =
   const [availableUsers, setAvailableUsers] = useState<any[]>([]);
   const [loadingUsers, setLoadingUsers] = useState(false);
 
-  const getLocale = () => locales[language as keyof typeof locales] || enUS;
+  const getLocale = () => enUS;
 
   // Check if user has privileged role that can bypass location restrictions
   const canAccessAllLocations = () => {

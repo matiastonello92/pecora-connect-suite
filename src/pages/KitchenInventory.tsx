@@ -25,7 +25,7 @@ import { KitchenCategory, KitchenProduct } from '@/types/kitchenInventory';
 
 export const KitchenInventory = () => {
   const { user } = useSimpleAuth();
-  const language = 'en'; // Temporarily hardcode language
+  
   const hasPermission = (permission: string) => true; // Temporarily allow all permissions
   
   const { toast } = useToast();

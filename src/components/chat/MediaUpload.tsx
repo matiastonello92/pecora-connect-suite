@@ -20,7 +20,7 @@ export const MediaUpload: React.FC<MediaUploadProps> = ({ file, onCancel, onSend
   const [isValidFile, setIsValidFile] = useState(true);
   const [validationError, setValidationError] = useState<string>('');
   const { profile } = useSimpleAuth();
-  const language = 'en'; // Temporary hardcode
+  
   
   const { toast } = useToast();
 

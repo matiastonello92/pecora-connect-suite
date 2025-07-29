@@ -21,7 +21,7 @@ import { LocationAwareReportWrapper } from '../reports/LocationAwareReportWrappe
 
 export const FinancialReports = () => {
   const { profile } = useSimpleAuth();
-  const language = 'en'; // Temporarily hardcode language
+  
   const hasPermission = (permission: string) => true; // Temporarily allow all permissions
   const { activeLocation, availableLocations } = useLocation();
   
@@ -136,7 +136,7 @@ export const FinancialReports = () => {
   };
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat(language, {
+    return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'EUR'
     }).format(amount);
@@ -403,7 +403,7 @@ export const FinancialReports = () => {
 
                     return (
                       <TableRow key={closure.id}>
-                        <TableCell>{new Date(closure.date).toLocaleDateString(language)}</TableCell>
+                        <TableCell>{new Date(closure.date).toLocaleDateString('en-US')}</TableCell>
                         <TableCell>{closure.submitterName}</TableCell>
                         <TableCell>{formatCurrency(closure.cashCollected)}</TableCell>
                         <TableCell>{formatCurrency(totalPayments)}</TableCell>

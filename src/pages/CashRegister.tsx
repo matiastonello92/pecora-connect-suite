@@ -14,7 +14,7 @@ import { PaymentMethod, OrderStatus } from '@/types/cashRegister';
 
 export const CashRegister = () => {
   const { user } = useSimpleAuth();
-  const language = 'en'; // Temporarily hardcode language
+  
   
   const {
     menuItems,
@@ -66,14 +66,14 @@ export const CashRegister = () => {
   };
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat(language, {
+    return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'EUR'
     }).format(price);
   };
 
   const formatTime = (date: Date) => {
-    return new Intl.DateTimeFormat(language, {
+    return new Intl.DateTimeFormat('en-US', {
       hour: '2-digit',
       minute: '2-digit'
     }).format(date);

@@ -35,7 +35,7 @@ interface ChatInterfaceProps {
 export const ChatInterface: React.FC<ChatInterfaceProps> = ({ onBack, onShowInfo }) => {
   const { activeChat, messages, sendMessage, sendingMessage, getConnectionStatus } = useChatContext();
   const { profile } = useSimpleAuth();
-  const language = 'en'; // Temporary hardcode
+  
   
   const [typingUsers, setTypingUsers] = useState<string[]>([]);
   const [showChatInfo, setShowChatInfo] = useState(false);

@@ -15,7 +15,7 @@ interface MessageReminder {
 
 export const useMessageReminders = () => {
   const { user } = useSimpleAuth();
-  const language = 'en'; // Temporarily hardcode language
+  
   const { showMobileNotification, isMobile } = useMobileNotifications();
   
 

@@ -35,7 +35,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage }) => 
   const [uploadingFile, setUploadingFile] = useState<File | null>(null);
   const { uploadMedia } = useChatContext();
   const { profile } = useSimpleAuth();
-  const language = 'en'; // Temporary hardcode
+  
   
   const { toast } = useToast();
   const textareaRef = useRef<HTMLTextAreaElement>(null);

@@ -18,7 +18,7 @@ export const LocationClock: React.FC<LocationClockProps> = ({
 }) => {
   const { profile } = useSimpleAuth();
   const { activeLocation, canSwitchLocations } = useLocation();
-  const language = 'en'; // Temporarily hardcode language
+  
   
   const [currentTime, setCurrentTime] = useState<Date>(new Date());
 
@@ -39,7 +39,7 @@ export const LocationClock: React.FC<LocationClockProps> = ({
     return () => clearInterval(interval);
   }, [effectiveLocation]);
 
-  const formattedTime = formatDateForLocation(currentTime, effectiveLocation, format, getDateLocale(language));
+  const formattedTime = formatDateForLocation(currentTime, effectiveLocation, format, getDateLocale());
   
   const getLocationDisplayName = () => {
     if (!effectiveLocation || effectiveLocation === 'all_locations') {

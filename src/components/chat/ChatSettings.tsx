@@ -32,7 +32,7 @@ interface ChatSettingsProps {
 export const ChatSettings: React.FC<ChatSettingsProps> = ({ children }) => {
   const { activeChat, muteChat } = useChatContext();
   const { profile } = useSimpleAuth();
-  const language = 'en'; // Temporary hardcode
+  
   
   const { toast } = useToast();
   const [open, setOpen] = useState(false);

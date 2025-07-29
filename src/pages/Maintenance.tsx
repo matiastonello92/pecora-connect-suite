@@ -13,7 +13,7 @@ import { Wrench, AlertTriangle, FileText, Settings, Plus, Upload } from 'lucide-
 
 export const Maintenance = () => {
   const { user } = useSimpleAuth();
-  const language = 'en'; // Temporarily hardcode language
+  
   
   const [showReportDialog, setShowReportDialog] = useState(false);
 
@@ -79,7 +79,7 @@ export const Maintenance = () => {
   ]);
 
   const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat(language, {
+    return new Intl.DateTimeFormat('en-US', {
       day: '2-digit',
       month: 'short',
       year: 'numeric'

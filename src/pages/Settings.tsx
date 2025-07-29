@@ -6,17 +6,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
-import { User, Globe, Shield, Palette, Bell } from 'lucide-react';
+import { User, Shield, Palette, Bell } from 'lucide-react';
 
 export const Settings = () => {
   const { user } = useSimpleAuth();
-  const language = 'en'; // Temporarily hardcode language
-  const setLanguage = (lang: any) => {}; // Temporarily stub
   const updateUser = (user: any) => {}; // Temporarily stub
-
-  const handleLanguageChange = (newLanguage: string) => {
-    setLanguage(newLanguage);
-  };
 
   const handleProfileUpdate = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -97,38 +91,6 @@ export const Settings = () => {
           </CardContent>
         </Card>
 
-        {/* Language Settings */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Globe className="h-5 w-5" />
-              Language
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label>Interface Language</Label>
-                <Select value={language} onValueChange={handleLanguageChange}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {[['en', 'English'], ['fr', 'Français'], ['it', 'Italiano']].map(([code, name]) => (
-                      <SelectItem key={code} value={code}>
-                        {name as string}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <p className="text-sm text-muted-foreground">
-                Choose your preferred language for the interface
-              </p>
-            </div>
-          </CardContent>
-        </Card>
 
         {/* Security Settings */}
         <Card>

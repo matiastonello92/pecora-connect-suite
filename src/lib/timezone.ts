@@ -105,8 +105,7 @@ export const getLocationTimestamp = (location: string | null | undefined): strin
 // Format relative time (e.g., "2 hours ago") for location
 export const formatRelativeTimeForLocation = (
   date: Date | string,
-  location: string | null | undefined,
-  locale: 'en' | 'fr' | 'it' = 'en'
+  location: string | null | undefined
 ): string => {
   const dateObj = typeof date === 'string' ? new Date(date) : date;
   const localDate = convertUTCToLocal(dateObj, location);
@@ -123,8 +122,7 @@ export const formatRelativeTimeForLocation = (
   return formatDateForLocation(localDate, location, DATE_FORMATS.DATE_ONLY);
 };
 
-// Get locale object for date-fns
-export const getDateLocale = (language: 'en' | 'fr' | 'it' = 'en') => {
-  const locales = { en: enUS, fr, it };
-  return locales[language] || enUS;
+// Get locale object for date-fns (always English)
+export const getDateLocale = () => {
+  return enUS;
 };

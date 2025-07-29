@@ -9,7 +9,7 @@ import { FinancialReports } from '@/components/financial/FinancialReports';
 
 export const Financial = () => {
   const { user } = useSimpleAuth();
-  const language = 'en'; // Temporarily hardcode language
+  
   const hasPermission = (permission: string) => true; // Temporarily allow all permissions
   
 

@@ -19,7 +19,7 @@ import { Button } from '@/components/ui/button';
 
 export default function Dashboard() {
   const { profile } = useSimpleAuth();
-  const language = 'en'; // Temporarily hardcode language
+  
   const hasPermission = () => true; // Temporarily allow all permissions  
   const hasAccess = () => true; // Temporarily allow all access
   

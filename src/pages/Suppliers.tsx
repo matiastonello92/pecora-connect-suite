@@ -11,7 +11,7 @@ import { Truck, Plus, Search, ShoppingCart, FileText, TrendingUp, Package } from
 
 export const Suppliers = () => {
   const { user } = useSimpleAuth();
-  const language = 'en'; // Temporarily hardcode language
+  
   const hasPermission = (permission: string) => true; // Temporarily allow all permissions
   
   const [searchTerm, setSearchTerm] = useState('');
@@ -88,14 +88,14 @@ export const Suppliers = () => {
   );
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat(language, {
+    return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'EUR'
     }).format(price);
   };
 
   const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat(language, {
+    return new Intl.DateTimeFormat('en-US', {
       day: '2-digit',
       month: 'short',
       year: 'numeric'

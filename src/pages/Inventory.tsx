@@ -14,7 +14,7 @@ import { InventoryPagination } from '@/components/inventory/InventoryPagination'
 
 export const Inventory = () => {
   const { user } = useSimpleAuth();
-  const language = 'en'; // Temporarily hardcode language
+  
   
   const {
     items,
@@ -59,14 +59,14 @@ export const Inventory = () => {
   };
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat(language, {
+    return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'EUR'
     }).format(price);
   };
 
   const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat(language, {
+    return new Intl.DateTimeFormat('en-US', {
       day: '2-digit',
       month: 'short',
       year: 'numeric'

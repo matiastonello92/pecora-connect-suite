@@ -155,7 +155,7 @@ const navigationItems = [
     roles: ['base', 'manager', 'director', 'finance', 'super_admin'],
     departments: ['kitchen', 'pizzeria', 'service', 'finance', 'manager', 'super_manager', 'general_manager'],
     submenu: [
-      { title: 'language', url: '/settings/language', icon: Globe },
+      
       { title: 'activeLocation', url: '/settings/location', icon: Building },
       { title: 'notificationSettings', url: '/settings/notifications', icon: Bell },
       { title: 'userPreferences', url: '/settings', icon: UserCog },

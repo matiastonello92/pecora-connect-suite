@@ -5,7 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import { Globe, Palette, Lock, Bell, MoonIcon, LogOut } from 'lucide-react';
+import { Palette, Lock, Bell, MoonIcon, LogOut } from 'lucide-react';
 import { UserProfile } from '@/types/users';
 
 import { useSimpleAuth } from '@/context/SimpleAuthContext';
@@ -21,19 +21,10 @@ export const ProfileSettings = ({ user }: ProfileSettingsProps) => {
   const { toast } = useToast();
   const [showPasswordDialog, setShowPasswordDialog] = useState(false);
   const [settings, setSettings] = useState({
-    language: 'en',
     theme: 'auto',
     notifications: true,
     doNotDisturb: false,
   });
-
-  const handleLanguageChange = (newLanguage: string) => {
-    setSettings(prev => ({ ...prev, language: newLanguage }));
-    toast({
-      title: 'Language Updated',
-      description: 'Your language preference has been updated.',
-    });
-  };
 
   const handleThemeChange = (theme: string) => {
     setSettings(prev => ({ ...prev, theme }));
@@ -75,30 +66,6 @@ export const ProfileSettings = ({ user }: ProfileSettingsProps) => {
 
   return (
     <div className="space-y-6">
-      {/* Language Settings */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Globe className="h-5 w-5" />
-            Language & Region
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-2">
-            <Label>Interface Language</Label>
-            <Select value={settings.language} onValueChange={handleLanguageChange}>
-              <SelectTrigger className="w-full">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="en">English</SelectItem>
-                <SelectItem value="fr">Français</SelectItem>
-                <SelectItem value="it">Italiano</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </CardContent>
-      </Card>
 
       {/* Theme Settings */}
       <Card>

@@ -16,7 +16,7 @@ import { useToast } from '@/hooks/use-toast';
 
 export const CashClosureForm = () => {
   const { profile } = useSimpleAuth();
-  const language = 'en'; // Temporarily hardcode language
+  
   
   const { toast } = useToast();
   const {
@@ -161,7 +161,7 @@ export const CashClosureForm = () => {
                 Daily Cash Closure
               </CardTitle>
               <p className="text-sm text-muted-foreground">
-                Date: {new Date().toLocaleDateString(language)}
+                Date: {new Date().toLocaleDateString('en-US')}
               </p>
             </div>
             <Badge variant={currentClosure.status === 'draft' ? 'secondary' : 'default'}>

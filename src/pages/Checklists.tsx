@@ -15,7 +15,7 @@ import { CheckSquare, Clock, Play, Plus, CheckCircle, AlertCircle } from 'lucide
 
 export const Checklists = () => {
   const { user } = useSimpleAuth();
-  const language = 'en'; // Temporarily hardcode language
+  
   
   const {
     templates,
@@ -69,7 +69,7 @@ export const Checklists = () => {
   };
 
   const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat(language, {
+    return new Intl.DateTimeFormat('en-US', {
       day: '2-digit',
       month: 'short',
       hour: '2-digit',

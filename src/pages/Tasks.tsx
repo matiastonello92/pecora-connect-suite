@@ -13,7 +13,7 @@ import { ListTodo, Plus, CheckSquare, BarChart3, Clock, User, AlertTriangle } fr
 
 export const Tasks = () => {
   const { user } = useSimpleAuth();
-  const language = 'en'; // Temporarily hardcode language
+  
   const hasPermission = (permission: string) => true; // Temporarily allow all permissions
   
   const [showCreateDialog, setShowCreateDialog] = useState(false);
@@ -59,7 +59,7 @@ export const Tasks = () => {
   ]);
 
   const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat(language, {
+    return new Intl.DateTimeFormat('en-US', {
       day: '2-digit',
       month: 'short',
       year: 'numeric'

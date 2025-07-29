@@ -25,12 +25,11 @@ interface MessageListProps {
 
 export const MessageList: React.FC<MessageListProps> = ({ messages }) => {
   const { profile } = useSimpleAuth();
-  const language = 'en'; // Temporary hardcode
+  
   
   
   const getDateLocale = () => {
-    const locales = { en: enUS, fr, it };
-    return locales[language] || enUS;
+    return enUS;
   };
 
   const formatMessageDate = (date: string) => {

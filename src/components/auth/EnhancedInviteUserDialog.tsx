@@ -40,7 +40,7 @@ export const EnhancedInviteUserDialog = () => {
   const [isLoading, setIsLoading] = useState(false);
   
   const { user } = useSimpleAuth();
-  const language = 'en'; // Temporary hardcode
+  
   
   // Temporary permission check - replace with proper permission system
   const hasPermission = (permission: string) => {
