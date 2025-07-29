@@ -15,6 +15,7 @@ import { AlertConfigurationPanel } from '@/components/testing/AlertConfiguration
 import { FunctionDetectionSystem } from '@/components/testing/FunctionDetectionSystem';
 import { TestingSimulator } from '@/components/testing/TestingSimulator';
 import { AppAnalysisDashboard } from '@/components/testing/AppAnalysisDashboard';
+import { RLSPerformanceTest } from '@/components/testing/RLSPerformanceTest';
 import { usePermissions } from '@/hooks/usePermissions';
 import { useSimpleAuth } from '@/context/SimpleAuthContext';
 
@@ -68,7 +69,7 @@ export default function TestDashboard() {
       }
     >
       <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-9">
+        <TabsList className="grid w-full grid-cols-10">
           <TabsTrigger value="overview" className="flex items-center gap-2">
             <Monitor className="h-4 w-4" />
             Overview
@@ -76,6 +77,10 @@ export default function TestDashboard() {
           <TabsTrigger value="analysis" className="flex items-center gap-2">
             <Database className="h-4 w-4" />
             Analisi App
+          </TabsTrigger>
+          <TabsTrigger value="rls-performance" className="flex items-center gap-2">
+            <Shield className="h-4 w-4" />
+            RLS Performance
           </TabsTrigger>
           <TabsTrigger value="pages" className="flex items-center gap-2">
             <Activity className="h-4 w-4" />
@@ -121,6 +126,10 @@ export default function TestDashboard() {
         
         <TabsContent value="analysis">
           <AppAnalysisDashboard />
+        </TabsContent>
+        
+        <TabsContent value="rls-performance">
+          <RLSPerformanceTest />
         </TabsContent>
         
         <TabsContent value="pages">
