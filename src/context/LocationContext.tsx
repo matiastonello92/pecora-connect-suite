@@ -1,217 +1,72 @@
-import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
-import { useSimpleAuth } from './SimpleAuthContext';
-import { useActiveLocations, Location, userHasMultipleLocations } from '@/hooks/useLocations';
+import React, { ReactNode } from 'react';
+import { OptimizedLocationProvider } from './OptimizedLocationProvider';
+import { useLocation as useOptimizedLocation } from './LocationBackwardCompatibility';
 
-interface LocationContextType {
-  activeLocation: string;
-  setActiveLocation: (location: string) => void;
-  canSwitchLocations: boolean;
-  availableLocations: { value: string; label: string }[];
-  userLocations: string[];
-  allActiveLocations: Location[];
-  isLocationBlocked: boolean;
-  requestLocationPermission: () => Promise<void>;
-  suggestedLocation: string | null;
-  acceptSuggestedLocation: () => void;
-  dismissSuggestedLocation: () => void;
-}
+/**
+ * Updated LocationContext that uses the new optimized three-context system
+ * This maintains backward compatibility while providing improved performance
+ */
 
-const LocationContext = createContext<LocationContextType | undefined>(undefined);
+// Re-export the optimized location hook with the same name for backward compatibility
+export const useLocation = useOptimizedLocation;
 
-// Location coordinates for proximity detection
-const LOCATION_COORDINATES: Record<string, { lat: number; lng: number }> = {
-  menton: { lat: 43.7736, lng: 7.5042 },
-  lyon: { lat: 45.7640, lng: 4.8357 },
-  paris: { lat: 48.8566, lng: 2.3522 },
-  nice: { lat: 43.7102, lng: 7.2620 },
-  cannes: { lat: 43.5528, lng: 7.0174 },
-  monaco: { lat: 43.7384, lng: 7.4246 },
-  antibes: { lat: 43.5804, lng: 7.1251 }
-};
-
-export const LocationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { profile, isLoading: authLoading } = useSimpleAuth();
-  const { data: allActiveLocations = [], isLoading } = useActiveLocations();
-  
-  // Get user's locations from their profile with safe fallback
-  const userLocations = profile?.locations && profile.locations.length > 0 
-    ? profile.locations 
-    : ['menton']; // Default fallback
-  
-  // State for location management
-  const [activeLocation, setActiveLocationState] = useState<string>('');
-  const [suggestedLocation, setSuggestedLocation] = useState<string | null>(null);
-  const [hasRequestedPermission, setHasRequestedPermission] = useState(false);
-
-  // User can switch locations if they have multiple locations
-  const canSwitchLocations = userHasMultipleLocations(userLocations);
-
-  // Available locations for switching - NO "All Locations" option
-  const availableLocations = useMemo(() => {
-    const userAccessibleLocations = allActiveLocations.filter(location => 
-      userLocations.includes(location.code)
-    );
-    
-    return userAccessibleLocations.map(location => ({
-      value: location.code,
-      label: location.name
-    }));
-  }, [allActiveLocations, userLocations]);
-
-  // Calculate distance between two coordinates
-  const calculateDistance = (lat1: number, lng1: number, lat2: number, lng2: number): number => {
-    const R = 6371; // Earth's radius in km
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLng = (lng2 - lng1) * Math.PI / 180;
-    const a = 
-      Math.sin(dLat/2) * Math.sin(dLat/2) +
-      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
-      Math.sin(dLng/2) * Math.sin(dLng/2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-    return R * c;
-  };
-
-  // Find nearest location to user's current position
-  const findNearestLocation = (lat: number, lng: number): string | null => {
-    let nearestLocation = null;
-    let minDistance = Infinity;
-
-    for (const location of userLocations) {
-      const coords = LOCATION_COORDINATES[location];
-      if (coords) {
-        const distance = calculateDistance(lat, lng, coords.lat, coords.lng);
-        if (distance < minDistance && distance < 50) { // Within 50km
-          minDistance = distance;
-          nearestLocation = location;
-        }
-      }
-    }
-
-    return nearestLocation;
-  };
-
-  // Request geolocation permission and suggest nearest location
-  const requestLocationPermission = async (): Promise<void> => {
-    if (!navigator.geolocation || hasRequestedPermission) return;
-    
-    setHasRequestedPermission(true);
-    
-    try {
-      const position = await new Promise<GeolocationPosition>((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject, {
-          enableHighAccuracy: true,
-          timeout: 10000,
-          maximumAge: 300000 // 5 minutes
-        });
-      });
-
-      const nearest = findNearestLocation(position.coords.latitude, position.coords.longitude);
-      if (nearest && nearest !== activeLocation) {
-        setSuggestedLocation(nearest);
-      }
-    } catch (error) {
-      console.warn('Geolocation failed:', error);
-    }
-  };
-
-  // Accept suggested location
-  const acceptSuggestedLocation = () => {
-    if (suggestedLocation) {
-      setActiveLocation(suggestedLocation);
-      setSuggestedLocation(null);
-    }
-  };
-
-  // Dismiss suggested location
-  const dismissSuggestedLocation = () => {
-    setSuggestedLocation(null);
-  };
-
-  // Initialize active location with smart fallback
-  useEffect(() => {
-    console.log('🌍 LocationContext: Initializing location...', {
-      authLoading,
-      hasProfile: !!profile,
-      userLocations,
-      currentActiveLocation: activeLocation
-    });
-    
-    // Wait for profile to load before initializing location
-    if (authLoading || !profile || userLocations.length === 0) {
-      console.log('🌍 LocationContext: Waiting for auth/profile...');
-      return;
-    }
-
-    // If single location, auto-select it
-    if (userLocations.length === 1) {
-      console.log('🌍 LocationContext: Single location detected, setting:', userLocations[0]);
-      setActiveLocationState(userLocations[0]);
-      localStorage.setItem('activeLocation', userLocations[0]);
-      return;
-    }
-
-    // For multiple locations, try to restore from localStorage
-    const saved = localStorage.getItem('activeLocation');
-    if (saved && userLocations.includes(saved)) {
-      console.log('🌍 LocationContext: Restored from localStorage:', saved);
-      setActiveLocationState(saved);
-      return;
-    }
-
-    // Try geolocation if available
-    if (navigator.geolocation && !hasRequestedPermission) {
-      console.log('🌍 LocationContext: Requesting geolocation permission...');
-      requestLocationPermission();
-    }
-
-    // Fallback to first location
-    if (!activeLocation) {
-      console.log('🌍 LocationContext: Fallback to first location:', userLocations[0]);
-      setActiveLocationState(userLocations[0]);
-      localStorage.setItem('activeLocation', userLocations[0]);
-    }
-  }, [userLocations, hasRequestedPermission, authLoading, profile]);
-
-  const setActiveLocation = (location: string) => {
-    if (userLocations.includes(location)) {
-      setActiveLocationState(location);
-      localStorage.setItem('activeLocation', location);
-      // Dismiss any suggestion when user manually switches
-      if (suggestedLocation) {
-        setSuggestedLocation(null);
-      }
-    }
-  };
-
-  // Check if location is blocked (no valid active location)
-  // Don't block while authentication is still loading
-  const isLocationBlocked = !authLoading && (!activeLocation || !userLocations.includes(activeLocation));
-
-  const value: LocationContextType = {
-    activeLocation,
-    setActiveLocation,
-    canSwitchLocations,
-    availableLocations,
-    userLocations,
-    allActiveLocations,
-    isLocationBlocked,
-    requestLocationPermission,
-    suggestedLocation,
-    acceptSuggestedLocation,
-    dismissSuggestedLocation
-  };
-
+// Re-export the provider with the same name for backward compatibility
+export const LocationProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   return (
-    <LocationContext.Provider value={value}>
+    <OptimizedLocationProvider>
       {children}
-    </LocationContext.Provider>
+    </OptimizedLocationProvider>
   );
 };
 
-export const useLocation = () => {
-  const context = useContext(LocationContext);
-  if (!context) {
-    throw new Error('useLocation must be used within LocationProvider');
-  }
-  return context;
-};
+// Re-export types and hooks from the optimized contexts for direct access when needed
+export { 
+  useLocationMeta, 
+  useLocationState, 
+  useLocationData,
+  type LocationHierarchy,
+  type LocationMetadata,
+  type LocationOption,
+  type LocationSpecificData 
+} from './OptimizedLocationProvider';
+
+// Re-export migration utilities
+export { useLocationMigration } from './LocationBackwardCompatibility';
+
+/**
+ * MIGRATION GUIDE:
+ * 
+ * The LocationContext has been split into three focused contexts:
+ * 
+ * 1. LocationMetaContext (useLocationMeta):
+ *    - Location definitions and hierarchy data
+ *    - allLocations, getLocationByCode, getLocationCoordinates
+ *    - Cached for 30 minutes (rarely changes)
+ * 
+ * 2. LocationStateContext (useLocationState):
+ *    - Active location and switching logic
+ *    - activeLocation, setActiveLocation, canSwitchLocations
+ *    - Real-time state management
+ * 
+ * 3. LocationDataContext (useLocationData):
+ *    - Location-specific data caching
+ *    - activeLocationData, prefetchLocationData
+ *    - Optimized with React Query
+ * 
+ * BACKWARD COMPATIBILITY:
+ * - Existing components using useLocation() will work unchanged
+ * - All previous properties and methods are available
+ * - Performance is automatically improved
+ * 
+ * PERFORMANCE BENEFITS:
+ * - Lazy loading of location hierarchy (loaded once, cached 30min)
+ * - Intelligent data prefetching for location switching
+ * - Optimized React Query caching with proper staleTime
+ * - Separate re-renders for different types of location changes
+ * 
+ * ADVANCED USAGE:
+ * - Use useLocationMeta() for hierarchy operations
+ * - Use useLocationState() for state management only
+ * - Use useLocationData() for data operations and caching
+ * - Use useLocationMigration() for performance monitoring
+ */
