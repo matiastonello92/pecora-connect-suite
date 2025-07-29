@@ -1,7 +1,7 @@
 # Test Environment Supabase Configuration
 # This configuration is for the test/staging environment
 
-project_id = "TEST_PROJECT_ID"
+project_id = "zaqltfagyhxeusttdhgq"
 
 [api]
 enabled = true

@@ -56,8 +56,8 @@ const environments: Record<Environment, EnvironmentConfig> = {
   },
   test: {
     supabase: {
-      url: "https://TEST_SUPABASE_PROJECT_ID.supabase.co", // Will be replaced during setup
-      anonKey: "TEST_SUPABASE_ANON_KEY" // Will be replaced during setup
+      url: "https://zaqltfagyhxeusttdhgq.supabase.co",
+      anonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InphcWx0ZmFneWh4ZXVzdHRkaGdxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM3OTQyMzksImV4cCI6MjA2OTM3MDIzOX0.fe7Fz869tH9K37fEXrOCq9etHr02zpAdEOf-d_hines"
     },
     api: {
       baseUrl: "https://test.managementpn.services",
