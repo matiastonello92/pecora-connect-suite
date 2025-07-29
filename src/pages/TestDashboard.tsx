@@ -18,6 +18,7 @@ import { AppAnalysisDashboard } from '@/components/testing/AppAnalysisDashboard'
 import { usePermissions } from '@/hooks/usePermissions';
 
 export default function TestDashboard() {
+  console.log('🧪 TestDashboard component loaded successfully');
   const { hasPermission } = usePermissions();
   const [activeTests, setActiveTests] = useState(0);
   
