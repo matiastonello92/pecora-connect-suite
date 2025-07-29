@@ -32,6 +32,7 @@ import { Suppliers } from '@/pages/Suppliers';
 import { Tasks } from '@/pages/Tasks';
 import { Maintenance } from '@/pages/Maintenance';
 import { Profile } from '@/pages/Profile';
+import TestDashboard from '@/pages/TestDashboard';
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -100,6 +101,7 @@ const AppContent = () => {
                   <Route path="/app/maintenance/report" element={<Maintenance />} />
                   <Route path="/app/maintenance/history" element={<Maintenance />} />
                   <Route path="/app/maintenance/scheduled" element={<Maintenance />} />
+                  <Route path="/app/test-dashboard" element={<TestDashboard />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </AppLayout>

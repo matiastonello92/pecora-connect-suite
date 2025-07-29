@@ -50,6 +50,7 @@ import {
   Headphones,
   Plus,
   Globe,
+  Activity,
 } from 'lucide-react';
 
 const navigationItems = [
@@ -161,6 +162,13 @@ const navigationItems = [
       { title: 'userPreferences', url: '/settings', icon: UserCog },
     ],
   },
+  {
+    title: 'testDashboard',
+    url: '/app/test-dashboard',
+    icon: Activity,
+    roles: ['manager', 'super_admin'],
+    departments: ['manager', 'super_manager', 'general_manager'],
+  },
 ];
 
 // Simple title mapping for hardcoded English
@@ -205,6 +213,7 @@ const getTitle = (key: string): string => {
     activeLocation: 'Active Location',
     notificationSettings: 'Notification Settings',
     userPreferences: 'User Preferences',
+    testDashboard: 'Test Dashboard',
     navigation: 'Navigation',
   };
   return titles[key] || key;
