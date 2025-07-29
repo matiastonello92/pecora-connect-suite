@@ -1,0 +1,60 @@
+#!/bin/bash
+
+# Git pre-commit hook for change detection preparation
+# This hook runs before each commit to prepare the environment
+
+echo "🔍 Pre-commit: Preparing change detection..."
+
+# Ensure reports directory exists
+mkdir -p reports
+
+# Create a snapshot of current state for comparison
+SNAPSHOT_FILE="reports/pre-commit-snapshot-$(date +%s).json"
+
+# Collect current state information
+cat > "$SNAPSHOT_FILE" << EOF
+{
+  "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+  "commit": "$(git rev-parse HEAD 2>/dev/null || echo 'initial')",
+  "branch": "$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo 'unknown')",
+  "staged_files": [
+$(git diff --cached --name-only | sed 's/.*/"&"/' | paste -sd ',' -)
+  ],
+  "file_counts": {
+    "pages": $(find src/pages -name "*.tsx" 2>/dev/null | wc -l),
+    "components": $(find src/components -name "*.tsx" 2>/dev/null | wc -l),
+    "hooks": $(find src/hooks -name "*.tsx" -o -name "*.ts" 2>/dev/null | wc -l),
+    "api_functions": $(find supabase/functions -name "index.ts" 2>/dev/null | wc -l)
+  }
+}
+EOF
+
+echo "📸 Snapshot saved to: $SNAPSHOT_FILE"
+
+# Run linting and formatting if available
+if command -v npm &> /dev/null; then
+    if [ -f "package.json" ] && grep -q '"lint"' package.json; then
+        echo "🧹 Running linters..."
+        npm run lint --silent || echo "⚠️ Linting warnings detected"
+    fi
+fi
+
+# Check for critical files that shouldn't be committed without review
+CRITICAL_FILES=(
+    "src/integrations/supabase/client.ts"
+    ".env"
+    "supabase/config.toml"
+)
+
+for file in "${CRITICAL_FILES[@]}"; do
+    if git diff --cached --name-only | grep -q "^$file$"; then
+        echo "⚠️ Critical file detected in commit: $file"
+        echo "   Please ensure this change is intentional and secure"
+    fi
+done
+
+# Stage any files that were modified by linting
+git add -A
+
+echo "✅ Pre-commit preparation completed"
+exit 0

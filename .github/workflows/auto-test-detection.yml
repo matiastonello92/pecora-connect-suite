@@ -1,0 +1,158 @@
+name: Auto Test Detection
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 2 # Need at least 2 commits to compare
+        
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: |
+        npm install
+        
+    - name: Run change detection
+      id: detect
+      run: |
+        echo "🔍 Running change detection..."
+        node scripts/detect-changes.js || true
+        
+        # Check if dashboard update is needed
+        if [ "$SHOULD_UPDATE_DASHBOARD" = "true" ]; then
+          echo "dashboard_update_needed=true" >> $GITHUB_OUTPUT
+        fi
+        
+    - name: Update test dashboard
+      if: steps.detect.outputs.dashboard_update_needed == 'true'
+      run: |
+        echo "⚡ Updating test dashboard..."
+        node scripts/update-test-dashboard.js
+        
+    - name: Create test coverage issue
+      if: steps.detect.outputs.dashboard_update_needed == 'true'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          
+          // Read the latest report
+          const reportFiles = fs.readdirSync('reports').filter(f => f.startsWith('change-detection-'));
+          const latestReport = reportFiles.sort().pop();
+          const report = JSON.parse(fs.readFileSync(`reports/${latestReport}`, 'utf8'));
+          
+          const issueTitle = `🧪 New Features Detected - Test Coverage Required`;
+          const issueBody = `
+          ## 🔍 Automatic Detection Report
+          
+          **Commit:** ${report.commit}
+          **Timestamp:** ${report.timestamp}
+          
+          ### 📊 Changes Detected:
+          
+          ${report.changes.newPages.length > 0 ? `#### 📄 New Pages (${report.changes.newPages.length})
+          ${report.changes.newPages.map(page => `- **${page.name}** - Route: \`${page.route}\``).join('\n')}
+          ` : ''}
+          
+          ${report.changes.newComponents.length > 0 ? `#### 🧩 New Components (${report.changes.newComponents.length})
+          ${report.changes.newComponents.map(comp => `- **${comp.name}** - Path: \`${comp.path}\``).join('\n')}
+          ` : ''}
+          
+          ${report.changes.newHooks.length > 0 ? `#### 🪝 New Hooks (${report.changes.newHooks.length})
+          ${report.changes.newHooks.map(hook => `- **${hook.name}** - Path: \`${hook.path}\``).join('\n')}
+          ` : ''}
+          
+          ${report.changes.newApiFunctions.length > 0 ? `#### 🔌 New API Functions (${report.changes.newApiFunctions.length})
+          ${report.changes.newApiFunctions.map(api => `- **${api.name}** - Path: \`${api.path}\``).join('\n')}
+          ` : ''}
+          
+          ${report.changes.newSupabaseTables.length > 0 ? `#### 🗄️ New Database Tables (${report.changes.newSupabaseTables.length})
+          ${report.changes.newSupabaseTables.map(table => `- **${table.name}**`).join('\n')}
+          ` : ''}
+          
+          ### ✅ Actions Required:
+          
+          1. **Test Dashboard Updated**: New items automatically added to test dashboard
+          2. **Manual Testing**: Review and test new functionality
+          3. **Documentation**: Update documentation if needed
+          4. **Security Review**: Ensure proper permissions for new features
+          
+          ### 🔗 Links:
+          - [Test Dashboard](${process.env.LOVABLE_APP_URL}/app/test-dashboard)
+          - [Full Report](reports/${latestReport})
+          
+          ---
+          *This issue was automatically created by the change detection system*
+          `;
+          
+          github.rest.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: issueTitle,
+            body: issueBody,
+            labels: ['testing', 'automation', 'needs-review']
+          });
+          
+    - name: Send Slack notification
+      if: steps.detect.outputs.dashboard_update_needed == 'true'
+      run: |
+        if [ -n "${{ secrets.SLACK_WEBHOOK_URL }}" ]; then
+          echo "📢 Sending Slack notification..."
+          node scripts/notify-team.js
+        else
+          echo "⚠️ Slack webhook not configured, skipping notification"
+        fi
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        
+    - name: Upload reports
+      uses: actions/upload-artifact@v4
+      with:
+        name: change-detection-reports
+        path: reports/
+        
+    - name: Comment on PR
+      if: github.event_name == 'pull_request' && steps.detect.outputs.dashboard_update_needed == 'true'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          const reportFiles = fs.readdirSync('reports').filter(f => f.startsWith('change-detection-'));
+          const latestReport = reportFiles.sort().pop();
+          const report = JSON.parse(fs.readFileSync(`reports/${latestReport}`, 'utf8'));
+          
+          const comment = `
+          ## 🧪 Automatic Test Detection Results
+          
+          This PR introduces changes that require test coverage:
+          
+          - **New Pages:** ${report.summary.totalNewPages}
+          - **New Components:** ${report.summary.totalNewComponents}
+          - **New API Functions:** ${report.summary.totalNewApiFunctions}
+          - **New Database Tables:** ${report.summary.totalNewTables}
+          
+          ✅ **Test dashboard has been automatically updated**
+          
+          Please review the [test dashboard](${process.env.LOVABLE_APP_URL}/app/test-dashboard) and ensure all new functionality is properly tested before merging.
+          `;
+          
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: comment
+          });

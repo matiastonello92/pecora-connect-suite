@@ -1,0 +1,228 @@
+{
+  "description": "Configuration for automatic change detection system",
+  "version": "1.0.0",
+  "lastUpdated": "2024-01-15T10:00:00Z",
+  
+  "detection": {
+    "rules": {
+      "pages": {
+        "enabled": true,
+        "pattern": "src/pages/**/*.tsx",
+        "description": "React page components that represent app routes",
+        "autoUpdate": true,
+        "severity": "high",
+        "requiredTests": ["page-load", "navigation", "accessibility"],
+        "excludePatterns": [
+          "src/pages/**/*.test.tsx",
+          "src/pages/**/*.stories.tsx"
+        ]
+      },
+      
+      "components": {
+        "enabled": true,
+        "pattern": "src/components/**/*.tsx",
+        "description": "Reusable React components",
+        "autoUpdate": false,
+        "severity": "medium",
+        "requiredTests": ["unit-test", "integration-test"],
+        "excludePatterns": [
+          "src/components/ui/**/*",
+          "src/components/**/*.test.tsx",
+          "src/components/**/*.stories.tsx"
+        ]
+      },
+      
+      "hooks": {
+        "enabled": true,
+        "pattern": "src/hooks/**/*.{ts,tsx}",
+        "description": "Custom React hooks for shared logic",
+        "autoUpdate": true,
+        "severity": "high",
+        "requiredTests": ["hook-test", "integration-test"],
+        "functionPattern": "^use[A-Z].*"
+      },
+      
+      "api": {
+        "enabled": true,
+        "patterns": [
+          "supabase/functions/*/index.ts",
+          "src/integrations/supabase/types.ts"
+        ],
+        "description": "API functions and database schema changes",
+        "autoUpdate": true,
+        "severity": "critical",
+        "requiredTests": ["api-test", "security-test", "performance-test"]
+      },
+      
+      "database": {
+        "enabled": true,
+        "patterns": [
+          "supabase/migrations/*.sql",
+          "src/integrations/supabase/types.ts"
+        ],
+        "description": "Database schema and migration changes",
+        "autoUpdate": true,
+        "severity": "critical",
+        "requiredTests": ["schema-test", "migration-test", "rls-test"]
+      }
+    },
+    
+    "thresholds": {
+      "newPagesWarning": 3,
+      "newComponentsWarning": 5,
+      "newApiEndpointsWarning": 2,
+      "newTablesWarning": 1
+    },
+    
+    "ignorePatterns": [
+      "**/*.test.{ts,tsx}",
+      "**/*.spec.{ts,tsx}",
+      "**/*.stories.{ts,tsx}",
+      "**/*.d.ts",
+      "**/node_modules/**",
+      "**/dist/**",
+      "**/build/**",
+      "**/.git/**"
+    ]
+  },
+  
+  "notifications": {
+    "channels": {
+      "slack": {
+        "enabled": true,
+        "channel": "#development",
+        "mentionRoles": ["@developers", "@qa-team"],
+        "severity": {
+          "critical": ["@channel"],
+          "high": ["@developers"],
+          "medium": ["@qa-team"],
+          "low": []
+        }
+      },
+      
+      "discord": {
+        "enabled": false,
+        "channel": "development",
+        "roleMapping": {
+          "critical": "@everyone",
+          "high": "@developers",
+          "medium": "@qa",
+          "low": ""
+        }
+      },
+      
+      "github": {
+        "enabled": true,
+        "createIssues": true,
+        "createPullRequestComments": true,
+        "labels": {
+          "critical": ["critical", "testing", "needs-review"],
+          "high": ["testing", "needs-review"],
+          "medium": ["testing"],
+          "low": ["enhancement"]
+        }
+      },
+      
+      "email": {
+        "enabled": false,
+        "recipients": {
+          "critical": ["tech-lead@company.com", "qa-lead@company.com"],
+          "high": ["dev-team@company.com"],
+          "medium": ["qa-team@company.com"],
+          "low": []
+        }
+      }
+    },
+    
+    "timing": {
+      "immediate": ["critical", "high"],
+      "batched": ["medium", "low"],
+      "batchInterval": "1h"
+    }
+  },
+  
+  "dashboard": {
+    "autoUpdate": {
+      "enabled": true,
+      "backupBeforeUpdate": true,
+      "validateAfterUpdate": true
+    },
+    
+    "components": {
+      "PageTestRunner": {
+        "file": "src/components/testing/PageTestRunner.tsx",
+        "updatePattern": "pages array",
+        "maxEntries": 50
+      },
+      "APITestRunner": {
+        "file": "src/components/testing/APITestRunner.tsx", 
+        "updatePattern": "apiTests array",
+        "maxEntries": 100
+      },
+      "SystemOverview": {
+        "file": "src/components/testing/SystemOverview.tsx",
+        "updatePattern": "stats object",
+        "trackMetrics": true
+      }
+    },
+    
+    "testGeneration": {
+      "generateBasicTests": true,
+      "includeSecurityTests": true,
+      "includePerformanceTests": true,
+      "customTestTemplates": "scripts/templates/"
+    }
+  },
+  
+  "ci": {
+    "integration": {
+      "github": {
+        "enabled": true,
+        "runOnPullRequest": true,
+        "runOnPush": true,
+        "branches": ["main", "master", "develop"],
+        "failBuildOnCriticalChanges": false,
+        "requireApprovalForCritical": true
+      },
+      
+      "gitlab": {
+        "enabled": false,
+        "pipeline": ".gitlab-ci.yml",
+        "jobName": "detect-changes"
+      }
+    },
+    
+    "reporting": {
+      "generateArtifacts": true,
+      "uploadReports": true,
+      "retentionDays": 30
+    }
+  },
+  
+  "security": {
+    "scanNewFiles": true,
+    "checkPermissions": true,
+    "validateRLS": true,
+    "requireSecurityReview": {
+      "newApiEndpoints": true,
+      "newDatabaseTables": true,
+      "authenticationChanges": true
+    }
+  },
+  
+  "performance": {
+    "trackBundleSize": true,
+    "performanceThresholds": {
+      "maxNewPageSize": "500kb",
+      "maxNewComponentSize": "100kb",
+      "buildTimeIncrease": "10%"
+    }
+  },
+  
+  "rollback": {
+    "enabled": true,
+    "createRestorePoints": true,
+    "maxRestorePoints": 10,
+    "autoRollbackOnFailure": false
+  }
+}
