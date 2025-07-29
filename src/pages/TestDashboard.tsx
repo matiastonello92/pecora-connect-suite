@@ -17,7 +17,10 @@ export default function TestDashboard() {
   const [activeTests, setActiveTests] = useState(0);
   
   // Only allow admins and managers to access the test dashboard
-  if (!hasPermission('manager') && !hasPermission('super_admin')) {
+  const isManager = hasPermission('user_management', 'can_validate');
+  const isSuperAdmin = hasPermission('financial', 'can_delete');
+  
+  if (!isManager && !isSuperAdmin) {
     return (
       <PageLayout 
         title="Access Denied" 

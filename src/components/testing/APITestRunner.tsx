@@ -84,7 +84,8 @@ export function APITestRunner({ onTestStateChange }: APITestRunnerProps) {
       
       switch (operation) {
         case 'select':
-          const { error: selectError } = await supabase.from(table).select('*').limit(1);
+          // Use type assertion to handle dynamic table names safely
+          const { error: selectError } = await supabase.from(table as any).select('*').limit(1);
           success = !selectError;
           break;
           

@@ -247,9 +247,8 @@ export function SecurityTestSuite({ onTestStateChange }: SecurityTestSuiteProps)
       const success = await runSecurityTest(securityTests[i].id);
       const test = securityTests.find(t => t.id === securityTests[i].id);
       if (success) passedCount++;
-      if (test?.status === 'warning') warningCount++;
       
-      setProgress(((i + 1) / securityTests.length) * 100);
+      if (test?.status === 'warning') warningCount++;
     }
     
     setCurrentTestIndex(-1);

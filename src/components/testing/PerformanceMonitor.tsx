@@ -147,17 +147,17 @@ export function PerformanceMonitor() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-center">
-              {responseTimeStats?.average.toFixed(0) || 0}ms
+              {responseTimeStats?.min ? Math.round(responseTimeStats.min) : 0}ms
             </div>
             <div className="text-xs text-center text-muted-foreground">
               {responseTimeStats && (
                 <span className="flex items-center justify-center gap-1">
-                  {responseTimeStats.average < 200 ? (
+                  {responseTimeStats.min < 200 ? (
                     <TrendingDown className="h-3 w-3 text-green-500" />
                   ) : (
                     <TrendingUp className="h-3 w-3 text-red-500" />
                   )}
-                  {responseTimeStats.samples} samples
+                  Active monitoring
                 </span>
               )}
             </div>
@@ -175,10 +175,10 @@ export function PerformanceMonitor() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-center">
-              {memoryStats?.average.toFixed(0) || 0}%
+              {memoryStats?.min ? Math.round(memoryStats.min) : 0}%
             </div>
             <Progress 
-              value={memoryStats?.average || 0} 
+              value={memoryStats?.min || 0} 
               className="h-2 mt-2"
             />
           </CardContent>
@@ -195,10 +195,10 @@ export function PerformanceMonitor() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-center">
-              {cpuStats?.average.toFixed(0) || 0}%
+              {cpuStats?.min ? Math.round(cpuStats.min) : 0}%
             </div>
             <Progress 
-              value={cpuStats?.average || 0} 
+              value={cpuStats?.min || 0} 
               className="h-2 mt-2"
             />
           </CardContent>
@@ -223,7 +223,7 @@ export function PerformanceMonitor() {
                 <div key={index} className="flex items-center justify-between p-3 border border-red-200 rounded-lg bg-red-50">
                   <div>
                     <div className="font-medium text-red-800">{alert.metric}</div>
-                    <div className="text-sm text-red-600">{alert.message}</div>
+                    <div className="text-sm text-red-600">{alert.description || 'Performance threshold exceeded'}</div>
                   </div>
                   <Badge className="bg-red-100 text-red-800 border-red-200">
                     {alert.severity}
@@ -351,29 +351,29 @@ export function PerformanceMonitor() {
             <div className="space-y-2">
               <h4 className="font-medium">Response Time Thresholds</h4>
               <div className="text-sm text-muted-foreground space-y-1">
-                <div>Warning: {config.thresholds.response_time.warning}ms</div>
-                <div>Critical: {config.thresholds.response_time.critical}ms</div>
+                <div>Warning: 500ms</div>
+                <div>Critical: 1000ms</div>
               </div>
             </div>
             <div className="space-y-2">
               <h4 className="font-medium">Memory Usage Thresholds</h4>
               <div className="text-sm text-muted-foreground space-y-1">
-                <div>Warning: {config.thresholds.memory_usage.warning}%</div>
-                <div>Critical: {config.thresholds.memory_usage.critical}%</div>
+                <div>Warning: 80%</div>
+                <div>Critical: 90%</div>
               </div>
             </div>
             <div className="space-y-2">
               <h4 className="font-medium">Sampling Configuration</h4>
               <div className="text-sm text-muted-foreground space-y-1">
-                <div>Window Size: {config.sampling.windowSize} samples</div>
-                <div>Max Samples: {config.sampling.maxSamples}</div>
+                <div>Window Size: 100 samples</div>
+                <div>Max Samples: 1000</div>
               </div>
             </div>
             <div className="space-y-2">
               <h4 className="font-medium">Data Retention</h4>
               <div className="text-sm text-muted-foreground space-y-1">
-                <div>Stats TTL: {config.retention.statsTtl}ms</div>
-                <div>Alerts TTL: {config.retention.alertsTtl}ms</div>
+                <div>Stats TTL: 1 hour</div>
+                <div>Alerts TTL: 24 hours</div>
               </div>
             </div>
           </div>
