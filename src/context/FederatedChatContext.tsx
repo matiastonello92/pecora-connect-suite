@@ -21,7 +21,7 @@ export interface LocationChatGroup {
   archive_after_days: number;
   priority: number;
   is_active: boolean;
-  metadata: Record<string, any>;
+  metadata: any;
   created_at: string;
   updated_at: string;
   created_by?: string;
@@ -47,7 +47,7 @@ export interface PaginatedMessage {
   content: string;
   sender_id: string;
   sender_name: string;
-  message_type: 'text' | 'image' | 'file' | 'audio' | 'video';
+  message_type: 'text' | 'image' | 'voice' | 'document' | 'system';
   media_url?: string;
   media_type?: string;
   created_at: string;
@@ -123,6 +123,20 @@ export const FederatedChatProvider: React.FC<FederatedChatProviderProps> = ({ ch
   } = useQuery({
     queryKey: ['federated-chats', user?.id],
     queryFn: async (): Promise<FederatedChat[]> => {
+      if (!user?.id) return [];
+      
+      // First get chat IDs where user is a participant
+      const { data: participantData, error: participantError } = await supabase
+        .from('chat_participants')
+        .select('chat_id')
+        .eq('user_id', user.id);
+
+      if (participantError) throw participantError;
+      
+      const chatIds = participantData?.map(p => p.chat_id) || [];
+      
+      if (chatIds.length === 0) return [];
+
       const { data, error } = await supabase
         .from('chats')
         .select(`
@@ -130,12 +144,7 @@ export const FederatedChatProvider: React.FC<FederatedChatProviderProps> = ({ ch
           locationGroup:location_chat_groups(*)
         `)
         .eq('is_federated', true)
-        .in('id', 
-          supabase
-            .from('chat_participants')
-            .select('chat_id')
-            .eq('user_id', user?.id || '')
-        )
+        .in('id', chatIds)
         .order('last_message_at', { ascending: false });
 
       if (error) throw error;
