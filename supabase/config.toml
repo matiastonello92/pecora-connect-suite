@@ -2,3 +2,6 @@ project_id = "cqlbidkagiknfplzbwse"
 
 [functions.send-invitation-email]
 verify_jwt = false
+
+[functions.send-alert-email]
+verify_jwt = false

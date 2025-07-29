@@ -11,6 +11,8 @@ import { StressTestController } from '@/components/testing/StressTestController'
 import { SecurityTestSuite } from '@/components/testing/SecurityTestSuite';
 import { PerformanceMonitor } from '@/components/testing/PerformanceMonitor';
 import { TestThreeFunctions } from '@/components/testing/TestThreeFunctions';
+import { AlertConfigurationPanel } from '@/components/testing/AlertConfigurationPanel';
+import { FunctionDetectionSystem } from '@/components/testing/FunctionDetectionSystem';
 import { usePermissions } from '@/hooks/usePermissions';
 
 export default function TestDashboard() {
@@ -57,7 +59,7 @@ export default function TestDashboard() {
       }
     >
       <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-7">
+        <TabsList className="grid w-full grid-cols-8">
           <TabsTrigger value="overview" className="flex items-center gap-2">
             <Monitor className="h-4 w-4" />
             Overview
@@ -77,6 +79,14 @@ export default function TestDashboard() {
           <TabsTrigger value="concurrent" className="flex items-center gap-2">
             <Activity className="h-4 w-4" />
             Concorrenti
+          </TabsTrigger>
+          <TabsTrigger value="detection" className="flex items-center gap-2">
+            <Activity className="h-4 w-4" />
+            Rilevamento
+          </TabsTrigger>
+          <TabsTrigger value="alerts" className="flex items-center gap-2">
+            <Activity className="h-4 w-4" />
+            Alert
           </TabsTrigger>
           <TabsTrigger value="security" className="flex items-center gap-2">
             <Shield className="h-4 w-4" />
@@ -106,6 +116,14 @@ export default function TestDashboard() {
 
         <TabsContent value="concurrent">
           <TestThreeFunctions />
+        </TabsContent>
+
+        <TabsContent value="detection">
+          <FunctionDetectionSystem />
+        </TabsContent>
+
+        <TabsContent value="alerts">
+          <AlertConfigurationPanel />
         </TabsContent>
 
         <TabsContent value="security">

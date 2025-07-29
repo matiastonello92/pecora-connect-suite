@@ -1592,30 +1592,7 @@ export type Database = {
       }
     }
     Views: {
-      location_hierarchy_view: {
-        Row: {
-          ancestor_codes: string[] | null
-          ancestors: string[] | null
-          children_codes: string[] | null
-          children_count: number | null
-          children_names: string[] | null
-          city: string | null
-          code: string | null
-          country: string | null
-          depth: number | null
-          district: string | null
-          full_path: string | null
-          hierarchy: Json | null
-          id: string | null
-          level: number | null
-          name: string | null
-          parent_location_id: string | null
-          path: string[] | null
-          region: string | null
-          root_location_id: string | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
       archive_old_messages: {
