@@ -140,14 +140,32 @@ All colors MUST be HSL. Based on La Pecoranegra branding.
 /* Test Dashboard specific improvements */
 @layer components {
   .test-tab-trigger {
-    @apply min-w-fit px-4 py-2 text-sm font-medium whitespace-nowrap;
+    @apply min-w-fit px-3 py-2 text-xs sm:text-sm font-medium whitespace-nowrap min-h-[2.5rem] w-full;
   }
   
   .test-card {
-    @apply border border-border bg-card text-card-foreground shadow-sm;
+    @apply border border-border bg-card text-card-foreground shadow-sm hover:shadow-md transition-shadow duration-200;
   }
   
   .test-content-wrapper {
     @apply max-w-full overflow-hidden;
+  }
+
+  /* Responsive tab grid improvements */
+  .tabs-grid {
+    @apply grid gap-1;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  }
+
+  @media (min-width: 640px) {
+    .tabs-grid {
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .tabs-grid {
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    }
   }
 }

@@ -111,62 +111,71 @@ export default function TestDashboard() {
 
       <Tabs defaultValue="overview" className="space-y-6">
         <div className="border-b">
-          <TabsList className="h-auto p-1 bg-transparent justify-start overflow-x-auto scrollbar-hide">
-            <div className="flex flex-wrap gap-1 min-w-max">
-              {/* System & Overview */}
-              <TabsTrigger value="overview" className="flex items-center gap-2 shrink-0">
+          <TabsList className="h-auto p-2 bg-transparent justify-start w-full">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 gap-2 w-full">
+              {/* Row 1: Core System Tests */}
+              <TabsTrigger value="overview" className="test-tab-trigger flex items-center justify-center gap-2">
                 <Monitor className="h-4 w-4" />
                 <span className="hidden sm:inline">Overview</span>
               </TabsTrigger>
               
-              {/* Database Tests */}
-              <TabsTrigger value="analysis" className="flex items-center gap-2 shrink-0">
+              <TabsTrigger value="analysis" className="test-tab-trigger flex items-center justify-center gap-2">
                 <Database className="h-4 w-4" />
                 <span className="hidden sm:inline">Analysis</span>
               </TabsTrigger>
-              <TabsTrigger value="duplication" className="flex items-center gap-2 shrink-0">
+              
+              <TabsTrigger value="duplication" className="test-tab-trigger flex items-center justify-center gap-2">
                 <Database className="h-4 w-4" />
                 <span className="hidden sm:inline">Duplication</span>
               </TabsTrigger>
-              <TabsTrigger value="rls-performance" className="flex items-center gap-2 shrink-0">
+              
+              <TabsTrigger value="rls-performance" className="test-tab-trigger flex items-center justify-center gap-2">
                 <Shield className="h-4 w-4" />
                 <span className="hidden sm:inline">RLS Perf</span>
               </TabsTrigger>
-              <TabsTrigger value="policy-validation" className="flex items-center gap-2 shrink-0">
+              
+              <TabsTrigger value="policy-validation" className="test-tab-trigger flex items-center justify-center gap-2">
                 <Shield className="h-4 w-4" />
                 <span className="hidden sm:inline">Policies</span>
               </TabsTrigger>
-              <TabsTrigger value="index-performance" className="flex items-center gap-2 shrink-0">
+              
+              <TabsTrigger value="index-performance" className="test-tab-trigger flex items-center justify-center gap-2">
                 <Database className="h-4 w-4" />
                 <span className="hidden sm:inline">Indexes</span>
               </TabsTrigger>
-              <TabsTrigger value="unused-indexes" className="flex items-center gap-2 shrink-0">
+              
+              <TabsTrigger value="unused-indexes" className="test-tab-trigger flex items-center justify-center gap-2">
                 <Database className="h-4 w-4" />
                 <span className="hidden sm:inline">Unused</span>
               </TabsTrigger>
               
-              {/* Performance Tests */}
-              <TabsTrigger value="pages" className="flex items-center gap-2 shrink-0">
+              {/* Row 2: Performance & Load Tests */}
+              <TabsTrigger value="pages" className="test-tab-trigger flex items-center justify-center gap-2">
                 <Activity className="h-4 w-4" />
                 <span className="hidden sm:inline">Pages</span>
               </TabsTrigger>
-              <TabsTrigger value="api" className="flex items-center gap-2 shrink-0">
+              
+              <TabsTrigger value="api" className="test-tab-trigger flex items-center justify-center gap-2">
                 <Database className="h-4 w-4" />
                 <span className="hidden sm:inline">API</span>
               </TabsTrigger>
-              <TabsTrigger value="stress" className="flex items-center gap-2 shrink-0">
+              
+              <TabsTrigger value="stress" className="test-tab-trigger flex items-center justify-center gap-2">
                 <Zap className="h-4 w-4" />
                 <span className="hidden sm:inline">Stress</span>
               </TabsTrigger>
-              <TabsTrigger value="chat-stress" className="flex items-center gap-2 shrink-0">
+              
+              <TabsTrigger value="chat-stress" className="test-tab-trigger flex items-center justify-center gap-2">
                 <Zap className="h-4 w-4" />
                 <span className="hidden sm:inline">Chat</span>
               </TabsTrigger>
-              <TabsTrigger value="concurrent" className="flex items-center gap-2 shrink-0">
+              
+              <TabsTrigger value="concurrent" className="test-tab-trigger flex items-center justify-center gap-2">
                 <Activity className="h-4 w-4" />
                 <span className="hidden sm:inline">Concurrent</span>
               </TabsTrigger>
-              <TabsTrigger value="security" className="flex items-center gap-2 shrink-0">
+              
+              <TabsTrigger value="security" className="test-tab-trigger flex items-center justify-center gap-2">
                 <Shield className="h-4 w-4" />
                 <span className="hidden sm:inline">Security</span>
               </TabsTrigger>

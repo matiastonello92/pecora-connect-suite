@@ -109,26 +109,31 @@ export function PerformanceMonitor() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="test-content-wrapper space-y-6">
       {/* System Health Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center justify-between text-sm">
-              <span className="flex items-center gap-2">
-                <Activity className="h-4 w-4" />
-                Health Score
-              </span>
-            </CardTitle>
-          </CardHeader>
+      <div>
+        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+          <Activity className="h-5 w-5 text-primary" />
+          System Health Overview
+        </h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <Card className="test-card">
+            <CardHeader className="pb-2">
+              <CardTitle className="flex items-center justify-between text-sm font-medium">
+                <span className="flex items-center gap-2">
+                  <Activity className="h-4 w-4 text-primary" />
+                  Health Score
+                </span>
+              </CardTitle>
+            </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-center">
               {(healthScore * 100).toFixed(0)}%
             </div>
             <Badge 
               className={
-                isHealthy ? 'bg-green-100 text-green-800 border-green-200 w-full justify-center' :
-                'bg-red-100 text-red-800 border-red-200 w-full justify-center'
+                isHealthy ? 'bg-success/10 text-success border-success/20 w-full justify-center' :
+                'bg-destructive/10 text-destructive border-destructive/20 w-full justify-center'
               }
             >
               {isHealthy ? 'Healthy' : 'Issues Detected'}
@@ -136,11 +141,11 @@ export function PerformanceMonitor() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="test-card">
           <CardHeader className="pb-2">
-            <CardTitle className="flex items-center justify-between text-sm">
+            <CardTitle className="flex items-center justify-between text-sm font-medium">
               <span className="flex items-center gap-2">
-                <Clock className="h-4 w-4" />
+                <Clock className="h-4 w-4 text-primary" />
                 Avg Response
               </span>
             </CardTitle>
@@ -153,9 +158,9 @@ export function PerformanceMonitor() {
               {responseTimeStats && (
                 <span className="flex items-center justify-center gap-1">
                   {responseTimeStats.avg < 200 ? (
-                    <TrendingDown className="h-3 w-3 text-green-500" />
+                    <TrendingDown className="h-3 w-3 text-success" />
                   ) : (
-                    <TrendingUp className="h-3 w-3 text-red-500" />
+                    <TrendingUp className="h-3 w-3 text-destructive" />
                   )}
                   {responseTimeStats.count} samples
                 </span>
@@ -164,11 +169,11 @@ export function PerformanceMonitor() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="test-card">
           <CardHeader className="pb-2">
-            <CardTitle className="flex items-center justify-between text-sm">
+            <CardTitle className="flex items-center justify-between text-sm font-medium">
               <span className="flex items-center gap-2">
-                <Database className="h-4 w-4" />
+                <Database className="h-4 w-4 text-primary" />
                 Memory
               </span>
             </CardTitle>
@@ -184,11 +189,11 @@ export function PerformanceMonitor() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="test-card">
           <CardHeader className="pb-2">
-            <CardTitle className="flex items-center justify-between text-sm">
+            <CardTitle className="flex items-center justify-between text-sm font-medium">
               <span className="flex items-center gap-2">
-                <Zap className="h-4 w-4" />
+                <Zap className="h-4 w-4 text-primary" />
                 CPU Usage
               </span>
             </CardTitle>
@@ -204,12 +209,13 @@ export function PerformanceMonitor() {
           </CardContent>
         </Card>
       </div>
+      </div>
 
       {/* Performance Alerts */}
       {alerts.length > 0 && (
-        <Card>
+        <Card className="test-card">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-red-600">
+            <CardTitle className="flex items-center gap-2 text-destructive text-lg">
               <Activity className="h-5 w-5" />
               Performance Alerts ({alerts.length})
             </CardTitle>
@@ -220,14 +226,14 @@ export function PerformanceMonitor() {
           <CardContent>
             <div className="space-y-2">
               {alerts.map((alert, index) => (
-                <div key={index} className="flex items-center justify-between p-3 border border-red-200 rounded-lg bg-red-50">
+                <div key={index} className="flex items-center justify-between p-3 border border-destructive/20 rounded-lg bg-destructive/5">
                   <div>
-                    <div className="font-medium text-red-800">{alert.metric}</div>
-                    <div className="text-sm text-red-600">
+                    <div className="font-medium text-destructive">{alert.metric}</div>
+                    <div className="text-sm text-muted-foreground">
                       {alert.metric} exceeded threshold: {alert.value.toFixed(2)} &gt; {alert.threshold}
                     </div>
                   </div>
-                  <Badge className="bg-red-100 text-red-800 border-red-200">
+                  <Badge className="bg-destructive/10 text-destructive border-destructive/20">
                     {alert.severity}
                   </Badge>
                 </div>
@@ -238,25 +244,27 @@ export function PerformanceMonitor() {
       )}
 
       {/* Real-time Monitoring */}
-      <Card>
+      <Card className="test-card">
         <CardHeader>
-          <CardTitle className="flex items-center justify-between">
+          <CardTitle className="flex items-center justify-between text-lg">
             <span className="flex items-center gap-2">
-              <Monitor className="h-5 w-5" />
+              <Monitor className="h-5 w-5 text-primary" />
               Real-time Performance Monitoring
             </span>
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <Button 
-                onClick={runPerformanceTest} 
+                onClick={runPerformanceTest}
                 variant="outline"
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 w-full sm:w-auto"
+                size="lg"
               >
                 <Zap className="h-4 w-4" />
                 Run Test
               </Button>
               <Button 
                 onClick={toggleMonitoring}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 w-full sm:w-auto"
+                size="lg"
               >
                 {isMonitoring ? (
                   <RefreshCw className="h-4 w-4 animate-spin" />
@@ -341,15 +349,15 @@ export function PerformanceMonitor() {
       </Card>
 
       {/* Performance Configuration */}
-      <Card>
+      <Card className="test-card">
         <CardHeader>
-          <CardTitle>Performance Monitoring Configuration</CardTitle>
+          <CardTitle className="text-lg">Performance Monitoring Configuration</CardTitle>
           <CardDescription>
             Current thresholds and sampling settings
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="space-y-2">
               <h4 className="font-medium">Response Time Thresholds</h4>
               <div className="text-sm text-muted-foreground space-y-1">
