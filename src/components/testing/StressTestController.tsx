@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -6,6 +6,7 @@ import { Progress } from '@/components/ui/progress';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Zap, 
   Play, 
@@ -15,7 +16,10 @@ import {
   Users, 
   Database,
   RefreshCw,
-  AlertTriangle
+  AlertTriangle,
+  Download,
+  BarChart3,
+  ExternalLink
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -84,6 +88,11 @@ export function StressTestController({ onTestStateChange }: StressTestController
   const runStressTest = async () => {
     setIsRunning(true);
     setProgress(0);
+    
+    toast({
+      title: "Starting K6 stress test",
+      description: `Launching stress test with ${config.concurrentUsers} users`,
+    });
     
     const testResult: StressTestResult = {
       scenario: config.scenario,

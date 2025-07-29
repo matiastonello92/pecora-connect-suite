@@ -1,0 +1,65 @@
+{
+  "testSuites": {
+    "auth-system": {
+      "script": "auth-api-test.js",
+      "description": "Authentication and location system stress test",
+      "maxUsers": 1000,
+      "duration": "15m",
+      "tags": ["auth", "location", "api"]
+    },
+    "chat-system": {
+      "script": "chat-system-test.js", 
+      "description": "Real-time chat system high-load test",
+      "maxUsers": 5000,
+      "duration": "20m",
+      "tags": ["chat", "realtime", "messaging"]
+    },
+    "inventory-system": {
+      "script": "inventory-system-test.js",
+      "description": "Inventory management heavy load simulation",
+      "maxUsers": 10000,
+      "duration": "18m", 
+      "tags": ["inventory", "database", "bulk-operations"]
+    },
+    "full-system": {
+      "script": "full-system-test.js",
+      "description": "Complete system stress test across all modules",
+      "maxUsers": 15000,
+      "duration": "30m",
+      "tags": ["full-stack", "integration", "extreme-load"]
+    }
+  },
+  "environments": {
+    "development": {
+      "baseUrl": "https://cqlbidkagiknfplzbwse.supabase.co",
+      "anonKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNxbGJpZGthZ2lrbmZwbHpid3NlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM1MzIwNjIsImV4cCI6MjA2OTEwODA2Mn0.U28s4yA5d9nLhnr7q-OcfYx6vfjquqXG8c7kOSXz1FA",
+      "maxConcurrentUsers": 5000
+    },
+    "staging": {
+      "baseUrl": "https://cqlbidkagiknfplzbwse.supabase.co",
+      "anonKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNxbGJpZGthZ2lrbmZwbHpid3NlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM1MzIwNjIsImV4cCI6MjA2OTEwODA2Mn0.U28s4yA5d9nLhnr7q-OcfYx6vfjquqXG8c7kOSXz1FA",
+      "maxConcurrentUsers": 10000
+    },
+    "production": {
+      "baseUrl": "https://cqlbidkagiknfplzbwse.supabase.co",
+      "anonKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNxbGJpZGthZ2lrbmZwbHpid3NlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM1MzIwNjIsImV4cCI6MjA2OTEwODA2Mn0.U28s4yA5d9nLhnr7q-OcfYx6vfjquqXG8c7kOSXz1FA",
+      "maxConcurrentUsers": 100000
+    }
+  },
+  "thresholds": {
+    "errorRateMax": 0.1,
+    "responseTimeP95": 2000,
+    "responseTimeP99": 5000,
+    "throughputMin": 100
+  },
+  "outputFormats": [
+    "json",
+    "influxdb"
+  ],
+  "reportGeneration": {
+    "enabled": true,
+    "formats": ["html", "json", "csv"],
+    "includeGraphs": true,
+    "saveLocation": "test-results/"
+  }
+}
