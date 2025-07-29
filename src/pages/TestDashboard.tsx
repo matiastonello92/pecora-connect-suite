@@ -18,6 +18,7 @@ import { AppAnalysisDashboard } from '@/components/testing/AppAnalysisDashboard'
 import { RLSPerformanceTest } from '@/components/testing/RLSPerformanceTest';
 import { PolicyValidationTest } from '@/components/testing/PolicyValidationTest';
 import { ForeignKeyIndexTest } from '@/components/testing/ForeignKeyIndexTest';
+import { UnusedIndexAnalyzer } from '@/components/testing/UnusedIndexAnalyzer';
 import { usePermissions } from '@/hooks/usePermissions';
 import { useSimpleAuth } from '@/context/SimpleAuthContext';
 
@@ -92,6 +93,10 @@ export default function TestDashboard() {
             <Database className="h-4 w-4" />
             Index Performance
           </TabsTrigger>
+          <TabsTrigger value="unused-indexes" className="flex items-center gap-2">
+            <Database className="h-4 w-4" />
+            Indici Inutilizzati
+          </TabsTrigger>
           <TabsTrigger value="pages" className="flex items-center gap-2">
             <Activity className="h-4 w-4" />
             Pages
@@ -150,6 +155,9 @@ export default function TestDashboard() {
           <ForeignKeyIndexTest />
         </TabsContent>
         
+        <TabsContent value="unused-indexes">
+          <UnusedIndexAnalyzer />
+        </TabsContent>
         <TabsContent value="pages">
           <PageTestRunner onTestStateChange={(running) => setActiveTests(prev => running ? prev + 1 : prev - 1)} />
         </TabsContent>
