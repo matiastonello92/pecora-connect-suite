@@ -10,6 +10,7 @@ import { APITestRunner } from '@/components/testing/APITestRunner';
 import { StressTestController } from '@/components/testing/StressTestController';
 import { SecurityTestSuite } from '@/components/testing/SecurityTestSuite';
 import { PerformanceMonitor } from '@/components/testing/PerformanceMonitor';
+import { TestThreeFunctions } from '@/components/testing/TestThreeFunctions';
 import { usePermissions } from '@/hooks/usePermissions';
 
 export default function TestDashboard() {
@@ -56,7 +57,7 @@ export default function TestDashboard() {
       }
     >
       <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-6">
+        <TabsList className="grid w-full grid-cols-7">
           <TabsTrigger value="overview" className="flex items-center gap-2">
             <Monitor className="h-4 w-4" />
             Overview
@@ -72,6 +73,10 @@ export default function TestDashboard() {
           <TabsTrigger value="stress" className="flex items-center gap-2">
             <Zap className="h-4 w-4" />
             Stress
+          </TabsTrigger>
+          <TabsTrigger value="concurrent" className="flex items-center gap-2">
+            <Activity className="h-4 w-4" />
+            Concorrenti
           </TabsTrigger>
           <TabsTrigger value="security" className="flex items-center gap-2">
             <Shield className="h-4 w-4" />
@@ -97,6 +102,10 @@ export default function TestDashboard() {
 
         <TabsContent value="stress">
           <StressTestController onTestStateChange={(running) => setActiveTests(prev => running ? prev + 1 : prev - 1)} />
+        </TabsContent>
+
+        <TabsContent value="concurrent">
+          <TestThreeFunctions />
         </TabsContent>
 
         <TabsContent value="security">
