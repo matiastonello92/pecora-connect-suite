@@ -14,6 +14,87 @@ export type Database = {
   }
   public: {
     Tables: {
+      alert_configurations: {
+        Row: {
+          alert_type: string
+          created_at: string
+          dashboard_enabled: boolean
+          email_address: string | null
+          email_enabled: boolean
+          id: string
+          is_enabled: boolean
+          threshold_settings: Json | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          alert_type: string
+          created_at?: string
+          dashboard_enabled?: boolean
+          email_address?: string | null
+          email_enabled?: boolean
+          id?: string
+          is_enabled?: boolean
+          threshold_settings?: Json | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          alert_type?: string
+          created_at?: string
+          dashboard_enabled?: boolean
+          email_address?: string | null
+          email_enabled?: boolean
+          id?: string
+          is_enabled?: boolean
+          threshold_settings?: Json | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      alerts: {
+        Row: {
+          alert_type: string
+          created_at: string
+          id: string
+          is_read: boolean
+          location_code: string | null
+          message: string
+          metadata: Json | null
+          severity: string
+          title: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          alert_type: string
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          location_code?: string | null
+          message: string
+          metadata?: Json | null
+          severity?: string
+          title: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          alert_type?: string
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          location_code?: string | null
+          message?: string
+          metadata?: Json | null
+          severity?: string
+          title?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       archived_users: {
         Row: {
           access_level: Database["public"]["Enums"]["access_level"] | null
@@ -594,6 +675,45 @@ export type Database = {
           },
         ]
       }
+      detected_functions: {
+        Row: {
+          created_at: string
+          detection_method: string
+          file_path: string
+          function_name: string
+          function_signature: string | null
+          id: string
+          is_test_ready: boolean
+          last_detected_at: string
+          metadata: Json | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          detection_method: string
+          file_path: string
+          function_name: string
+          function_signature?: string | null
+          id?: string
+          is_test_ready?: boolean
+          last_detected_at?: string
+          metadata?: Json | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          detection_method?: string
+          file_path?: string
+          function_name?: string
+          function_signature?: string | null
+          id?: string
+          is_test_ready?: boolean
+          last_detected_at?: string
+          metadata?: Json | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       equipment: {
         Row: {
           category: string
@@ -1169,6 +1289,45 @@ export type Database = {
           },
         ]
       }
+      performance_test_results: {
+        Row: {
+          alerts_generated: number | null
+          created_at: string
+          end_time: string | null
+          id: string
+          metrics: Json | null
+          start_time: string
+          status: string
+          test_function: string
+          test_suite: string
+          updated_at: string
+        }
+        Insert: {
+          alerts_generated?: number | null
+          created_at?: string
+          end_time?: string | null
+          id?: string
+          metrics?: Json | null
+          start_time: string
+          status?: string
+          test_function: string
+          test_suite: string
+          updated_at?: string
+        }
+        Update: {
+          alerts_generated?: number | null
+          created_at?: string
+          end_time?: string | null
+          id?: string
+          metrics?: Json | null
+          start_time?: string
+          status?: string
+          test_function?: string
+          test_suite?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           access_level: Database["public"]["Enums"]["access_level"]
@@ -1507,6 +1666,18 @@ export type Database = {
           error_message: string
         }[]
       }
+      create_alert: {
+        Args: {
+          p_alert_type: string
+          p_title: string
+          p_message: string
+          p_severity?: string
+          p_metadata?: Json
+          p_user_id?: string
+          p_location_code?: string
+        }
+        Returns: string
+      }
       create_private_chat: {
         Args: { other_user_id: string }
         Returns: string
@@ -1709,6 +1880,17 @@ export type Database = {
       get_user_access_level: {
         Args: { user_uuid?: string }
         Returns: Database["public"]["Enums"]["access_level"]
+      }
+      get_user_alert_configurations: {
+        Args: { target_user_id: string }
+        Returns: {
+          alert_type: string
+          is_enabled: boolean
+          email_enabled: boolean
+          dashboard_enabled: boolean
+          email_address: string
+          threshold_settings: Json
+        }[]
       }
       get_user_chat_ids: {
         Args: { user_uuid?: string }
