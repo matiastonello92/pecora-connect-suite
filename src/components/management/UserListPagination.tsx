@@ -199,7 +199,7 @@ export const UserListPagination = ({
                 <div>
                   <div className="font-medium">Location</div>
                   <div className="text-muted-foreground">
-                    {(user.locations || [user.location]).join(', ')}
+                    {user.locations?.join(', ') || 'No locations'}
                   </div>
                 </div>
                 <div>

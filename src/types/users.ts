@@ -2,7 +2,7 @@
 export type UserRole = 'base' | 'manager' | 'super_admin';
 export type UserStatus = 'active' | 'inactive' | 'suspended';
 export type EmploymentType = 'full-time' | 'part-time' | 'contract' | 'intern';
-export type LocationType = 'menton' | 'lyon' | 'all_locations';
+export type LocationType = 'menton' | 'lyon';
 
 // Restaurant roles (descriptive job functions)
 export type RestaurantRole = 
@@ -86,8 +86,7 @@ export interface UserProfile {
   position: string;
   employmentType: EmploymentType;
   status: UserStatus;
-  location: LocationType; // Keep for backward compatibility
-  locations: string[]; // New multiple locations field
+  locations: string[];
   startDate: Date;
   endDate?: Date;
   
@@ -109,8 +108,7 @@ export interface ArchivedUser {
   role: UserRole;
   restaurantRole?: RestaurantRole;
   accessLevel?: AccessLevel;
-  location: LocationType; // Keep for backward compatibility
-  locations: string[]; // New multiple locations field
+  locations: string[];
   department?: string;
   position?: string;
   previousStatus: 'active' | 'pending';
@@ -129,8 +127,7 @@ export interface InvitationData {
   role: UserRole;
   restaurantRole?: RestaurantRole;
   accessLevel: AccessLevel;
-  location: LocationType; // Keep for backward compatibility
-  locations?: string[]; // New field for multiple locations (optional for backward compatibility)
+  locations: string[];
   customPermissions?: Partial<Record<AppModule, ModulePermissions>>;
 }
 

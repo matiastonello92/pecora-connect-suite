@@ -19,7 +19,7 @@ interface PendingInvitation {
   first_name: string;
   last_name: string;
   role: string;
-  location: string;
+  locations: string[];
   status: string;
   created_at: string;
   expires_at: string;

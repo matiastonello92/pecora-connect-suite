@@ -146,7 +146,6 @@ export const EnhancedInviteUserDialog = () => {
         role: role as UserRole,
         restaurantRole: restaurantRole === 'none' ? undefined : restaurantRole as RestaurantRole,
         accessLevel: accessLevel as AccessLevel,
-        location: locations[0] as LocationType, // Use first location for backward compatibility
         locations: locations,
         customPermissions: hasCustomPermissions ? customPermissions : undefined
       };

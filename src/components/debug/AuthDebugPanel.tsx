@@ -52,8 +52,7 @@ export const AuthDebugPanel: React.FC = () => {
               user_id: profile.user_id,
               email: profile.email,
               role: profile.role,
-              access_level: profile.access_level,
-              location: profile.location,
+              access_level: profile.accessLevel,
               locations: profile.locations,
               status: profile.status
             }, null, 2) : 'null'}

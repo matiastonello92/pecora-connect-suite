@@ -73,9 +73,9 @@ export const ConnectionRequestManager: React.FC<ConnectionRequestManagerProps> =
 
         // Apply location filtering for non-privileged users
         if (!canAccessAllLocations()) {
-          const userLocations = profile.locations || [profile.location]; // Support both new and old format
+          const userLocations = profile.locations || ['menton'];
           filteredUsers = filteredUsers.filter(u => {
-            const targetUserLocations = u.locations || [u.location];
+            const targetUserLocations = u.locations || ['menton'];
             return userLocations.some(loc => targetUserLocations.includes(loc));
           });
         }
@@ -283,7 +283,7 @@ export const ConnectionRequestManager: React.FC<ConnectionRequestManagerProps> =
               {canAccessAllLocations() && (
                 <p className="text-xs text-muted-foreground flex items-center mt-1">
                   <MapPin className="h-3 w-3 mr-1" />
-                  {(targetUser.locations || [targetUser.location]).join(', ')}
+                  {targetUser.locations?.join(', ') || 'No locations'}
                 </p>
               )}
                             </div>
@@ -487,7 +487,7 @@ export const ConnectionRequestManager: React.FC<ConnectionRequestManagerProps> =
                     {canAccessAllLocations() && (
                       <p className="text-xs text-muted-foreground flex items-center">
                         <MapPin className="h-3 w-3 mr-1" />
-                        {(selectedUser.locations || [selectedUser.location]).join(', ')}
+                        {selectedUser.locations?.join(', ') || 'No locations'}
                       </p>
                     )}
                   </div>

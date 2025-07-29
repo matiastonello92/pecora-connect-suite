@@ -25,7 +25,6 @@ export type Database = {
           first_name: string
           id: string
           last_name: string
-          location: string
           locations: string[] | null
           metadata: Json | null
           original_invitation_id: string | null
@@ -46,7 +45,6 @@ export type Database = {
           first_name: string
           id?: string
           last_name: string
-          location: string
           locations?: string[] | null
           metadata?: Json | null
           original_invitation_id?: string | null
@@ -69,7 +67,6 @@ export type Database = {
           first_name?: string
           id?: string
           last_name?: string
-          location?: string
           locations?: string[] | null
           metadata?: Json | null
           original_invitation_id?: string | null
@@ -998,7 +995,6 @@ export type Database = {
           id: string
           last_login_at: string | null
           last_name: string
-          location: string
           locations: string[] | null
           phone: string | null
           position: string | null
@@ -1019,7 +1015,6 @@ export type Database = {
           id?: string
           last_login_at?: string | null
           last_name: string
-          location: string
           locations?: string[] | null
           phone?: string | null
           position?: string | null
@@ -1042,7 +1037,6 @@ export type Database = {
           id?: string
           last_login_at?: string | null
           last_name?: string
-          location?: string
           locations?: string[] | null
           phone?: string | null
           position?: string | null
@@ -1137,7 +1131,6 @@ export type Database = {
           invitation_token: string | null
           invited_by: string | null
           last_name: string
-          location: string
           locations: string[] | null
           metadata: Json | null
           restaurant_role: Database["public"]["Enums"]["restaurant_role"] | null
@@ -1155,7 +1148,6 @@ export type Database = {
           invitation_token?: string | null
           invited_by?: string | null
           last_name: string
-          location: string
           locations?: string[] | null
           metadata?: Json | null
           restaurant_role?:
@@ -1175,7 +1167,6 @@ export type Database = {
           invitation_token?: string | null
           invited_by?: string | null
           last_name?: string
-          location?: string
           locations?: string[] | null
           metadata?: Json | null
           restaurant_role?:
@@ -1389,10 +1380,6 @@ export type Database = {
         Args: { user1_id: string; user2_id: string }
         Returns: string
       }
-      get_current_user_location: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
       get_current_user_locations: {
         Args: Record<PropertyKey, never>
         Returns: string[]
@@ -1409,8 +1396,8 @@ export type Database = {
         Args: { user_uuid?: string }
         Returns: string[]
       }
-      get_user_locations_for_rls: {
-        Args: { user_uuid: string }
+      get_user_locations: {
+        Args: { user_uuid?: string }
         Returns: string[]
       }
       get_user_unread_counts: {

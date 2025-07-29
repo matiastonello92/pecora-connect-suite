@@ -77,7 +77,6 @@ export const InviteUserDialog = () => {
       lastName,
       role: role as UserRole,
       accessLevel: 'base' as AccessLevel,
-      location: location as LocationType,
       locations: [location]
     };
 

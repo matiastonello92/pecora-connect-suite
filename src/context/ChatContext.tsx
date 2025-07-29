@@ -136,7 +136,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
 
       // Get user's accessible locations from profile
-      const profileLocations = profile.locations || [profile.location || 'menton'];
+      const profileLocations = profile.locations || ['menton'];
       console.log('📍 User locations:', profileLocations);
       
       const { data, error } = await supabase
@@ -341,7 +341,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Chat module supports multi-location views
   const filteredChats = chats.filter(chat => {
-    const profileLocations = profile?.locations || [profile?.location || 'menton'];
+    const profileLocations = profile?.locations || ['menton'];
     const hasLocationAccess = profileLocations.includes(chat.location);
     
     if (!hasLocationAccess) return false;

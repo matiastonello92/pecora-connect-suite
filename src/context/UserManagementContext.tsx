@@ -11,7 +11,7 @@ interface PendingInvitation {
   role: string;
   restaurant_role?: string | null;
   access_level: string;
-  location: string;
+  locations: string[];
   status: string;
   created_at: string;
   expires_at: string;
@@ -142,8 +142,7 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
         accessLevel: profile.access_level || 'base',
         hasCustomPermissions: profile.has_custom_permissions || false,
         department: profile.department || '',
-        location: profile.location as LocationType || 'menton',
-        locations: profile.locations || [profile.location as LocationType || 'menton'], // New locations field
+        locations: profile.locations || ['menton'],
         position: profile.position || '',
         status: profile.status as UserStatus,
         employmentType: 'full-time' as EmploymentType,
@@ -179,7 +178,7 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
         role: invitation.role,
         restaurant_role: invitation.restaurant_role,
         access_level: invitation.access_level || 'base',
-        location: invitation.location,
+        locations: invitation.locations || ['menton'],
         status: invitation.status,
         created_at: invitation.created_at,
         expires_at: invitation.expires_at,
@@ -216,8 +215,7 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
         lastName: user.last_name,
         email: user.email,
         role: user.role as UserRole,
-        location: ((user.locations && user.locations[0]) || user.location) as LocationType, // Use first location
-        locations: user.locations || [user.location], // Add new locations field
+        locations: user.locations || ['menton'],
         department: user.department,
         position: user.position,
         previousStatus: user.previous_status as 'active' | 'pending',
@@ -363,8 +361,7 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
           role: user.role,
           restaurant_role: user.restaurantRole,
           access_level: user.accessLevel,
-          location: (user.locations && user.locations[0]) || user.location, // Use first location
-          locations: user.locations || [user.location], // Add new locations field
+          locations: user.locations || ['menton'],
           department: user.department,
           position: user.position,
           previous_status: user.status || 'active',
@@ -483,7 +480,7 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
           role: invitation.role,
           restaurant_role: invitation.restaurant_role as any,
           access_level: invitation.access_level as any,
-          location: invitation.location,
+          locations: invitation.locations,
           previous_status: 'pending',
           archived_by: (await supabase.auth.getUser()).data.user?.id,
           reason: 'invitation_deletion',
@@ -554,8 +551,7 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
             first_name: archivedUser.firstName,
             last_name: archivedUser.lastName,
             role: archivedUser.role,
-            location: (archivedUser.locations && archivedUser.locations[0]) || archivedUser.location,
-            locations: archivedUser.locations || [archivedUser.location],
+            locations: archivedUser.locations || ['menton'],
             status: 'pending'
           });
 
@@ -569,8 +565,7 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
             first_name: archivedUser.firstName,
             last_name: archivedUser.lastName,
             role: archivedUser.role,
-            location: (archivedUser.locations && archivedUser.locations[0]) || archivedUser.location,
-            locations: archivedUser.locations || [archivedUser.location],
+            locations: archivedUser.locations || ['menton'],
             department: archivedUser.department,
             position: archivedUser.position,
             status: 'active'
@@ -647,7 +642,7 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
           firstName: invitation.first_name,
           lastName: invitation.last_name,
           role: invitation.role,
-          location: invitation.location,
+          locations: invitation.locations,
           invitationToken: updatedInvitation.invitation_token,
           invitedByName,
           isResend: true

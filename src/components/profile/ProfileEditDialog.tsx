@@ -29,7 +29,7 @@ export const ProfileEditDialog = ({ user, isOpen, onOpenChange }: ProfileEditDia
       setFirstName(user.firstName);
       setLastName(user.lastName);
       setPhone(user.phone || '');
-      setLocations(user.locations || [user.location].filter(Boolean));
+      setLocations(user.locations || ['menton']);
       setLocationError('');
     }
   }, [isOpen, user]);

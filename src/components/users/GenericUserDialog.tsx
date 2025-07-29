@@ -54,7 +54,7 @@ export const GenericUserDialog = ({
           role: user.role,
           restaurantRole: user.restaurantRole || 'none',
           accessLevel: user.accessLevel,
-          locations: user.locations || [user.location].filter(Boolean),
+          locations: user.locations || ['menton'],
           department: user.department,
           position: user.position
         });
@@ -99,7 +99,7 @@ export const GenericUserDialog = ({
           role: formData.role,
           restaurant_role: formData.restaurantRole === 'none' ? null : formData.restaurantRole,
           access_level: formData.accessLevel,
-          location: formData.locations[0], // Backward compatibility
+          
           locations: formData.locations,
           department: formData.department,
           position: formData.position,

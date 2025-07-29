@@ -101,8 +101,7 @@ export const ProfileSecurity = ({ user }: ProfileSecurityProps) => {
             role: user.role,
             restaurant_role: user.restaurantRole,
             access_level: user.accessLevel,
-            location: user.location, // Keep for backward compatibility
-            locations: user.locations || [user.location], // Add new locations field
+            locations: user.locations || ['menton'],
             department: user.department,
             position: user.position,
             previous_status: user.status,
@@ -243,7 +242,7 @@ export const ProfileSecurity = ({ user }: ProfileSecurityProps) => {
             <div className="space-y-2">
               <label className="text-sm font-medium">Location</label>
               <div className="text-sm text-muted-foreground">
-                Current locations: {(user.locations || [user.location]).join(', ')}
+                Current locations: {user.locations?.join(', ') || 'No locations'}
               </div>
               <p className="text-xs text-muted-foreground">
                 Contact an administrator to change location assignments.

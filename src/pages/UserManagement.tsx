@@ -193,7 +193,7 @@ export const UserManagement = () => {
                       </div>
                       <div className="min-w-0">
                         <div className="text-xs sm:text-sm font-medium">Location</div>
-                        <div className="text-xs sm:text-sm text-muted-foreground">{(user.locations || [user.location]).join(', ')}</div>
+                        <div className="text-xs sm:text-sm text-muted-foreground">{user.locations?.join(', ') || 'No locations'}</div>
                       </div>
                       <div className="min-w-0">
                         <div className="text-xs sm:text-sm font-medium">Last Login</div>
@@ -283,7 +283,7 @@ export const UserManagement = () => {
                     </div>
                     <div className="min-w-0">
                       <div className="text-xs sm:text-sm font-medium">Location</div>
-                      <div className="text-xs sm:text-sm text-muted-foreground">{invitation.location}</div>
+                      <div className="text-xs sm:text-sm text-muted-foreground">{invitation.locations?.join(', ') || 'No locations'}</div>
                     </div>
                   </div>
                   

@@ -1,21 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import type { User, Session } from '@supabase/supabase-js';
-
-interface UserProfile {
-  user_id: string;
-  first_name: string;
-  last_name: string;
-  email: string;
-  role: string;
-  access_level: string;
-  location: string;
-  locations: string[];
-  department: string;
-  position: string;
-  status: string;
-  has_custom_permissions: boolean;
-}
+import { UserProfile } from '@/types/users';
 
 interface AuthState {
   user: User | null;
@@ -75,7 +61,30 @@ export const SimpleAuthProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         status: data.status
       });
       
-      return data;
+      // Map database profile to UserProfile interface
+      return {
+        user_id: data.user_id,
+        email: data.email || '',
+        firstName: data.first_name || '',
+        lastName: data.last_name || '',
+        phone: data.phone,
+        avatar: data.avatar_url,
+        role: data.role,
+        restaurantRole: data.restaurant_role,
+        accessLevel: data.access_level || 'base',
+        hasCustomPermissions: data.has_custom_permissions || false,
+        department: data.department || '',
+        position: data.position || '',
+        employmentType: 'full-time',
+        status: data.status || 'active',
+        locations: data.locations || ['menton'],
+        startDate: new Date(data.created_at || ''),
+        permissions: [],
+        customPermissions: [],
+        lastLogin: data.last_login_at ? new Date(data.last_login_at) : undefined,
+        createdAt: new Date(data.created_at || ''),
+        updatedAt: new Date(data.updated_at || '')
+      } as UserProfile;
     } catch (error) {
       console.error('❌ Exception during profile fetch:', error);
       return null;

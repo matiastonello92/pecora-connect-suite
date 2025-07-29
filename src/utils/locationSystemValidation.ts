@@ -40,7 +40,7 @@ export const validateLocationSystemHealth = async () => {
     // Step 3: Get user location summary
     const { data: users, error: usersError } = await supabase
       .from('profiles')
-      .select('user_id, first_name, last_name, location, locations, status')
+      .select('user_id, first_name, last_name, locations, status')
       .eq('status', 'active');
 
     if (usersError) {
@@ -49,8 +49,7 @@ export const validateLocationSystemHealth = async () => {
       results.userLocationSummary = (users || []).map(user => ({
         id: user.user_id,
         name: `${user.first_name} ${user.last_name}`,
-        oldLocation: user.location,
-        newLocations: user.locations || [],
+        locations: user.locations || [],
         locationCount: (user.locations || []).length
       }));
     }
