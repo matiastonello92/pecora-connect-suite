@@ -26,14 +26,27 @@ export const useOptimizedChats = () => {
     queryFn: async () => {
       if (!profile?.user_id) throw new Error('No profile available');
 
-      // Single optimized query to get chats with unread counts using CTE
-      const { data, error } = await supabase.rpc('get_chats_with_unread_counts', {
-        user_id: profile.user_id,
-        user_locations: userLocations
-      });
+      // For now, use the existing chat loading logic until the RPC function is available
+      const { data, error } = await supabase
+        .from('chats')
+        .select(`
+          *,
+          participants:chat_participants(
+            *,
+            user:profiles!chat_participants_user_id_fkey(
+              first_name,
+              last_name,
+              position,
+              department,
+              role
+            )
+          )
+        `)
+        .in('location', userLocations)
+        .order('last_message_at', { ascending: false });
 
       if (error) throw error;
-      return data || [];
+      return (data || []) as Chat[];
     },
     enabled: !!profile?.user_id && userLocations.length > 0,
     staleTime: 1000 * 60 * 2, // 2 minutes for chat list
@@ -101,7 +114,7 @@ export const useSendMessage = () => {
     }: {
       chatId: string;
       content: string;
-      messageType?: string;
+      messageType?: 'text' | 'image' | 'voice' | 'document' | 'system';
       mediaUrl?: string;
     }) => {
       if (!profile) throw new Error('No profile available');
@@ -112,7 +125,7 @@ export const useSendMessage = () => {
           chat_id: chatId,
           sender_id: profile.user_id,
           content,
-          message_type: messageType,
+          message_type: messageType as 'text' | 'image' | 'voice' | 'document' | 'system',
           media_url: mediaUrl
         });
 
@@ -136,12 +149,45 @@ export const useOptimizedUnreadCounts = () => {
     queryFn: async () => {
       if (!profile?.user_id) return { total: 0, byChat: {} };
 
-      const { data, error } = await supabase.rpc('get_user_unread_counts', {
-        user_id: profile.user_id
-      });
+      // Simplified unread count logic for now
+      const { data: participants, error } = await supabase
+        .from('chat_participants')
+        .select(`
+          chat_id,
+          last_read_at,
+          chat:chats(id, type, location)
+        `)
+        .eq('user_id', profile.user_id);
 
       if (error) throw error;
-      return data;
+
+      const chatCounts: Record<string, number> = {};
+      let total = 0;
+
+      await Promise.all(
+        (participants || []).map(async (participant) => {
+          const chat = participant.chat;
+          if (!chat) return;
+
+          const lastReadAt = participant.last_read_at || '1970-01-01T00:00:00Z';
+
+          const { count, error: countError } = await supabase
+            .from('chat_messages')
+            .select('*', { count: 'exact', head: true })
+            .eq('chat_id', chat.id)
+            .neq('sender_id', profile.user_id)
+            .eq('is_deleted', false)
+            .gt('created_at', lastReadAt);
+
+          if (!countError) {
+            const unreadCount = count || 0;
+            chatCounts[chat.id] = unreadCount;
+            total += unreadCount;
+          }
+        })
+      );
+
+      return { total, byChat: chatCounts };
     },
     enabled: !!profile?.user_id,
     staleTime: 1000 * 30, // 30 seconds for unread counts

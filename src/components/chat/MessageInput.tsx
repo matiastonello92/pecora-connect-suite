@@ -25,9 +25,10 @@ import { MediaUpload } from './MediaUpload';
 
 interface MessageInputProps {
   onSendMessage: (content: string, type?: ChatMessageType, mediaUrl?: string) => void;
+  disabled?: boolean;
 }
 
-export const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage }) => {
+export const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage, disabled = false }) => {
   const [message, setMessage] = useState('');
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [showAttachMenu, setShowAttachMenu] = useState(false);
@@ -281,6 +282,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage }) => 
             onClick={handleSend}
             size="sm"
             className="h-10 w-10 rounded-full p-0"
+            disabled={disabled}
           >
             <Send className="h-4 w-4" />
           </Button>

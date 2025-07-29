@@ -1356,6 +1356,25 @@ export type Database = {
           location: string
         }[]
       }
+      get_chats_with_unread_counts: {
+        Args: { user_id: string; user_locations: string[] }
+        Returns: {
+          id: string
+          type: Database["public"]["Enums"]["chat_type"]
+          name: string
+          location: string
+          description: string
+          is_archived: boolean
+          metadata: Json
+          last_message_at: string
+          created_at: string
+          updated_at: string
+          created_by: string
+          participants: Json
+          last_message: Json
+          unread_count: number
+        }[]
+      }
       get_comprehensive_chat_status: {
         Args: Record<PropertyKey, never>
         Returns: {
@@ -1393,6 +1412,13 @@ export type Database = {
       get_user_locations_for_rls: {
         Args: { user_uuid: string }
         Returns: string[]
+      }
+      get_user_unread_counts: {
+        Args: { user_id: string }
+        Returns: {
+          total: number
+          bychat: Json
+        }[]
       }
       has_module_permission: {
         Args: {
