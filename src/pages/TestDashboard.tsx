@@ -16,6 +16,7 @@ import { FunctionDetectionSystem } from '@/components/testing/FunctionDetectionS
 import { TestingSimulator } from '@/components/testing/TestingSimulator';
 import { AppAnalysisDashboard } from '@/components/testing/AppAnalysisDashboard';
 import { RLSPerformanceTest } from '@/components/testing/RLSPerformanceTest';
+import { PolicyValidationTest } from '@/components/testing/PolicyValidationTest';
 import { usePermissions } from '@/hooks/usePermissions';
 import { useSimpleAuth } from '@/context/SimpleAuthContext';
 
@@ -69,7 +70,7 @@ export default function TestDashboard() {
       }
     >
       <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-10">
+        <TabsList className="grid w-full grid-cols-11">
           <TabsTrigger value="overview" className="flex items-center gap-2">
             <Monitor className="h-4 w-4" />
             Overview
@@ -81,6 +82,10 @@ export default function TestDashboard() {
           <TabsTrigger value="rls-performance" className="flex items-center gap-2">
             <Shield className="h-4 w-4" />
             RLS Performance
+          </TabsTrigger>
+          <TabsTrigger value="policy-validation" className="flex items-center gap-2">
+            <Shield className="h-4 w-4" />
+            Policy Validation
           </TabsTrigger>
           <TabsTrigger value="pages" className="flex items-center gap-2">
             <Activity className="h-4 w-4" />
@@ -130,6 +135,10 @@ export default function TestDashboard() {
         
         <TabsContent value="rls-performance">
           <RLSPerformanceTest />
+        </TabsContent>
+        
+        <TabsContent value="policy-validation">
+          <PolicyValidationTest />
         </TabsContent>
         
         <TabsContent value="pages">
