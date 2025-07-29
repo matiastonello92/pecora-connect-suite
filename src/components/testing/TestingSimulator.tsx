@@ -56,8 +56,8 @@ export function TestingSimulator() {
       // Simulate critical performance issue
       await AlertService.alertPerformanceBottleneck(
         'generateMonthlyReport',
-        'src/reports/monthly.ts',
         2850,
+        200,
         {
           complexity: 'high',
           threshold_exceeded: '1325%',
