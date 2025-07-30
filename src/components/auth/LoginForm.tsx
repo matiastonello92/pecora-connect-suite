@@ -1,15 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { useSimpleAuth } from '@/context/SimpleAuthContext';
-
-import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { useToast } from '@/hooks/use-toast';
-import { Loader2, CheckCircle } from 'lucide-react';
+import { CheckCircle } from 'lucide-react';
 import { AuthLayout } from '@/components/ui/layouts/AuthLayout';
 import { FormField } from '@/components/forms/FormField';
 import { GenericForm } from '@/components/forms/GenericForm';
+import { SmartButton } from '@/components/common/SmartButton';
+import { useNotificationService } from '@/hooks/useNotificationService';
 
 export const LoginForm = () => {
   const [email, setEmail] = useState('');
@@ -18,8 +16,8 @@ export const LoginForm = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const { login, isLoading } = useSimpleAuth();
-  const { toast } = useToast();
+  const { login } = useSimpleAuth();
+  const { showSuccess, showError } = useNotificationService();
 
   // Check for registration success
   useEffect(() => {
@@ -28,10 +26,10 @@ export const LoginForm = () => {
     
     if (registrationSuccess === 'success' || state?.message) {
       setShowSuccessMessage(true);
-      toast({
-        title: "Registration Successful!",
-        description: state?.message || "Your account has been created successfully. Please log in.",
-      });
+      showSuccess(
+        "Registration Successful!",
+        state?.message || "Your account has been created successfully. Please log in."
+      );
       
       if (state?.email) {
         setEmail(state.email);
@@ -40,33 +38,22 @@ export const LoginForm = () => {
       // Clear the URL parameters
       navigate('/', { replace: true, state: null });
     }
-  }, [searchParams, location.state, toast, navigate]);
+  }, [searchParams, location.state, showSuccess, navigate]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
+  const handleLogin = async () => {
     if (!email || !password) {
-      toast({
-        title: "Error",
-        description: "Please fill in all fields",
-        variant: "destructive",
-      });
-      return;
+      showError("Please fill in all fields");
+      throw new Error("Please fill in all fields");
     }
 
     const result = await login(email, password);
     
     if (result.error) {
-      toast({
-        title: "Error",
-        description: result.error?.message || String(result.error) || "Login failed",
-        variant: "destructive",
-      });
+      const errorMsg = result.error?.message || String(result.error) || "Login failed";
+      showError(errorMsg);
+      throw new Error(errorMsg);
     } else {
-      toast({
-        title: "Welcome back!",
-        description: "Successfully signed in to your account.",
-      });
+      showSuccess("Welcome back!", "Successfully signed in to your account.");
     }
   };
 
@@ -81,19 +68,13 @@ export const LoginForm = () => {
         </Alert>
       )}
 
-      <GenericForm 
-        onSubmit={handleSubmit}
-        submitLabel={isLoading ? "Signing in..." : "Sign In"}
-        isLoading={isLoading}
-        showActions={false}
-      >
+      <div className="space-y-4">
         <FormField
           label="Email"
           type="email"
           value={email}
           onChange={setEmail}
           placeholder="mario@pecoranegra.com"
-          disabled={isLoading}
           required
         />
 
@@ -102,7 +83,6 @@ export const LoginForm = () => {
           type="password"
           value={password}
           onChange={setPassword}
-          disabled={isLoading}
           required
         />
 
@@ -117,27 +97,18 @@ export const LoginForm = () => {
           </ul>
         </div>
 
-        <Button
-          type="submit"
+        <SmartButton
+          asyncOperation={handleLogin}
           className="w-full h-11 sm:h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-inter font-medium text-base"
-          disabled={isLoading}
+          loadingText="Signing in..."
         >
-          {isLoading ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Signing in...
-            </>
-          ) : (
-            "Sign In"
-          )}
-        </Button>
-      </GenericForm>
+          Sign In
+        </SmartButton>
+      </div>
 
       <div className="text-center">
-        <Link to="/auth/forgot-password">
-          <Button variant="link" className="text-sm text-muted-foreground font-inter">
-            Forgot your password?
-          </Button>
+        <Link to="/auth/forgot-password" className="text-sm text-muted-foreground font-inter hover:underline">
+          Forgot your password?
         </Link>
       </div>
     </AuthLayout>
