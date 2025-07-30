@@ -95,8 +95,7 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
       locations: user.locations,
       previous_status: 'active',
       reason: 'manual_deletion',
-      can_reactivate: true,
-      role: 'user' // Default role required by schema
+      can_reactivate: true
     });
 
     await supabase.from('profiles').delete().eq('user_id', userId);
@@ -125,7 +124,6 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
       first_name: data.firstName,
       last_name: data.lastName,
       locations: data.locations,
-      role: 'user', // Default role since we're removing permissions
       status: 'pending'
     });
     await refreshUsers();

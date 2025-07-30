@@ -24,8 +24,6 @@ export const CompleteSignup = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [role, setRole] = useState('');
-  const [location, setLocation] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isValidInvitation, setIsValidInvitation] = useState(false);
   const [isCheckingInvitation, setIsCheckingInvitation] = useState(true);
@@ -91,8 +89,6 @@ export const CompleteSignup = () => {
         setEmail(invitationData.email);
         setFirstName(invitationData.first_name);
         setLastName(invitationData.last_name);
-        setRole(invitationData.role);
-        setLocation(invitationData.location);
         setIsValidInvitation(true);
         setIsCheckingInvitation(false);
         
@@ -227,10 +223,8 @@ export const CompleteSignup = () => {
         undefined, 
         { 
           email, 
-          role, 
-          location, 
           invitation_used: invitationData.id,
-          registration_method: 'invitation' 
+          registration_method: 'invitation'
         }
       );
 
@@ -393,31 +387,6 @@ export const CompleteSignup = () => {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="role" className="font-inter">
-                Role
-              </Label>
-              <Input
-                id="role"
-                type="text"
-                value={role}
-                disabled
-                className="font-inter bg-muted"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="location" className="font-inter">
-                Location
-              </Label>
-              <Input
-                id="location"
-                type="text"
-                value={location}
-                disabled
-                className="font-inter bg-muted"
-              />
-            </div>
 
             <div className="space-y-2">
               <Label htmlFor="password" className="font-inter">

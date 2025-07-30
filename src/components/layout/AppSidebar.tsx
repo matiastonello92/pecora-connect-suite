@@ -57,8 +57,6 @@ const navigationItems = [
   {
     title: 'dashboard',
     icon: LayoutDashboard,
-    roles: ['base', 'manager', 'director', 'finance', 'super_admin'],
-    departments: ['kitchen', 'pizzeria', 'service', 'finance', 'manager', 'super_manager', 'general_manager'],
     submenu: [
       { title: 'overview', url: '/dashboard', icon: LayoutDashboard },
       { title: 'reports', url: '/reports', icon: BarChart3 },
@@ -68,8 +66,6 @@ const navigationItems = [
   {
     title: 'inventories',
     icon: Package,
-    roles: ['base', 'manager', 'director', 'super_admin'],
-    departments: ['kitchen', 'pizzeria', 'service', 'manager', 'super_manager', 'general_manager'],
     submenu: [
       { title: 'kitchenInventory', url: '/inventory/kitchen', icon: Package },
       { title: 'pizzeriaInventory', url: '/inventory/pizzeria', icon: Package },
@@ -80,8 +76,6 @@ const navigationItems = [
   {
     title: 'suppliers',
     icon: Truck,
-    roles: ['manager', 'director', 'super_admin'],
-    departments: ['manager', 'super_manager', 'finance', 'general_manager'],
     submenu: [
       { title: 'sentOrders', url: '/suppliers/orders', icon: ShoppingCart },
       { title: 'createNewOrder', url: '/suppliers/new', icon: Plus },
@@ -92,14 +86,10 @@ const navigationItems = [
     title: 'chat',
     url: '/communication',
     icon: MessageSquare,
-    roles: ['base', 'manager', 'director', 'finance', 'super_admin'],
-    departments: ['kitchen', 'pizzeria', 'service', 'finance', 'manager', 'super_manager', 'general_manager'],
   },
   {
     title: 'checklists',
     icon: CheckSquare,
-    roles: ['base', 'manager', 'director', 'super_admin'],
-    departments: ['kitchen', 'pizzeria', 'service', 'manager', 'super_manager', 'general_manager'],
     submenu: [
       { title: 'miseEnPlace', url: '/checklists/mise-en-place', icon: ClipboardList },
       { title: 'serviceChecklists', url: '/checklists', icon: CheckSquare },
@@ -109,8 +99,6 @@ const navigationItems = [
   {
     title: 'tasks',
     icon: ListTodo,
-    roles: ['base', 'manager', 'director', 'super_admin'],
-    departments: ['kitchen', 'pizzeria', 'service', 'finance', 'manager', 'super_manager', 'general_manager'],
     submenu: [
       { title: 'dailyTasks', url: '/tasks', icon: ListTodo },
       { title: 'assignedTasks', url: '/tasks/assigned', icon: CheckSquare },
@@ -120,8 +108,6 @@ const navigationItems = [
   {
     title: 'finance',
     icon: DollarSign,
-    roles: ['manager', 'director', 'finance', 'super_admin'],
-    departments: ['finance', 'manager', 'super_manager', 'general_manager'],
     submenu: [
       { title: 'cashRegisterClosure', url: '/financial', icon: Calculator },
       { title: 'financialReports', url: '/financial?tab=reports', icon: BarChart3 },
@@ -131,19 +117,14 @@ const navigationItems = [
   {
     title: 'users',
     icon: Users,
-    roles: ['manager', 'admin', 'super_admin'],
-    departments: ['super_manager', 'general_manager'],
     submenu: [
       { title: 'userManagement', url: '/users', icon: UserCog },
       { title: 'invitations', url: '/users/invitations', icon: Bell },
-      { title: 'rolesPermissions', url: '/users/roles', icon: Shield },
     ],
   },
   {
     title: 'maintenance',
     icon: Wrench,
-    roles: ['base', 'manager', 'director', 'super_admin'],
-    departments: ['kitchen', 'pizzeria', 'service', 'manager', 'super_manager', 'general_manager'],
     submenu: [
       { title: 'techniciansList', url: '/maintenance/technicians', icon: Users },
       { title: 'scheduledInterventions', url: '/maintenance/scheduled', icon: Settings },
@@ -153,10 +134,7 @@ const navigationItems = [
   {
     title: 'settings',
     icon: Settings,
-    roles: ['base', 'manager', 'director', 'finance', 'super_admin'],
-    departments: ['kitchen', 'pizzeria', 'service', 'finance', 'manager', 'super_manager', 'general_manager'],
     submenu: [
-      
       { title: 'activeLocation', url: '/settings/location', icon: Building },
       { title: 'notificationSettings', url: '/settings/notifications', icon: Bell },
       { title: 'userPreferences', url: '/settings', icon: UserCog },
@@ -166,8 +144,6 @@ const navigationItems = [
     title: 'testDashboard',
     url: '/app/test-dashboard',
     icon: Activity,
-    roles: ['manager', 'super_admin'],
-    departments: ['manager', 'super_manager', 'general_manager'],
   },
 ];
 
@@ -203,7 +179,7 @@ const getTitle = (key: string): string => {
     users: 'Users',
     userManagement: 'User Management',
     invitations: 'Invitations',
-    rolesPermissions: 'Roles & Permissions',
+    
     maintenance: 'Maintenance',
     techniciansList: 'Technicians List',
     scheduledInterventions: 'Scheduled Interventions',
@@ -221,8 +197,6 @@ const getTitle = (key: string): string => {
 
 export const AppSidebar = () => {
   const { profile, logout } = useEnhancedAuth();
-  const hasPermission = () => true; // Temporarily allow all permissions
-  const hasAccess = () => true; // Temporarily allow all access
   const { totalUnreadCount, markChatAsRead } = useUnreadMessages();
   const { state, setOpen } = useSidebar();
   const location = useLocation();
@@ -295,16 +269,9 @@ export const AppSidebar = () => {
     }));
   };
 
-  const filteredItems = navigationItems.filter((item) => {
-    if (!profile) return false;
-    
+  const filteredItems = navigationItems.filter(() => {
     // All authenticated users can see everything
-    return true;
-    
-    const hasRolePermission = true; // Allow all for now
-    const hasDepartmentAccess = true; // Allow all for now
-    
-    return hasRolePermission && hasDepartmentAccess;
+    return !!profile;
   });
 
   return (

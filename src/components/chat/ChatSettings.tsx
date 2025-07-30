@@ -46,7 +46,6 @@ export const ChatSettings: React.FC<ChatSettingsProps> = ({ children }) => {
 
   const currentParticipant = getCurrentUserParticipant();
   const isMuted = currentParticipant?.is_muted || false;
-  const isAdmin = currentParticipant?.role === 'admin';
   const isCreator = activeChat.created_by === profile?.user_id;
 
   const handleMuteToggle = async () => {
@@ -223,14 +222,6 @@ export const ChatSettings: React.FC<ChatSettingsProps> = ({ children }) => {
                            )}
                         </p>
                       </div>
-                      <div className="flex items-center space-x-1">
-                        {participant.role === 'admin' && (
-                          <Badge variant="secondary" className="text-xs">
-                            <Shield className="h-3 w-3 mr-1" />
-                            Admin
-                          </Badge>
-                        )}
-                      </div>
                     </div>
                   ))}
                 </div>
@@ -255,7 +246,7 @@ export const ChatSettings: React.FC<ChatSettingsProps> = ({ children }) => {
                 </Button>
               )}
 
-              {(isAdmin || isCreator) && activeChat.type === 'group' && (
+              {isCreator && activeChat.type === 'group' && (
                 <Button
                   variant="outline"
                   className="w-full justify-start"

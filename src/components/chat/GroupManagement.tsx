@@ -255,34 +255,19 @@ export const GroupManagement: React.FC<GroupManagementProps> = ({ onClose }) => 
                         <p className="text-xs text-muted-foreground">
                           {participant.user?.position}
                         </p>
-                        {participant.role === 'admin' && (
-                          <Badge variant="secondary" className="text-xs">
-                            <Crown className="h-3 w-3 mr-1" />
-                            Admin
-                          </Badge>
-                        )}
                       </div>
                     </div>
                   </div>
                   
-                  <div className="flex items-center space-x-1">
-                    {participant.role !== 'admin' && (
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => handleMakeAdmin(participant.user_id)}
-                      >
-                        <Crown className="h-4 w-4" />
-                      </Button>
-                    )}
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => handleRemoveParticipant(participant.user_id)}
-                    >
-                      <UserMinus className="h-4 w-4" />
-                    </Button>
-                  </div>
+                   <div className="flex items-center space-x-1">
+                     <Button
+                       size="sm"
+                       variant="ghost"
+                       onClick={() => handleRemoveParticipant(participant.user_id)}
+                     >
+                       <UserMinus className="h-4 w-4" />
+                     </Button>
+                   </div>
                 </div>
               ))}
             </div>
