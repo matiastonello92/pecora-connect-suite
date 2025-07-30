@@ -8,6 +8,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter } from 'react-router-dom';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { SimpleAuthProvider } from '@/context/SimpleAuthContext';
+import { EnhancedAuthProvider } from './EnhancedAuthProvider';
+import { EnhancedPermissionProvider } from './EnhancedPermissionProvider';
 import { OptimizedLocationProvider } from '@/context/OptimizedLocationProvider';
 import { ErrorBoundary } from '@/components/common/ErrorBoundary';
 
@@ -40,20 +42,28 @@ export const AppProviders: React.FC<AppProvidersProps> = ({ children, queryClien
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
-          <SimpleAuthProvider>
-            <SuperUnifiedProvider>
-              <UnifiedAppProvider>
-                <TooltipProvider>
-                  {children}
-                </TooltipProvider>
-              </UnifiedAppProvider>
-            </SuperUnifiedProvider>
-          </SimpleAuthProvider>
+          <EnhancedAuthProvider>
+            <EnhancedPermissionProvider>
+              <SimpleAuthProvider>
+                <SuperUnifiedProvider>
+                  <UnifiedAppProvider>
+                    <TooltipProvider>
+                      {children}
+                    </TooltipProvider>
+                  </UnifiedAppProvider>
+                </SuperUnifiedProvider>
+              </SimpleAuthProvider>
+            </EnhancedPermissionProvider>
+          </EnhancedAuthProvider>
         </BrowserRouter>
       </QueryClientProvider>
     </ErrorBoundary>
   );
 };
+
+// Enhanced auth exports
+export { useEnhancedAuth } from './EnhancedAuthProvider';
+export { useEnhancedPermissions } from './EnhancedPermissionProvider';
 
 // Legacy exports for backward compatibility
 export { useUnifiedApp } from './UnifiedAppProvider';
