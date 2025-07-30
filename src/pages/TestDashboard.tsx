@@ -30,19 +30,58 @@ import { LocationSystemTest } from '@/components/testing/LocationSystemTest';
 
 export default function TestDashboard() {
   console.log('🧪 TestDashboard component loaded successfully');
-  const { profile } = useEnhancedAuth();
-  const { hasPermission } = usePermissions({
+  const { profile, isLoading, isAuthenticated } = useEnhancedAuth();
+  const { hasPermission, loading: permissionsLoading } = usePermissions({
     userId: profile?.user_id,
     accessLevel: profile?.accessLevel
   });
   const [activeTests, setActiveTests] = useState(0);
+  
+  // Enhanced debugging
+  console.log('🔍 TestDashboard DEBUG:', {
+    profile,
+    isLoading,
+    isAuthenticated,
+    permissionsLoading,
+    userId: profile?.user_id,
+    accessLevel: profile?.accessLevel,
+    role: profile?.role
+  });
   
   // Allow super_admin role OR general_manager access level to access test dashboard
   const isSuperAdmin = profile?.role === 'super_admin';
   const isGeneralManager = profile?.accessLevel === 'general_manager';
   const hasManagerPermission = hasPermission('user_management', 'can_validate');
   
-  if (!isSuperAdmin && !isGeneralManager && !hasManagerPermission) {
+  console.log('🔍 Access checks:', {
+    isSuperAdmin,
+    isGeneralManager,
+    hasManagerPermission,
+    shouldHaveAccess: isSuperAdmin || isGeneralManager || hasManagerPermission
+  });
+  
+  // Show loading state while checking auth and permissions
+  if (isLoading || permissionsLoading) {
+    return (
+      <PageLayout 
+        title="Test Dashboard" 
+        icon={Beaker}
+        subtitle="Loading..."
+      >
+        <Card>
+          <CardContent className="p-6 text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+            <p className="text-muted-foreground mt-4">Loading test dashboard...</p>
+          </CardContent>
+        </Card>
+      </PageLayout>
+    );
+  }
+  
+  // For super_admin users, always allow access (bypass all permission checks)
+  if (profile?.role === 'super_admin') {
+    console.log('✅ Super admin access granted');
+  } else if (!isSuperAdmin && !isGeneralManager && !hasManagerPermission) {
     return (
       <PageLayout 
         title="Access Denied" 

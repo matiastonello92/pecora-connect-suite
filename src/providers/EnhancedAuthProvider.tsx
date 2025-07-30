@@ -95,6 +95,13 @@ export const EnhancedAuthProvider: React.FC<{ children: React.ReactNode }> = ({ 
         updatedAt: new Date(data.updated_at || '')
       };
 
+      console.log('🔍 Enhanced: Profile mapping debug:', {
+        raw_access_level: data.access_level,
+        mapped_accessLevel: profile.accessLevel,
+        raw_role: data.role,
+        mapped_role: profile.role
+      });
+
       // Cache the profile
       setProfileCache(prev => new Map(prev).set(userId, profile));
       

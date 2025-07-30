@@ -184,17 +184,36 @@ export const usePermissions = ({ userId, accessLevel }: UsePermissionsProps = {}
   };
 
   const hasPermission = (module: AppModule, permission: 'can_read' | 'can_write' | 'can_validate' | 'can_delete'): boolean => {
-    if (!accessLevel) return false;
+    console.log('🔍 usePermissions.hasPermission called:', {
+      module,
+      permission,
+      accessLevel,
+      userId,
+      permissionsCount: permissions.length
+    });
+    
+    if (!accessLevel) {
+      console.log('❌ No accessLevel provided to hasPermission');
+      return false;
+    }
     
     // Check custom permissions first
     const customPerm = permissions.find(p => p.module === module);
     if (customPerm) {
+      console.log('✅ Found custom permission:', customPerm);
       return customPerm[permission];
     }
     
     // Fall back to default permissions
     const defaults = getDefaultPermissions(accessLevel);
-    return defaults[module]?.[permission] || false;
+    const result = defaults[module]?.[permission] || false;
+    
+    console.log('🔍 Default permission result:', {
+      defaults: defaults[module],
+      result
+    });
+    
+    return result;
   };
 
   useEffect(() => {
