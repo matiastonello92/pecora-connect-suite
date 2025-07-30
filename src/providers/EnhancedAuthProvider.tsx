@@ -7,7 +7,7 @@ import React, { createContext, useContext, useEffect, useState, useCallback, use
 import type { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { SessionManager, type SessionData } from '@/core/auth/SessionManager';
-import { UserProfile } from '@/types/users';
+import { UserProfile, UserStatus } from '@/types/users';
 
 export interface EnhancedAuthState {
   user: User | null;
@@ -77,30 +77,13 @@ export const EnhancedAuthProvider: React.FC<{ children: React.ReactNode }> = ({ 
         firstName: data.first_name || '',
         lastName: data.last_name || '',
         phone: data.phone,
-        avatar: data.avatar_url,
-        role: data.role as any,
-        restaurantRole: data.restaurant_role,
-        accessLevel: data.access_level || 'base',
-        hasCustomPermissions: data.has_custom_permissions || false,
-        department: data.department || '',
-        position: data.position || '',
-        employmentType: 'full-time',
-        status: (data.status || 'active') as any,
-        locations: data.locations || ['menton'],
-        startDate: new Date(data.created_at || ''),
-        permissions: [],
-        customPermissions: [],
+        avatar_url: data.avatar_url || '',
+        status: (data.status || 'active') as UserStatus,
+        locations: data.locations || [],
         lastLogin: data.last_login_at ? new Date(data.last_login_at) : undefined,
         createdAt: new Date(data.created_at || ''),
         updatedAt: new Date(data.updated_at || '')
       };
-
-      console.log('🔍 Enhanced: Profile mapping debug:', {
-        raw_access_level: data.access_level,
-        mapped_accessLevel: profile.accessLevel,
-        raw_role: data.role,
-        mapped_role: profile.role
-      });
 
       // Cache the profile
       setProfileCache(prev => new Map(prev).set(userId, profile));
@@ -109,8 +92,7 @@ export const EnhancedAuthProvider: React.FC<{ children: React.ReactNode }> = ({ 
         user_id: profile.user_id,
         email: profile.email,
         locations: profile.locations,
-        role: profile.role,
-        accessLevel: profile.accessLevel
+        status: profile.status
       });
       
       return profile;

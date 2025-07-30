@@ -9,7 +9,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { TooltipProvider } from '@/components/ui/tooltip';
 
 import { EnhancedAuthProvider } from './EnhancedAuthProvider';
-import { EnhancedPermissionProvider } from './EnhancedPermissionProvider';
+
 import { OptimizedLocationProvider } from '@/context/OptimizedLocationProvider';
 import { ErrorBoundary } from '@/components/common/ErrorBoundary';
 
@@ -43,15 +43,13 @@ export const AppProviders: React.FC<AppProvidersProps> = ({ children, queryClien
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <EnhancedAuthProvider>
-            <EnhancedPermissionProvider>
-              <SuperUnifiedProvider>
-                <UnifiedAppProvider>
-                  <TooltipProvider>
-                    {children}
-                  </TooltipProvider>
-                </UnifiedAppProvider>
-              </SuperUnifiedProvider>
-            </EnhancedPermissionProvider>
+            <SuperUnifiedProvider>
+              <UnifiedAppProvider>
+                <TooltipProvider>
+                  {children}
+                </TooltipProvider>
+              </UnifiedAppProvider>
+            </SuperUnifiedProvider>
           </EnhancedAuthProvider>
         </BrowserRouter>
       </QueryClientProvider>
@@ -61,7 +59,7 @@ export const AppProviders: React.FC<AppProvidersProps> = ({ children, queryClien
 
 // Enhanced auth exports
 export { useEnhancedAuth } from './EnhancedAuthProvider';
-export { useEnhancedPermissions } from './EnhancedPermissionProvider';
+
 
 // Legacy exports for backward compatibility
 export { useUnifiedApp } from './UnifiedAppProvider';

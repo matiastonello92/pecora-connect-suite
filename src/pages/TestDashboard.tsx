@@ -16,25 +16,17 @@ import { FunctionDetectionSystem } from '@/components/testing/FunctionDetectionS
 import { TestingSimulator } from '@/components/testing/TestingSimulator';
 import { AppAnalysisDashboard } from '@/components/testing/AppAnalysisDashboard';
 import { RLSPerformanceTest } from '@/components/testing/RLSPerformanceTest';
-import { PolicyValidationTest } from '@/components/testing/PolicyValidationTest';
 import { ForeignKeyIndexTest } from '@/components/testing/ForeignKeyIndexTest';
 import { UnusedIndexAnalyzer } from '@/components/testing/UnusedIndexAnalyzer';
 import { CodeDuplicationAnalyzer } from '@/components/testing/CodeDuplicationAnalyzer';
 import { ChatPerformanceMonitor } from '@/components/testing/ChatPerformanceMonitor';
 import { ChatStressTestSuite } from '@/components/testing/ChatStressTestSuite';
 import { CoreInfrastructureTest } from '@/components/testing/CoreInfrastructureTest';
-import { EnhancedAuthTest } from '@/components/testing/EnhancedAuthTest';
-import { usePermissions } from '@/hooks/usePermissions';
 import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
-import { LocationSystemTest } from '@/components/testing/LocationSystemTest';
 
 export default function TestDashboard() {
   console.log('🧪 TestDashboard component loaded successfully');
   const { profile, isLoading, isAuthenticated } = useEnhancedAuth();
-  const { hasPermission, loading: permissionsLoading } = usePermissions({
-    userId: profile?.user_id,
-    accessLevel: profile?.accessLevel
-  });
   const [activeTests, setActiveTests] = useState(0);
   
   // Enhanced debugging
@@ -42,26 +34,11 @@ export default function TestDashboard() {
     profile,
     isLoading,
     isAuthenticated,
-    permissionsLoading,
-    userId: profile?.user_id,
-    accessLevel: profile?.accessLevel,
-    role: profile?.role
+    userId: profile?.user_id
   });
   
-  // Allow super_admin role OR general_manager access level to access test dashboard
-  const isSuperAdmin = profile?.role === 'super_admin';
-  const isGeneralManager = profile?.accessLevel === 'general_manager';
-  const hasManagerPermission = hasPermission('user_management', 'can_validate');
-  
-  console.log('🔍 Access checks:', {
-    isSuperAdmin,
-    isGeneralManager,
-    hasManagerPermission,
-    shouldHaveAccess: isSuperAdmin || isGeneralManager || hasManagerPermission
-  });
-  
-  // Show loading state while checking auth and permissions
-  if (isLoading || permissionsLoading) {
+  // Show loading state while checking auth
+  if (isLoading) {
     return (
       <PageLayout 
         title="Test Dashboard" 
@@ -78,21 +55,19 @@ export default function TestDashboard() {
     );
   }
   
-  // For super_admin users, always allow access (bypass all permission checks)
-  if (profile?.role === 'super_admin') {
-    console.log('✅ Super admin access granted');
-  } else if (!isSuperAdmin && !isGeneralManager && !hasManagerPermission) {
+  // All authenticated users can access the test dashboard
+  if (!isAuthenticated) {
     return (
       <PageLayout 
         title="Access Denied" 
         icon={Shield}
-        subtitle="You don't have permission to access the test dashboard"
+        subtitle="Please log in to access the test dashboard"
       >
         <Card>
           <CardContent className="p-6 text-center">
             <Shield className="h-12 w-12 mx-auto mb-4 text-destructive" />
             <p className="text-muted-foreground">
-              Test dashboard access is restricted to administrators and managers only.
+              Please log in to access the test dashboard.
             </p>
           </CardContent>
         </Card>
@@ -181,10 +156,6 @@ export default function TestDashboard() {
                 <span className="hidden sm:inline">RLS Perf</span>
               </TabsTrigger>
               
-              <TabsTrigger value="policy-validation" className="test-tab-trigger flex items-center justify-center gap-2">
-                <Shield className="h-4 w-4" />
-                <span className="hidden sm:inline">Policies</span>
-              </TabsTrigger>
               
               <TabsTrigger value="index-performance" className="test-tab-trigger flex items-center justify-center gap-2">
                 <Database className="h-4 w-4" />
@@ -227,15 +198,6 @@ export default function TestDashboard() {
                 <span className="hidden sm:inline">Security</span>
               </TabsTrigger>
               
-              <TabsTrigger value="enhanced-auth" className="test-tab-trigger flex items-center justify-center gap-2">
-                <Shield className="h-4 w-4" />
-                <span className="hidden sm:inline">Enhanced Auth</span>
-              </TabsTrigger>
-              
-              <TabsTrigger value="location-system" className="test-tab-trigger flex items-center justify-center gap-2">
-                <Monitor className="h-4 w-4" />
-                <span className="hidden sm:inline">Locations</span>
-              </TabsTrigger>
             </div>
           </TabsList>
         </div>
@@ -262,12 +224,6 @@ export default function TestDashboard() {
           <TabsContent value="rls-performance" className="mt-6">
             <div className="space-y-6">
               <RLSPerformanceTest />
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="policy-validation" className="mt-6">
-            <div className="space-y-6">
-              <PolicyValidationTest />
             </div>
           </TabsContent>
           
@@ -322,18 +278,6 @@ export default function TestDashboard() {
           <TabsContent value="security" className="mt-6">
             <div className="space-y-6">
               <SecurityTestSuite onTestStateChange={(running) => setActiveTests(prev => running ? prev + 1 : prev - 1)} />
-            </div>
-          </TabsContent>
-
-          <TabsContent value="enhanced-auth" className="mt-6">
-            <div className="space-y-6">
-              <EnhancedAuthTest />
-            </div>
-          </TabsContent>
-
-          <TabsContent value="location-system" className="mt-6">
-            <div className="space-y-6">
-              <LocationSystemTest />
             </div>
           </TabsContent>
         </div>
