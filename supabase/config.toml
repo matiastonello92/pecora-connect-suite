@@ -5,3 +5,9 @@ verify_jwt = false
 
 [functions.send-alert-email]
 verify_jwt = false
+
+[functions.test-data-seeder]
+verify_jwt = false
+
+[functions.process-message-reminders]
+verify_jwt = true

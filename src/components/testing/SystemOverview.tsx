@@ -64,9 +64,9 @@ export function SystemOverview({ onActiveTestsChange }: SystemOverviewProps) {
       // Test auth
       const { data: { user }, error: authError } = await supabase.auth.getUser();
       
-      // Test functions (call test-data-seeder with dry run)
+      // Test functions (health check)
       const { error: functionError } = await supabase.functions.invoke('test-data-seeder', {
-        body: { dryRun: true }
+        body: { type: 'locations', count: 1, clear: false }
       });
 
       setHealth({

@@ -10,6 +10,7 @@ interface SeedDataRequest {
   type: 'locations' | 'users' | 'equipment' | 'all' | 'performance';
   count?: number;
   clear?: boolean;
+  dryRun?: boolean;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -31,11 +32,29 @@ const handler = async (req: Request): Promise<Response> => {
     
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
     
-    const { type, count = 100, clear = false }: SeedDataRequest = await req.json();
+    const { type, count = 100, clear = false, dryRun = false }: SeedDataRequest = await req.json();
 
-    console.log(`🌱 Seeding test data: ${type}, count: ${count}, clear: ${clear}`);
+    console.log(`🌱 ${dryRun ? 'Health check' : 'Seeding test data'}: ${type}, count: ${count}, clear: ${clear}`);
 
     const results: any = {};
+
+    // If this is a dry run (health check), just return success
+    if (dryRun) {
+      return new Response(
+        JSON.stringify({
+          success: true,
+          message: 'Function health check successful',
+          timestamp: new Date().toISOString()
+        }),
+        { 
+          status: 200, 
+          headers: { 
+            ...corsHeaders, 
+            'Content-Type': 'application/json' 
+          } 
+        }
+      );
+    }
 
     // Clear existing data if requested
     if (clear) {
