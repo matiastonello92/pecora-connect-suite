@@ -1,109 +1,143 @@
-import { useCallback } from 'react';
-import { toast } from 'sonner';
+/**
+ * Notification Service Hook
+ * Separates notification business logic from UI components
+ * Phase 3: Business Logic Separation
+ */
 
-interface NotificationOptions {
-  duration?: number;
-  position?: 'top-left' | 'top-center' | 'top-right' | 'bottom-left' | 'bottom-center' | 'bottom-right';
-  dismissible?: boolean;
+import { useState, useCallback } from 'react';
+import { DataService } from '@/core/services';
+import { useToast } from '@/hooks/use-toast';
+
+export interface UseNotificationServiceOptions {
+  autoShow?: boolean;
+  position?: 'top' | 'bottom' | 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
 }
 
-/**
- * Centralized notification service hook
- * Eliminates duplication of toast notification patterns
- */
-export function useNotificationService() {
-  const showSuccess = useCallback((
-    message: string,
-    description?: string,
-    options?: NotificationOptions
-  ) => {
-    toast.success(message, {
-      description,
-      duration: options?.duration,
-      dismissible: options?.dismissible
-    });
-  }, []);
+export function useNotificationService(options: UseNotificationServiceOptions = {}) {
+  const [notifications, setNotifications] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
 
-  const showError = useCallback((
-    message: string,
-    description?: string,
-    options?: NotificationOptions
-  ) => {
-    toast.error(message, {
-      description,
-      duration: options?.duration,
-      dismissible: options?.dismissible
-    });
-  }, []);
-
-  const showWarning = useCallback((
-    message: string,
-    description?: string,
-    options?: NotificationOptions
-  ) => {
-    toast.warning(message, {
-      description,
-      duration: options?.duration,
-      dismissible: options?.dismissible
-    });
-  }, []);
-
-  const showInfo = useCallback((
-    message: string,
-    description?: string,
-    options?: NotificationOptions
-  ) => {
-    toast.info(message, {
-      description,
-      duration: options?.duration,
-      dismissible: options?.dismissible
-    });
-  }, []);
-
-  // Predefined notification templates
-  const notifyOperation = useCallback((
-    operation: string,
-    success: boolean,
-    customMessage?: string
-  ) => {
-    if (success) {
-      showSuccess(
-        customMessage || `${operation} completed successfully`,
-        undefined,
-        { duration: 3000 }
-      );
-    } else {
-      showError(
-        customMessage || `Failed to ${operation.toLowerCase()}`,
-        'Please try again or contact support if the problem persists',
-        { duration: 5000 }
-      );
+  const showNotification = useCallback(async (notification: {
+    title: string;
+    message: string;
+    type: 'info' | 'success' | 'warning' | 'error';
+    userId?: string;
+    locationId?: string;
+  }) => {
+    try {
+      await DataService.insert('notifications', {
+        title: notification.title,
+        message: notification.message,
+        type: notification.type,
+        user_id: notification.userId,
+        location_id: notification.locationId,
+        created_at: new Date().toISOString()
+      });
+      
+      if (options.autoShow) {
+        toast({
+          title: notification.title,
+          description: notification.message,
+          variant: notification.type === 'error' ? 'destructive' : 'default'
+        });
+      }
+      
+      return { success: true };
+    } catch (error: any) {
+      return { success: false, error: error.message };
     }
-  }, [showSuccess, showError]);
+  }, [options.autoShow, toast]);
 
-  const notifyDataChange = useCallback((
-    action: 'created' | 'updated' | 'deleted',
-    itemType: string,
-    success: boolean = true
-  ) => {
-    const actionMap = {
-      created: 'created',
-      updated: 'updated', 
-      deleted: 'deleted'
-    };
-    
-    notifyOperation(
-      `${itemType} ${actionMap[action]}`,
-      success
-    );
-  }, [notifyOperation]);
+  const markAsRead = useCallback(async (notificationId: string) => {
+    try {
+      await DataService.update('notifications', notificationId, {
+        read: true,
+        read_at: new Date().toISOString()
+      });
+      setNotifications(prev => 
+        prev.map(notif => 
+          notif.id === notificationId 
+            ? { ...notif, read: true }
+            : notif
+        )
+      );
+      return { success: true };
+    } catch (error: any) {
+      return { success: false, error: error.message };
+    }
+  }, []);
+
+  const markAllAsRead = useCallback(async (userId: string) => {
+    try {
+      const { data, error } = await DataService.query('notifications', {
+        filters: { user_id: userId, read: false }
+      });
+      
+      if (data) {
+        await Promise.all(data.map((notif: any) => 
+          DataService.update('notifications', notif.id, {
+            read: true,
+            read_at: new Date().toISOString()
+          })
+        ));
+      }
+      
+      setNotifications(prev => 
+        prev.map(notif => ({ ...notif, read: true }))
+      );
+      return { success: true };
+    } catch (error: any) {
+      return { success: false, error: error.message };
+    }
+  }, []);
+
+  const deleteNotification = useCallback(async (notificationId: string) => {
+    try {
+      await DataService.delete('notifications', notificationId);
+      setNotifications(prev => 
+        prev.filter(notif => notif.id !== notificationId)
+      );
+      return { success: true };
+    } catch (error: any) {
+      return { success: false, error: error.message };
+    }
+  }, []);
+
+  const fetchNotifications = useCallback(async (userId: string, filters?: any) => {
+    setIsLoading(true);
+    try {
+      const result = await DataService.query('notifications', {
+        filters: { user_id: userId, ...filters },
+        orderBy: { column: 'created_at', ascending: false }
+      });
+      setNotifications(result.data || []);
+      return { success: true, data: result.data };
+    } catch (error: any) {
+      return { success: false, error: error.message };
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  // Backward compatibility methods
+  const showSuccess = useCallback((title: string, message?: string) => {
+    return showNotification({ title, message: message || '', type: 'success' });
+  }, [showNotification]);
+
+  const showError = useCallback((title: string, message?: string) => {
+    return showNotification({ title, message: message || '', type: 'error' });
+  }, [showNotification]);
 
   return {
+    notifications,
+    isLoading,
+    showNotification,
+    markAsRead,
+    markAllAsRead,
+    deleteNotification,
+    fetchNotifications,
     showSuccess,
-    showError,
-    showWarning,
-    showInfo,
-    notifyOperation,
-    notifyDataChange
+    showError
   };
 }
