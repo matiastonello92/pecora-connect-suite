@@ -1,13 +1,13 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { LocationDashboardConfig, DashboardWidget, DashboardLayout, DashboardTheme } from '@/types/dashboard';
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 
 /**
  * Hook for managing dashboard configurations with lazy loading
  */
 export const useDashboardConfig = (locationId: string | null) => {
-  const { user } = useSimpleAuth();
+  const { user } = useEnhancedAuth();
   const queryClient = useQueryClient();
 
   // Query for dashboard configuration

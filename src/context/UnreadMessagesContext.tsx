@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { useSimpleAuth } from './SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 
 interface UnreadMessagesContextType {
   totalUnreadCount: number;
@@ -20,7 +20,7 @@ export const useUnreadMessages = () => {
 };
 
 export const UnreadMessagesProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { profile } = useSimpleAuth();
+  const { profile } = useEnhancedAuth();
   const [totalUnreadCount, setTotalUnreadCount] = useState(0);
   const [unreadCountByChat, setUnreadCountByChat] = useState<Record<string, number>>({});
 

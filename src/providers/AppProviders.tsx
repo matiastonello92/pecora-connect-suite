@@ -7,7 +7,7 @@ import React, { ReactNode } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter } from 'react-router-dom';
 import { TooltipProvider } from '@/components/ui/tooltip';
-import { SimpleAuthProvider } from '@/context/SimpleAuthContext';
+
 import { EnhancedAuthProvider } from './EnhancedAuthProvider';
 import { EnhancedPermissionProvider } from './EnhancedPermissionProvider';
 import { OptimizedLocationProvider } from '@/context/OptimizedLocationProvider';
@@ -44,15 +44,13 @@ export const AppProviders: React.FC<AppProvidersProps> = ({ children, queryClien
         <BrowserRouter>
           <EnhancedAuthProvider>
             <EnhancedPermissionProvider>
-              <SimpleAuthProvider>
-                <SuperUnifiedProvider>
-                  <UnifiedAppProvider>
-                    <TooltipProvider>
-                      {children}
-                    </TooltipProvider>
-                  </UnifiedAppProvider>
-                </SuperUnifiedProvider>
-              </SimpleAuthProvider>
+              <SuperUnifiedProvider>
+                <UnifiedAppProvider>
+                  <TooltipProvider>
+                    {children}
+                  </TooltipProvider>
+                </UnifiedAppProvider>
+              </SuperUnifiedProvider>
             </EnhancedPermissionProvider>
           </EnhancedAuthProvider>
         </BrowserRouter>

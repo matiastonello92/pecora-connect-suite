@@ -1,6 +1,5 @@
 import React, { createContext, useContext, ReactNode } from 'react';
 import { LocationProvider } from './LocationContext';
-import { PermissionProvider } from './PermissionContext';
 import { UnreadMessagesProvider } from './UnreadMessagesContext';
 
 // Core app data provider that combines location, permissions, and message state
@@ -18,11 +17,9 @@ export const AppDataProvider = ({ children }: { children: ReactNode }) => {
   return (
     <AppDataContext.Provider value={value}>
       <LocationProvider>
-        <PermissionProvider>
-          <UnreadMessagesProvider>
-            {children}
-          </UnreadMessagesProvider>
-        </PermissionProvider>
+        <UnreadMessagesProvider>
+          {children}
+        </UnreadMessagesProvider>
       </LocationProvider>
     </AppDataContext.Provider>
   );

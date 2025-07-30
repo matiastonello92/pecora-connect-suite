@@ -1,13 +1,13 @@
 import { useQuery, useQueries } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 
 /**
  * Optimized hook that eliminates N+1 patterns by using bulk fetching functions
  * Replaces individual location queries with single bulk operations
  */
 export const useOptimizedLocationQueries = () => {
-  const { user } = useSimpleAuth();
+  const { user } = useEnhancedAuth();
 
   // Bulk fetch user's location access data
   const { data: userLocationData } = useQuery({
@@ -135,7 +135,7 @@ export const useLocationSpecificData = (
     statusFilter?: string;
   }
 ) => {
-  const { user } = useSimpleAuth();
+  const { user } = useEnhancedAuth();
 
   return useQuery({
     queryKey: ['location-specific-data', tableName, locationCodes, filters, user?.id],
@@ -163,7 +163,7 @@ export const useLocationSpecificData = (
  * Eliminates sequential queries by fetching multiple location datasets simultaneously
  */
 export const useParallelLocationData = (locationCodes: string[]) => {
-  const { user } = useSimpleAuth();
+  const { user } = useEnhancedAuth();
 
   const queries = useQueries({
     queries: locationCodes.map(locationCode => ({

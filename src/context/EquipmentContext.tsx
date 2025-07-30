@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { Equipment, MaintenanceRecord, MaintenanceSchedule, EquipmentStatus, MaintenanceType } from '@/types/equipment';
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 
 interface EquipmentState {
   equipment: Equipment[];
@@ -77,7 +77,7 @@ interface EquipmentContextType extends EquipmentState {
 const EquipmentContext = createContext<EquipmentContextType | undefined>(undefined);
 
 export const EquipmentProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { user } = useSimpleAuth();
+  const { user } = useEnhancedAuth();
   const [state, dispatch] = useReducer(equipmentReducer, {
     equipment: [],
     maintenanceRecords: [],

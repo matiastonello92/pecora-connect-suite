@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { InventoryItem, InventorySession, InvoiceItem } from '@/types/inventory';
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 import { useLocationFilter } from '@/hooks/useLocationData';
 
 interface InventoryState {
@@ -92,7 +92,7 @@ interface InventoryContextType extends InventoryState {
 const InventoryContext = createContext<InventoryContextType | undefined>(undefined);
 
 export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { profile } = useSimpleAuth();
+  const { profile } = useEnhancedAuth();
   const [state, dispatch] = useReducer(inventoryReducer, {
     items: [],
     sessions: [],

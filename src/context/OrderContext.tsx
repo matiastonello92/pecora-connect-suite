@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 
 // Order types
 export interface Order {
@@ -87,7 +87,7 @@ interface OrderContextType extends OrderState {
 const OrderContext = createContext<OrderContextType | undefined>(undefined);
 
 export const OrderProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { user } = useSimpleAuth();
+  const { user } = useEnhancedAuth();
   const [state, dispatch] = useReducer(orderReducer, {
     orders: [],
     currentOrder: null,

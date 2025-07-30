@@ -4,7 +4,7 @@
  */
 
 import React, { ReactNode, createContext, useContext, useState, useMemo } from 'react';
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 
 // Unified App Context Type
 interface UnifiedAppContextType {
@@ -39,7 +39,7 @@ export const useUnifiedApp = () => {
 
 // Provider component
 export const UnifiedAppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const auth = useSimpleAuth();
+  const auth = useEnhancedAuth();
   
   // Global app state
   const [isCollapsed, setIsCollapsed] = useState(false);

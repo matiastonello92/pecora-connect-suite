@@ -1,4 +1,4 @@
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 
 /**
  * System-wide audit for multi-location data access
@@ -32,7 +32,7 @@ export const validateLocationSystemAudit = () => {
  * Hook to check if current user has access to a specific location
  */
 export const useLocationAccess = () => {
-  const { user } = useSimpleAuth();
+  const { user } = useEnhancedAuth();
   
   const hasLocationAccess = (location: string): boolean => {
     // Simplified for now - will need location data from LocationContext

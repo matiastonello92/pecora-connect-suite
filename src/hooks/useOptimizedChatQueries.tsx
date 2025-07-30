@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 import { useLocation } from '@/context/LocationContext';
 import { Chat, ChatMessage } from '@/types/communication';
 import { useCallback, useMemo } from 'react';
@@ -17,7 +17,7 @@ export const chatKeys = {
 
 // Optimized hook to fetch chats with unread counts in a single operation
 export const useOptimizedChats = () => {
-  const { profile } = useSimpleAuth();
+  const { profile } = useEnhancedAuth();
   const { userLocations } = useLocation();
   const queryClient = useQueryClient();
 
@@ -102,7 +102,7 @@ export const useOptimizedMessages = (chatId: string | null) => {
 
 // Debounced mutation for sending messages
 export const useSendMessage = () => {
-  const { profile } = useSimpleAuth();
+  const { profile } = useEnhancedAuth();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -142,7 +142,7 @@ export const useSendMessage = () => {
 
 // Optimized unread counts hook
 export const useOptimizedUnreadCounts = () => {
-  const { profile } = useSimpleAuth();
+  const { profile } = useEnhancedAuth();
 
   const unreadQuery = useQuery({
     queryKey: chatKeys.unreadCounts(profile?.user_id || ''),
@@ -203,7 +203,7 @@ export const useOptimizedUnreadCounts = () => {
 
 // Mutation for marking messages as read with optimistic updates
 export const useMarkAsRead = () => {
-  const { profile } = useSimpleAuth();
+  const { profile } = useEnhancedAuth();
   const queryClient = useQueryClient();
 
   return useMutation({

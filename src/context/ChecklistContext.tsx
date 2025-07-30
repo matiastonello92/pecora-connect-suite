@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { ChecklistTemplate, ChecklistSession, ChecklistItem } from '@/types/checklist';
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 
 interface ChecklistState {
   templates: ChecklistTemplate[];
@@ -92,7 +92,7 @@ interface ChecklistContextType extends ChecklistState {
 const ChecklistContext = createContext<ChecklistContextType | undefined>(undefined);
 
 export const ChecklistProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { user } = useSimpleAuth();
+  const { user } = useEnhancedAuth();
   const [state, dispatch] = useReducer(checklistReducer, {
     templates: [],
     sessions: [],

@@ -292,13 +292,6 @@ async function registerBusinessModules(registry: ModuleRegistry): Promise<void> 
       factory: () => import('../../context/ChatContext').then(m => m.useChatContext),
     },
     {
-      id: 'permissions',
-      name: 'Permission System',
-      version: '1.0.0',
-      priority: 10,
-      factory: () => import('../../context/PermissionContext').then(m => m.useUserPermissions),
-    },
-    {
       id: 'unread-messages',
       name: 'Unread Messages',
       version: '1.0.0',

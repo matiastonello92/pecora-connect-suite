@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 
 /**
  * FederatedChatContext: Manages the new federated chat system
@@ -89,7 +89,7 @@ interface FederatedChatProviderProps {
 }
 
 export const FederatedChatProvider: React.FC<FederatedChatProviderProps> = ({ children }) => {
-  const { user } = useSimpleAuth();
+  const { user } = useEnhancedAuth();
   const queryClient = useQueryClient();
   const [messagePagination, setMessagePagination] = useState<Record<string, { page: number; hasMore: boolean }>>({});
 

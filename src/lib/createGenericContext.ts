@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 import { toast } from 'sonner';
 
 export interface GenericContextState<T> {
@@ -69,7 +69,7 @@ export function createGenericContext<T, Methods = Record<string, unknown>>(
   }
 
   const Provider: React.FC<ProviderProps> = ({ children, methods }) => {
-    const { profile } = useSimpleAuth();
+    const { profile } = useEnhancedAuth();
     const reducer = createGenericReducer<T>();
     const [state, dispatch] = useReducer(reducer, {
       loading: false,

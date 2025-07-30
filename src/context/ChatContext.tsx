@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { useSimpleAuth } from './SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 import { useLocation } from './LocationContext';
 import { 
   Chat, 
@@ -77,7 +77,7 @@ export const useChatContext = () => {
 };
 
 export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { profile } = useSimpleAuth();
+  const { profile } = useEnhancedAuth();
   const { userLocations } = useLocation();
   
   

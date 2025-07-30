@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { MonthlyInventory, InventoryItem, KitchenProduct, InventoryStatus, InventoryAnomaly, KITCHEN_PRODUCTS } from '@/types/kitchenInventory';
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 
 interface KitchenInventoryState {
   currentInventory: MonthlyInventory | null;
@@ -209,7 +209,7 @@ interface KitchenInventoryContextType extends KitchenInventoryState {
 const KitchenInventoryContext = createContext<KitchenInventoryContextType | undefined>(undefined);
 
 export const KitchenInventoryProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { user } = useSimpleAuth();
+  const { user } = useEnhancedAuth();
   const [state, dispatch] = useReducer(kitchenInventoryReducer, {
     currentInventory: null,
     historicalInventories: [],

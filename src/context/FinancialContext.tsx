@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { CashClosure, FinancialReport, FilterPreset, FinancialAnomalies, ClosureStatus, SatisfactionRating } from '@/types/financial';
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 
 interface FinancialState {
   closures: CashClosure[];
@@ -104,7 +104,7 @@ interface FinancialContextType extends FinancialState {
 const FinancialContext = createContext<FinancialContextType | undefined>(undefined);
 
 export const FinancialProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { user } = useSimpleAuth();
+  const { user } = useEnhancedAuth();
   const [state, dispatch] = useReducer(financialReducer, {
     closures: [],
     currentClosure: null,

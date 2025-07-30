@@ -1,5 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 import { useMobileNotifications } from './useMobileNotifications';
 
 import { toast } from '@/hooks/use-toast';
@@ -14,7 +14,7 @@ interface MessageReminder {
 }
 
 export const useMessageReminders = () => {
-  const { user } = useSimpleAuth();
+  const { user } = useEnhancedAuth();
   
   const { showMobileNotification, isMobile } = useMobileNotifications();
   
