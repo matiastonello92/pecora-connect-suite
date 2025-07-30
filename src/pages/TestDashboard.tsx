@@ -23,6 +23,7 @@ import { CodeDuplicationAnalyzer } from '@/components/testing/CodeDuplicationAna
 import { ChatPerformanceMonitor } from '@/components/testing/ChatPerformanceMonitor';
 import { ChatStressTestSuite } from '@/components/testing/ChatStressTestSuite';
 import { CoreInfrastructureTest } from '@/components/testing/CoreInfrastructureTest';
+import { EnhancedAuthTest } from '@/components/testing/EnhancedAuthTest';
 import { usePermissions } from '@/hooks/usePermissions';
 import { useSimpleAuth } from '@/context/SimpleAuthContext';
 
@@ -185,6 +186,11 @@ export default function TestDashboard() {
                 <Shield className="h-4 w-4" />
                 <span className="hidden sm:inline">Security</span>
               </TabsTrigger>
+              
+              <TabsTrigger value="enhanced-auth" className="test-tab-trigger flex items-center justify-center gap-2">
+                <Shield className="h-4 w-4" />
+                <span className="hidden sm:inline">Enhanced Auth</span>
+              </TabsTrigger>
             </div>
           </TabsList>
         </div>
@@ -271,6 +277,12 @@ export default function TestDashboard() {
           <TabsContent value="security" className="mt-6">
             <div className="space-y-6">
               <SecurityTestSuite onTestStateChange={(running) => setActiveTests(prev => running ? prev + 1 : prev - 1)} />
+            </div>
+          </TabsContent>
+
+          <TabsContent value="enhanced-auth" className="mt-6">
+            <div className="space-y-6">
+              <EnhancedAuthTest />
             </div>
           </TabsContent>
         </div>
