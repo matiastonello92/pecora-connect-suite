@@ -24,7 +24,7 @@ import { UserManagementProvider } from '@/context/UserManagementContext';
 import { ChatProvider } from '@/context/ChatContext';
 
 import { UnifiedAppProvider } from './UnifiedAppProvider';
-import { UnifiedBusinessProvider } from './UnifiedBusinessProvider';
+import { SuperUnifiedProvider } from './SuperUnifiedProvider';
 
 interface AppProvidersProps {
   children: ReactNode;
@@ -41,15 +41,13 @@ export const AppProviders: React.FC<AppProvidersProps> = ({ children, queryClien
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <SimpleAuthProvider>
-            <OptimizedLocationProvider>
-              <UnifiedBusinessProvider>
-                <UnifiedAppProvider>
-                  <TooltipProvider>
-                    {children}
-                  </TooltipProvider>
-                </UnifiedAppProvider>
-              </UnifiedBusinessProvider>
-            </OptimizedLocationProvider>
+            <SuperUnifiedProvider>
+              <UnifiedAppProvider>
+                <TooltipProvider>
+                  {children}
+                </TooltipProvider>
+              </UnifiedAppProvider>
+            </SuperUnifiedProvider>
           </SimpleAuthProvider>
         </BrowserRouter>
       </QueryClientProvider>
@@ -59,4 +57,4 @@ export const AppProviders: React.FC<AppProvidersProps> = ({ children, queryClien
 
 // Legacy exports for backward compatibility
 export { useUnifiedApp } from './UnifiedAppProvider';
-export { useBusiness } from './BusinessContextProvider';
+export { useBusiness, useCore, useSuperUnified } from './SuperUnifiedProvider';

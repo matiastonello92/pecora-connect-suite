@@ -3,13 +3,7 @@
  * Unified from /lib/utils.ts and other utility functions
  */
 
-import { type ClassValue, clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
-
-// CSS class name utility (from /lib/utils.ts)
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
+// CSS class name utility moved to separate file to avoid conflicts
 
 // Date utilities
 export function formatDate(date: Date | string | null): string {

@@ -15,7 +15,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { CalendarIcon, Download, Filter, TrendingUp, AlertTriangle, BarChart3, PieChart, Search, Save, Star, MapPin } from 'lucide-react';
 import { format } from 'date-fns';
-import { cn } from '@/lib/utils';
+import { cn } from '@/core/utils';
 import { ClosureStatus } from '@/types/financial';
 import { LocationAwareReportWrapper } from '../reports/LocationAwareReportWrapper';
 

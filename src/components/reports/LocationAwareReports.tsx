@@ -12,7 +12,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { CalendarIcon, Download, Filter, BarChart3, AlertTriangle, MapPin, Eye } from 'lucide-react';
 import { format } from 'date-fns';
-import { cn } from '@/lib/utils';
+import { cn } from '@/core/utils';
 import { LocationAwareReportWrapper } from './LocationAwareReportWrapper';
 
 interface LocationComparisonData {

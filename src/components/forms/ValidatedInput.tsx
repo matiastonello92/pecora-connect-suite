@@ -1,7 +1,7 @@
 import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { cn } from '@/lib/utils';
+import { cn } from '@/core/utils';
 
 interface ValidatedInputProps extends React.ComponentProps<"input"> {
   label?: string;

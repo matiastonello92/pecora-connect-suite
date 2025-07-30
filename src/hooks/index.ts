@@ -9,3 +9,6 @@ export * from './usePermissionGuard';
 export * from './useAsyncOperation';
 export * from './useLoadingState';
 export * from './use-toast';
+export * from './useAuthService';
+export * from './useDataService';
+export * from './useUploadService';

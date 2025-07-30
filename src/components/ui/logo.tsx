@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn } from "@/core/utils";
 import logoImage from "@/assets/pecora-logo.png";
 
 interface LogoProps {

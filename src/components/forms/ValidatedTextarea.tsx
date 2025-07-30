@@ -1,7 +1,7 @@
 import React from 'react';
 import { Textarea, TextareaProps } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { cn } from '@/lib/utils';
+import { cn } from '@/core/utils';
 
 interface ValidatedTextareaProps extends TextareaProps {
   label?: string;
