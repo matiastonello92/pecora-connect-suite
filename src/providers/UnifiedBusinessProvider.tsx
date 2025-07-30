@@ -5,7 +5,7 @@
  */
 
 import React, { ReactNode, createContext, useContext, useMemo } from 'react';
-import { useEnhancedPermissions } from '@/providers/EnhancedPermissionProvider';
+// Permission provider removed - simplified access model
 
 // Import all business context hooks
 import { useInventory } from '@/context/InventoryContext';
@@ -54,7 +54,7 @@ interface UnifiedBusinessContextType {
   
   // Core contexts
   location: ReturnType<typeof useLocation>;
-  permissions: ReturnType<typeof useEnhancedPermissions>;
+  // permissions removed - simplified access model
   unreadMessages: ReturnType<typeof useUnreadMessages>;
   reports: ReturnType<typeof useReports>;
 }
@@ -114,7 +114,7 @@ const BusinessContextValue: React.FC<{ children: ReactNode }> = ({ children }) =
   const userManagement = useUserManagement();
   const chat = useChatContext();
   const location = useLocation();
-  const permissions = useEnhancedPermissions();
+  // permissions removed - simplified access model
   const unreadMessages = useUnreadMessages();
   const reports = useReports();
 
@@ -130,7 +130,7 @@ const BusinessContextValue: React.FC<{ children: ReactNode }> = ({ children }) =
     userManagement,
     chat,
     location,
-    permissions,
+    // permissions removed
     unreadMessages,
     reports,
   }), [
@@ -145,7 +145,7 @@ const BusinessContextValue: React.FC<{ children: ReactNode }> = ({ children }) =
     userManagement,
     chat,
     location,
-    permissions,
+    // permissions removed
     unreadMessages,
     reports,
   ]);
@@ -181,6 +181,6 @@ export const useBusinessCommunication = () => useUnifiedBusiness().communication
 export const useBusinessUserManagement = () => useUnifiedBusiness().userManagement;
 export const useBusinessChat = () => useUnifiedBusiness().chat;
 export const useBusinessLocation = () => useUnifiedBusiness().location;
-export const useBusinessPermissions = () => useUnifiedBusiness().permissions;
+// permissions removed - simplified access model
 export const useBusinessUnreadMessages = () => useUnifiedBusiness().unreadMessages;
 export const useBusinessReports = () => useUnifiedBusiness().reports;

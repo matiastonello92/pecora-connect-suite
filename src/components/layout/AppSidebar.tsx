@@ -298,8 +298,8 @@ export const AppSidebar = () => {
   const filteredItems = navigationItems.filter((item) => {
     if (!profile) return false;
     
-    // Super admin can see everything
-    if (profile.role === 'super_admin') return true;
+    // All authenticated users can see everything
+    return true;
     
     const hasRolePermission = true; // Allow all for now
     const hasDepartmentAccess = true; // Allow all for now
@@ -430,7 +430,7 @@ export const AppSidebar = () => {
                       : profile.email?.split('@')[0] || 'User'}
                   </p>
                   <p className="text-xs text-muted-foreground truncate capitalize">
-                    {profile.role || 'User'} • {(profile.locations || []).join(', ')}
+                    {profile.status || 'Active'} • {(profile.locations || []).join(', ')}
                   </p>
                 </div>
               </div>

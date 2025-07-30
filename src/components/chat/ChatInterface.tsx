@@ -142,9 +142,9 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({ onBack, onShowInfo
   };
 
   const canSendMessages = () => {
-    // Announcements: only admins and managers can send
+    // All authenticated users can send messages
     if (activeChat.type === 'announcements') {
-      return profile?.role && ['manager', 'super_admin'].includes(profile.role);
+      return true; // All authenticated users can send announcements
     }
     
     // Private chats: check connection status

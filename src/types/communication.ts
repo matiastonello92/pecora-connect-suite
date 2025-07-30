@@ -58,7 +58,7 @@ export interface ChatParticipant {
     last_name: string;
     position?: string;
     department?: string;
-    role: string;
+    role?: string; // Optional since role system removed
   };
 }
 

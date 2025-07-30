@@ -19,10 +19,7 @@ import { CommunicationProvider } from '@/context/CommunicationProvider';
 import { UserManagementProvider } from '@/context/UserManagementContext';
 import { ChatProvider } from '@/context/ChatContext';
 
-import { UnreadMessagesProvider } from '@/context/UnreadMessagesContext';
-import { ReportsProvider } from '@/context/ReportsContext';
-
-// Import ALL business context hooks for unified access
+// Import ALL business context hooks
 import { useInventory } from '@/context/InventoryContext';
 import { useKitchenInventory } from '@/context/KitchenInventoryContext';
 import { useChecklist } from '@/context/ChecklistContext';
@@ -34,8 +31,8 @@ import { useCommunication } from '@/context/CommunicationContext';
 import { useUserManagement } from '@/context/UserManagementContext';
 import { useChatContext } from '@/context/ChatContext';
 
-import { useUnreadMessages } from '@/context/UnreadMessagesContext';
-import { useReports } from '@/context/ReportsContext';
+import { UnreadMessagesProvider, useUnreadMessages } from '@/context/UnreadMessagesContext';
+import { ReportsProvider, useReports } from '@/context/ReportsContext';
 import { useLocationMeta, useLocationState, useLocationData } from '@/context/OptimizedLocationProvider';
 
 // Unified Business Context Interface

@@ -11,11 +11,24 @@ interface UserEditDialogProps {
 export const UserEditDialog = ({ user, isOpen, onOpenChange, onUserUpdated }: UserEditDialogProps) => {
   return (
     <GenericUserDialog
-      user={user}
-      isOpen={isOpen}
+      open={isOpen}
       onOpenChange={onOpenChange}
-      onUserSaved={onUserUpdated}
-      mode="edit"
-    />
+      title="Edit User"
+    >
+      <div className="space-y-4">
+        <div>
+          <strong>User:</strong> {user.firstName} {user.lastName}
+        </div>
+        <div>
+          <strong>Email:</strong> {user.email}
+        </div>
+        <div>
+          <strong>Status:</strong> {user.status}
+        </div>
+        <div>
+          <strong>Locations:</strong> {user.locations?.join(', ') || 'None'}
+        </div>
+      </div>
+    </GenericUserDialog>
   );
 };

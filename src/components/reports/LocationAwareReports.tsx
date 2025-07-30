@@ -53,7 +53,7 @@ export const LocationAwareReports = () => {
     }
   }, [availableLocations]);
 
-  const isBackofficeUser = ['super_admin', 'manager', 'director'].includes(profile?.role || '');
+  const isBackofficeUser = true; // All authenticated users have backoffice access
   const currentLocationName = availableLocations.find(loc => loc.value === activeLocation)?.label || activeLocation;
 
   const generateLocationReport = async () => {

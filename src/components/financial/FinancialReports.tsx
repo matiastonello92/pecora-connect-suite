@@ -67,7 +67,7 @@ export const FinancialReports = () => {
   const [chartType, setChartType] = useState<'bar' | 'pie' | 'line'>('bar');
   const [viewType, setViewType] = useState<'totals' | 'percentages'>('totals');
 
-  const canManageStatus = ['director', 'super_admin'].includes(profile?.role || '');
+  const canManageStatus = true; // All authenticated users can manage status
   const currentLocationName = availableLocations.find(loc => loc.value === activeLocation)?.label || activeLocation;
 
   const handleGenerateReport = () => {

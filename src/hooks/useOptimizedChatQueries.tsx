@@ -35,10 +35,7 @@ export const useOptimizedChats = () => {
             *,
             user:profiles!chat_participants_user_id_fkey(
               first_name,
-              last_name,
-              position,
-              department,
-              role
+              last_name
             )
           )
         `)
@@ -46,7 +43,17 @@ export const useOptimizedChats = () => {
         .order('last_message_at', { ascending: false });
 
       if (error) throw error;
-      return (data || []) as Chat[];
+      // Transform data to match Chat type
+      return (data || []).map(chat => ({
+        ...chat,
+        participants: chat.participants?.map(p => ({
+          ...p,
+          user: p.user ? {
+            ...p.user,
+            role: 'user' // Default role since permission system removed
+          } : undefined
+        })) || []
+      })) as Chat[];
     },
     enabled: !!profile?.user_id && userLocations.length > 0,
     staleTime: 1000 * 60 * 2, // 2 minutes for chat list

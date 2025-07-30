@@ -154,7 +154,7 @@ export const ChatSystemStatus: React.FC = () => {
             <div className="text-sm">
               <div><strong>User:</strong> {profile.firstName} {profile.lastName} ({profile.email})</div>
               <div><strong>Locations:</strong> {(profile.locations || []).join(', ') || 'None'}</div>
-              <div><strong>Role:</strong> {profile.role} | <strong>Access Level:</strong> {profile.accessLevel}</div>
+              <div><strong>Status:</strong> {profile.status}</div>
             </div>
           </div>
         )}

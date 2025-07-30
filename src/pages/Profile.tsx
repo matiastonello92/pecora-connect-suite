@@ -50,7 +50,7 @@ export const Profile = () => {
           <div className="flex items-center gap-3">
             <div className="relative">
               <Avatar className="h-12 w-12">
-                <AvatarImage src={currentUser.avatar} />
+                <AvatarImage src={currentUser.avatar_url} />
                 <AvatarFallback className="bg-primary text-primary-foreground">
                   {initials}
                 </AvatarFallback>

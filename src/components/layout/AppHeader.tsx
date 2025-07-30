@@ -35,14 +35,7 @@ export const AppHeader = () => {
   const getRoleColor = () => {
     if (!profile) return 'bg-primary text-primary-foreground';
     
-    switch (profile.role) {
-      case 'super_admin':
-        return 'bg-destructive text-destructive-foreground';
-      case 'manager':
-        return 'bg-yellow-600 text-white';
-      default:
-        return 'bg-primary text-primary-foreground';
-    }
+    return 'bg-primary text-primary-foreground'; // All users have same styling
   };
 
   return (
@@ -115,7 +108,7 @@ export const AppHeader = () => {
                   {profile?.email}
                 </p>
                 <p className="text-xs leading-none text-muted-foreground capitalize">
-                  {profile?.role || 'User'} • {(profile?.locations || []).join(', ')}
+                  {profile?.status || 'Active'} • {(profile?.locations || []).join(', ')}
                 </p>
               </div>
             </DropdownMenuLabel>

@@ -54,9 +54,7 @@ export const ConnectionRequestManager: React.FC<ConnectionRequestManagerProps> =
     if (!profile) return false;
     
     const privilegedRoles = ['general_manager', 'human_resources'];
-    return profile.role === 'super_admin' || 
-           profile.role === 'manager' ||
-           profile.accessLevel === 'general_manager';
+    return true; // All authenticated users can access across locations
   };
 
   // Load available users based on location access

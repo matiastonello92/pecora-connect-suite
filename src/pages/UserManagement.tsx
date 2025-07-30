@@ -5,11 +5,11 @@ import { useUserManagement } from '@/context/UserManagementContext';
 import { DeleteUserDialog } from '@/components/ui/delete-user-dialog';
 import { DeleteInvitationDialog } from '@/components/ui/delete-invitation-dialog';
 import { ReactivateUserDialog } from '@/components/ui/reactivate-user-dialog';
-import { EnhancedInviteUserDialog } from '@/components/auth/EnhancedInviteUserDialog';
-import { EnhancedUserCard } from '@/components/users/EnhancedUserCard';
+import { SimpleInviteUserDialog } from '@/components/auth/SimpleInviteUserDialog';
+import { SimpleUserCard } from '@/components/users/SimpleUserCard';
 
 import { useUserDeletionValidation } from '@/hooks/useUserDeletionValidation';
-import { UserListPagination } from '@/components/management/UserListPagination';
+import { SimpleUserList } from '@/components/management/SimpleUserList';
 import { UserValidationPanel } from '@/components/management/UserValidationPanel';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -96,7 +96,7 @@ export const UserManagement = () => {
             <Shield className="h-4 w-4" />
             {isValidating ? 'Validating...' : 'System Check'}
           </Button>
-          <EnhancedInviteUserDialog />
+          <SimpleInviteUserDialog />
         </div>
       </div>
 
@@ -144,11 +144,9 @@ export const UserManagement = () => {
         </TabsList>
 
         <TabsContent value="users" className="space-y-4">
-          <UserListPagination
+          <SimpleUserList
             users={users}
-            usersPerPage={10}
-            showActions={true}
-            actions={<UserValidationPanel />}
+            onDelete={deleteUser}
           />
             
           {/* Archived Users Section - Only show if users had completed registration */}
@@ -174,13 +172,11 @@ export const UserManagement = () => {
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <div className={`w-2 h-2 rounded-full ${getRoleColor(user.role)}`} />
-                        <Badge variant="outline" className="text-xs">{user.role}</Badge>
                         <Badge variant="secondary" className="text-xs bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200">
                           {user.previousStatus}
                         </Badge>
-                        {hasPermission('manager') && user.canReactivate && (
-                          <ReactivateUserDialog user={user} onReactivate={reactivateUser} />
+                        {user.canReactivate && (
+                          <ReactivateUserDialog user={user} onReactivate={() => reactivateUser(user)} />
                         )}
                       </div>
                     </div>
@@ -237,16 +233,6 @@ export const UserManagement = () => {
                       </div>
                     </div>
                     <div className="flex items-center gap-2 shrink-0 flex-wrap">
-                      <div className={`w-2 h-2 rounded-full ${getRoleColor(invitation.role)}`} />
-                      <Badge variant="outline" className="text-xs">{invitation.role}</Badge>
-                      {invitation.restaurant_role && (
-                        <Badge variant="outline" className="text-xs bg-purple-50 text-purple-700 dark:bg-purple-900 dark:text-purple-300">
-                          {invitation.restaurant_role}
-                        </Badge>
-                      )}
-                      <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 dark:bg-blue-900 dark:text-blue-300">
-                        {invitation.access_level}
-                      </Badge>
                       <Badge variant="secondary" className="text-xs bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200">
                         pending
                       </Badge>
@@ -259,9 +245,7 @@ export const UserManagement = () => {
                         <RefreshCw className="h-3 w-3 mr-1" />
                         Resend
                       </Button>
-                      {hasPermission('manager') && (
-                        <DeleteInvitationDialog invitation={invitation} onDelete={deletePendingInvitation} />
-                      )}
+                      <DeleteInvitationDialog invitation={invitation} onDelete={deletePendingInvitation} />
                     </div>
                   </div>
                 </CardHeader>
@@ -272,14 +256,10 @@ export const UserManagement = () => {
                       <div className="text-xs sm:text-sm text-muted-foreground truncate">{invitation.email}</div>
                     </div>
                     <div className="min-w-0">
-                      <div className="text-xs sm:text-sm font-medium">Restaurant Role</div>
+                      <div className="text-xs sm:text-sm font-medium">Status</div>
                       <div className="text-xs sm:text-sm text-muted-foreground">
-                        {invitation.restaurant_role || 'Not assigned'}
+                        {invitation.status}
                       </div>
-                    </div>
-                    <div className="min-w-0">
-                      <div className="text-xs sm:text-sm font-medium">Access Level</div>
-                      <div className="text-xs sm:text-sm text-muted-foreground">{invitation.access_level}</div>
                     </div>
                     <div className="min-w-0">
                       <div className="text-xs sm:text-sm font-medium">Location</div>
@@ -309,15 +289,12 @@ export const UserManagement = () => {
 
         <TabsContent value="roles" className="space-y-4">
           <div className="grid gap-3 sm:gap-4">
-            {/* Active Users with Permission Management */}
+            {/* All Users */}
             {users.map((user) => (
-              <EnhancedUserCard
+              <SimpleUserCard
                 key={user.user_id}
                 user={user}
                 onDelete={deleteUser}
-                onUpdate={() => window.location.reload()}
-                hasPermission={hasPermission}
-                showPermissions={true}
               />
             ))}
           </div>

@@ -51,10 +51,8 @@ export const AuthDebugPanel: React.FC = () => {
             {profile ? JSON.stringify({
               user_id: profile.user_id,
               email: profile.email,
-              role: profile.role,
-              access_level: profile.accessLevel,
-              locations: profile.locations,
-              status: profile.status
+              status: profile.status,
+              locations: profile.locations
             }, null, 2) : 'null'}
           </pre>
         </div>
