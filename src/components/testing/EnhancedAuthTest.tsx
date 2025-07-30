@@ -31,8 +31,16 @@ interface PerformanceMetrics {
 }
 
 export const EnhancedAuthTest: React.FC = () => {
-  const auth = useEnhancedAuth();
-  const permissions = useEnhancedPermissions();
+  // Gracefully handle when enhanced providers aren't set up
+  let auth: any = null;
+  let permissions: any = null;
+  
+  try {
+    auth = useEnhancedAuth();
+    permissions = useEnhancedPermissions();
+  } catch (error) {
+    // Enhanced providers not available, show setup message
+  }
   
   const [testResults, setTestResults] = useState<TestResult[]>([]);
   const [performanceMetrics, setPerformanceMetrics] = useState<PerformanceMetrics>({
@@ -265,6 +273,36 @@ export const EnhancedAuthTest: React.FC = () => {
       </Badge>
     );
   };
+
+  // Show setup message if enhanced providers aren't available
+  if (!auth || !permissions) {
+    return (
+      <div className="space-y-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <AlertCircle className="h-5 w-5 text-yellow-500" />
+              Enhanced Auth System Setup Required
+            </CardTitle>
+            <CardDescription>
+              The Enhanced Auth system requires setup of EnhancedAuthProvider and EnhancedPermissionProvider
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="text-sm text-muted-foreground">
+              <p>To test the enhanced authentication system:</p>
+              <ol className="list-decimal list-inside mt-2 space-y-1">
+                <li>Add EnhancedAuthProvider to your provider hierarchy</li>
+                <li>Add EnhancedPermissionProvider after EnhancedAuthProvider</li>
+                <li>The enhanced system provides advanced session management and role-based caching</li>
+              </ol>
+              <p className="mt-4 font-medium">Current Status: Using fallback SimpleAuth system</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
