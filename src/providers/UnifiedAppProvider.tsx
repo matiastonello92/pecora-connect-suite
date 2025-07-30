@@ -8,7 +8,7 @@ import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 
 // Unified App Context Type
 interface UnifiedAppContextType {
-  // Auth state (delegated to SimpleAuthContext)
+  // Auth state (delegated to EnhancedAuthProvider)
   auth: {
     user: any;
     profile: any;
