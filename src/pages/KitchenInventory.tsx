@@ -26,8 +26,6 @@ import { KitchenCategory, KitchenProduct } from '@/types/kitchenInventory';
 export const KitchenInventory = () => {
   const { user } = useEnhancedAuth();
   
-  const hasPermission = (permission: string) => true; // Temporarily allow all permissions
-  
   const { toast } = useToast();
   const {
     currentInventory,
@@ -57,9 +55,9 @@ export const KitchenInventory = () => {
     }
   );
 
-  // Check if user has access to kitchen inventory
-  const hasKitchenAccess = true; // Simplified for now - will need proper permission check
-  const canApprove = hasPermission('manager');
+  // All authenticated users have full access
+  const canApprove = true;
+  const hasKitchenAccess = true; // All authenticated users have kitchen access
 
   if (!hasKitchenAccess) {
     return (
@@ -67,7 +65,7 @@ export const KitchenInventory = () => {
         <Alert>
           <AlertTriangle className="h-4 w-4" />
           <AlertDescription>
-            You don't have access to the Kitchen Inventory section. Only Kitchen department users and managers can access this area.
+            You don't have access to the Kitchen Inventory section.
           </AlertDescription>
         </Alert>
       </div>
@@ -180,16 +178,7 @@ export const KitchenInventory = () => {
         </div>
       </div>
 
-      {/* Access Control */}
-      {!hasKitchenAccess && (
-        <Alert variant="destructive">
-          <AlertTriangle className="h-4 w-4" />
-          <AlertDescription>
-            Access denied. Only kitchen staff can access this section.
-          </AlertDescription>
-        </Alert>
-      )}
-
+      {/* All users have access */}
       {hasKitchenAccess && (
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="grid grid-cols-2 w-full max-w-md">

@@ -14,5 +14,5 @@ export * from './useDataService';
 export * from './useUploadService';
 export * from './useNotificationService';
 export * from './useChatService';
-export * from './useUserService';
+
 export * from './useFinancialService';

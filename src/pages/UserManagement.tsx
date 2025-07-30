@@ -20,8 +20,6 @@ import { Users, UserPlus, Mail, RefreshCw, Archive, AlertTriangle, Shield } from
 export const UserManagement = () => {
   const { user } = useEnhancedAuth();
   
-  const hasPermission = (permission: string) => true; // Temporarily allow all permissions
-  
   const location = useLocation();
   const navigate = useNavigate();
   const { users, pendingInvitations, archivedUsers, resendInvitation, deleteUser, deletePendingInvitation, reactivateUser } = useUserManagement();

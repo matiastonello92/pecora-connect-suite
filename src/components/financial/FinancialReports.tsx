@@ -21,8 +21,6 @@ import { LocationAwareReportWrapper } from '../reports/LocationAwareReportWrappe
 
 export const FinancialReports = () => {
   const { profile } = useEnhancedAuth();
-  
-  const hasPermission = (permission: string) => true; // Temporarily allow all permissions
   const { activeLocation, availableLocations } = useLocation();
   
   const {

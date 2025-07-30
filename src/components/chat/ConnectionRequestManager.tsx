@@ -49,12 +49,9 @@ export const ConnectionRequestManager: React.FC<ConnectionRequestManagerProps> =
 
   const getLocale = () => enUS;
 
-  // Check if user has privileged role that can bypass location restrictions
+  // All authenticated users can access across locations
   const canAccessAllLocations = () => {
-    if (!profile) return false;
-    
-    const privilegedRoles = ['general_manager', 'human_resources'];
-    return true; // All authenticated users can access across locations
+    return !!profile; // All authenticated users can access across locations
   };
 
   // Load available users based on location access

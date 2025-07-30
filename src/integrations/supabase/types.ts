@@ -139,7 +139,6 @@ export type Database = {
           position: string | null
           previous_status: string
           reason: string | null
-          role: string
         }
         Insert: {
           archived_at?: string
@@ -157,7 +156,6 @@ export type Database = {
           position?: string | null
           previous_status: string
           reason?: string | null
-          role: string
         }
         Update: {
           archived_at?: string
@@ -175,7 +173,6 @@ export type Database = {
           position?: string | null
           previous_status?: string
           reason?: string | null
-          role?: string
         }
         Relationships: []
       }

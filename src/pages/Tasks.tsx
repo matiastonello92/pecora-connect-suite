@@ -14,8 +14,6 @@ import { ListTodo, Plus, CheckSquare, BarChart3, Clock, User, AlertTriangle } fr
 export const Tasks = () => {
   const { user } = useEnhancedAuth();
   
-  const hasPermission = (permission: string) => true; // Temporarily allow all permissions
-  
   const [showCreateDialog, setShowCreateDialog] = useState(false);
 
   // Mock data for demonstration
@@ -102,7 +100,8 @@ export const Tasks = () => {
             Manage and track tasks for your department
           </p>
         </div>
-        {hasPermission('manager') && (
+        {/* All authenticated users can create tasks */}
+        {true && (
           <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
             <DialogTrigger asChild>
               <Button>
@@ -282,7 +281,8 @@ export const Tasks = () => {
               <CardTitle>Create New Task</CardTitle>
             </CardHeader>
             <CardContent>
-              {hasPermission('manager') ? (
+              {/* All authenticated users can manage tasks */}
+              {true ? (
                 <div className="text-center py-8 text-muted-foreground">
                   <CheckSquare className="h-12 w-12 mx-auto mb-2 opacity-50" />
                   <p>Use the "Create Task" button in the header to create new tasks</p>

@@ -12,8 +12,6 @@ import { Truck, Plus, Search, ShoppingCart, FileText, TrendingUp, Package } from
 export const Suppliers = () => {
   const { user } = useEnhancedAuth();
   
-  const hasPermission = (permission: string) => true; // Temporarily allow all permissions
-  
   const [searchTerm, setSearchTerm] = useState('');
   const [showAddDialog, setShowAddDialog] = useState(false);
 
@@ -60,8 +58,8 @@ export const Suppliers = () => {
     }
   ]);
 
-  // Check permissions
-  const canManageSuppliers = hasPermission('manager');
+  // All authenticated users can manage suppliers
+  const canManageSuppliers = true;
 
   if (!canManageSuppliers) {
     return (

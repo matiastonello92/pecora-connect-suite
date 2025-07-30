@@ -32,9 +32,7 @@ export const AppHeader = () => {
     return name.slice(0, 2).toUpperCase();
   };
 
-  const getRoleColor = () => {
-    if (!profile) return 'bg-primary text-primary-foreground';
-    
+  const getUserColor = () => {
     return 'bg-primary text-primary-foreground'; // All users have same styling
   };
 
@@ -88,7 +86,7 @@ export const AppHeader = () => {
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="relative h-8 w-8 sm:h-10 sm:w-10 rounded-full">
               <Avatar className="h-8 w-8 sm:h-10 sm:w-10">
-                <AvatarFallback className={getRoleColor()}>
+                <AvatarFallback className={getUserColor()}>
                   <span className="text-xs sm:text-sm">
                     {profile && getInitials(profile.email || '')}
                   </span>

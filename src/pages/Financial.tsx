@@ -10,8 +10,6 @@ import { FinancialReports } from '@/components/financial/FinancialReports';
 export const Financial = () => {
   const { user } = useEnhancedAuth();
   
-  const hasPermission = (permission: string) => true; // Temporarily allow all permissions
-  
 
   // Check if user has access to financial section
   const hasFinancialAccess = ['manager', 'director', 'finance', 'super_admin'].includes(user?.role || '');

@@ -20,9 +20,6 @@ import { Button } from '@/components/ui/button';
 export default function Dashboard() {
   const { profile } = useEnhancedAuth();
   
-  const hasPermission = () => true; // Temporarily allow all permissions  
-  const hasAccess = () => true; // Temporarily allow all access
-  
 
   // Check if user has access to financial section  
   const hasFinancialAccess = true; // Allow all for now

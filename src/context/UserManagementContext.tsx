@@ -95,7 +95,8 @@ export const UserManagementProvider: React.FC<{ children: React.ReactNode }> = (
       locations: user.locations,
       previous_status: 'active',
       reason: 'manual_deletion',
-      can_reactivate: true
+      can_reactivate: true,
+      role: 'user' // Temporary - will be removed when types update
     });
 
     await supabase.from('profiles').delete().eq('user_id', userId);
