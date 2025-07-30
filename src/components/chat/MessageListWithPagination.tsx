@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Trash2, MoreVertical } from 'lucide-react';
 // import { useChat } from '@/context/ChatContext'; // TODO: Fix context export
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 import { formatDistanceToNow } from 'date-fns';
 import {
   DropdownMenu,
@@ -40,7 +40,7 @@ export const MessageListWithPagination = () => {
   const currentChat = null;
   const allMessages: Message[] = [];
   const deleteMessage = async (id: string) => {};
-  const { profile } = useSimpleAuth();
+  const { profile } = useEnhancedAuth();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [page, setPage] = useState(1);
   const [isLoadingMore, setIsLoadingMore] = useState(false);

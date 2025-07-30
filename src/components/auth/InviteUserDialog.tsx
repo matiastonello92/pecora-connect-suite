@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { UserPlus, Loader2 } from 'lucide-react';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 import { UserRole } from '@/types/users';
 import { InvitationData, AccessLevel, LocationType } from '@/types/users';
 
@@ -20,7 +20,7 @@ export const InviteUserDialog = () => {
   const [location, setLocation] = useState<LocationType>('menton');
   const [isLoading, setIsLoading] = useState(false);
   
-  const { user } = useSimpleAuth();
+  const { user } = useEnhancedAuth();
   
   // Temporary permission check - replace with proper permission system
   const hasPermission = (permission: string) => {

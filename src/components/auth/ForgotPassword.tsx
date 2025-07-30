@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -16,7 +16,7 @@ export const ForgotPassword = () => {
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const { user } = useSimpleAuth();
+  const { user } = useEnhancedAuth();
   const resetPassword = async (email: string) => {
     const { error } = await supabase.auth.resetPasswordForEmail(email);
     return { error: error?.message };

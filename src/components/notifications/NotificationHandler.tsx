@@ -2,10 +2,10 @@ import React, { useEffect } from 'react';
 import { usePrivateMessageNotifications } from '@/hooks/usePrivateMessageNotifications';
 import { useMobileNotifications } from '@/hooks/useMobileNotifications';
 import { reminderService } from '@/services/reminderService';
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 
 export const NotificationHandler: React.FC = () => {
-  const { profile } = useSimpleAuth();
+  const { profile } = useEnhancedAuth();
   
   // Use the new private message notification hook
   usePrivateMessageNotifications();

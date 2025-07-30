@@ -1,4 +1,4 @@
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -18,7 +18,7 @@ import { Button } from '@/components/ui/button';
   } from 'lucide-react';
 
 export default function Dashboard() {
-  const { profile } = useSimpleAuth();
+  const { profile } = useEnhancedAuth();
   
   const hasPermission = () => true; // Temporarily allow all permissions  
   const hasAccess = () => true; // Temporarily allow all access

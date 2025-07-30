@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 import { useReports } from '@/context/ReportsContext';
 import { useLocation } from '@/context/LocationContext';
 

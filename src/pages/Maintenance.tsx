@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Wrench, AlertTriangle, FileText, Settings, Plus, Upload } from 'lucide-react';
 
 export const Maintenance = () => {
-  const { user } = useSimpleAuth();
+  const { user } = useEnhancedAuth();
   
   
   const [showReportDialog, setShowReportDialog] = useState(false);

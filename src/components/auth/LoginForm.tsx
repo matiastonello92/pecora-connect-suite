@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { CheckCircle } from 'lucide-react';
 import { AuthLayout } from '@/components/ui/layouts/AuthLayout';
@@ -16,7 +16,7 @@ export const LoginForm = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const { login } = useSimpleAuth();
+  const { login } = useEnhancedAuth();
   const { showSuccess, showError } = useNotificationService();
 
   // Check for registration success

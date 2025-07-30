@@ -18,7 +18,7 @@ import { FinancialProvider } from '@/context/FinancialProvider';
 import { CommunicationProvider } from '@/context/CommunicationProvider';
 import { UserManagementProvider } from '@/context/UserManagementContext';
 import { ChatProvider } from '@/context/ChatContext';
-import { PermissionProvider } from '@/context/PermissionContext';
+
 import { UnreadMessagesProvider } from '@/context/UnreadMessagesContext';
 import { ReportsProvider } from '@/context/ReportsContext';
 
@@ -33,7 +33,7 @@ import { useFinancial } from '@/context/FinancialContext';
 import { useCommunication } from '@/context/CommunicationContext';
 import { useUserManagement } from '@/context/UserManagementContext';
 import { useChatContext } from '@/context/ChatContext';
-import { useUserPermissions } from '@/context/PermissionContext';
+
 import { useUnreadMessages } from '@/context/UnreadMessagesContext';
 import { useReports } from '@/context/ReportsContext';
 import { useLocationMeta, useLocationState, useLocationData } from '@/context/OptimizedLocationProvider';
@@ -53,7 +53,6 @@ interface SuperUnifiedContextType {
   chat: ReturnType<typeof useChatContext>;
   
   // Core contexts
-  permissions: ReturnType<typeof useUserPermissions>;
   unreadMessages: ReturnType<typeof useUnreadMessages>;
   reports: ReturnType<typeof useReports>;
   
@@ -77,8 +76,7 @@ export const useSuperUnified = () => {
 
 // All providers nested component - COMPLETE LIST
 const AllProvidersNested: React.FC<{ children: ReactNode }> = ({ children }) => (
-  <PermissionProvider>
-    <UnreadMessagesProvider>
+  <UnreadMessagesProvider>
       <ReportsProvider>
         <InventoryProvider>
           <KitchenInventoryProvider>
@@ -103,7 +101,6 @@ const AllProvidersNested: React.FC<{ children: ReactNode }> = ({ children }) => 
         </InventoryProvider>
       </ReportsProvider>
     </UnreadMessagesProvider>
-  </PermissionProvider>
 );
 
 // Context value component that uses all hooks
@@ -119,7 +116,6 @@ const SuperUnifiedContextProvider: React.FC<{ children: ReactNode }> = ({ childr
   const communication = useCommunication();
   const userManagement = useUserManagement();
   const chat = useChatContext();
-  const permissions = useUserPermissions();
   const unreadMessages = useUnreadMessages();
   const reports = useReports();
   
@@ -139,7 +135,6 @@ const SuperUnifiedContextProvider: React.FC<{ children: ReactNode }> = ({ childr
     communication,
     userManagement,
     chat,
-    permissions,
     unreadMessages,
     reports,
     location: {
@@ -158,7 +153,6 @@ const SuperUnifiedContextProvider: React.FC<{ children: ReactNode }> = ({ childr
     communication,
     userManagement,
     chat,
-    permissions,
     unreadMessages,
     reports,
     locationMeta,
@@ -198,7 +192,7 @@ export const useBusinessFinancial = () => useSuperUnified().financial;
 export const useBusinessCommunication = () => useSuperUnified().communication;
 export const useBusinessUserManagement = () => useSuperUnified().userManagement;
 export const useBusinessChat = () => useSuperUnified().chat;
-export const useBusinessPermissions = () => useSuperUnified().permissions;
+
 export const useBusinessUnreadMessages = () => useSuperUnified().unreadMessages;
 export const useBusinessReports = () => useSuperUnified().reports;
 export const useBusinessLocation = () => useSuperUnified().location;

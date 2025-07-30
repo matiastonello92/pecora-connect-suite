@@ -1,8 +1,8 @@
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 import { Navigate } from 'react-router-dom';
 
 const Index = () => {
-  const { isAuthenticated, isLoading } = useSimpleAuth();
+  const { isAuthenticated, isLoading } = useEnhancedAuth();
 
   if (isLoading) {
     return (

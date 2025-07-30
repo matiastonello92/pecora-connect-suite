@@ -1,13 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 
 /**
- * Hook centralizzato per gestione autenticazione e redirect
- * Elimina duplicazione di logica di autenticazione tra componenti
+ * Enhanced auth guard hook with improved session management
+ * Uses EnhancedAuth for better performance and caching
  */
 export function useAuthGuard(requireAuth = true) {
-  const { user, profile, isLoading } = useSimpleAuth();
+  const { user, profile, isLoading } = useEnhancedAuth();
   const navigate = useNavigate();
 
   useEffect(() => {

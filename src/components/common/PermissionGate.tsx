@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 import { supabase } from '@/integrations/supabase/client';
 
 interface PermissionGateProps {
@@ -19,7 +19,7 @@ export function PermissionGate({
   fallback = null, 
   children 
 }: PermissionGateProps) {
-  const { profile } = useSimpleAuth();
+  const { profile } = useEnhancedAuth();
   
   // Simuliamo il controllo permessi (in produzione useremo la funzione Supabase)
   const checkPermission = () => {

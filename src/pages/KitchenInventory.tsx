@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 import { useKitchenInventory } from '@/context/KitchenInventoryContext';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -24,7 +24,7 @@ import {
 import { KitchenCategory, KitchenProduct } from '@/types/kitchenInventory';
 
 export const KitchenInventory = () => {
-  const { user } = useSimpleAuth();
+  const { user } = useEnhancedAuth();
   
   const hasPermission = (permission: string) => true; // Temporarily allow all permissions
   

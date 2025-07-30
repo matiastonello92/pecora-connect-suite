@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useChatContext } from '@/context/ChatContext';
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 
 import {
   Users,
@@ -27,7 +27,7 @@ interface GroupManagementProps {
 
 export const GroupManagement: React.FC<GroupManagementProps> = ({ onClose }) => {
   const { activeChat, createChat, updateChat, addParticipant, removeParticipant, updateParticipantRole } = useChatContext();
-  const { profile } = useSimpleAuth();
+  const { profile } = useEnhancedAuth();
   
   
   const [showCreateGroup, setShowCreateGroup] = useState(false);

@@ -8,7 +8,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { supabase } from '@/integrations/supabase/client';
 
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 import { useLocation } from '@/context/LocationContext';
 import { useMessageReminders } from '@/hooks/useMessageReminders';
 import { useOptimizedChats, useOptimizedUnreadCounts, useMarkAsRead } from '@/hooks/useOptimizedChatQueries';
@@ -45,7 +45,7 @@ import { OptimizedChatList } from './OptimizedChatList';
 import { useState, useEffect } from 'react';
 
 export const OptimizedChatDashboard = memo(() => {
-  const { profile } = useSimpleAuth();
+  const { profile } = useEnhancedAuth();
   const { userLocations } = useLocation();
   const { processReminders } = useMessageReminders();
   

@@ -21,7 +21,7 @@ import {
   Shield
 } from 'lucide-react';
 import { useChatContext } from '@/context/ChatContext';
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 
 import { useToast } from '@/hooks/use-toast';
 
@@ -31,7 +31,7 @@ interface ChatSettingsProps {
 
 export const ChatSettings: React.FC<ChatSettingsProps> = ({ children }) => {
   const { activeChat, muteChat } = useChatContext();
-  const { profile } = useSimpleAuth();
+  const { profile } = useEnhancedAuth();
   
   
   const { toast } = useToast();

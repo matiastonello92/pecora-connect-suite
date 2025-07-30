@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useChatContext } from '@/context/ChatContext';
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 import { useUserManagement } from '@/context/UserManagementContext';
 
 import { formatDistanceToNow } from 'date-fns';
@@ -29,7 +29,7 @@ interface ConnectionRequestManagerProps {
 }
 
 export const ConnectionRequestManager: React.FC<ConnectionRequestManagerProps> = ({ onClose }) => {
-  const { profile } = useSimpleAuth();
+  const { profile } = useEnhancedAuth();
   
   const { users } = useUserManagement();
   const { 

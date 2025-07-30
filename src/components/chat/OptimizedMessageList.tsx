@@ -1,7 +1,7 @@
 import React, { memo, useMemo, useCallback } from 'react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 import { format, isToday, isYesterday } from 'date-fns';
 import { enUS } from 'date-fns/locale';
 import {
@@ -182,7 +182,7 @@ const MessageItem = memo(({
 MessageItem.displayName = 'MessageItem';
 
 export const OptimizedMessageList = memo<OptimizedMessageListProps>(({ messages }) => {
-  const { profile } = useSimpleAuth();
+  const { profile } = useEnhancedAuth();
 
   // Memoized message processing
   const processedMessages = useMemo(() => {

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 import { UserRole } from '@/types/users';
 import { useUserManagement } from '@/context/UserManagementContext';
 import { Button } from '@/components/ui/button';
@@ -39,7 +39,7 @@ export const EnhancedInviteUserDialog = () => {
   const [customPermissions, setCustomPermissions] = useState<Partial<Record<AppModule, ModulePermissions>>>({});
   const [isLoading, setIsLoading] = useState(false);
   
-  const { user } = useSimpleAuth();
+  const { user } = useEnhancedAuth();
   
   
   // Temporary permission check - replace with proper permission system

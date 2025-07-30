@@ -8,7 +8,7 @@ import { Separator } from '@/components/ui/separator';
 import { Palette, Lock, Bell, MoonIcon, LogOut } from 'lucide-react';
 import { UserProfile } from '@/types/users';
 
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 import { useToast } from '@/hooks/use-toast';
 import { PasswordChangeDialog } from './PasswordChangeDialog';
 
@@ -17,7 +17,7 @@ interface ProfileSettingsProps {
 }
 
 export const ProfileSettings = ({ user }: ProfileSettingsProps) => {
-  const { logout } = useSimpleAuth();
+  const { logout } = useEnhancedAuth();
   const { toast } = useToast();
   const [showPasswordDialog, setShowPasswordDialog] = useState(false);
   const [settings, setSettings] = useState({

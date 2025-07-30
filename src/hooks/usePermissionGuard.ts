@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
-import { usePermissions } from '@/hooks/usePermissions';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
+import { useEnhancedPermissions } from '@/providers/EnhancedPermissionProvider';
 import { AppModule, AccessLevel } from '@/types/users';
 
 interface UsePermissionGuardOptions {
@@ -10,15 +10,12 @@ interface UsePermissionGuardOptions {
 }
 
 /**
- * Centralized permission checking hook
- * Eliminates duplication of permission logic across components
+ * Enhanced permission checking hook with caching
+ * Uses EnhancedPermissions for better performance
  */
 export function usePermissionGuard(options: UsePermissionGuardOptions = {}) {
-  const { profile, user } = useSimpleAuth();
-  const { hasPermission } = usePermissions({
-    userId: profile?.user_id,
-    accessLevel: profile?.accessLevel as AccessLevel || 'base'
-  });
+  const { profile, user } = useEnhancedAuth();
+  const { hasPermission } = useEnhancedPermissions();
 
   const checkPermission = useCallback((
     module: AppModule, 

@@ -2,7 +2,7 @@ import React from 'react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 
 import { formatDistanceToNow, format, isToday, isYesterday } from 'date-fns';
 import { enUS } from 'date-fns/locale';
@@ -23,7 +23,7 @@ interface MessageListProps {
 }
 
 export const MessageList: React.FC<MessageListProps> = ({ messages }) => {
-  const { profile } = useSimpleAuth();
+  const { profile } = useEnhancedAuth();
   
   
   

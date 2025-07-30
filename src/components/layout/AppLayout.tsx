@@ -1,4 +1,4 @@
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { UnreadMessagesProvider } from '@/context/UnreadMessagesContext';

@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Shield, Save, RotateCcw } from 'lucide-react';
 import { UserProfile, AppModule, MODULE_LABELS, ModulePermissions } from '@/types/users';
 
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -17,7 +17,7 @@ interface ProfilePermissionsProps {
 
 export const ProfilePermissions = ({ user }: ProfilePermissionsProps) => {
   
-  const { profile: currentProfile } = useSimpleAuth();
+  const { profile: currentProfile } = useEnhancedAuth();
   const { toast } = useToast();
   const [permissions, setPermissions] = useState<Partial<Record<AppModule, ModulePermissions>>>({});
   const [loading, setLoading] = useState(false);

@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { AlertTriangle, Shield, UserX, RotateCcw, History, Download } from 'lucide-react';
 import { UserProfile, UserRole, AccessLevel, LocationType, RESTAURANT_ROLE_LABELS, ACCESS_LEVEL_LABELS } from '@/types/users';
 
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -16,7 +16,7 @@ interface ProfileSecurityProps {
 
 export const ProfileSecurity = ({ user }: ProfileSecurityProps) => {
   
-  const { profile: currentProfile } = useSimpleAuth();
+  const { profile: currentProfile } = useEnhancedAuth();
   const { toast } = useToast();
   const [isUpdating, setIsUpdating] = useState(false);
 

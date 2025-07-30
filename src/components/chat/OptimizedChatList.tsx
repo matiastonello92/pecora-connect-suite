@@ -11,7 +11,7 @@ import {
   CheckCheck
 } from 'lucide-react';
 import { Chat, ChatType } from '@/types/communication';
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 
 interface OptimizedChatListProps {
   chats: Chat[];
@@ -173,7 +173,7 @@ export const OptimizedChatList = memo<OptimizedChatListProps>(({
   searchTerm,
   selectedLocation
 }) => {
-  const { profile } = useSimpleAuth();
+  const { profile } = useEnhancedAuth();
 
   // Memoized filtering and sorting logic
   const filteredAndSortedChats = useMemo(() => {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 import { useFinancial } from '@/context/FinancialContext';
 import { useLocation } from '@/context/LocationContext';
 
@@ -20,7 +20,7 @@ import { ClosureStatus } from '@/types/financial';
 import { LocationAwareReportWrapper } from '../reports/LocationAwareReportWrapper';
 
 export const FinancialReports = () => {
-  const { profile } = useSimpleAuth();
+  const { profile } = useEnhancedAuth();
   
   const hasPermission = (permission: string) => true; // Temporarily allow all permissions
   const { activeLocation, availableLocations } = useLocation();

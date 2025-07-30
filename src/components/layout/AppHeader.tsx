@@ -1,4 +1,4 @@
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -20,7 +20,7 @@ import { LogOut, Settings, User, Globe, Bell, MapPin } from 'lucide-react';
 import { NotificationCenter, useNotificationCount } from '@/components/notifications/NotificationCenter';
 
 export const AppHeader = () => {
-  const { profile, logout } = useSimpleAuth();
+  const { profile, logout } = useEnhancedAuth();
   const navigate = useNavigate();
   const unreadCount = useNotificationCount();
   const { activeLocation, availableLocations } = useLocation();

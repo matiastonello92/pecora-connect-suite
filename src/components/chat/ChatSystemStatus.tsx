@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle, AlertTriangle, RefreshCw, Settings } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 import { toast } from '@/hooks/use-toast';
 
 interface HealthCheck {
@@ -15,7 +15,7 @@ interface HealthCheck {
 }
 
 export const ChatSystemStatus: React.FC = () => {
-  const { profile } = useSimpleAuth();
+  const { profile } = useEnhancedAuth();
   const [healthChecks, setHealthChecks] = useState<HealthCheck[]>([]);
   const [loading, setLoading] = useState(false);
 

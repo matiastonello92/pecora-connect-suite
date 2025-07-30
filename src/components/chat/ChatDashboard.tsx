@@ -9,7 +9,7 @@ import { Separator } from '@/components/ui/separator';
 import { supabase } from '@/integrations/supabase/client';
 import { useChatContext } from '@/context/ChatContext';
 
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 import { useUnreadMessages } from '@/context/UnreadMessagesContext';
 import { useMessageReminders } from '@/hooks/useMessageReminders';
 import { useLocation } from '@/context/LocationContext';
@@ -59,7 +59,7 @@ export const ChatDashboard: React.FC = () => {
     error,
     emergencyFixAuth
   } = useChatContext();
-  const { profile } = useSimpleAuth();
+  const { profile } = useEnhancedAuth();
   
   const { unreadCountByChat, markChatAsRead } = useUnreadMessages();
   const { processReminders } = useMessageReminders();

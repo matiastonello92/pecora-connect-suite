@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Clock, MapPin } from 'lucide-react';
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 import { useLocation } from '@/context/LocationContext';
 import { formatDateForLocation, getCurrentTimeForLocation, DATE_FORMATS, getDateLocale } from '@/lib/timezone';
 
@@ -16,7 +16,7 @@ export const LocationClock: React.FC<LocationClockProps> = ({
   showLocation = true,
   format = DATE_FORMATS.ITALIAN_DATE
 }) => {
-  const { profile } = useSimpleAuth();
+  const { profile } = useEnhancedAuth();
   const { activeLocation, canSwitchLocations } = useLocation();
   
   

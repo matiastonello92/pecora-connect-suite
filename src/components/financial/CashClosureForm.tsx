@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 import { useFinancial } from '@/context/FinancialContext';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -15,7 +15,7 @@ import { SatisfactionRating } from '@/types/financial';
 import { useToast } from '@/hooks/use-toast';
 
 export const CashClosureForm = () => {
-  const { profile } = useSimpleAuth();
+  const { profile } = useEnhancedAuth();
   
   
   const { toast } = useToast();

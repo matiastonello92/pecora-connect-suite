@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 import { useEquipment } from '@/context/EquipmentContext';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';

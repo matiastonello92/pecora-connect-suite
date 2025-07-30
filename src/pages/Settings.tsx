@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,7 +9,7 @@ import { Separator } from '@/components/ui/separator';
 import { User, Shield, Palette, Bell } from 'lucide-react';
 
 export const Settings = () => {
-  const { user } = useSimpleAuth();
+  const { user } = useEnhancedAuth();
   const updateUser = (user: any) => {}; // Temporarily stub
 
   const handleProfileUpdate = (e: React.FormEvent<HTMLFormElement>) => {

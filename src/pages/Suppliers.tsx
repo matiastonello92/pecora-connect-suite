@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Truck, Plus, Search, ShoppingCart, FileText, TrendingUp, Package } from 'lucide-react';
 
 export const Suppliers = () => {
-  const { user } = useSimpleAuth();
+  const { user } = useEnhancedAuth();
   
   const hasPermission = (permission: string) => true; // Temporarily allow all permissions
   

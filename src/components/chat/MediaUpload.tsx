@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 
 import { useToast } from '@/hooks/use-toast';
 import { X, Upload, FileText, Image as ImageIcon, AlertTriangle } from 'lucide-react';
@@ -19,7 +19,7 @@ export const MediaUpload: React.FC<MediaUploadProps> = ({ file, onCancel, onSend
   const [caption, setCaption] = useState('');
   const [isValidFile, setIsValidFile] = useState(true);
   const [validationError, setValidationError] = useState<string>('');
-  const { profile } = useSimpleAuth();
+  const { profile } = useEnhancedAuth();
   
   
   const { toast } = useToast();

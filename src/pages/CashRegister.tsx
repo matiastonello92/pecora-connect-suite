@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 import { useCashRegister } from '@/context/CashRegisterContext';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,7 +13,7 @@ import { ShoppingCart, CreditCard, Banknote, Smartphone, Plus, Minus, Trash2, Cl
 import { PaymentMethod, OrderStatus } from '@/types/cashRegister';
 
 export const CashRegister = () => {
-  const { user } = useSimpleAuth();
+  const { user } = useEnhancedAuth();
   
   
   const {

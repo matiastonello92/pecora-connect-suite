@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 import { useLocation } from '@/context/LocationContext';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -24,7 +24,7 @@ interface LocationComparisonData {
 }
 
 export const LocationAwareReports = () => {
-  const { profile } = useSimpleAuth();
+  const { profile } = useEnhancedAuth();
   
   const { activeLocation, availableLocations, allActiveLocations } = useLocation();
   

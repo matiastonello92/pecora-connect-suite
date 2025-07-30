@@ -1,4 +1,4 @@
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 import { useUnreadMessages } from '@/context/UnreadMessagesContext';
 
 import { NavLink, useLocation } from 'react-router-dom';
@@ -220,7 +220,7 @@ const getTitle = (key: string): string => {
 };
 
 export const AppSidebar = () => {
-  const { profile, logout } = useSimpleAuth();
+  const { profile, logout } = useEnhancedAuth();
   const hasPermission = () => true; // Temporarily allow all permissions
   const hasAccess = () => true; // Temporarily allow all access
   const { totalUnreadCount, markChatAsRead } = useUnreadMessages();

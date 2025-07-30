@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { useChatContext } from '@/context/ChatContext';
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 import { MessageList } from './MessageList';
 import { MessageInput } from './MessageInput';
 
@@ -34,7 +34,7 @@ interface ChatInterfaceProps {
 
 export const ChatInterface: React.FC<ChatInterfaceProps> = ({ onBack, onShowInfo }) => {
   const { activeChat, messages, sendMessage, sendingMessage, getConnectionStatus } = useChatContext();
-  const { profile } = useSimpleAuth();
+  const { profile } = useEnhancedAuth();
   
   
   const [typingUsers, setTypingUsers] = useState<string[]>([]);

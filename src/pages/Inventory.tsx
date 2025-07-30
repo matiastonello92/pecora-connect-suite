@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 import { useInventory } from '@/context/InventoryContext';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,7 +13,7 @@ import { Package, AlertTriangle, TrendingDown, Plus, Search, Filter, Clock } fro
 import { InventoryPagination } from '@/components/inventory/InventoryPagination';
 
 export const Inventory = () => {
-  const { user } = useSimpleAuth();
+  const { user } = useEnhancedAuth();
   
   
   const {

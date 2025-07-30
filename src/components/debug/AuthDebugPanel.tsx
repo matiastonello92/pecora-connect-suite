@@ -1,9 +1,9 @@
 import React from 'react';
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export const AuthDebugPanel: React.FC = () => {
-  const { user, session, profile, isLoading, isAuthenticated } = useSimpleAuth();
+  const { user, session, profile, isLoading, isAuthenticated } = useEnhancedAuth();
 
   // Only show in development
   if (process.env.NODE_ENV === 'production') return null;

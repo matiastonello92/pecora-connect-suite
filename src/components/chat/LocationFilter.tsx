@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { MapPin } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 import { useActiveLocations } from '@/hooks/useLocations';
 
 interface LocationFilterProps {
@@ -14,7 +14,7 @@ export const LocationFilter: React.FC<LocationFilterProps> = ({
   onLocationChange, 
   selectedLocation 
 }) => {
-  const { profile } = useSimpleAuth();
+  const { profile } = useEnhancedAuth();
   const { data: activeLocations = [] } = useActiveLocations();
   
   // Get user's accessible locations from their profile

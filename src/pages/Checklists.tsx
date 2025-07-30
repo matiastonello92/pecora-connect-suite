@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 import { useChecklist } from '@/context/ChecklistContext';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,7 +14,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { CheckSquare, Clock, Play, Plus, CheckCircle, AlertCircle } from 'lucide-react';
 
 export const Checklists = () => {
-  const { user } = useSimpleAuth();
+  const { user } = useEnhancedAuth();
   
   
   const {
