@@ -1,12 +1,12 @@
 /**
  * Common Utilities
- * Consolidated from lib/utils.ts and various utility files
+ * Unified from /lib/utils.ts and other utility functions
  */
 
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
-// UI utilities
+// CSS class name utility (from /lib/utils.ts)
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }

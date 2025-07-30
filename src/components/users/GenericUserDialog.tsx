@@ -13,8 +13,8 @@ import {
   RESTAURANT_ROLE_LABELS,
   ACCESS_LEVEL_LABELS
 } from '@/types/users';
-import { userValidationSchema, validateForm } from '@/lib/validation';
-import { handleError, showSuccessToast, showErrorToast } from '@/lib/errorHandling';
+import { userValidationSchema, validateForm } from '@/core/validation';
+import { handleError, showSuccessToast, showErrorToast } from '@/core/utils';
 import { supabase } from '@/integrations/supabase/client';
 
 interface GenericUserDialogProps {
@@ -85,7 +85,7 @@ export const GenericUserDialog = ({
     // Validate locations first
     if (formData.locations.length === 0) {
       setErrors({ locations: 'At least one location must be selected' });
-      showErrorToast('Please fix validation errors', { operation: 'validate form' });
+      showErrorToast('Please fix validation errors');
       return;
     }
 
@@ -109,19 +109,12 @@ export const GenericUserDialog = ({
 
       if (error) throw error;
 
-      showSuccessToast(
-        `User ${mode === 'create' ? 'created' : 'updated'} successfully`,
-        `${formData.firstName} ${formData.lastName}'s profile has been saved.`
-      );
+      showSuccessToast(`User ${mode === 'create' ? 'created' : 'updated'} successfully`);
 
       onUserSaved();
       onOpenChange(false);
     } catch (error) {
-      showErrorToast(error, { 
-        operation: `${mode} user`,
-        component: 'GenericUserDialog',
-        userId: user?.user_id 
-      });
+      showErrorToast(`Failed to ${mode} user: ${error.message || error}`);
     } finally {
       setSaving(false);
     }

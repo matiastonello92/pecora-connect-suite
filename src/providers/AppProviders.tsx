@@ -24,7 +24,7 @@ import { UserManagementProvider } from '@/context/UserManagementContext';
 import { ChatProvider } from '@/context/ChatContext';
 
 import { UnifiedAppProvider } from './UnifiedAppProvider';
-import { BusinessContextProvider } from './BusinessContextProvider';
+import { UnifiedBusinessProvider } from './UnifiedBusinessProvider';
 
 interface AppProvidersProps {
   children: ReactNode;
@@ -32,38 +32,8 @@ interface AppProvidersProps {
 }
 
 /**
- * All Business Providers Wrapper
- * Consolidates all business context providers (temporary - will be optimized further)
- */
-const AllBusinessProviders: React.FC<{ children: ReactNode }> = ({ children }) => (
-  <InventoryProvider>
-    <KitchenInventoryProvider>
-      <ChecklistProvider>
-        <EquipmentProvider>
-          <SupplierProvider>
-            <CashRegisterProvider>
-              <FinancialProvider>
-                <CommunicationProvider>
-                  <UserManagementProvider>
-                    <ChatProvider>
-                      <BusinessContextProvider>
-                        {children}
-                      </BusinessContextProvider>
-                    </ChatProvider>
-                  </UserManagementProvider>
-                </CommunicationProvider>
-              </FinancialProvider>
-            </CashRegisterProvider>
-          </SupplierProvider>
-        </EquipmentProvider>
-      </ChecklistProvider>
-    </KitchenInventoryProvider>
-  </InventoryProvider>
-);
-
-/**
  * Main App Providers
- * NEW STRUCTURE: Only 2 levels of nesting (QueryClient + Auth, then Unified App)
+ * FINAL STRUCTURE: Only 2 levels of nesting (Core + Business)
  */
 export const AppProviders: React.FC<AppProvidersProps> = ({ children, queryClient }) => {
   return (
@@ -72,13 +42,13 @@ export const AppProviders: React.FC<AppProvidersProps> = ({ children, queryClien
         <BrowserRouter>
           <SimpleAuthProvider>
             <OptimizedLocationProvider>
-              <AllBusinessProviders>
+              <UnifiedBusinessProvider>
                 <UnifiedAppProvider>
                   <TooltipProvider>
                     {children}
                   </TooltipProvider>
                 </UnifiedAppProvider>
-              </AllBusinessProviders>
+              </UnifiedBusinessProvider>
             </OptimizedLocationProvider>
           </SimpleAuthProvider>
         </BrowserRouter>

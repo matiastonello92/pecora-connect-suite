@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react';
 import { Loader2 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn } from '@/core/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 
 interface LoadingSpinnerProps {

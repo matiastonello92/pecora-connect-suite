@@ -12,8 +12,8 @@ import { useToast } from '@/hooks/use-toast';
 import { Loader2, AlertTriangle, RefreshCw } from 'lucide-react';
 import { LoadingSpinner, FullPageLoader } from '@/components/ui/LoadingSpinner';
 import { supabase } from '@/integrations/supabase/client';
-import { validatePassword } from '@/utils/security';
-import { auditLogger, auditActions } from '@/utils/auditLog';
+import { validatePassword } from '@/core/services';
+import { AuditService } from '@/core/services';
 import { validateInvitationToken, getInvitationErrorMessage, cleanupExpiredInvitations } from '@/utils/invitationValidation';
 
 export const CompleteSignup = () => {
@@ -220,9 +220,10 @@ export const CompleteSignup = () => {
       console.log('Invitation completed successfully');
 
       // Audit log the successful registration
-      await auditLogger.logUserAction(
+      await AuditService.logUserAction(
         signUpData.user.id, 
-        auditActions.USER_CREATED, 
+        'USER_CREATED', 
+        'user',
         undefined, 
         { 
           email, 

@@ -8,3 +8,4 @@ export * from './dataService';
 export * from './notificationService';
 export * from './auditService';
 export * from './uploadService';
+export * from './securityService';
