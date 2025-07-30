@@ -22,6 +22,7 @@ import { UnusedIndexAnalyzer } from '@/components/testing/UnusedIndexAnalyzer';
 import { CodeDuplicationAnalyzer } from '@/components/testing/CodeDuplicationAnalyzer';
 import { ChatPerformanceMonitor } from '@/components/testing/ChatPerformanceMonitor';
 import { ChatStressTestSuite } from '@/components/testing/ChatStressTestSuite';
+import { CoreInfrastructureTest } from '@/components/testing/CoreInfrastructureTest';
 import { usePermissions } from '@/hooks/usePermissions';
 import { useSimpleAuth } from '@/context/SimpleAuthContext';
 
@@ -119,6 +120,11 @@ export default function TestDashboard() {
                 <span className="hidden sm:inline">Overview</span>
               </TabsTrigger>
               
+              <TabsTrigger value="core-infrastructure" className="test-tab-trigger flex items-center justify-center gap-2">
+                <Zap className="h-4 w-4" />
+                <span className="hidden sm:inline">Core Infra</span>
+              </TabsTrigger>
+              
               <TabsTrigger value="analysis" className="test-tab-trigger flex items-center justify-center gap-2">
                 <Database className="h-4 w-4" />
                 <span className="hidden sm:inline">Analysis</span>
@@ -187,6 +193,12 @@ export default function TestDashboard() {
           <TabsContent value="overview" className="mt-6">
             <div className="space-y-6">
               <SystemOverview onActiveTestsChange={setActiveTests} />
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="core-infrastructure" className="mt-6">
+            <div className="space-y-6">
+              <CoreInfrastructureTest />
             </div>
           </TabsContent>
           
