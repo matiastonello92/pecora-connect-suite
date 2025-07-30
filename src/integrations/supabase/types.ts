@@ -1442,7 +1442,6 @@ export type Database = {
           last_name: string
           locations: string[] | null
           metadata: Json | null
-          role: string
           status: string | null
         }
         Insert: {
@@ -1457,7 +1456,6 @@ export type Database = {
           last_name: string
           locations?: string[] | null
           metadata?: Json | null
-          role: string
           status?: string | null
         }
         Update: {
@@ -1472,7 +1470,6 @@ export type Database = {
           last_name?: string
           locations?: string[] | null
           metadata?: Json | null
-          role?: string
           status?: string | null
         }
         Relationships: []
