@@ -1,15 +1,11 @@
 /**
- * Super Unified Provider
- * ELIMINATES ALL PROVIDER NESTING - Single provider for entire business context
- * Achieves 0 levels of nesting using React Context Composition Pattern
+ * Super Unified Provider - FIXED
+ * Includes all necessary providers including location context
  */
 
 import React, { ReactNode, createContext, useContext, useMemo, useReducer } from 'react';
 import { useSimpleAuth } from '@/context/SimpleAuthContext';
-
-// Import all business logic without providers - we'll manage state internally
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { OptimizedLocationProvider } from '@/context/OptimizedLocationProvider';
 
 // All business state types in one unified interface
 interface SuperUnifiedContextType {
@@ -143,54 +139,6 @@ interface SuperUnifiedContextType {
       };
     };
   };
-  
-  // Core app contexts
-  core: {
-    location: {
-      currentLocation: any;
-      locations: any[];
-      loading: boolean;
-      error: string | null;
-      actions: {
-        switchLocation: (locationId: string) => void;
-        refreshLocations: () => void;
-      };
-    };
-    
-    permissions: {
-      userPermissions: any;
-      loading: boolean;
-      error: string | null;
-      actions: {
-        checkPermission: (module: string, action: string) => boolean;
-        refreshPermissions: () => void;
-      };
-    };
-    
-    unreadMessages: {
-      count: number;
-      messages: any[];
-      loading: boolean;
-      error: string | null;
-      actions: {
-        markAsRead: (messageId: string) => void;
-        markAllAsRead: () => void;
-        refreshUnread: () => void;
-      };
-    };
-    
-    reports: {
-      availableReports: any[];
-      generatedReports: any[];
-      loading: boolean;
-      error: string | null;
-      actions: {
-        generateReport: (reportType: string, params: any) => void;
-        downloadReport: (reportId: string) => void;
-        deleteReport: (reportId: string) => void;
-      };
-    };
-  };
 }
 
 // Internal state management using useReducer for better performance
@@ -245,8 +193,8 @@ export const useSuperUnified = () => {
   return context;
 };
 
-// Single provider that manages ALL business state internally
-export const SuperUnifiedProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+// Internal context provider that manages business state
+const SuperUnifiedContextProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const auth = useSimpleAuth();
   
   // Unified state management using reducer
@@ -260,16 +208,8 @@ export const SuperUnifiedProvider: React.FC<{ children: ReactNode }> = ({ childr
     financial: { reports: [], totalRevenue: 0, totalExpenses: 0, loading: false, error: null },
     communication: { messages: [], unreadCount: 0, loading: false, error: null },
     userManagement: { users: [], invitations: [], loading: false, error: null },
-    chat: { conversations: [], activeConversation: null, messages: [], loading: false, error: null },
-    location: { currentLocation: null, locations: [], loading: false, error: null },
-    permissions: { userPermissions: null, loading: false, error: null },
-    unreadMessages: { count: 0, messages: [], loading: false, error: null },
-    reports: { availableReports: [], generatedReports: [], loading: false, error: null }
+    chat: { conversations: [], activeConversation: null, messages: [], loading: false, error: null }
   });
-
-  // Simplified for now - will add proper queries when tables are confirmed
-  const inventoryData = [];
-  const locationsData = [];
 
   // Create unified actions
   const createActions = useMemo(() => ({
@@ -324,24 +264,6 @@ export const SuperUnifiedProvider: React.FC<{ children: ReactNode }> = ({ childr
       sendMessage: (conversationId: string, message: string) => {},
       createConversation: (participants: string[]) => {},
       markAsRead: (conversationId: string) => {}
-    },
-    location: {
-      switchLocation: (locationId: string) => dispatch({ type: 'SET_DATA', module: 'location', data: { currentLocation: locationId } }),
-      refreshLocations: () => {}
-    },
-    permissions: {
-      checkPermission: (module: string, action: string) => true, // Simplified for now
-      refreshPermissions: () => {}
-    },
-    unreadMessages: {
-      markAsRead: (messageId: string) => {},
-      markAllAsRead: () => dispatch({ type: 'SET_DATA', module: 'unreadMessages', data: { count: 0, messages: [] } }),
-      refreshUnread: () => {}
-    },
-    reports: {
-      generateReport: (reportType: string, params: any) => {},
-      downloadReport: (reportId: string) => {},
-      deleteReport: (reportId: string) => dispatch({ type: 'DELETE_ITEM', module: 'reports', id: reportId })
     }
   }), []);
 
@@ -356,7 +278,7 @@ export const SuperUnifiedProvider: React.FC<{ children: ReactNode }> = ({ childr
     
     business: {
       inventory: {
-        items: inventoryData || businessState.inventory.items,
+        items: businessState.inventory.items,
         loading: businessState.inventory.loading,
         error: businessState.inventory.error,
         actions: createActions.inventory
@@ -423,36 +345,6 @@ export const SuperUnifiedProvider: React.FC<{ children: ReactNode }> = ({ childr
         error: businessState.chat.error,
         actions: createActions.chat
       }
-    },
-    
-    core: {
-      location: {
-        currentLocation: businessState.location.currentLocation,
-        locations: locationsData || businessState.location.locations,
-        loading: businessState.location.loading,
-        error: businessState.location.error,
-        actions: createActions.location
-      },
-      permissions: {
-        userPermissions: businessState.permissions.userPermissions,
-        loading: businessState.permissions.loading,
-        error: businessState.permissions.error,
-        actions: createActions.permissions
-      },
-      unreadMessages: {
-        count: businessState.unreadMessages.count,
-        messages: businessState.unreadMessages.messages,
-        loading: businessState.unreadMessages.loading,
-        error: businessState.unreadMessages.error,
-        actions: createActions.unreadMessages
-      },
-      reports: {
-        availableReports: businessState.reports.availableReports,
-        generatedReports: businessState.reports.generatedReports,
-        loading: businessState.reports.loading,
-        error: businessState.reports.error,
-        actions: createActions.reports
-      }
     }
   }), [
     auth.user,
@@ -460,9 +352,7 @@ export const SuperUnifiedProvider: React.FC<{ children: ReactNode }> = ({ childr
     auth.isAuthenticated,
     auth.isLoading,
     businessState,
-    createActions,
-    inventoryData,
-    locationsData
+    createActions
   ]);
 
   return (
@@ -472,9 +362,25 @@ export const SuperUnifiedProvider: React.FC<{ children: ReactNode }> = ({ childr
   );
 };
 
+// Main Provider component that includes location providers
+export const SuperUnifiedProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  return (
+    <OptimizedLocationProvider>
+      <SuperUnifiedContextProvider>
+        {children}
+      </SuperUnifiedContextProvider>
+    </OptimizedLocationProvider>
+  );
+};
+
 // Backward compatibility exports
 export const useBusiness = () => useSuperUnified().business;
-export const useCore = () => useSuperUnified().core;
 export const useBusinessInventory = () => useSuperUnified().business.inventory;
-export const useBusinessLocation = () => useSuperUnified().core.location;
-export const useBusinessPermissions = () => useSuperUnified().core.permissions;
+export const useBusinessLocation = () => {
+  // This will now work because OptimizedLocationProvider is included
+  const { useLocationMeta, useLocationState } = require('@/context/OptimizedLocationProvider');
+  return {
+    meta: useLocationMeta(),
+    state: useLocationState()
+  };
+};

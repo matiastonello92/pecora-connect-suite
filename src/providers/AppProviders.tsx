@@ -57,4 +57,4 @@ export const AppProviders: React.FC<AppProvidersProps> = ({ children, queryClien
 
 // Legacy exports for backward compatibility
 export { useUnifiedApp } from './UnifiedAppProvider';
-export { useBusiness, useCore, useSuperUnified } from './SuperUnifiedProvider';
+export { useBusiness, useSuperUnified } from './SuperUnifiedProvider';
