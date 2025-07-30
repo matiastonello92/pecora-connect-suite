@@ -5,7 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AppProviders } from "@/providers/AppProviders";
-import { useSimpleAuth } from "@/context/SimpleAuthContext";
+import { useEnhancedAuth } from "@/providers/EnhancedAuthProvider";
 import { NotificationHandler } from '@/components/notifications/NotificationHandler';
 import { ErrorBoundary } from '@/components/common/ErrorBoundary';
 import { LoginForm } from "@/components/auth/LoginForm";
@@ -34,7 +34,7 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 
 const AppContent = () => {
-  const { isAuthenticated, isLoading, user, profile } = useSimpleAuth();
+  const { isAuthenticated, isLoading, user, profile } = useEnhancedAuth();
 
   console.log('🚀 AppContent render:', { isLoading, isAuthenticated, hasUser: !!user, hasProfile: !!profile });
 

@@ -25,11 +25,12 @@ import { ChatStressTestSuite } from '@/components/testing/ChatStressTestSuite';
 import { CoreInfrastructureTest } from '@/components/testing/CoreInfrastructureTest';
 import { EnhancedAuthTest } from '@/components/testing/EnhancedAuthTest';
 import { usePermissions } from '@/hooks/usePermissions';
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
+import { LocationSystemTest } from '@/components/testing/LocationSystemTest';
 
 export default function TestDashboard() {
   console.log('🧪 TestDashboard component loaded successfully');
-  const { profile } = useSimpleAuth();
+  const { profile } = useEnhancedAuth();
   const { hasPermission } = usePermissions({
     userId: profile?.user_id,
     accessLevel: profile?.accessLevel
@@ -191,6 +192,11 @@ export default function TestDashboard() {
                 <Shield className="h-4 w-4" />
                 <span className="hidden sm:inline">Enhanced Auth</span>
               </TabsTrigger>
+              
+              <TabsTrigger value="location-system" className="test-tab-trigger flex items-center justify-center gap-2">
+                <Monitor className="h-4 w-4" />
+                <span className="hidden sm:inline">Locations</span>
+              </TabsTrigger>
             </div>
           </TabsList>
         </div>
@@ -283,6 +289,12 @@ export default function TestDashboard() {
           <TabsContent value="enhanced-auth" className="mt-6">
             <div className="space-y-6">
               <EnhancedAuthTest />
+            </div>
+          </TabsContent>
+
+          <TabsContent value="location-system" className="mt-6">
+            <div className="space-y-6">
+              <LocationSystemTest />
             </div>
           </TabsContent>
         </div>

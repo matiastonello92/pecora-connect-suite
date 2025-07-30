@@ -54,7 +54,7 @@ export const GenericUserDialog = ({
           role: user.role,
           restaurantRole: user.restaurantRole || 'none',
           accessLevel: user.accessLevel,
-          locations: user.locations || ['menton'],
+          locations: user.locations || ['menton', 'lyon'],
           department: user.department,
           position: user.position
         });
@@ -65,7 +65,7 @@ export const GenericUserDialog = ({
           role: 'base',
           restaurantRole: 'none',
           accessLevel: 'base',
-          locations: [],
+          locations: ['menton', 'lyon'],
           department: '',
           position: ''
         });

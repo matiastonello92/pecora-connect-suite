@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { useSimpleAuth } from '@/context/SimpleAuthContext';
+import { useEnhancedAuth } from '@/providers/EnhancedAuthProvider';
 import { useLocationMeta } from './LocationMetaContext';
 
 /**
@@ -43,7 +43,7 @@ interface LocationStateProviderProps {
 }
 
 export const LocationStateProvider: React.FC<LocationStateProviderProps> = ({ children }) => {
-  const { user } = useSimpleAuth();
+  const { user, profile } = useEnhancedAuth();
   const { allLocations, getLocationCoordinates } = useLocationMeta();
   const queryClient = useQueryClient();
   
@@ -52,7 +52,7 @@ export const LocationStateProvider: React.FC<LocationStateProviderProps> = ({ ch
   const [suggestedLocation, setSuggestedLocation] = useState<string | null>(null);
   const [hasRequestedPermission, setHasRequestedPermission] = useState(false);
 
-  // Load user's accessible locations
+  // Load user's accessible locations from profile
   const {
     data: userLocations = [],
     isLoading: isLoadingUserLocations,
@@ -60,20 +60,12 @@ export const LocationStateProvider: React.FC<LocationStateProviderProps> = ({ ch
   } = useQuery({
     queryKey: ['user-locations', user?.id],
     queryFn: async () => {
-      if (!user?.id) return [];
+      if (!user?.id || !profile) return [];
       
-      const { data, error } = await supabase.rpc('get_user_location_data', {
-        target_user_id: user.id,
-        location_codes: null
-      });
-      
-      if (error) throw error;
-      
-      return (data || [])
-        .filter((loc: any) => loc.has_access)
-        .map((loc: any) => loc.location_code);
+      // Get locations directly from the profile
+      return profile.locations || [];
     },
-    enabled: !!user?.id,
+    enabled: !!user?.id && !!profile,
     staleTime: 1000 * 60 * 5, // 5 minutes
     gcTime: 1000 * 60 * 15, // 15 minutes cache time
   });
